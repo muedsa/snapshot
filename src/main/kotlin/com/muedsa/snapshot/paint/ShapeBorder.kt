@@ -10,20 +10,25 @@ abstract class ShapeBorder {
 
     abstract val dimensions: EdgeInsets
 
-    protected open fun add(other: ShapeBorder, reversed: Boolean = false): ShapeBorder? = null
+    open fun add(other: ShapeBorder, reversed: Boolean = false): ShapeBorder? = null
+
+    operator fun plus(other: ShapeBorder): ShapeBorder = add(other = other)
+        ?: other.add(other = this, reversed = true)
+        ?: CompoundBorder(listOf(this, other))
 
     abstract fun scale(t: Float): ShapeBorder
 
-    protected open fun lerpFrom(a: ShapeBorder?, t: Float): ShapeBorder? = if (a == null) scale(t) else null
+    open fun lerpFrom(a: ShapeBorder?, t: Float): ShapeBorder? = if (a == null) scale(t) else null
 
-    protected open fun lerpTo(b: ShapeBorder?, t: Float): ShapeBorder? = if (b == null) scale(1f - t) else null
+    open fun lerpTo(b: ShapeBorder?, t: Float): ShapeBorder? = if (b == null) scale(1f - t) else null
 
     abstract fun getOuterPath(rect: Rect): Path
 
     abstract fun getInnerPath(rect: Rect): Path
 
     open fun paintInterior(canvas: Canvas, rect: Rect, paint: Paint) {
-
+        assert(!preferPaintInterior) { "$javaClass.preferPaintInterior returns true but $javaClass..paintInterior is not implemented." }
+        assert(false) { "$javaClass.preferPaintInterior returns false, so it is an error to call its paintInterior method." }
     }
 
     open val preferPaintInterior: Boolean = false

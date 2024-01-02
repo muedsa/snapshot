@@ -35,6 +35,35 @@ abstract class BorderRadiusGeometry {
         bottomEnd = bottomEnd + other.bottomEnd
     )
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is BorderRadiusGeometry) return false
+
+        if (topLeft != other.topLeft) return false
+        if (topRight != other.topRight) return false
+        if (bottomLeft != other.bottomLeft) return false
+        if (bottomRight != other.bottomRight) return false
+        if (topStart != other.topStart) return false
+        if (topEnd != other.topEnd) return false
+        if (bottomStart != other.bottomStart) return false
+        if (bottomEnd != other.bottomEnd) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = topLeft.hashCode()
+        result = 31 * result + topRight.hashCode()
+        result = 31 * result + bottomLeft.hashCode()
+        result = 31 * result + bottomRight.hashCode()
+        result = 31 * result + topStart.hashCode()
+        result = 31 * result + topEnd.hashCode()
+        result = 31 * result + bottomStart.hashCode()
+        result = 31 * result + bottomEnd.hashCode()
+        return result
+    }
+
+
     companion object {
 
         @JvmStatic

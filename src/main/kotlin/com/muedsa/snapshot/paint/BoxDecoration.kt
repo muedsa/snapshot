@@ -8,10 +8,10 @@ import org.jetbrains.skia.*
 
 class BoxDecoration(
     val color: Int? = null,
-    val image: DecorationImage,
+    val image: DecorationImage? = null,
     val border: BoxBorder,
-    val borderRadius: BorderRadius?,
-    val boxShadow: List<BoxShadow>,
+    val borderRadius: BorderRadius? = null,
+    val boxShadow: List<BoxShadow>? = null,
     val gradient: Gradient? = null,
     val backgroundBlendMode: BlendMode? = null,
     val shape: BoxShape = BoxShape.RECTANGLE
@@ -43,12 +43,5 @@ class BoxDecoration(
         }
     }
 
-    override fun createBoxPainter(): BoxPainter {
-        TODO("Not yet implemented")
-    }
-
-
-    fun copyWith(){
-        TODO("Not yet implemented")
-    }
+    override fun createBoxPainter(): BoxPainter = BoxDecorationPainter(this)
 }

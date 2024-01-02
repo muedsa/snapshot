@@ -24,6 +24,9 @@ class Snapshot(
         val rootRenderBox = rootWidget!!.createRenderTree()
         rootRenderBox.layout(constraints = BoxConstraints())
         val rootSize = rootRenderBox.definiteSize
+        if (rootSize.isEmpty) {
+            throw IllegalArgumentException("layout size is empty")
+        }
         if (rootSize.isInfinite) {
             throw IllegalArgumentException("layout size is infinite")
         }

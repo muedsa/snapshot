@@ -24,9 +24,24 @@ class EdgeInsets(
 
     fun deflateRect(rect: Rect): Rect = Rect(rect.left + left, rect.top + top, rect.right - right, rect.bottom - bottom)
 
+    fun add(other: EdgeInsets) = EdgeInsets(
+        left = left + other.left,
+        top = top + other.top,
+        right = right + other.right,
+        bottom = bottom + other.bottom
+    )
+
     companion object {
         @JvmStatic
         val ZERO = only()
+
+        @JvmStatic
+        fun fromLTRB(left: Float, top: Float, right: Float, bottom: Float) = EdgeInsets(
+            left = left,
+            top = top,
+            right = right,
+            bottom = bottom
+        )
 
         @JvmStatic
         fun all(value: Float) = EdgeInsets(

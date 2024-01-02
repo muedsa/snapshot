@@ -14,11 +14,11 @@ class RenderDecoratedBox(
 
     override fun paint(context: PaintingContext, offset: Offset) {
         if (position == DecorationPosition.BACKGROUND) {
-            painter.paint(context.canvas, offset);
+            painter.paint(context.canvas, offset, definiteSize)
         }
         super.paint(context, offset)
         if (position == DecorationPosition.FOREGROUND) {
-            painter.paint(context.canvas, offset)
+            painter.paint(context.canvas, offset, definiteSize)
         }
         super.paint(context, offset)
     }
