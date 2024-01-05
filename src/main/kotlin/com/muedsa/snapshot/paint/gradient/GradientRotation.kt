@@ -1,4 +1,4 @@
-package com.muedsa.snapshot.paint
+package com.muedsa.snapshot.paint.gradient
 
 import com.muedsa.geometry.Matrix44CMO
 import com.muedsa.geometry.Offset

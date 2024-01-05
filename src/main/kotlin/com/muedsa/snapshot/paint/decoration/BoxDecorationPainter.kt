@@ -1,6 +1,8 @@
-package com.muedsa.snapshot.paint
+package com.muedsa.snapshot.paint.decoration
 
 import com.muedsa.geometry.*
+import com.muedsa.snapshot.paint.BoxPainter
+import com.muedsa.snapshot.paint.BoxShape
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Paint
 import org.jetbrains.skia.Path
@@ -48,7 +50,8 @@ internal class BoxDecorationPainter(
             }
             BoxShape.RECTANGLE -> {
                 if (decoration.borderRadius == null ||
-                    decoration.borderRadius == BorderRadius.ZERO) {
+                    decoration.borderRadius == BorderRadius.ZERO
+                ) {
                     canvas.drawRect(r = rect, paint = paint)
                 } else {
                     canvas.drawRRect(r = decoration.borderRadius.toRRect(rect), paint = paint)
@@ -58,10 +61,7 @@ internal class BoxDecorationPainter(
     }
 
     private fun paintShadows(canvas: Canvas, rect: Rect) {
-        if (decoration.boxShadow == null) {
-            return
-        }
-        decoration.boxShadow.forEach {
+        decoration.boxShadow?.forEach {
             val paint: Paint = it.toPaint()
             val bounds: Rect = rect.shift(it.offset).inflate(it.spreadRadius)
             paintBox(canvas = canvas, rect = bounds, paint = paint)
@@ -105,7 +105,7 @@ internal class BoxDecorationPainter(
         paintShadows(canvas = canvas, rect = rect)
         paintBackgroundColor(canvas = canvas, rect = rect)
         paintBackgroundImage(canvas = canvas, rect = rect)
-        decoration.border.paint(
+        decoration.border?.paint(
             canvas = canvas,
             rect = rect,
             shape = decoration.shape,

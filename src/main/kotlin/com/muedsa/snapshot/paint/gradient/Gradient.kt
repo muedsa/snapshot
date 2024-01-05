@@ -1,24 +1,24 @@
-package com.muedsa.snapshot.paint
+package com.muedsa.snapshot.paint.gradient
 
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.Shader
 
 abstract class Gradient(
-    val colors: List<Int>,
-    val stops: List<Float>? = null,
+    val colors: IntArray,
+    val stops: FloatArray? = null,
     val transform: GradientTransform? = null,
 ) {
-    private fun impliedStops(): List<Float> {
+    protected fun impliedStops(): FloatArray {
         if (stops != null) {
             return stops
         }
         assert(colors.size >= 2) { "colors list must have at least two colors" }
         val separation: Float  = 1f / (colors.size - 1)
-        return buildList(colors.size) {
-            for (i in colors.indices) {
-                add(i * separation)
-            }
+        val newStops = FloatArray(colors.size)
+        for (i in colors.indices) {
+            newStops[i] = i * separation
         }
+        return newStops
     }
     abstract fun createShader(rect: Rect): Shader
 

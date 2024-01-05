@@ -2,7 +2,7 @@ package com.muedsa.snapshot.rendering
 
 import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.paint.BoxPainter
-import com.muedsa.snapshot.paint.Decoration
+import com.muedsa.snapshot.paint.decoration.Decoration
 
 class RenderDecoratedBox(
     val decoration: Decoration,

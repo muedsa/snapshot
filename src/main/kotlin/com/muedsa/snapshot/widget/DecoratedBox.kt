@@ -1,6 +1,6 @@
 package com.muedsa.snapshot.widget
 
-import com.muedsa.snapshot.paint.Decoration
+import com.muedsa.snapshot.paint.decoration.Decoration
 import com.muedsa.snapshot.rendering.DecorationPosition
 import com.muedsa.snapshot.rendering.RenderBox
 import com.muedsa.snapshot.rendering.RenderDecoratedBox

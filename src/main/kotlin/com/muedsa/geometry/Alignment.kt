@@ -5,7 +5,6 @@ import org.jetbrains.skia.Rect
 
 open class Alignment(val x: Float, val y: Float) {
 
-
     fun alongOffset(other: Offset): Offset {
         val centerX: Float = other.x / 2f
         val centerY: Float = other.y / 2f
@@ -15,6 +14,15 @@ open class Alignment(val x: Float, val y: Float) {
         val centerX: Float = other.width / 2f
         val centerY: Float = other.height / 2f
         return Offset(centerX + x * centerX, centerY + y * centerY)
+    }
+
+    fun withinRect(rect: Rect): Offset {
+        val halfWidth: Float = rect.width / 2f
+        val halfHeight: Float = rect.height / 2f
+        return Offset(
+            rect.left + halfWidth + x * halfWidth,
+            rect.top + halfHeight + y * halfHeight,
+        )
     }
 
     fun inscribe(size: Size, rect:Rect): Rect {

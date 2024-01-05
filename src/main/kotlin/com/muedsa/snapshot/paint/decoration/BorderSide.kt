@@ -1,4 +1,4 @@
-package com.muedsa.snapshot.paint
+package com.muedsa.snapshot.paint.decoration
 
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.Paint
@@ -56,7 +56,7 @@ class BorderSide(
             val aIsNone: Boolean = a.style == BorderStyle.NONE && a.width == 0f
             val bIsNone: Boolean = b.style == BorderStyle.NONE && b.width == 0f
             if (aIsNone && bIsNone) {
-                return BorderSide.NONE
+                return NONE
             }
             if (aIsNone) {
                 return b

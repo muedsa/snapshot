@@ -1,4 +1,4 @@
-package com.muedsa.snapshot.paint
+package com.muedsa.snapshot.paint.decoration
 
 import com.muedsa.geometry.Radius
 
