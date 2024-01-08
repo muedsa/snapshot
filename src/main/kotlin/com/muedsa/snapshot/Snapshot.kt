@@ -1,6 +1,6 @@
 package com.muedsa.snapshot
 
-import com.muedsa.snapshot.rendering.BoxConstraints
+import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.rendering.PaintingContext
 import com.muedsa.snapshot.widget.SingleWidgetBuilder

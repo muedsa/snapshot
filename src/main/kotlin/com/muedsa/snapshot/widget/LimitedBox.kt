@@ -1,7 +1,7 @@
 package com.muedsa.snapshot.widget
 
-import com.muedsa.snapshot.rendering.RenderBox
-import com.muedsa.snapshot.rendering.RenderLimitedBox
+import com.muedsa.snapshot.rendering.box.RenderBox
+import com.muedsa.snapshot.rendering.box.RenderLimitedBox
 
 class LimitedBox(
     val maxWidth: Float = Float.POSITIVE_INFINITY,

@@ -1,7 +1,7 @@
 package com.muedsa.snapshot.widget
 
 import com.muedsa.snapshot.annotation.MustCallSuper
-import com.muedsa.snapshot.rendering.RenderBox
+import com.muedsa.snapshot.rendering.box.RenderBox
 
 abstract class Widget {
 
@@ -19,4 +19,8 @@ abstract class Widget {
 
     @MustCallSuper
     open fun dispose() { }
+
+    operator fun plus(widget: Widget): Array<Widget> = arrayOf(this, widget)
+
+    operator fun Array<Widget>.plus(widget: Widget): Array<Widget> = arrayOf(*this, widget)
 }

@@ -2,8 +2,8 @@ package com.muedsa.snapshot.widget
 
 import com.muedsa.geometry.Size
 import com.muedsa.snapshot.rendering.ClipBehavior
-import com.muedsa.snapshot.rendering.RenderBox
-import com.muedsa.snapshot.rendering.RenderClipPath
+import com.muedsa.snapshot.rendering.box.RenderBox
+import com.muedsa.snapshot.rendering.box.RenderClipPath
 import org.jetbrains.skia.Path
 
 class ClipPath(

@@ -1,7 +1,6 @@
 package com.muedsa.snapshot.paint.decoration
 
 import com.muedsa.geometry.EdgeInsets
-import com.muedsa.snapshot.paint.BoxShape
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.Rect

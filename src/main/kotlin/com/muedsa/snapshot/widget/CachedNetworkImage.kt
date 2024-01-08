@@ -4,8 +4,8 @@ import com.muedsa.geometry.Alignment
 import com.muedsa.snapshot.annotation.MustCallSuper
 import com.muedsa.snapshot.paint.BoxFit
 import com.muedsa.snapshot.paint.ImageRepeat
-import com.muedsa.snapshot.rendering.RenderBox
-import com.muedsa.snapshot.rendering.RenderImage
+import com.muedsa.snapshot.rendering.box.RenderBox
+import com.muedsa.snapshot.rendering.box.RenderImage
 import com.muedsa.snapshot.tools.NetworkImageCache
 import com.muedsa.snapshot.tools.NetworkImageCacheManager
 import org.jetbrains.skia.BlendMode

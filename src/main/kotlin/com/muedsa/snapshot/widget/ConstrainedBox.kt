@@ -1,8 +1,8 @@
 package com.muedsa.snapshot.widget
 
-import com.muedsa.snapshot.rendering.BoxConstraints
-import com.muedsa.snapshot.rendering.RenderBox
-import com.muedsa.snapshot.rendering.RenderConstrainedBox
+import com.muedsa.snapshot.rendering.box.BoxConstraints
+import com.muedsa.snapshot.rendering.box.RenderBox
+import com.muedsa.snapshot.rendering.box.RenderConstrainedBox
 
 class ConstrainedBox(
     val constraints: BoxConstraints,

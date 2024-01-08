@@ -1,7 +1,6 @@
 package com.muedsa.snapshot.paint.decoration
 
 import com.muedsa.geometry.*
-import com.muedsa.snapshot.paint.BoxShape
 import org.jetbrains.skia.*
 
 abstract class BoxBorder : ShapeBorder() {

@@ -1,8 +1,8 @@
 package com.muedsa.snapshot.widget
 
 import com.muedsa.geometry.*
-import com.muedsa.snapshot.rendering.RenderBox
-import com.muedsa.snapshot.rendering.RenderTransform
+import com.muedsa.snapshot.rendering.box.RenderBox
+import com.muedsa.snapshot.rendering.box.RenderTransform
 
 class Transform(
     val transform: Matrix44CMO,

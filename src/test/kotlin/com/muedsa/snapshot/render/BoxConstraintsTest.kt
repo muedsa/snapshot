@@ -1,6 +1,6 @@
 package com.muedsa.snapshot.render
 
-import com.muedsa.snapshot.rendering.BoxConstraints
+import com.muedsa.snapshot.rendering.box.BoxConstraints
 import org.junit.jupiter.api.Test
 import kotlin.test.expect
 

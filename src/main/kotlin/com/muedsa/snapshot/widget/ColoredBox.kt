@@ -1,12 +1,12 @@
 package com.muedsa.snapshot.widget
 
-import com.muedsa.snapshot.rendering.RenderBox
-import com.muedsa.snapshot.rendering.RenderColoredBox
+import com.muedsa.snapshot.rendering.box.RenderBox
+import com.muedsa.snapshot.rendering.box.RenderColoredBox
 
 
-class ColoredBox(
+ class ColoredBox(
     val color: Int,
-    childBuilder: SingleWidgetBuilder?= null
+    childBuilder: SingleWidgetBuilder? = null
 ) : SingleChildWidget(childBuilder = childBuilder) {
 
     override fun createRenderTree(): RenderBox = RenderColoredBox(color = color, child = child?.createRenderTree())

@@ -1,7 +1,6 @@
 package com.muedsa.snapshot.paint.decoration
 
 import com.muedsa.geometry.EdgeInsets
-import com.muedsa.snapshot.paint.BoxPainter
 import org.jetbrains.skia.Path
 import org.jetbrains.skia.Rect
 import java.util.*

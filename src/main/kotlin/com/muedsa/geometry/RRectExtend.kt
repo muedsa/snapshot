@@ -154,3 +154,12 @@ fun makeRRectFromRectAndRadius(rect: Rect, radius: Radius) = RRect.makeLTRB(
     xRad = radius.x,
     yRad = radius.y
 )
+
+fun RRect.shift(offset: Offset): RRect =
+    RRect.makeComplexLTRB(
+        l = left + offset.x,
+        t = top + offset.y,
+        r = right + offset.x,
+        b = bottom + offset.y,
+        radii = radii.clone()
+    )

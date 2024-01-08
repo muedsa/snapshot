@@ -1,8 +1,8 @@
 package com.muedsa.snapshot.widget
 
 import com.muedsa.geometry.Alignment
-import com.muedsa.snapshot.rendering.RenderBox
-import com.muedsa.snapshot.rendering.RenderPositionedBox
+import com.muedsa.snapshot.rendering.box.RenderBox
+import com.muedsa.snapshot.rendering.box.RenderPositionedBox
 
 open class Align(
     val alignment: Alignment = Alignment.CENTER,

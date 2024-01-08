@@ -1,7 +1,7 @@
 package com.muedsa.snapshot.widget
 
 import com.muedsa.snapshot.annotation.MustCallSuper
-import com.muedsa.snapshot.rendering.RenderBox
+import com.muedsa.snapshot.rendering.box.RenderBox
 
 abstract class SingleChildWidget(
     val child: Widget?
@@ -14,9 +14,6 @@ abstract class SingleChildWidget(
             it.parent = this
         }
     }
-
-    abstract override fun createRenderTree(): RenderBox
-
 
     @MustCallSuper
     override fun dispose() {

@@ -1,7 +1,7 @@
 package com.muedsa.snapshot.render
 
 import com.muedsa.snapshot.noLimitedLayout
-import com.muedsa.snapshot.rendering.RenderBox
+import com.muedsa.snapshot.rendering.box.RenderBox
 
 class RenderBoxTest {
 
