@@ -3,7 +3,6 @@ package com.muedsa.snapshot.widget
 import com.muedsa.geometry.Alignment
 import com.muedsa.geometry.AlignmentDirectional
 import com.muedsa.snapshot.drawWidget
-import com.muedsa.snapshot.rendering.stack.StackFit
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.paragraph.Direction
 import kotlin.test.Test
@@ -38,7 +37,7 @@ class StackTest {
                 val name = "stack/a${alignmentIndex}_d${directionIndex}"
                 val description = "Stack(\n$alignment\n$direction\n)"
                 println("\n\ndraw: $name\n$description")
-                drawWidget(filename = name, debugInfo = description) {
+                drawWidget(imagePathWithoutSuffix = name, debugInfo = description) {
                     Stack(
                         alignment = alignment,
                         textDirection = direction

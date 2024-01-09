@@ -43,37 +43,7 @@ fun sample() {
 
 fun main() {
     sample()
-    //logo()
     //textTest()
-}
-
-fun logo() {
-    val snapshot = Snapshot(background = Color.WHITE) {
-        SizedBox(
-            width = 300f,
-            height = 300f,
-        ) {
-            Align(
-                alignment = Alignment.BOTTOM_RIGHT
-            ) {
-                Container(
-                    width = 200f,
-                    height = 200f,
-                    decoration = BoxDecoration(
-                        color = 0xFF_7C_94_b6.toInt(),
-                        border = Border.all(width = 10f),
-                        borderRadius = BorderRadius.circular(100f)
-                    )
-                )
-            }
-
-        }
-    }
-    snapshot.draw()
-    val filePath = java.nio.file.Path.of("logo.png")
-    filePath.toFile().apply {
-        writeBytes(snapshot.toPNGImageBytes())
-    }
 }
 
 fun textTest() {

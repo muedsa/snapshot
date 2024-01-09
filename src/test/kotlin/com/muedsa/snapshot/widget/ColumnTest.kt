@@ -1,7 +1,6 @@
 package com.muedsa.snapshot.widget
 
 import com.muedsa.snapshot.drawWidget
-import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.flex.CrossAxisAlignment
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.paragraph.BaselineMode
@@ -16,7 +15,7 @@ class ColumnTest {
             val name = "column/crossAxis$index"
             val description = "Column($crossAxisAlignment)"
             println("\n\ndraw: $name\n$description")
-            drawWidget(filename = name, debugInfo = description) {
+            drawWidget(imagePathWithoutSuffix = name, debugInfo = description) {
                 var widget: Widget = Column(
                     crossAxisAlignment = crossAxisAlignment,
                     textBaseline = if (crossAxisAlignment == CrossAxisAlignment.BASELINE) BaselineMode.ALPHABETIC else null

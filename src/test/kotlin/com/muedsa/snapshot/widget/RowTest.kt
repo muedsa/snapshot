@@ -2,7 +2,6 @@ package com.muedsa.snapshot.widget
 
 import com.muedsa.snapshot.drawWidget
 import com.muedsa.snapshot.rendering.flex.CrossAxisAlignment
-import com.muedsa.snapshot.rendering.flex.MainAxisAlignment
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.paragraph.BaselineMode
 import kotlin.test.Test
@@ -17,7 +16,7 @@ class RowTest {
             val name = "row/crossAxis$index"
             val description = "Row($crossAxisAlignment)"
             println("\n\ndraw: $name \n$description")
-            drawWidget(filename = name, debugInfo = description) {
+            drawWidget(imagePathWithoutSuffix = name, debugInfo = description) {
                 var widget: Widget = Row(
                     crossAxisAlignment = crossAxisAlignment,
                     textBaseline = if (crossAxisAlignment == CrossAxisAlignment.BASELINE) BaselineMode.ALPHABETIC else null
