@@ -7,6 +7,7 @@ import com.muedsa.snapshot.rendering.box.RenderBox
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.FontMgr
 import org.jetbrains.skia.paragraph.*
+import kotlin.math.ceil
 
 @Deprecated(message = "only unit test use it")
 internal class RenderSimpleText(
@@ -20,8 +21,9 @@ internal class RenderSimpleText(
     override fun performLayout() {
 
         val width: Float = if(definiteConstraints.hasBoundedWidth) definiteConstraints.maxWidth
-            else definiteConstraints.minWidth
-        assert(width.isFinite() && width > 0) { "$this must have definite width" }
+            else if (definiteConstraints.minWidth > 0) definiteConstraints.minWidth
+            else Float.POSITIVE_INFINITY
+        //assert(width.isFinite() && width > 0) { "$this must have definite width" }
 
         paragraph = ParagraphBuilder(style = paragraphStyle, fc = fontCollection)
             .apply {
@@ -33,7 +35,7 @@ internal class RenderSimpleText(
             }
             .build()
         paragraph!!.layout(width)
-        size = definiteConstraints.constrainDimensions(width = width, height = paragraph!!.height)
+        size = definiteConstraints.constrainDimensions(width = ceil(paragraph!!.maxIntrinsicWidth), height = ceil(paragraph!!.height))
     }
 
     override fun paint(context: PaintingContext, offset: Offset) {
