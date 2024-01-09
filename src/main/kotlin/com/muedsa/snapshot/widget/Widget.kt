@@ -19,8 +19,4 @@ abstract class Widget {
 
     @MustCallSuper
     open fun dispose() { }
-
-    operator fun plus(widget: Widget): Array<Widget> = arrayOf(this, widget)
-
-    operator fun Array<Widget>.plus(widget: Widget): Array<Widget> = arrayOf(*this, widget)
 }

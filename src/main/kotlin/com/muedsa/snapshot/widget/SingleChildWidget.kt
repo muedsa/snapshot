@@ -4,6 +4,7 @@ import com.muedsa.snapshot.annotation.MustCallSuper
 import com.muedsa.snapshot.rendering.box.RenderBox
 
 abstract class SingleChildWidget(
+
     val child: Widget?
 ) : Widget() {
 

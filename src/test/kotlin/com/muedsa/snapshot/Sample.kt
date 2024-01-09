@@ -1,15 +1,10 @@
 package com.muedsa.snapshot
 
 import com.muedsa.geometry.Alignment
-import com.muedsa.snapshot.paint.*
 import com.muedsa.snapshot.paint.decoration.Border
 import com.muedsa.snapshot.paint.decoration.BorderRadius
 import com.muedsa.snapshot.paint.decoration.BoxDecoration
-import com.muedsa.snapshot.paint.decoration.DecorationImage
-import com.muedsa.snapshot.paint.gradient.LinearGradient
-import com.muedsa.snapshot.paint.gradient.RadialGradient
 import com.muedsa.snapshot.paint.gradient.SweepGradient
-import com.muedsa.snapshot.tools.NetworkImageCacheManager
 import com.muedsa.snapshot.widget.Align
 import com.muedsa.snapshot.widget.Container
 import com.muedsa.snapshot.widget.SizedBox

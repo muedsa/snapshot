@@ -1,40 +1,12 @@
 package com.muedsa.geometry
 
-import org.jetbrains.skia.Rect
+import org.jetbrains.skia.paragraph.Direction
 
 
-open class Alignment(val x: Float, val y: Float) {
+open class Alignment(override val x: Float, override val y: Float) : AlignmentGeometry() {
 
-    fun alongOffset(other: Offset): Offset {
-        val centerX: Float = other.x / 2f
-        val centerY: Float = other.y / 2f
-        return Offset((centerX + x * centerX), (centerY + y * centerY))
-    }
-    fun alongSize(other: Size): Offset {
-        val centerX: Float = other.width / 2f
-        val centerY: Float = other.height / 2f
-        return Offset(centerX + x * centerX, centerY + y * centerY)
-    }
-
-    fun withinRect(rect: Rect): Offset {
-        val halfWidth: Float = rect.width / 2f
-        val halfHeight: Float = rect.height / 2f
-        return Offset(
-            rect.left + halfWidth + x * halfWidth,
-            rect.top + halfHeight + y * halfHeight,
-        )
-    }
-
-    fun inscribe(size: Size, rect:Rect): Rect {
-        val halfWidthDelta: Float = (rect.width - size.width) / 2f
-        val halfHeightDelta: Float  = (rect.height - size.height) / 2f
-        return Rect.makeXYWH(
-            rect.left + halfWidthDelta + x * halfWidthDelta,
-            rect.top + halfHeightDelta + y * halfHeightDelta,
-            size.width,
-            size.height,
-        )
-    }
+    override val start: Float = 0f
+    override fun resolve(direction: Direction?): Alignment = this
 
     companion object {
         @JvmStatic val TOP_LEFT = Alignment(-1f, -1f)
@@ -46,5 +18,37 @@ open class Alignment(val x: Float, val y: Float) {
         @JvmStatic val BOTTOM_LEFT = Alignment(-1f, 1f)
         @JvmStatic val BOTTOM_CENTER = Alignment(0f, 1f)
         @JvmStatic val BOTTOM_RIGHT = Alignment(1f, 1f)
+
+
+        fun stringify(x: Float, y: Float): String {
+            if (x == -1f && y == -1f) {
+                return "Alignment.TOP_LEFT"
+            }
+            if (x == 0f && y == -1f) {
+                return "Alignment.TOP_CENTER"
+            }
+            if (x == 1f && y == -1f) {
+                return "Alignment.TOP_RIGHT"
+            }
+            if (x == -1f && y == 0f) {
+                return "Alignment.CENTER_LEFT"
+            }
+            if (x == 0f && y == 0f) {
+                return "Alignment.CENTER"
+            }
+            if (x == 1f && y == 0f) {
+                return "Alignment.CENTER_RIGHT"
+            }
+            if (x == -1f && y == 1f) {
+                return "Alignment.BOTTOM_LEFT"
+            }
+            if (x == 0f && y == 1f) {
+                return "Alignment.BOTTOM_CENTER"
+            }
+            if (x == 1f && y == 1f) {
+                return "Alignment.BOTTOM_RIGHT"
+            }
+            return "Alignment($x, $y)"
+        }
     }
 }

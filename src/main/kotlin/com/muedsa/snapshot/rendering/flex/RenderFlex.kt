@@ -52,7 +52,7 @@ open class RenderFlex(
     private fun computeSizes(constraints: BoxConstraints): LayoutSizes {
         // Determine used flex factor, size inflexible items, calculate free space.
         var totalFlex: Int = 0
-        val maxMainSize: Float = if (direction == Axis.HORIZONTAL) constraints.maxWidth else constraints.minWidth
+        val maxMainSize: Float = if (direction == Axis.HORIZONTAL) constraints.maxWidth else constraints.maxHeight
         val canFlex: Boolean = maxMainSize < Float.POSITIVE_INFINITY
 
         var crossSize: Float = 0f
@@ -69,7 +69,7 @@ open class RenderFlex(
                 val innerConstraints: BoxConstraints = if (crossAxisAlignment == CrossAxisAlignment.STRETCH) {
                     when (direction) {
                         Axis.HORIZONTAL -> BoxConstraints.tightFor(height = constraints.maxHeight)
-                        Axis.VERTICAL -> BoxConstraints.tightFor(height = constraints.maxWidth)
+                        Axis.VERTICAL -> BoxConstraints.tightFor(width = constraints.maxWidth)
                     }
                 } else {
                     when (direction) {
@@ -199,31 +199,33 @@ open class RenderFlex(
         // to flip, but that doesn't have any detectable effect.
         val flipMainAxis: Boolean = !(startIsTopLeft(direction, textDirection, verticalDirection) ?: true)
 
-        val (leadingSpace, betweenSpace) = when (mainAxisAlignment) {
+        val leadingSpace: Float
+        val betweenSpace: Float
+        when (mainAxisAlignment) {
             MainAxisAlignment.START -> {
-                arrayOf(0f, 0f)
+                leadingSpace = 0f
+                betweenSpace = 0f
             }
-
             MainAxisAlignment.END -> {
-                arrayOf(remainingSpace, 0f)
+                leadingSpace = remainingSpace
+                betweenSpace = 0f
             }
-
             MainAxisAlignment.CENTER -> {
-                arrayOf(remainingSpace / 2f, 0f)
+                leadingSpace = remainingSpace / 2f
+                betweenSpace = 0f
             }
-
             MainAxisAlignment.SPACE_BETWEEN -> {
-                arrayOf(0f, if (childCount > 1) remainingSpace / (childCount - 1) else 0f)
+                leadingSpace = 0f
+                betweenSpace =  if (childCount > 1) remainingSpace / (childCount - 1) else 0f
             }
-
             MainAxisAlignment.SPACE_AROUND -> {
-                val bs = if (childCount > 0) remainingSpace / childCount else 0f
-                arrayOf(bs, bs / 2f)
+                leadingSpace = if (childCount > 0) remainingSpace / childCount else 0f
+                betweenSpace = leadingSpace / 2
             }
-
             MainAxisAlignment.SPACE_EVENLY -> {
                 val bs = if (childCount > 0) remainingSpace / (childCount + 1) else 0f
-                arrayOf(bs, bs)
+                leadingSpace = if (childCount > 0) remainingSpace / (childCount + 1) else 0f
+                betweenSpace = leadingSpace
             }
         }
 

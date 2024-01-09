@@ -90,23 +90,23 @@ data class BoxConstraints(
         val aspectRatio = width / height
 
         if (width > maxWidth) {
-            width = maxWidth;
-            height = width / aspectRatio;
+            width = maxWidth
+            height = width / aspectRatio
         }
 
         if (height > maxHeight) {
-            height = maxHeight;
-            width = height * aspectRatio;
+            height = maxHeight
+            width = height * aspectRatio
         }
 
         if (width < minWidth) {
-            width = minWidth;
-            height = width / aspectRatio;
+            width = minWidth
+            height = width / aspectRatio
         }
 
         if (height < minHeight) {
-            height = minHeight;
-            width = height * aspectRatio;
+            height = minHeight
+            width = height * aspectRatio
         }
 
         return Size(width, height)

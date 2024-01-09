@@ -1,24 +1,23 @@
 package com.muedsa.snapshot.widget
 
 import com.muedsa.snapshot.drawWidget
+import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.flex.CrossAxisAlignment
-import com.muedsa.snapshot.rendering.flex.MainAxisAlignment
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.paragraph.BaselineMode
 import kotlin.test.Test
 
-class RowTest {
-
+class ColumnTest {
     @Test
     fun crossAxisAlignment_test() {
-        println("\n\n\nRowTest.crossAxisAlignment_test()")
+        println("\n\n\nColumnTest.crossAxisAlignment_test()")
         val crossAxisAlignmentArr = CrossAxisAlignment.entries.toTypedArray()
         crossAxisAlignmentArr.forEachIndexed { index, crossAxisAlignment ->
-            val name = "row/crossAxis$index"
-            val description = "Row($crossAxisAlignment)"
-            println("\n\ndraw: $name \n$description")
+            val name = "column/crossAxis$index"
+            val description = "Column($crossAxisAlignment)"
+            println("\n\ndraw: $name\n$description")
             drawWidget(filename = name, debugInfo = description) {
-                var widget: Widget = Row(
+                var widget: Widget = Column(
                     crossAxisAlignment = crossAxisAlignment,
                     textBaseline = if (crossAxisAlignment == CrossAxisAlignment.BASELINE) BaselineMode.ALPHABETIC else null
                 ) { arrayOf(
@@ -27,7 +26,7 @@ class RowTest {
                     Container(width = 200f, height = 200f, color = Color.BLUE)
                 ) }
                 if (crossAxisAlignment == CrossAxisAlignment.STRETCH) {
-                    widget = LimitedBox(
+                    widget =LimitedBox(
                         maxWidth = 1000f,
                         maxHeight = 1000f,
                     ) {
