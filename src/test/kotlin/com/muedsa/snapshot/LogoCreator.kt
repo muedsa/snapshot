@@ -5,6 +5,7 @@ import com.muedsa.snapshot.paint.decoration.BoxDecoration
 import com.muedsa.snapshot.paint.decoration.BoxShape
 import com.muedsa.snapshot.rendering.ClipBehavior
 import com.muedsa.snapshot.widget.*
+import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.Path
 import kotlin.test.Test
 
@@ -75,7 +76,12 @@ class LogoCreator {
                         },
                     )
                 },
-                SimpleText(content = "Snapshot", color = 0xFF_A6_A6_A6.toInt(), fontSize = size * 0.8f)
+                SimpleText(
+                    content = "Snapshot",
+                    color = 0xFF_A6_A6_A6.toInt(),
+                    fontSize = size * 0.8f,
+                    fontStyle = FontStyle.BOLD
+                )
             )}
         }
     }

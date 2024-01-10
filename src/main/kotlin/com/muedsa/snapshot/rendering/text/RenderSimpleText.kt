@@ -1,80 +1,55 @@
 package com.muedsa.snapshot.rendering.text
 
 import com.muedsa.geometry.Offset
-import com.muedsa.snapshot.rendering.ClipBehavior
+import com.muedsa.geometry.Size
+import com.muedsa.snapshot.paint.text.SimpleTextPainter
 import com.muedsa.snapshot.rendering.PaintingContext
+import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderBox
 import org.jetbrains.skia.Color
-import org.jetbrains.skia.FontMgr
-import org.jetbrains.skia.paragraph.*
-import kotlin.math.ceil
+import org.jetbrains.skia.FontStyle
 
 @Deprecated(message = "only unit test use it")
-internal class RenderSimpleText(
+class RenderSimpleText(
     val content: String,
     val color: Int = Color.BLACK,
-    val fontSize: Float = 15f
+    val fontSize: Float = 14f,
+    val fontFamilyName: Array<String>? = null,
+    val fontStyle: FontStyle = FontStyle.NORMAL
 ) : RenderBox() {
 
-    var paragraph: Paragraph? = null
+    val textPainter: SimpleTextPainter = SimpleTextPainter(
+        text = content,
+        color = color,
+        fontSize = fontSize,
+        fontFamilyName = fontFamilyName,
+        fontStyle = fontStyle
+    )
+    private var needsClipping: Boolean = false
+
+    private fun layoutTextWithConstraints(constraints: BoxConstraints) {
+        textPainter.layout(minWidth = constraints.minWidth, maxWidth= constraints.maxWidth)
+    }
 
     override fun performLayout() {
+        layoutTextWithConstraints(definiteConstraints)
+        val textSize: Size = textPainter.size
+        val textDidExceedMaxLines: Boolean = textPainter.didExceedMaxLines
+        size = definiteConstraints.constrain(textSize)
 
-        val width: Float = if(definiteConstraints.hasBoundedWidth) definiteConstraints.maxWidth
-            else if (definiteConstraints.minWidth > 0) definiteConstraints.minWidth
-            else Float.POSITIVE_INFINITY
-        //assert(width.isFinite() && width > 0) { "$this must have definite width" }
-
-        paragraph = ParagraphBuilder(style = paragraphStyle, fc = fontCollection)
-            .apply {
-                pushStyle(TextStyle().apply {
-                    color = this@RenderSimpleText.color
-                    fontSize = this@RenderSimpleText.fontSize
-                })
-                addText(content)
-            }
-            .build()
-        paragraph!!.layout(width)
-        size = definiteConstraints.constrainDimensions(width = ceil(paragraph!!.maxIntrinsicWidth), height = ceil(paragraph!!.height))
+        val didOverflowHeight: Boolean = definiteSize.height < textSize.height || textDidExceedMaxLines
+        val didOverflowWidth: Boolean = definiteSize.width < textSize.width
+        needsClipping = didOverflowWidth || didOverflowHeight
     }
 
     override fun paint(context: PaintingContext, offset: Offset) {
-        assert(definiteSize.width.isFinite())
-        if (definiteSize.isEmpty) {
-            return
-        }
-        val paragraph = ParagraphBuilder(style = paragraphStyle, fc = fontCollection)
-            .apply {
-                pushStyle(TextStyle().apply {
-                    color = this@RenderSimpleText.color
-                    fontSize = this@RenderSimpleText.fontSize
-                })
-                addText(content)
-            }
-            .build()
-        paragraph.layout(definiteSize.width)
-
-        if (paragraph.height > definiteSize.height) {
-            context.doClipRect(
-                offset = offset,
-                clipRect = Offset.ZERO combine definiteSize,
-                clipBehavior = ClipBehavior.HARD_EDGE
-            ) { c, o ->
-                paragraph.paint(c.canvas, o.x, o.y)
+        layoutTextWithConstraints(definiteConstraints)
+        if (needsClipping) {
+            context.doClipRect(offset = offset, clipRect = Offset.ZERO combine definiteSize) {
+                c, o -> textPainter.paint(c.canvas, o)
             }
         } else {
-            paragraph.paint(context.canvas, offset.x, offset.y)
+            textPainter.paint(context.canvas, offset)
         }
     }
-
-    companion object {
-        val paragraphStyle = ParagraphStyle().apply {
-            strutStyle = StrutStyle()
-        }
-        val fontCollection = FontCollection().apply {
-            setDefaultFontManager(FontMgr.default)
-            setEnableFallback(true)
-        }
-    }
-
 }

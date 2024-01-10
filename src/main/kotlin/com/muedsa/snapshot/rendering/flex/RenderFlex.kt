@@ -4,6 +4,7 @@ import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
 import com.muedsa.snapshot.VerticalDirection
 import com.muedsa.snapshot.paint.Axis
+import com.muedsa.snapshot.precisionErrorTolerance
 import com.muedsa.snapshot.rendering.ClipBehavior
 import com.muedsa.snapshot.rendering.PaintingContext
 import com.muedsa.snapshot.rendering.box.BoxConstraints
@@ -37,7 +38,7 @@ open class RenderFlex(
         private set
 
     protected open val hasOverflow: Boolean
-        get() = overflow > 1e-10
+        get() = overflow > precisionErrorTolerance
 
     private fun getMainSize(size: Size): Float = when (direction) {
         Axis.HORIZONTAL -> size.width

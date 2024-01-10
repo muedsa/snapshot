@@ -4,11 +4,12 @@ import com.muedsa.geometry.EdgeInsets
 import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.widget.*
-import org.jetbrains.skia.Color
+import org.jetbrains.skia.*
 import java.nio.file.Path
 import kotlin.io.path.createDirectory
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.exists
+import kotlin.math.ceil
 
 fun noLimitedLayout(renderBox: RenderBox) {
     renderBox.layout(BoxConstraints())
@@ -50,4 +51,21 @@ fun drawWidget(imagePathWithoutSuffix: String, debugInfo: String? = null, single
     val path = testImagesDirection.resolve("$imagePathWithoutSuffix.png")
     path.createParentDirectories()
     path.toFile().writeBytes(snapshot.toPNGImageBytes())
+}
+
+fun drawPainter(
+    imagePathWithoutSuffix: String,
+    width: Float,
+    height: Float,
+    background: Int = Color.WHITE,
+    painter: (Canvas) ->Unit = {}
+) {
+    val surface = Surface.makeRaster(ImageInfo.makeN32Premul(ceil(width).toInt(), ceil(height).toInt()))
+    surface.canvas.clear(background)
+    painter.invoke(surface.canvas)
+    val path = testImagesDirection.resolve("$imagePathWithoutSuffix.png")
+    path.createParentDirectories()
+    surface.makeImageSnapshot().use {
+        path.toFile().writeBytes(it.encodeToData(EncodedImageFormat.PNG)!!.bytes)
+    }
 }

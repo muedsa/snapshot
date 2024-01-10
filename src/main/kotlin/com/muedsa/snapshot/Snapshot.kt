@@ -1,10 +1,11 @@
 package com.muedsa.snapshot
 
-import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.rendering.PaintingContext
+import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.widget.SingleWidgetBuilder
 import org.jetbrains.skia.*
+import kotlin.math.ceil
 
 
 class Snapshot(
@@ -30,7 +31,7 @@ class Snapshot(
         if (rootSize.isInfinite) {
             throw IllegalArgumentException("layout size is infinite")
         }
-        val surface = Surface.makeRaster(ImageInfo.makeN32Premul(rootSize.width.toInt(), rootSize.height.toInt()))
+        val surface = Surface.makeRaster(ImageInfo.makeN32Premul(ceil(rootSize.width).toInt(), ceil(rootSize.height).toInt()))
         surface.canvas.clear(background)
         val context = PaintingContext(canvas = surface.canvas, debug = debug)
         context.paintChild(rootRenderBox, Offset.ZERO)
