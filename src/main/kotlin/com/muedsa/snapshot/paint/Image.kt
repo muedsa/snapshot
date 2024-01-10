@@ -133,11 +133,11 @@ fun paintImage(
         }
     }
     if (needSave) {
-        canvas.restore();
+        canvas.restore()
     }
 
     if (invertedCanvas) {
-        canvas.restore();
+        canvas.restore()
     }
 }
 

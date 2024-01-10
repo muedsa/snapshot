@@ -41,10 +41,10 @@ data class FittedSizes (val source: Size, val destination: Size) {
                     if (outputSize.width / outputSize.height > inputSize.width / inputSize.height) {
                         // Like "cover"
                         sourceSize = Size(inputSize.width, inputSize.width * outputSize.height / outputSize.width)
-                        destinationSize = outputSize;
+                        destinationSize = outputSize
                     } else {
                         // Like "contain"
-                        sourceSize = inputSize;
+                        sourceSize = inputSize
                         destinationSize = Size(outputSize.width, sourceSize.height * outputSize.width / sourceSize.width)
                     }
                 }
@@ -68,10 +68,10 @@ data class FittedSizes (val source: Size, val destination: Size) {
                     destinationSize = inputSize
                     val aspectRatio: Float = inputSize.width / inputSize.height
                     if (destinationSize.height > outputSize.height) {
-                        destinationSize = Size(outputSize.height * aspectRatio, outputSize.height);
+                        destinationSize = Size(outputSize.height * aspectRatio, outputSize.height)
                     }
                     if (destinationSize.width > outputSize.width) {
-                        destinationSize = Size(outputSize.width, outputSize.width / aspectRatio);
+                        destinationSize = Size(outputSize.width, outputSize.width / aspectRatio)
                     }
                 }
             }

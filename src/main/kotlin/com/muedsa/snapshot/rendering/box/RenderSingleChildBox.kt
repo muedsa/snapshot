@@ -2,6 +2,7 @@ package com.muedsa.snapshot.rendering.box
 
 import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.rendering.PaintingContext
+import org.jetbrains.skia.paragraph.BaselineMode
 
 abstract class RenderSingleChildBox(val child: RenderBox?) : RenderBox() {
 
@@ -11,9 +12,13 @@ abstract class RenderSingleChildBox(val child: RenderBox?) : RenderBox() {
         }
     }
 
+    override fun computeDistanceToActualBaseline(baseline: BaselineMode): Float? {
+        return child?.getDistanceToBaseline(baseline)
+    }
+
     override fun performLayout() {
         if (child != null) {
-            child.layout(definiteConstraints);
+            child.layout(definiteConstraints)
             size = child.definiteSize
         } else {
             size = definiteConstraints.smallest

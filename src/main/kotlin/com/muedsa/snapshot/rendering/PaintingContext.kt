@@ -87,7 +87,7 @@ class PaintingContext(
         canvas.save()
         // skia的Matrix44为行顺序
         canvas.concat(effectiveTransform.toRMO())
-        painter(this, offset);
+        painter(this, offset)
         canvas.restore()
     }
 }

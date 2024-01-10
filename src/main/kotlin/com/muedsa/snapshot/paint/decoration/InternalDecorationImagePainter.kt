@@ -33,7 +33,7 @@ internal class InternalDecorationImagePainter(
         )
 
         if (clipPath != null) {
-            canvas.restore();
+            canvas.restore()
         }
     }
 

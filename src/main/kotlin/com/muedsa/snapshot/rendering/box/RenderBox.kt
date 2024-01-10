@@ -100,7 +100,7 @@ abstract class RenderBox {
         val rendererList = mutableListOf<RenderBox>()
         do {
             var renderer = this
-            rendererList.add(renderer);
+            rendererList.add(renderer)
             renderer = renderer.parent as RenderBox
         } while (renderer != ancestor)
         rendererList.add(ancestor)

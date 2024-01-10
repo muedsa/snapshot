@@ -31,9 +31,9 @@ abstract class ClipContext {
         }
         painter()
         if (clipBehavior == ClipBehavior.ANTI_ALIAS_WITH_SAVE_LAYER) {
-            canvas.restore();
+            canvas.restore()
         }
-        canvas.restore();
+        canvas.restore()
     }
 
     protected fun clipPathAndPaint(path: Path, clipBehavior: ClipBehavior, bounds: Rect, painter: () -> Unit) {

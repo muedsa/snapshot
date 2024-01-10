@@ -37,4 +37,33 @@ class RowTest {
             }
         }
     }
+
+    @Test
+    @OptIn(ExperimentalStdlibApi::class)
+    fun baseline_test() {
+        println("\n\n\nRowTest.baseline_test()")
+        drawWidget(imagePathWithoutSuffix = "row/baseline", debugInfo = "Row(${CrossAxisAlignment.BASELINE})") {
+            Row(
+                crossAxisAlignment = CrossAxisAlignment.BASELINE,
+                textBaseline = BaselineMode.ALPHABETIC
+            ) { arrayOf(
+                Row(
+                    crossAxisAlignment = CrossAxisAlignment.BASELINE,
+                    textBaseline = BaselineMode.ALPHABETIC
+                ) { arrayOf(
+                    SimpleText("test", fontSize = 30f, color = Color.RED),
+                    SimpleText("foo", fontSize = 20f, color = Color.GREEN),
+                    SimpleText("bar", fontSize = 40f, color = Color.BLUE)
+                ) },
+                Row(
+                    crossAxisAlignment = CrossAxisAlignment.BASELINE,
+                    textBaseline = BaselineMode.ALPHABETIC
+                ) { arrayOf(
+                    SimpleText("test", fontSize = 100f, color = Color.RED),
+                    SimpleText("foo", fontSize = 300f, color = Color.GREEN),
+                    SimpleText("bar", fontSize = 200f, color = Color.BLUE)
+                ) }
+            ) }
+        }
+    }
 }

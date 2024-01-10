@@ -20,7 +20,7 @@ internal class BoxDecorationPainter(
         if (cachedBackgroundPaint == null ||
             (decoration.gradient != null &&
                     rectForCachedBackgroundPaint != rect)) {
-            val paint: Paint  = Paint();
+            val paint: Paint = Paint()
             if (decoration.backgroundBlendMode != null) {
                 paint.blendMode = decoration.backgroundBlendMode
             }

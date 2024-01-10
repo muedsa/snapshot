@@ -2,6 +2,8 @@ package com.muedsa.snapshot.rendering.box
 
 import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.rendering.PaintingContext
+import org.jetbrains.skia.paragraph.BaselineMode
+import kotlin.math.min
 
 abstract class RenderContainerBox(val children: Array<RenderBox>?) : RenderBox() {
 
@@ -21,6 +23,33 @@ abstract class RenderContainerBox(val children: Array<RenderBox>?) : RenderBox()
     }
 
     val childCount: Int = children?.size ?: 0
+
+    fun defaultComputeDistanceToFirstActualBaseline(baseline: BaselineMode): Float? {
+        children?.let {
+            for (child in it) {
+                val result: Float? = child.getDistanceToBaseline(baseline)
+                if (result != null) {
+                    return result + child.parentData!!.offset.y
+                }
+            }
+        }
+        return null
+    }
+
+    fun defaultComputeDistanceToHighestActualBaseline(baseline: BaselineMode): Float? {
+        var result: Float? = null
+        if (!children.isNullOrEmpty()) {
+            for (child in children) {
+                var candidate: Float? = child.getDistanceToBaseline(baseline)
+                if (candidate != null) {
+                    candidate += child.parentData!!.offset.y
+                    result = result?.let { min(it, candidate) } ?: candidate
+                }
+            }
+        }
+        return result
+    }
+
 
     override fun paint(context: PaintingContext, offset: Offset) {
         defaultPaint(context, offset)

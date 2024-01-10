@@ -16,7 +16,7 @@ class Vector3(vararg storage: Float) {
         get() = sqrt(length2)
         set(value) {
             if (value == 0f) {
-                setZero();
+                setZero()
             } else {
                 var l = length
                 if (l == 0f) {

@@ -142,7 +142,7 @@ open class RenderStack(
             }
 
             if (y < 0f || y + childSize.height > size.height) {
-                hasVisualOverflow = true;
+                hasVisualOverflow = true
             }
 
             childParentData.offset = Offset(x, y)

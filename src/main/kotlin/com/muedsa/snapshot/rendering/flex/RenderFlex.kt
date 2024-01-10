@@ -34,6 +34,13 @@ open class RenderFlex(
         }
     }
 
+    override fun computeDistanceToActualBaseline(baseline: BaselineMode): Float? {
+        if (direction == Axis.HORIZONTAL) {
+            return defaultComputeDistanceToHighestActualBaseline(baseline)
+        }
+        return defaultComputeDistanceToFirstActualBaseline(baseline)
+    }
+
     protected var overflow = 0f
         private set
 
