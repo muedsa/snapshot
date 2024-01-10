@@ -3,7 +3,6 @@ package com.muedsa.snapshot.rendering.box
 import com.muedsa.geometry.Matrix44CMO
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
-import com.muedsa.snapshot.annotation.MustCallSuper
 import com.muedsa.snapshot.rendering.PaintingContext
 import org.jetbrains.skia.Paint
 import org.jetbrains.skia.PathEffect
@@ -78,6 +77,7 @@ abstract class RenderBox {
      * 渲染debug信息
      */
     open fun debugPaint(context: PaintingContext, offset: Offset) {
+        // 使用虚线画一个边框
         context.canvas.drawRect(offset combine definiteSize,
             Paint().apply {
                 setStroke(true)

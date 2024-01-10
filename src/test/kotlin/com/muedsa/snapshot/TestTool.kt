@@ -22,10 +22,12 @@ val testImagesDirection: Path = Path.of("testOutputs").apply {
     }
 }
 
-fun drawWidget(imagePathWithoutSuffix: String, debugInfo: String? = null, singleWidgetBuilder: SingleWidgetBuilder) {
+@OptIn(ExperimentalStdlibApi::class)
+fun drawWidget(imagePathWithoutSuffix: String, debugInfo: String? = null, drawDebug: Boolean = false, singleWidgetBuilder: SingleWidgetBuilder) {
     var snapshot = Snapshot(
         background = Color.TRANSPARENT,
-        widgetBuilder = singleWidgetBuilder
+        widgetBuilder = singleWidgetBuilder,
+        debug = drawDebug
     )
     snapshot.draw()
     val snapshotImage = snapshot.image!!

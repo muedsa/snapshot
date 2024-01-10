@@ -2,12 +2,10 @@ package com.muedsa.snapshot.paint.text
 
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
-import org.jetbrains.skia.Canvas
-import org.jetbrains.skia.Color
-import org.jetbrains.skia.FontMgr
-import org.jetbrains.skia.FontStyle
+import org.jetbrains.skia.*
 import org.jetbrains.skia.paragraph.*
 
+@ExperimentalStdlibApi
 class SimpleTextPainter(
     val text: String,
     val color: Int = Color.BLACK,
@@ -140,6 +138,93 @@ class SimpleTextPainter(
             return
         }
         layoutCache.paragraph.paint(canvas, offset.x + paintOffset.x, offset.y + paintOffset.y)
+    }
+
+    fun debugPaint(canvas: Canvas, offset: Offset) {
+        val paintOffset = layoutCache!!.paintOffset
+        if (!paintOffset.x.isFinite() || !paintOffset.y.isFinite()) {
+            return
+        }
+        val textOffsetX = offset.x + paintOffset.x
+        val textOffsetY = offset.y + paintOffset.y
+
+
+        // debug paintOffset
+        if (paintOffset.x > 0) {
+            canvas.drawLine(
+                x0 = offset.x,
+                y0 = textOffsetY,
+                x1 = textOffsetX,
+                y1 = textOffsetY,
+                paint = Paint().apply {
+                    setStroke(true)
+                    setARGB(144, 0, 255, 0)
+                    pathEffect = PathEffect.makeDash(floatArrayOf(3f, 3f), 0f)
+                }
+            )
+        }
+        if (paintOffset.y > 0) {
+            canvas.drawLine(
+                x0 = textOffsetX,
+                y0 = offset.y,
+                x1 = textOffsetX,
+                y1 = textOffsetY,
+                paint = Paint().apply {
+                    setStroke(true)
+                    setARGB(144, 0, 255, 0)
+                    pathEffect = PathEffect.makeDash(floatArrayOf(3f, 3f), 0f)
+                }
+            )
+        }
+
+        val lineMetrics: Array<LineMetrics> = layoutCache!!.paragraph.lineMetrics
+        if (lineMetrics.isNotEmpty()) {
+            val firstLineMetrics: LineMetrics = lineMetrics[0]
+
+            val textEndOffsetX = textOffsetX + firstLineMetrics.width.toFloat()
+
+            // top edge
+            val topEdgeOffsetY = textOffsetY + (firstLineMetrics.baseline - firstLineMetrics.ascent).toFloat()
+            canvas.drawLine(
+                x0 = textOffsetX,
+                y0 = topEdgeOffsetY,
+                x1 = textEndOffsetX,
+                y1 = topEdgeOffsetY,
+                paint = Paint().apply {
+                    setStroke(true)
+                    setARGB(144, 0, 0, 255)
+                    pathEffect = PathEffect.makeDash(floatArrayOf(3f, 3f), 0f)
+                }
+            )
+
+            // baseline
+            val baselineOffsetY = textOffsetY + firstLineMetrics.baseline.toFloat()
+            canvas.drawLine(
+                x0 = textOffsetX,
+                y0 = baselineOffsetY,
+                x1 = textEndOffsetX,
+                y1 = baselineOffsetY,
+                paint = Paint().apply {
+                    setStroke(true)
+                    setARGB(144, 0, 0, 255)
+                    pathEffect = PathEffect.makeDash(floatArrayOf(3f, 3f), 0f)
+                }
+            )
+
+            // bottom edge
+            val bottomEdgeOffsetY = textOffsetY  + (firstLineMetrics.baseline + firstLineMetrics.descent).toFloat()
+            canvas.drawLine(
+                x0 = textOffsetX,
+                y0 = bottomEdgeOffsetY,
+                x1 = textEndOffsetX,
+                y1 = bottomEdgeOffsetY,
+                paint = Paint().apply {
+                    setStroke(true)
+                    setARGB(144, 0, 0, 255)
+                    pathEffect = PathEffect.makeDash(floatArrayOf(3f, 3f), 0f)
+                }
+            )
+        }
     }
 
     override fun close() {

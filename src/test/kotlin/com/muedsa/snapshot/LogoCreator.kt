@@ -1,6 +1,7 @@
 package com.muedsa.snapshot
 
 import com.muedsa.geometry.Alignment
+import com.muedsa.geometry.EdgeInsets
 import com.muedsa.snapshot.paint.decoration.BoxDecoration
 import com.muedsa.snapshot.paint.decoration.BoxShape
 import com.muedsa.snapshot.rendering.ClipBehavior
@@ -11,78 +12,80 @@ import kotlin.test.Test
 
 class LogoCreator {
 
+    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun logo() {
         val radius = 200f
         val size = radius * 2
-        val delta = radius / 3f
-        val alignOffset = delta / radius
-        val wholeSize = (radius + delta) * 2
-        val leftAlignment = Alignment(-alignOffset, -alignOffset)
-        val rightAlignment = Alignment(alignOffset, alignOffset)
+        val delta = radius / 5f
+        val wholeSize = size + delta
         drawWidget("../logo") {
-            Row { arrayOf(
-                Stack {
-                    arrayOf(
-                        Container(
-                            width = wholeSize,
-                            height = wholeSize,
-                            alignment = leftAlignment
-                        ) {
-                            ClipPath(
-                                clipper = {
-                                    Path().apply {
-                                        moveTo(0f, 0f)
-                                        lineTo(0f, it.x)
-                                        lineTo(it.x, it.y)
-                                    }
-                                }
+            Padding(
+                padding = EdgeInsets.all(20f)
+            ) {
+                Row { arrayOf(
+                    Stack {
+                        arrayOf(
+                            Container(
+                                width = wholeSize,
+                                height = wholeSize,
+                                alignment = Alignment.TOP_LEFT
                             ) {
-                                Container(
-                                    width = size,
-                                    height = size,
-                                    color = 0xFF_FF_D1_33.toInt(),
-                                    clipBehavior = ClipBehavior.ANTI_ALIAS,
-                                    decoration = BoxDecoration(
-                                        shape = BoxShape.CIRCLE,
+                                ClipPath(
+                                    clipper = {
+                                        Path().apply {
+                                            moveTo(0f, 0f)
+                                            lineTo(0f, it.x)
+                                            lineTo(it.x, it.y)
+                                        }
+                                    }
+                                ) {
+                                    Container(
+                                        width = size,
+                                        height = size,
+                                        color = 0xFF_FF_D1_33.toInt(),
+                                        clipBehavior = ClipBehavior.ANTI_ALIAS,
+                                        decoration = BoxDecoration(
+                                            shape = BoxShape.CIRCLE,
+                                        )
                                     )
-                                )
-                            }
-                        },
-                        Container(
-                            width = wholeSize,
-                            height = wholeSize,
-                            alignment = rightAlignment
-                        ) {
-                            ClipPath(
-                                clipper = {
-                                    Path().apply {
-                                        moveTo(0f, 0f)
-                                        lineTo(it.x, 0f)
-                                        lineTo(it.x, it.y)
-                                    }
                                 }
+                            },
+                            Container(
+                                width = wholeSize,
+                                height = wholeSize,
+                                alignment =  Alignment.BOTTOM_RIGHT
                             ) {
-                                Container(
-                                    width = size,
-                                    height = size,
-                                    color = 0xFF_FF_57_33.toInt(),
-                                    clipBehavior = ClipBehavior.ANTI_ALIAS,
-                                    decoration = BoxDecoration(
-                                        shape = BoxShape.CIRCLE
-                                    ),
-                                )
-                            }
-                        },
+                                ClipPath(
+                                    clipper = {
+                                        Path().apply {
+                                            moveTo(0f, 0f)
+                                            lineTo(it.x, 0f)
+                                            lineTo(it.x, it.y)
+                                        }
+                                    }
+                                ) {
+                                    Container(
+                                        width = size,
+                                        height = size,
+                                        color = 0xFF_FF_57_33.toInt(),
+                                        clipBehavior = ClipBehavior.ANTI_ALIAS,
+                                        decoration = BoxDecoration(
+                                            shape = BoxShape.CIRCLE
+                                        ),
+                                    )
+                                }
+                            },
+                        )
+                    },
+                    SimpleText(
+                        content = "Snapshot",
+                        color = 0xFF_A6_A6_A6.toInt(),
+                        fontSize = size * 0.8f,
+                        fontStyle = FontStyle.BOLD
                     )
-                },
-                SimpleText(
-                    content = "Snapshot",
-                    color = 0xFF_A6_A6_A6.toInt(),
-                    fontSize = size * 0.8f,
-                    fontStyle = FontStyle.BOLD
-                )
-            )}
+                )}
+            }
         }
     }
 }

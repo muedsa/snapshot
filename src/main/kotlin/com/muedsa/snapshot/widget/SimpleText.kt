@@ -5,7 +5,7 @@ import com.muedsa.snapshot.rendering.text.RenderSimpleText
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.FontStyle
 
-@Deprecated(message = "only unit test use it")
+@ExperimentalStdlibApi
 class SimpleText(
     val content: String,
     val color: Int = Color.BLACK,

@@ -8,8 +8,9 @@ import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderBox
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.FontStyle
+import org.jetbrains.skia.paragraph.BaselineMode
 
-@Deprecated(message = "only unit test use it")
+@ExperimentalStdlibApi
 class RenderSimpleText(
     val content: String,
     val color: Int = Color.BLACK,
@@ -26,6 +27,11 @@ class RenderSimpleText(
         fontStyle = fontStyle
     )
     private var needsClipping: Boolean = false
+
+    override fun computeDistanceToActualBaseline(baseline: BaselineMode): Float {
+        layoutTextWithConstraints(definiteConstraints)
+        return textPainter.computeDistanceToActualBaseline(baseline)
+    }
 
     private fun layoutTextWithConstraints(constraints: BoxConstraints) {
         textPainter.layout(minWidth = constraints.minWidth, maxWidth= constraints.maxWidth)
@@ -51,5 +57,10 @@ class RenderSimpleText(
         } else {
             textPainter.paint(context.canvas, offset)
         }
+    }
+
+    override fun debugPaint(context: PaintingContext, offset: Offset) {
+        super.debugPaint(context, offset)
+        textPainter.debugPaint(context.canvas, offset)
     }
 }

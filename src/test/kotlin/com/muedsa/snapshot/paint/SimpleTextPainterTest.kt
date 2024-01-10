@@ -9,6 +9,7 @@ import kotlin.test.Test
 
 class SimpleTextPainterTest {
 
+    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun drawLocalFontListSample() {
         val padding = 10f
