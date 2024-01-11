@@ -148,9 +148,6 @@ class SimpleTextPainter(
         if (!paintOffset.x.isFinite() || !paintOffset.y.isFinite()) {
             return
         }
-        val textOffsetX = offset.x + paintOffset.x
-        val textOffsetY = offset.y + paintOffset.y
-
 
         // debug paintOffset
         println("offset:$offset, width: $width, paintOffset:$paintOffset due to textAlign:$textAlign")
@@ -159,12 +156,12 @@ class SimpleTextPainter(
         if (lineMetrics.isNotEmpty()) {
             val firstLineMetrics: LineMetrics = lineMetrics[0]
 
-            val textEndOffsetX = textOffsetX + firstLineMetrics.width.toFloat()
+            val textEndOffsetX = offset.x + width
 
             // top edge
-            val topEdgeOffsetY = textOffsetY + (firstLineMetrics.baseline - firstLineMetrics.ascent).toFloat()
+            val topEdgeOffsetY = offset.y + (firstLineMetrics.baseline - firstLineMetrics.ascent).toFloat()
             canvas.drawLine(
-                x0 = textOffsetX,
+                x0 = offset.x,
                 y0 = topEdgeOffsetY,
                 x1 = textEndOffsetX,
                 y1 = topEdgeOffsetY,
@@ -176,9 +173,9 @@ class SimpleTextPainter(
             )
 
             // baseline
-            val baselineOffsetY = textOffsetY + firstLineMetrics.baseline.toFloat()
+            val baselineOffsetY = offset.y + firstLineMetrics.baseline.toFloat()
             canvas.drawLine(
-                x0 = textOffsetX,
+                x0 = offset.x,
                 y0 = baselineOffsetY,
                 x1 = textEndOffsetX,
                 y1 = baselineOffsetY,
@@ -190,9 +187,9 @@ class SimpleTextPainter(
             )
 
             // bottom edge
-            val bottomEdgeOffsetY = textOffsetY  + (firstLineMetrics.baseline + firstLineMetrics.descent).toFloat()
+            val bottomEdgeOffsetY = offset.y + (firstLineMetrics.baseline + firstLineMetrics.descent).toFloat()
             canvas.drawLine(
-                x0 = textOffsetX,
+                x0 = offset.x,
                 y0 = bottomEdgeOffsetY,
                 x1 = textEndOffsetX,
                 y1 = bottomEdgeOffsetY,
