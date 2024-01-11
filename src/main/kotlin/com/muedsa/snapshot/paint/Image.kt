@@ -15,7 +15,7 @@ fun paintImage(
     opacity: Float = 1f,
     colorFilter: ColorFilter? = null,
     fit: BoxFit? = null,
-    alignment: Alignment = Alignment.CENTER,
+    alignment: BoxAlignment = BoxAlignment.CENTER,
     centerSlice: Rect? = null,
     repeat: ImageRepeat = ImageRepeat.NO_REPEAT,
     flipHorizontally: Boolean = false,

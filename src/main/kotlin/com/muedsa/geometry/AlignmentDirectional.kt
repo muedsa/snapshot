@@ -6,10 +6,10 @@ class AlignmentDirectional(override val start: Float, override val y: Float): Al
 
     override val x: Float = 0f
 
-    override fun resolve(direction: Direction?): Alignment =
+    override fun resolve(direction: Direction?): BoxAlignment =
         when(direction) {
-            Direction.RTL -> Alignment(-start, y)
-            Direction.LTR -> Alignment(start, y)
+            Direction.RTL -> BoxAlignment(-start, y)
+            Direction.LTR -> BoxAlignment(start, y)
             null -> throw IllegalArgumentException("Cannot resolve $this without a Text Direction.")
         }
 

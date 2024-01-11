@@ -1,13 +1,16 @@
 package com.muedsa.snapshot.rendering.box
 
-import com.muedsa.geometry.Alignment
+import com.muedsa.geometry.BoxAlignment
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
 import com.muedsa.snapshot.paint.BoxFit
 import com.muedsa.snapshot.paint.ImageRepeat
 import com.muedsa.snapshot.paint.paintImage
 import com.muedsa.snapshot.rendering.PaintingContext
-import org.jetbrains.skia.*
+import org.jetbrains.skia.BlendMode
+import org.jetbrains.skia.ColorFilter
+import org.jetbrains.skia.Image
+import org.jetbrains.skia.Rect
 
 class RenderImage(
     val image: Image?,
@@ -18,7 +21,7 @@ class RenderImage(
     val opacity: Float = 1f,
     val colorBlendMode: BlendMode? = null,
     val fit: BoxFit? = null,
-    val alignment: Alignment = Alignment.CENTER,
+    val alignment: BoxAlignment = BoxAlignment.CENTER,
     val repeat: ImageRepeat = ImageRepeat.NO_REPEAT,
     val centerSlice: Rect? = null,
     val isAntiAlias: Boolean = false

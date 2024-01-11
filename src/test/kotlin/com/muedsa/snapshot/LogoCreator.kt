@@ -1,6 +1,6 @@
 package com.muedsa.snapshot
 
-import com.muedsa.geometry.Alignment
+import com.muedsa.geometry.BoxAlignment
 import com.muedsa.geometry.EdgeInsets
 import com.muedsa.snapshot.widget.*
 import org.jetbrains.skia.FontStyle
@@ -27,7 +27,7 @@ class LogoCreator {
                             Container(
                                 width = wholeSize,
                                 height = wholeSize,
-                                alignment = Alignment.TOP_LEFT
+                                alignment = BoxAlignment.TOP_LEFT
                             ) {
                                 ClipPath(
                                     clipper = {
@@ -51,7 +51,7 @@ class LogoCreator {
                             Container(
                                 width = wholeSize,
                                 height = wholeSize,
-                                alignment =  Alignment.BOTTOM_RIGHT
+                                alignment =  BoxAlignment.BOTTOM_RIGHT
                             ) {
                                 ClipPath(
                                     clipper = {

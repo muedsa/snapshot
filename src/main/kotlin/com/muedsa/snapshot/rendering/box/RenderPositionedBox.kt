@@ -1,15 +1,19 @@
 package com.muedsa.snapshot.rendering.box
 
-import com.muedsa.geometry.Alignment
+import com.muedsa.geometry.AlignmentGeometry
+import com.muedsa.geometry.BoxAlignment
 import com.muedsa.geometry.Size
+import org.jetbrains.skia.paragraph.Direction
 
 open class RenderPositionedBox(
     val widthFactor: Float? = null,
     val heightFactor: Float? = null,
-    alignment: Alignment = Alignment.CENTER,
+    alignment: AlignmentGeometry = BoxAlignment.CENTER,
+    textDirection: Direction? = null,
     child: RenderBox? = null
 ) : RenderAligningBox(
     alignment = alignment,
+    textDirection = textDirection,
     child = child
 ) {
     init {

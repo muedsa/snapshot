@@ -40,16 +40,16 @@ abstract class AlignmentGeometry {
         )
     }
 
-    abstract fun resolve(direction: Direction?): Alignment
+    abstract fun resolve(direction: Direction?): BoxAlignment
 
 
     override fun toString(): String {
         if (start == 0f) {
-            return Alignment.stringify(x, y)
+            return BoxAlignment.stringify(x, y)
         }
         if (x == 0f) {
             return AlignmentDirectional.stringify(start, y)
         }
-        return "${Alignment.stringify(x, y)} + ${AlignmentDirectional.stringify(start, 0f)}"
+        return "${BoxAlignment.stringify(x, y)} + ${AlignmentDirectional.stringify(start, 0f)}"
     }
 }

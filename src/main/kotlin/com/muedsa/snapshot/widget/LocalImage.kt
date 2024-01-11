@@ -1,6 +1,6 @@
 package com.muedsa.snapshot.widget
 
-import com.muedsa.geometry.Alignment
+import com.muedsa.geometry.BoxAlignment
 import com.muedsa.snapshot.annotation.MustCallSuper
 import com.muedsa.snapshot.paint.BoxFit
 import com.muedsa.snapshot.paint.ImageRepeat
@@ -14,7 +14,7 @@ open class LocalImage(
     val width: Float? = null,
     val height: Float? = null,
     val fit: BoxFit? = null,
-    val alignment: Alignment = Alignment.CENTER,
+    val alignment: BoxAlignment = BoxAlignment.CENTER,
     val repeat: ImageRepeat = ImageRepeat.NO_REPEAT,
     val scale: Float = 1f,
     val opacity: Float = 1f,

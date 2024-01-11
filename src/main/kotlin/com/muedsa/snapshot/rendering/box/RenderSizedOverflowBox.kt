@@ -1,11 +1,11 @@
 package com.muedsa.snapshot.rendering.box
 
-import com.muedsa.geometry.Alignment
+import com.muedsa.geometry.BoxAlignment
 import com.muedsa.geometry.Size
 
 class RenderSizedOverflowBox(
     val requestedSize: Size,
-    alignment: Alignment = Alignment.CENTER,
+    alignment: BoxAlignment = BoxAlignment.CENTER,
     child: RenderBox? = null
 ) : RenderAligningBox(
     alignment = alignment,

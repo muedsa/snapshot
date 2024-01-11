@@ -1,7 +1,7 @@
 package com.muedsa.snapshot.widget
 
-import com.muedsa.geometry.Alignment
 import com.muedsa.geometry.AlignmentDirectional
+import com.muedsa.geometry.BoxAlignment
 import com.muedsa.snapshot.drawWidget
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.paragraph.Direction
@@ -22,14 +22,14 @@ class StackTest {
             AlignmentDirectional.BOTTOM_START,
             AlignmentDirectional.BOTTOM_CENTER,
             AlignmentDirectional.BOTTOM_END,
-            Alignment.TOP_CENTER,
-            Alignment.TOP_RIGHT,
-            Alignment.CENTER_LEFT,
-            Alignment.CENTER,
-            Alignment.CENTER_RIGHT,
-            Alignment.BOTTOM_LEFT,
-            Alignment.BOTTOM_CENTER,
-            Alignment.BOTTOM_RIGHT
+            BoxAlignment.TOP_CENTER,
+            BoxAlignment.TOP_RIGHT,
+            BoxAlignment.CENTER_LEFT,
+            BoxAlignment.CENTER,
+            BoxAlignment.CENTER_RIGHT,
+            BoxAlignment.BOTTOM_LEFT,
+            BoxAlignment.BOTTOM_CENTER,
+            BoxAlignment.BOTTOM_RIGHT
         )
         val directionArr = Direction.entries.toTypedArray()
         alignmentArr.forEachIndexed { alignmentIndex, alignment ->

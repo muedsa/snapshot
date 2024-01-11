@@ -1,14 +1,19 @@
 package com.muedsa.snapshot.rendering.box
 
-import com.muedsa.geometry.Alignment
+import com.muedsa.geometry.AlignmentGeometry
+import com.muedsa.geometry.BoxAlignment
+import org.jetbrains.skia.paragraph.Direction
 
 abstract class RenderAligningBox(
-    val alignment: Alignment = Alignment.CENTER,
+    val alignment: AlignmentGeometry = BoxAlignment.CENTER,
+    val textDirection: Direction? = null,
     child : RenderBox? = null
 ) : RenderSingleChildBox(child = child) {
 
+    val resolveAlignment: BoxAlignment = alignment.resolve(textDirection)
+
     protected fun alignChild() {
         val childParentData = child!!.parentData!!
-        childParentData.offset = alignment.alongOffset(definiteSize - child.definiteSize)
+        childParentData.offset = resolveAlignment.alongOffset(definiteSize - child.definiteSize)
     }
 }

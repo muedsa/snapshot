@@ -1,13 +1,16 @@
 package com.muedsa.snapshot.widget
 
-import com.muedsa.geometry.*
+import com.muedsa.geometry.BoxAlignment
+import com.muedsa.geometry.Matrix44CMO
+import com.muedsa.geometry.Offset
+import com.muedsa.geometry.computeRotation
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderTransform
 
 class Transform(
     val transform: Matrix44CMO,
     val origin: Offset? = null,
-    val alignment: Alignment?,
+    val alignment: BoxAlignment?,
     childBuilder: SingleWidgetBuilder?= null
 ) : SingleChildWidget(childBuilder = childBuilder) {
 
@@ -25,7 +28,7 @@ class Transform(
         fun rotate(
             angle :Float,
             origin: Offset? = null,
-            alignment: Alignment = Alignment.CENTER,
+            alignment: BoxAlignment = BoxAlignment.CENTER,
             childBuilder: SingleWidgetBuilder? = null
         ): Transform = Transform(
             transform = computeRotation(angle),

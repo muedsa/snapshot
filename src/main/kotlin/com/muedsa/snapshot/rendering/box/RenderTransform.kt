@@ -1,12 +1,15 @@
 package com.muedsa.snapshot.rendering.box
 
-import com.muedsa.geometry.*
+import com.muedsa.geometry.BoxAlignment
+import com.muedsa.geometry.Matrix44CMO
+import com.muedsa.geometry.Offset
+import com.muedsa.geometry.getAsTranslation
 import com.muedsa.snapshot.rendering.PaintingContext
 
 class RenderTransform(
     transform: Matrix44CMO,
     val origin: Offset? = null,
-    val alignment: Alignment? = null,
+    val alignment: BoxAlignment? = null,
     child: RenderBox? = null
 ) : RenderSingleChildBox(child = child) {
 

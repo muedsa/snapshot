@@ -2,6 +2,7 @@ package com.muedsa.snapshot.paint.gradient
 
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.Shader
+import org.jetbrains.skia.paragraph.Direction
 
 abstract class Gradient(
     val colors: IntArray,
@@ -20,7 +21,7 @@ abstract class Gradient(
         }
         return newStops
     }
-    abstract fun createShader(rect: Rect): Shader
+    abstract fun createShader(rect: Rect, textDirection: Direction? = null): Shader
 
     abstract fun scale(factor: Float): Gradient
 

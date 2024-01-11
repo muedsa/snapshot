@@ -1,11 +1,8 @@
 package com.muedsa.snapshot.widget
 
-import com.muedsa.geometry.Alignment
-import com.muedsa.snapshot.annotation.MustCallSuper
+import com.muedsa.geometry.BoxAlignment
 import com.muedsa.snapshot.paint.BoxFit
 import com.muedsa.snapshot.paint.ImageRepeat
-import com.muedsa.snapshot.rendering.box.RenderBox
-import com.muedsa.snapshot.rendering.box.RenderImage
 import com.muedsa.snapshot.tools.NetworkImageCache
 import com.muedsa.snapshot.tools.NetworkImageCacheManager
 import org.jetbrains.skia.BlendMode
@@ -16,7 +13,7 @@ class CachedNetworkImage(
     width: Float? = null,
     height: Float? = null,
     fit: BoxFit? = null,
-    alignment: Alignment = Alignment.CENTER,
+    alignment: BoxAlignment = BoxAlignment.CENTER,
     repeat: ImageRepeat = ImageRepeat.NO_REPEAT,
     scale: Float = 1f,
     opacity: Float = 1f,

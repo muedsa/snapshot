@@ -1,17 +1,17 @@
 package com.muedsa.snapshot.widget
 
-import com.muedsa.geometry.Alignment
+import com.muedsa.geometry.BoxAlignment
 import com.muedsa.geometry.EdgeInsets
 import com.muedsa.geometry.Matrix44CMO
 import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.paint.decoration.Decoration
-import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.ClipBehavior
 import com.muedsa.snapshot.rendering.DecorationPosition
+import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderBox
 
 class Container(
-    val alignment: Alignment? = null,
+    val alignment: BoxAlignment? = null,
     val padding: EdgeInsets? = null,
     val color: Int? = null,
     val decoration: Decoration? = null,
@@ -21,7 +21,7 @@ class Container(
     var constraints: BoxConstraints? = null,
     val margin: EdgeInsets? = null,
     val transform: Matrix44CMO? = null,
-    val transformAlignment: Alignment? = null,
+    val transformAlignment: BoxAlignment? = null,
     val clipBehavior: ClipBehavior = ClipBehavior.NONE,
     childBuilder: SingleWidgetBuilder? = null
 ) : SingleChildWidget(childBuilder = childBuilder) {

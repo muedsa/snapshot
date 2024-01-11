@@ -1,6 +1,7 @@
 package com.muedsa.snapshot.paint.gradient
 
-import com.muedsa.geometry.Alignment
+import com.muedsa.geometry.AlignmentGeometry
+import com.muedsa.geometry.BoxAlignment
 import com.muedsa.geometry.MATH_PI
 import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.paint.lerpColor
@@ -8,9 +9,10 @@ import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.GradientStyle
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.Shader
+import org.jetbrains.skia.paragraph.Direction
 
 class SweepGradient(
-    val center: Alignment = Alignment.CENTER,
+    val center: AlignmentGeometry = BoxAlignment.CENTER,
     val startAngle: Float = 0f,
     val endAngle: Float = MATH_PI * 2,
     colors: IntArray,
@@ -22,8 +24,8 @@ class SweepGradient(
     stops = stops,
     transform = transform
 ) {
-    override fun createShader(rect: Rect): Shader {
-        val centerOffset: Offset = center.withinRect(rect)
+    override fun createShader(rect: Rect, textDirection: Direction?): Shader {
+        val centerOffset: Offset = center.resolve(textDirection).withinRect(rect)
         return Shader.makeSweepGradient(
             x = centerOffset.x,
             y = centerOffset.y,

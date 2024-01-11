@@ -1,11 +1,11 @@
 package com.muedsa.snapshot.widget
 
-import com.muedsa.geometry.Alignment
+import com.muedsa.geometry.BoxAlignment
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderConstrainedOverflowBox
 
 class OverflowBox(
-    val alignment: Alignment = Alignment.CENTER,
+    val alignment: BoxAlignment = BoxAlignment.CENTER,
     val minWidth: Float? = null,
     val maxWidth: Float? = null,
     val minHeight: Float? = null,

@@ -21,7 +21,7 @@ open class RenderStack(
 
     var hasVisualOverflow: Boolean = false
 
-    val resolvedAlignment: Alignment
+    val resolvedAlignment: BoxAlignment
         get() = alignment.resolve(textDirection)
 
     override fun setupParentData(child: RenderBox) {
@@ -102,7 +102,7 @@ open class RenderStack(
     }
 
     companion object {
-        fun layoutPositionedChild(child: RenderBox, childParentData: StackParentData, size: Size, alignment: Alignment): Boolean {
+        fun layoutPositionedChild(child: RenderBox, childParentData: StackParentData, size: Size, alignment: BoxAlignment): Boolean {
             assert(childParentData.isPositioned)
             assert(child.parentData == childParentData)
             var hasVisualOverflow: Boolean = false

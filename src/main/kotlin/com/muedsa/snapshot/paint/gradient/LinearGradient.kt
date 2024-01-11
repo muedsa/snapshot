@@ -1,15 +1,17 @@
 package com.muedsa.snapshot.paint.gradient
 
-import com.muedsa.geometry.Alignment
+import com.muedsa.geometry.AlignmentGeometry
+import com.muedsa.geometry.BoxAlignment
 import com.muedsa.snapshot.paint.lerpColor
 import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.GradientStyle
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.Shader
+import org.jetbrains.skia.paragraph.Direction
 
 class LinearGradient(
-    val begin: Alignment = Alignment.CENTER_LEFT,
-    val end: Alignment = Alignment.CENTER_RIGHT,
+    val begin: AlignmentGeometry = BoxAlignment.CENTER_LEFT,
+    val end: AlignmentGeometry = BoxAlignment.CENTER_RIGHT,
     colors: IntArray,
     stops: FloatArray? = null,
     val tileMode: FilterTileMode = FilterTileMode.CLAMP,
@@ -21,9 +23,9 @@ class LinearGradient(
 ) {
 
 
-    override fun createShader(rect: Rect): Shader {
-        val beginOffset = begin.withinRect(rect)
-        val endOffset = end.withinRect(rect)
+    override fun createShader(rect: Rect, textDirection: Direction?): Shader {
+        val beginOffset = begin.resolve(textDirection).withinRect(rect)
+        val endOffset = end.resolve(textDirection).withinRect(rect)
         return Shader.makeLinearGradient(
             x0 = beginOffset.x,
             y0 = beginOffset.y,

@@ -1,6 +1,7 @@
 package com.muedsa.snapshot.paint.gradient
 
-import com.muedsa.geometry.Alignment
+import com.muedsa.geometry.AlignmentGeometry
+import com.muedsa.geometry.BoxAlignment
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.shortestSide
 import com.muedsa.snapshot.paint.lerpColor
@@ -8,14 +9,15 @@ import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.GradientStyle
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.Shader
+import org.jetbrains.skia.paragraph.Direction
 
 class RadialGradient(
-    val center: Alignment = Alignment.CENTER,
+    val center: AlignmentGeometry = BoxAlignment.CENTER,
     val radius: Float = 0.5f,
     colors: IntArray,
     stops: FloatArray? = null,
     val tileMode: FilterTileMode = FilterTileMode.CLAMP,
-    val focal: Alignment? = null,
+    val focal: AlignmentGeometry? = null,
     val focalRadius: Float = 0.5f,
     transform: GradientTransform? = null
 ) : Gradient(
@@ -24,8 +26,8 @@ class RadialGradient(
     transform = transform
 ) {
 
-    override fun createShader(rect: Rect): Shader {
-        val centerOffset: Offset = center.withinRect(rect)
+    override fun createShader(rect: Rect, textDirection: Direction?): Shader {
+        val centerOffset: Offset = center.resolve(textDirection).withinRect(rect)
         return if (focal == null || (focal == center && focalRadius == 0f)) {
             Shader.makeRadialGradient(
                 x = centerOffset.x,
@@ -40,7 +42,7 @@ class RadialGradient(
                 )
             )
         } else {
-            val focalOffset: Offset = focal.withinRect(rect)
+            val focalOffset: Offset = focal.resolve(textDirection).withinRect(rect)
             Shader.makeTwoPointConicalGradient(
                 x0 = centerOffset.x,
                 y0 = centerOffset.y,
