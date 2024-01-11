@@ -22,7 +22,9 @@ class SimpleTextPainter(
 
     init {
         fontFamilyName?.let {
-            assert(FONT_COLLECTION.findTypefaces(fontFamilyName, fontStyle).isNotEmpty())
+            assert(FONT_COLLECTION.findTypefaces(fontFamilyName, fontStyle).isNotEmpty()) {
+                "not find Typefaces for fontFamily: ${fontFamilyName.contentToString()}"
+            }
         }
     }
 
@@ -56,7 +58,7 @@ class SimpleTextPainter(
             style =  ParagraphStyle().apply {
                 strutStyle = StrutStyle()
                 this.direction = textDirection
-                this.alignment = alignment
+                this.alignment = textAlign
                 this.ellipsis = this@SimpleTextPainter.ellipsis
                 maxLines?.let {
                     this.maxLinesCount = it
@@ -141,6 +143,7 @@ class SimpleTextPainter(
     }
 
     fun debugPaint(canvas: Canvas, offset: Offset) {
+        println(toString())
         val paintOffset = layoutCache!!.paintOffset
         if (!paintOffset.x.isFinite() || !paintOffset.y.isFinite()) {
             return
@@ -150,32 +153,7 @@ class SimpleTextPainter(
 
 
         // debug paintOffset
-        if (paintOffset.x > 0) {
-            canvas.drawLine(
-                x0 = offset.x,
-                y0 = textOffsetY,
-                x1 = textOffsetX,
-                y1 = textOffsetY,
-                paint = Paint().apply {
-                    setStroke(true)
-                    setARGB(144, 0, 255, 0)
-                    pathEffect = PathEffect.makeDash(floatArrayOf(3f, 3f), 0f)
-                }
-            )
-        }
-        if (paintOffset.y > 0) {
-            canvas.drawLine(
-                x0 = textOffsetX,
-                y0 = offset.y,
-                x1 = textOffsetX,
-                y1 = textOffsetY,
-                paint = Paint().apply {
-                    setStroke(true)
-                    setARGB(144, 0, 255, 0)
-                    pathEffect = PathEffect.makeDash(floatArrayOf(3f, 3f), 0f)
-                }
-            )
-        }
+        println("offset:$offset, width: $width, paintOffset:$paintOffset due to textAlign:$textAlign")
 
         val lineMetrics: Array<LineMetrics> = layoutCache!!.paragraph.lineMetrics
         if (lineMetrics.isNotEmpty()) {
@@ -192,8 +170,8 @@ class SimpleTextPainter(
                 y1 = topEdgeOffsetY,
                 paint = Paint().apply {
                     setStroke(true)
-                    setARGB(144, 0, 0, 255)
-                    pathEffect = PathEffect.makeDash(floatArrayOf(3f, 3f), 0f)
+                    color = 0x90_FF_69_B4.toInt()
+                    pathEffect = PathEffect.makeDash(floatArrayOf(2f, 4f), 0f)
                 }
             )
 
@@ -206,8 +184,8 @@ class SimpleTextPainter(
                 y1 = baselineOffsetY,
                 paint = Paint().apply {
                     setStroke(true)
-                    setARGB(144, 0, 0, 255)
-                    pathEffect = PathEffect.makeDash(floatArrayOf(3f, 3f), 0f)
+                    color = 0x90_C7_15_85.toInt()
+                    pathEffect = PathEffect.makeDash(floatArrayOf(3f, 6f), 0f)
                 }
             )
 
@@ -220,8 +198,8 @@ class SimpleTextPainter(
                 y1 = bottomEdgeOffsetY,
                 paint = Paint().apply {
                     setStroke(true)
-                    setARGB(144, 0, 0, 255)
-                    pathEffect = PathEffect.makeDash(floatArrayOf(3f, 3f), 0f)
+                    color = 0x90_FF_14_93.toInt()
+                    pathEffect = PathEffect.makeDash(floatArrayOf(2f, 4f), 0f)
                 }
             )
         }
@@ -230,6 +208,10 @@ class SimpleTextPainter(
     override fun close() {
         layoutCache?.paragraph?.close()
         layoutCache = null
+    }
+
+    override fun toString(): String {
+        return "SimpleTextPainter(text='$text', color=$color, fontSize=$fontSize, fontFamilyName=${fontFamilyName?.contentToString()}, fontStyle=$fontStyle, textAlign=$textAlign, textDirection=$textDirection, maxLines=$maxLines, ellipsis=$ellipsis, textWidthBasis=$textWidthBasis, textHeightMode=$textHeightMode)"
     }
 
     companion object {
