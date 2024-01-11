@@ -26,6 +26,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3.1.3
         with:
-          name: build-test-outputs
+          name: test-outputs
           path: |
             testOutputs

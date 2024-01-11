@@ -2,12 +2,10 @@ package com.muedsa.snapshot
 
 import com.muedsa.geometry.Alignment
 import com.muedsa.geometry.EdgeInsets
-import com.muedsa.snapshot.paint.decoration.BoxDecoration
-import com.muedsa.snapshot.paint.decoration.BoxShape
-import com.muedsa.snapshot.rendering.ClipBehavior
 import com.muedsa.snapshot.widget.*
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.Path
+import org.jetbrains.skia.Rect
 import kotlin.test.Test
 
 class LogoCreator {
@@ -34,20 +32,19 @@ class LogoCreator {
                                 ClipPath(
                                     clipper = {
                                         Path().apply {
-                                            moveTo(0f, 0f)
-                                            lineTo(0f, it.x)
-                                            lineTo(it.x, it.y)
+                                            arcTo(
+                                                oval = Rect.Companion.makeWH(it.width, it.height),
+                                                startAngle = 45f,
+                                                sweepAngle = 180f,
+                                                forceMoveTo = true
+                                            )
                                         }
                                     }
                                 ) {
                                     Container(
                                         width = size,
                                         height = size,
-                                        color = 0xFF_FF_D1_33.toInt(),
-                                        clipBehavior = ClipBehavior.ANTI_ALIAS,
-                                        decoration = BoxDecoration(
-                                            shape = BoxShape.CIRCLE,
-                                        )
+                                        color = 0xFF_FF_D1_33.toInt()
                                     )
                                 }
                             },
@@ -59,20 +56,19 @@ class LogoCreator {
                                 ClipPath(
                                     clipper = {
                                         Path().apply {
-                                            moveTo(0f, 0f)
-                                            lineTo(it.x, 0f)
-                                            lineTo(it.x, it.y)
+                                            arcTo(
+                                                oval = Rect.Companion.makeWH(it.width, it.height),
+                                                startAngle = 45f + 180f,
+                                                sweepAngle = 180f,
+                                                forceMoveTo = true
+                                            )
                                         }
                                     }
                                 ) {
                                     Container(
                                         width = size,
                                         height = size,
-                                        color = 0xFF_FF_57_33.toInt(),
-                                        clipBehavior = ClipBehavior.ANTI_ALIAS,
-                                        decoration = BoxDecoration(
-                                            shape = BoxShape.CIRCLE
-                                        ),
+                                        color = 0xFF_FF_57_33.toInt()
                                     )
                                 }
                             },

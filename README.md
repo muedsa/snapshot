@@ -5,54 +5,56 @@
 抄[Flutter](https://github.com/flutter/flutter)实现了一个简单快捷构建一张图片的工具
 
 ```kotlin
+val radius = 200f
+val size = radius * 2
+val delta = radius / 5f
+val wholeSize = size + delta
 Stack { arrayOf(
     Container(
         width = wholeSize,
         height = wholeSize,
-        alignment = leftAlignment
+        alignment = Alignment.TOP_LEFT
     ) {
         ClipPath(
             clipper = {
                 Path().apply {
-                    moveTo(0f, 0f)
-                    lineTo(0f, it.x)
-                    lineTo(it.x, it.y)
+                    arcTo(
+                        oval = Rect.Companion.makeWH(it.width, it.height),
+                        startAngle = 45f,
+                        sweepAngle = 180f,
+                        forceMoveTo = true
+                    )
                 }
             }
         ) {
             Container(
                 width = size,
                 height = size,
-                color = 0xFF_FF_D1_33.toInt(),
-                clipBehavior = ClipBehavior.ANTI_ALIAS,
-                decoration = BoxDecoration(
-                    shape = BoxShape.CIRCLE,
-                )
+                color = 0xFF_FF_D1_33.toInt()
             )
         }
     },
     Container(
         width = wholeSize,
         height = wholeSize,
-        alignment = rightAlignment
+        alignment =  Alignment.BOTTOM_RIGHT
     ) {
         ClipPath(
             clipper = {
                 Path().apply {
-                    moveTo(0f, 0f)
-                    lineTo(it.x, 0f)
-                    lineTo(it.x, it.y)
+                    arcTo(
+                        oval = Rect.Companion.makeWH(it.width, it.height),
+                        startAngle = 45f + 180f,
+                        sweepAngle = 180f,
+                        forceMoveTo = true
+                    )
                 }
             }
         ) {
             Container(
                 width = size,
                 height = size,
-                color = 0xFF_FF_57_33.toInt(),
-                clipBehavior = ClipBehavior.ANTI_ALIAS,
-                decoration = BoxDecoration(
-                    shape = BoxShape.CIRCLE
-                ),
+                color = 0xFF_FF_57_33.toInt()
             )
         }
     },
