@@ -303,4 +303,7 @@ open class RenderFlex(
         }
     }
 
+    override fun toString(): String {
+        return "RenderFlex(direction=$direction, mainAxisSize=$mainAxisSize, mainAxisAlignment=$mainAxisAlignment, crossAxisAlignment=$crossAxisAlignment, textDirection=$textDirection, verticalDirection=$verticalDirection, textBaseline=$textBaseline, clipBehavior=$clipBehavior, overflow=$overflow)"
+    }
 }

@@ -1,6 +1,9 @@
 package com.muedsa.snapshot
 
 import com.muedsa.geometry.EdgeInsets
+import com.muedsa.geometry.Offset
+import com.muedsa.geometry.Size
+import com.muedsa.snapshot.paint.text.SimpleTextPainter
 import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.widget.*
@@ -55,19 +58,50 @@ fun drawWidget(imagePathWithoutSuffix: String, debugInfo: String? = null, drawDe
     path.toFile().writeBytes(snapshot.toPNGImageBytes())
 }
 
+@OptIn(ExperimentalStdlibApi::class)
 fun drawPainter(
     imagePathWithoutSuffix: String,
     width: Float,
     height: Float,
+    debugInfo: String? = null,
     background: Int = Color.WHITE,
     painter: (Canvas) ->Unit = {}
 ) {
-    val surface = Surface.makeRaster(ImageInfo.makeN32Premul(ceil(width).toInt(), ceil(height).toInt()))
+    var h = height
+    val debugInfoPainter: SimpleTextPainter? = debugInfo?.let {
+        SimpleTextPainter(debugInfo).apply {
+            layout(0f, width - 20f)
+            h += this@apply.height + 20f
+        }
+    }
+    val surface = Surface.makeRaster(ImageInfo.makeN32Premul(ceil(width).toInt(), ceil(h).toInt()))
     surface.canvas.clear(background)
     painter.invoke(surface.canvas)
-    val path = testImagesDirection.resolve("$imagePathWithoutSuffix.png")
+    debugInfoPainter?.paint(surface.canvas, Offset(10f, height + 10f))
+    var suffix = imagePathWithoutSuffix
+    if (imagePathWithoutSuffix.startsWith("/")) {
+        suffix = suffix.substring(1)
+    }
+    val path = testImagesDirection.resolve("$suffix.png")
     path.createParentDirectories()
     surface.makeImageSnapshot().use {
         path.toFile().writeBytes(it.encodeToData(EncodedImageFormat.PNG)!!.bytes)
     }
+}
+
+fun drawPainter(
+    imagePathWithoutSuffix: String,
+    size: Size,
+    background: Int = Color.WHITE,
+    debugInfo: String? = null,
+    painter: (Canvas) ->Unit = {}
+) {
+    drawPainter(
+        imagePathWithoutSuffix = imagePathWithoutSuffix,
+        width = size.width,
+        height = size.height,
+        background = background,
+        debugInfo = debugInfo,
+        painter = painter
+    )
 }

@@ -20,10 +20,27 @@ open class Size(width: Float, height: Float) : Offset(width, height) {
     override operator fun times(operand: Float) = Size(width * operand, height = height * operand)
 
     override operator fun div(operand: Float) = Size(width / operand, height = height / operand)
+
+
     override fun toString(): String {
         return "Size(width=$width, height=$height)"
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Size) return false
+
+        if (width != other.width) return false
+        if (height != other.height) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = width.hashCode()
+        result = 31 * result + height.hashCode()
+        return result
+    }
 
     companion object {
         val ZERO = Size(0f, 0f)
