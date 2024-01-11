@@ -2,7 +2,9 @@
 
 ![logo](logo.png)
 
-抄[Flutter](https://github.com/flutter/flutter)实现了一个简单快捷构建一张图片的工具
+抄[Flutter](https://github.com/flutter/flutter)实现了一个可以直观~~简单快捷~~地构建图片的工具
+
+之前像 [taffy-pvp-card-sw](https://github.com/muedsa/taffy-pvp-card-sw) 这样直接使用Canvas的方式，会让后期维护和修改变的十分困难, 所以急需一个可以结构化构建图像的工具
 
 ```kotlin
 val radius = 200f
