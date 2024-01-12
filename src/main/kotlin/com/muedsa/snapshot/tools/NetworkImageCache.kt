@@ -10,4 +10,7 @@ interface NetworkImageCache {
 
     fun clearImage(url: String)
 
+    fun count(): Int
+
+    fun size(): Int
 }
