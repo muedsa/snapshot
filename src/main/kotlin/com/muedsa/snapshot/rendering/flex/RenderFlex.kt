@@ -98,7 +98,7 @@ open class RenderFlex(
         if (totalFlex > 0) {
             val spacePerFlex: Float = if (canFlex) freeSpace / totalFlex else Float.NaN
             children?.forEach { child ->
-                val childParentData: FlexParentData = (child.parent as FlexParentData?)!!
+                val childParentData: FlexParentData = (child.parentData as FlexParentData?)!!
                 val flex: Int = childParentData.flex ?: 0
                 if (flex > 0) {
                     val maxChildExtent: Float = if (canFlex)

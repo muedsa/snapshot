@@ -7,15 +7,14 @@ import com.muedsa.snapshot.paint.Axis
 import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderConstrainedBox
-import com.muedsa.snapshot.rendering.flex.CrossAxisAlignment
-import com.muedsa.snapshot.rendering.flex.FlexParentData
-import com.muedsa.snapshot.rendering.flex.MainAxisAlignment
-import com.muedsa.snapshot.rendering.flex.RenderFlex
+import com.muedsa.snapshot.rendering.flex.*
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.Paint
 import org.jetbrains.skia.PathEffect
 import org.jetbrains.skia.paragraph.BaselineMode
+import kotlin.random.Random
 import kotlin.test.Test
+import kotlin.test.expect
 
 class RenderFlexTest {
 
@@ -68,8 +67,6 @@ class RenderFlexTest {
                     )
                     renderFlex.layout(BoxConstraints.expand(size.width, size.height))
                     valid_direction_mainAxisAlign_crossAxisAlign_test(renderFlex, size, children, childSizeArr, space)
-
-                    val colors = arrayOf(Color.RED, Color.GREEN, Color.BLUE)
                     drawPainter(
                         "render/flex/d${directionIndex}_m${mainAxisAlignmentIndex}_c${crossAxisAlignmentIndex}",
                         size = size,
@@ -86,7 +83,7 @@ class RenderFlexTest {
                             canvas.drawRect(childOffset combine childSize, Paint().apply {
                                 setStroke(true)
                                 pathEffect = PathEffect.makeDash(floatArrayOf(3f, 3f), 0f)
-                                color = colors[childIndex % colors.size]
+                                color = COLORS[childIndex % COLORS.size]
                                 strokeWidth = 2f
                             })
                         }
@@ -126,6 +123,114 @@ class RenderFlexTest {
         }
     }
 
+    @Test
+    fun parent_data_test() {
+        Axis.entries.forEach { direction: Axis ->
+            direction_parent_data_flex_test(direction)
+            direction_parent_data_fit_test(direction)
+        }
+    }
+
+    private fun direction_parent_data_flex_test(direction: Axis) {
+        val children: Array<RenderBox> = Array(5) {
+            RenderConstrainedBox(additionalConstraints = BoxConstraints())
+        }
+        val renderFlex = RenderFlex(direction = direction, children = children)
+        val defaultSize = 100f
+        var mainAxisSize = 0f
+        children.forEachIndexed { index, child ->
+            val childParentData: FlexParentData = child.parentData!! as FlexParentData
+            childParentData.flex = index + 1
+            mainAxisSize += childParentData.flex!! * defaultSize
+        }
+        renderFlex.layout(BoxConstraints.loose(Size(
+            width = if(renderFlex.direction == Axis.HORIZONTAL) mainAxisSize else defaultSize,
+            height = if(renderFlex.direction == Axis.HORIZONTAL) defaultSize else mainAxisSize,
+        )))
+
+        println("renderFlex ${renderFlex.definiteSize}")
+        children.forEachIndexed { index, child ->
+            println("child$index, size=${child.definiteSize}, offset=${child.parentData!!.offset}")
+        }
+
+        var mainAxisOffset = 0f
+        children.forEachIndexed { index, child ->
+            val childParentData: FlexParentData = child.parentData as FlexParentData
+            val childFlex: Int = childParentData.flex!!
+            expect(mainAxisOffset, message = "child$index, offset=${child.parentData!!.offset}") {
+                if (renderFlex.direction == Axis.HORIZONTAL) {
+                    childParentData.offset.x
+                } else {
+                    childParentData.offset.y
+                }
+            }
+            val childMainAxisSize = childFlex * defaultSize
+            expect(childMainAxisSize, message = "child$index, size=${child.definiteSize}") {
+                if (renderFlex.direction == Axis.HORIZONTAL) {
+                    child.definiteSize.width
+                } else {
+                    child.definiteSize.height
+                }
+            }
+            mainAxisOffset += childMainAxisSize
+        }
+    }
+
+
+    private fun direction_parent_data_fit_test(direction: Axis) {
+        val childrenCount = 5
+        val defaultSize = 100f
+        var mainAxisSize = 0f
+        val expandIndex = Random(System.currentTimeMillis()).nextInt(childrenCount)
+        val expandedSpace = defaultSize * (expandIndex + 1)
+        val children: Array<RenderBox> = Array(childrenCount) {
+            if (it == expandIndex) {
+                RenderConstrainedBox(additionalConstraints = BoxConstraints())
+            } else {
+                RenderConstrainedBox(additionalConstraints = BoxConstraints.expand(defaultSize, defaultSize))
+            }
+        }
+        val renderFlex = RenderFlex(direction = direction, children = children)
+        children.forEachIndexed { index, child ->
+            val childParentData: FlexParentData = child.parentData!! as FlexParentData
+            mainAxisSize += defaultSize
+            if (index == expandIndex) {
+                childParentData.flex = 1
+                childParentData.fit = FlexFit.TIGHT
+                mainAxisSize += expandedSpace
+            }
+        }
+        renderFlex.layout(BoxConstraints.expand(
+            width = if(renderFlex.direction == Axis.HORIZONTAL) mainAxisSize else defaultSize,
+            height = if(renderFlex.direction == Axis.HORIZONTAL) defaultSize else mainAxisSize,
+        ))
+
+        println("renderFlex ${renderFlex.definiteSize}, expandIndex=$expandIndex, expandedSpace=$expandedSpace")
+        children.forEachIndexed { index, child ->
+            println("child$index, size=${child.definiteSize}, offset=${child.parentData!!.offset}")
+        }
+        var mainAxisOffset = 0f
+        children.forEachIndexed { index, child ->
+            val childParentData: FlexParentData = child.parentData as FlexParentData
+            expect(mainAxisOffset, message = "child$index, offset=${child.parentData!!.offset}") {
+                if (renderFlex.direction == Axis.HORIZONTAL) {
+                    childParentData.offset.x
+                } else {
+                    childParentData.offset.y
+                }
+            }
+            val childMainAxisSize = defaultSize + if(index == expandIndex) expandedSpace else 0f
+            expect(childMainAxisSize, message = "child$index, size=${child.definiteSize}") {
+                if (renderFlex.direction == Axis.HORIZONTAL) {
+                    child.definiteSize.width
+                } else {
+                    child.definiteSize.height
+                }
+            }
+            mainAxisOffset += childMainAxisSize
+        }
+    }
+
     companion object {
         private fun getMainAxisOffset(offset: Offset, direction: Axis): Float =
             when(direction) {
@@ -138,6 +243,8 @@ class RenderFlexTest {
                 Axis.HORIZONTAL -> offset.y
                 Axis.VERTICAL -> offset.x
             }
+
+        val COLORS = arrayOf(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.CYAN, Color.MAGENTA)
     }
 
 }
