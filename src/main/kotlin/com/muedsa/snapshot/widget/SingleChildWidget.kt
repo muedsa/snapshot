@@ -1,7 +1,5 @@
 package com.muedsa.snapshot.widget
 
-import com.muedsa.snapshot.annotation.MustCallSuper
-
 abstract class SingleChildWidget(
     val child: Widget?
 ) : Widget() {
@@ -12,11 +10,5 @@ abstract class SingleChildWidget(
         child?.let {
             it.parent = this
         }
-    }
-
-    @MustCallSuper
-    override fun dispose() {
-        child?.dispose()
-        super.dispose()
     }
 }

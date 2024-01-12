@@ -1,6 +1,5 @@
 package com.muedsa.snapshot.widget
 
-import com.muedsa.snapshot.annotation.MustCallSuper
 import com.muedsa.snapshot.rendering.box.RenderBox
 
 abstract class Widget {
@@ -16,7 +15,4 @@ abstract class Widget {
         }
 
     abstract fun createRenderTree(): RenderBox
-
-    @MustCallSuper
-    open fun dispose() { }
 }

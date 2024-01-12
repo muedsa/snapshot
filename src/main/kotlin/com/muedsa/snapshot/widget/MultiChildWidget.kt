@@ -1,7 +1,5 @@
 package com.muedsa.snapshot.widget
 
-import com.muedsa.snapshot.annotation.MustCallSuper
-
 abstract class MultiChildWidget(
     val children: Array<out Widget>?
 ) : Widget() {
@@ -11,11 +9,5 @@ abstract class MultiChildWidget(
         children?.forEach {
             it.parent = this
         }
-    }
-
-    @MustCallSuper
-    override fun dispose() {
-        children?.forEach { it.dispose() }
-        super.dispose()
     }
 }

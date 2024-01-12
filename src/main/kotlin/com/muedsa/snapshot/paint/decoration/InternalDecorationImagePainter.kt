@@ -36,11 +36,4 @@ internal class InternalDecorationImagePainter(
             canvas.restore()
         }
     }
-
-
-    override fun dispose() {
-        if (!details.image.isClosed) {
-            details.image.close()
-        }
-    }
 }

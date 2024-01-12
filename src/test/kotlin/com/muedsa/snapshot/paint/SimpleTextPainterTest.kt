@@ -155,10 +155,26 @@ class SimpleTextPainterTest {
     }
 
 
+    @OptIn(ExperimentalStdlibApi::class)
+    @Test
+    fun emoji_test() {
+        println("\n\n\nSimpleTextPainterTest.emoji_test()")
+        val textPainter = SimpleTextPainter(
+            text = SAMPLE_EMOJI,
+            fontSize = 30f
+        ).apply {
+            layout(0f, 600f)
+        }
+        drawPainter("text/emoji", textPainter.size) { canvas ->
+            textPainter.paint(canvas, offset = Offset.ZERO)
+            textPainter.debugPaint(canvas, offset = Offset.ZERO)
+        }
+    }
 
     companion object {
         const val SAMPLE_TEXT_EN = "Hello Word!"
         const val SAMPLE_TEXT_CN = "你好，世界！"
         const val SAMPLE_TEXT = "$SAMPLE_TEXT_EN $SAMPLE_TEXT_CN"
+        const val SAMPLE_EMOJI = "\uD83E\uDD70\uD83D\uDC80✌\uFE0F\uD83C\uDF34\uD83D\uDC22\uD83D\uDC10\uD83C\uDF44⚽\uD83C\uDF7B\uD83D\uDC51\uD83D\uDCF8\uD83D\uDE2C\uD83D\uDC40\uD83D\uDEA8\uD83C\uDFE1\uD83D\uDD4A\uFE0F\uD83C\uDFC6\uD83D\uDE3B\uD83C\uDF1F\uD83E\uDDFF\uD83C\uDF40\uD83C\uDFA8\uD83C\uDF5C"
     }
 }

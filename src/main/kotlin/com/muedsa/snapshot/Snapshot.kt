@@ -38,7 +38,6 @@ class Snapshot(
         surface.flush()
         image = surface.makeImageSnapshot()
         surface.close()
-        rootWidget.dispose()
         isDrawed = true
     }
 

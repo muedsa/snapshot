@@ -1,7 +1,6 @@
 package com.muedsa.snapshot.widget
 
 import com.muedsa.geometry.BoxAlignment
-import com.muedsa.snapshot.annotation.MustCallSuper
 import com.muedsa.snapshot.paint.BoxFit
 import com.muedsa.snapshot.paint.ImageRepeat
 import com.muedsa.snapshot.rendering.box.RenderBox
@@ -35,11 +34,5 @@ open class LocalImage(
             color = color,
             colorBlendMode = colorBlendMode
         )
-    }
-
-    @MustCallSuper
-    override fun dispose() {
-        image.close()
-        super.dispose()
     }
 }

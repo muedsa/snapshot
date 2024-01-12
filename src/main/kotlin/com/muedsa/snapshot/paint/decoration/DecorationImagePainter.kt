@@ -7,5 +7,4 @@ import org.jetbrains.skia.Rect
 
 interface DecorationImagePainter {
     fun paint(canvas: Canvas, rect: Rect, clipPath : Path?, blend: Float = 1f, blendMode: BlendMode = BlendMode.SRC_OVER)
-    fun dispose()
 }

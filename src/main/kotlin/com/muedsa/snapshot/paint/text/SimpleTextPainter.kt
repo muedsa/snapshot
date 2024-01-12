@@ -17,8 +17,8 @@ class SimpleTextPainter(
     val maxLines: Int? = null,
     val ellipsis: String? = null,
     val textWidthBasis: TextWidthBasis = TextWidthBasis.PARENT,
-    val textHeightMode: HeightMode? = null,
-): AutoCloseable {
+    val textHeightMode: HeightMode? = null
+) {
 
     init {
         fontFamilyName?.let {
@@ -202,11 +202,6 @@ class SimpleTextPainter(
         }
     }
 
-    override fun close() {
-        layoutCache?.paragraph?.close()
-        layoutCache = null
-    }
-
     override fun toString(): String {
         return "SimpleTextPainter(text='$text', color=$color, fontSize=$fontSize, fontFamilyName=${fontFamilyName?.contentToString()}, fontStyle=$fontStyle, textAlign=$textAlign, textDirection=$textDirection, maxLines=$maxLines, ellipsis=$ellipsis, textWidthBasis=$textWidthBasis, textHeightMode=$textHeightMode)"
     }
@@ -244,7 +239,7 @@ class SimpleTextPainter(
             ).apply {
                 layout(minWidth = minWidth, maxWidth = maxWidth)
             }
-            return painter.use { painter.width }
+            return painter.width
         }
 
         @JvmStatic
@@ -278,7 +273,7 @@ class SimpleTextPainter(
             ).apply {
                 layout(minWidth = minWidth, maxWidth = maxWidth)
             }
-            return painter.use { painter.maxIntrinsicWidth }
+            return painter.maxIntrinsicWidth
         }
 
         private fun computePaintOffsetFraction(textAlign: Alignment, textDirection: Direction) :Float =
