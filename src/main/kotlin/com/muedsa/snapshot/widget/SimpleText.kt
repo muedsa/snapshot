@@ -14,7 +14,7 @@ class SimpleText(
     val fontStyle: FontStyle = FontStyle.NORMAL,
 ) : Widget() {
 
-    override fun createRenderTree(): RenderBox = RenderSimpleText(
+    override fun createRenderBox(): RenderBox = RenderSimpleText(
         content = content,
         color = color,
         fontSize = fontSize,

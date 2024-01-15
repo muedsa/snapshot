@@ -14,5 +14,5 @@ abstract class Widget {
             field = value
         }
 
-    abstract fun createRenderTree(): RenderBox
+    abstract fun createRenderBox(): RenderBox
 }

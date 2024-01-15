@@ -22,7 +22,7 @@ class Snapshot(
     fun draw() {
         val rootWidget = widgetBuilder.invoke()
         assert(rootWidget != null)
-        val rootRenderBox = rootWidget!!.createRenderTree()
+        val rootRenderBox = rootWidget!!.createRenderBox()
         rootRenderBox.layout(constraints = BoxConstraints())
         val rootSize = rootRenderBox.definiteSize
         if (rootSize.isEmpty) {

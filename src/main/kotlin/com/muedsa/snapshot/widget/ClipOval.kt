@@ -15,6 +15,6 @@ class ClipOval(
     override fun createRenderTree(): RenderBox = RenderClipOval(
         clipper = clipper,
         clipBehavior = clipBehavior,
-        child = child?.createRenderTree()
+        child = child?.createRenderBox()
     )
 }

@@ -18,6 +18,6 @@ class ClipRRect(
         borderRadius = borderRadius,
         clipper = clipper,
         clipBehavior = clipBehavior,
-        child = child?.createRenderTree()
+        child = child?.createRenderBox()
     )
 }

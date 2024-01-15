@@ -12,6 +12,6 @@ class LimitedBox(
     override fun createRenderTree(): RenderBox = RenderLimitedBox(
         maxWidth = maxWidth,
         maxHeight = maxHeight,
-        child = child?.createRenderTree()
+        child = child?.createRenderBox()
     )
 }

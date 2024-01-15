@@ -15,6 +15,6 @@ class SizedOverflowBox(
         RenderSizedOverflowBox(
             requestedSize = size,
             alignment = alignment,
-            child = child?.createRenderTree()
+            child = child?.createRenderBox()
         )
 }

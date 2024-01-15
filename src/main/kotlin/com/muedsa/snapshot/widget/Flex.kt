@@ -21,7 +21,6 @@ open class Flex(
     childrenBuilder = childrenBuilder
 ) {
 
-
     override fun createRenderTree(): RenderBox = RenderFlex(
         direction = direction,
         mainAxisSize = mainAxisSize,
@@ -31,6 +30,6 @@ open class Flex(
         verticalDirection = verticalDirection,
         textBaseline = textBaseline,
         clipBehavior = clipBehavior,
-        children = children?.createRenderTree()
+        children = children?.createRenderBox()
     )
 }

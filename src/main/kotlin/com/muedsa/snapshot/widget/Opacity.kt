@@ -14,6 +14,6 @@ class Opacity(
 
     override fun createRenderTree(): RenderBox = RenderOpacity(
         opacity = opacity,
-        child = child?.createRenderTree()
+        child = child?.createRenderBox()
     )
 }

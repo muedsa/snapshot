@@ -15,6 +15,6 @@ class ClipRect(
     override fun createRenderTree(): RenderBox = RenderClipRect(
         clipper = clipper,
         clipBehavior = clipBehavior,
-        child = child?.createRenderTree()
+        child = child?.createRenderBox()
     )
 }

@@ -13,6 +13,6 @@ class DecoratedBox(
     override fun createRenderTree(): RenderBox = RenderDecoratedBox(
         decoration = decoration,
         position = position,
-        child = child?.createRenderTree()
+        child = child?.createRenderBox()
     )
 }

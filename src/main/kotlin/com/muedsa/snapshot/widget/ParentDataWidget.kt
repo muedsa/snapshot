@@ -1,6 +1,8 @@
 package com.muedsa.snapshot.widget
 
 import com.muedsa.snapshot.rendering.box.RenderBox
+import com.muedsa.snapshot.rendering.box.RenderContainerBox
+import com.muedsa.snapshot.rendering.box.RenderSingleChildBox
 
 abstract class ParentDataWidget(
     childBuilder: SingleWidgetBuilder,
@@ -9,7 +11,17 @@ abstract class ParentDataWidget(
 ) {
     protected abstract fun applyParentData(renderBox: RenderBox)
 
-    final override fun createRenderTree(): RenderBox = child!!.createRenderTree().also {
-        applyParentData(it)
+    override fun createRenderTree(): RenderBox = child!!.createRenderBox()
+
+    fun applyChildParentDate(parent: RenderBox) {
+        if (parent is RenderSingleChildBox) {
+            parent.child?.let {
+                applyParentData(it)
+            }
+        } else if (parent is RenderContainerBox) {
+            parent.children?.forEach {
+                applyParentData(it)
+            }
+        }
     }
 }

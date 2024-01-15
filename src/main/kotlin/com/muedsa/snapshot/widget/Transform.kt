@@ -19,7 +19,7 @@ class Transform(
         transform = transform,
         origin = origin,
         alignment = alignment,
-        child = child?.createRenderTree()
+        child = child?.createRenderBox()
     )
 
     companion object {

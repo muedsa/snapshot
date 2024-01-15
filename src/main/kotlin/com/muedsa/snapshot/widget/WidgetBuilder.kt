@@ -6,6 +6,6 @@ typealias SingleWidgetBuilder = () -> Widget?
 
 typealias MultiWidgetBuilder = () -> Array<Widget>
 
-fun Array<out Widget>.createRenderTree(): Array<RenderBox> = Array(this.size) {
-    this[it].createRenderTree()
+fun Array<out Widget>.createRenderBox(): Array<RenderBox> = Array(this.size) {
+    this[it].createRenderBox()
 }

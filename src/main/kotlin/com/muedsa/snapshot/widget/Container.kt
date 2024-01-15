@@ -117,5 +117,5 @@ class Container(
         current!!
     }
 
-    override fun createRenderTree(): RenderBox = compositedWidget.createRenderTree()
+    override fun createRenderTree(): RenderBox = compositedWidget.createRenderBox()
 }

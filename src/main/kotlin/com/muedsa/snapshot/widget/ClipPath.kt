@@ -15,6 +15,6 @@ class ClipPath(
     override fun createRenderTree(): RenderBox = RenderClipPath(
         clipper = clipper,
         clipBehavior = clipBehavior,
-        child = child?.createRenderTree()
+        child = child?.createRenderBox()
     )
 }

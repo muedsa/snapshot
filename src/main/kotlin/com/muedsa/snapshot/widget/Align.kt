@@ -20,6 +20,6 @@ open class Align(
         alignment = alignment,
         widthFactor = widthFactor,
         heightFactor = heightFactor,
-        child = child?.createRenderTree()
+        child = child?.createRenderBox()
     )
 }

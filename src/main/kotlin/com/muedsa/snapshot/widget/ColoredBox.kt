@@ -9,5 +9,5 @@ class ColoredBox(
     childBuilder: SingleWidgetBuilder? = null,
 ) : SingleChildWidget(childBuilder = childBuilder) {
 
-    override fun createRenderTree(): RenderBox = RenderColoredBox(color = color, child = child?.createRenderTree())
+    override fun createRenderTree(): RenderBox = RenderColoredBox(color = color, child = child?.createRenderBox())
 }

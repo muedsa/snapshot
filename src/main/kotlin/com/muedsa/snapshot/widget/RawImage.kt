@@ -21,7 +21,7 @@ open class RawImage(
     val colorBlendMode: BlendMode? = null,
 ) : Widget() {
 
-    override fun createRenderTree(): RenderBox {
+    override fun createRenderBox(): RenderBox {
         return RenderImage(
             image = image,
             width = width,

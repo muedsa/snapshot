@@ -15,9 +15,8 @@ class SizedBox(
         BoxConstraints.tightFor(width = width, height = height)
     }
 
-    override fun createRenderTree(): RenderBox {
-        return RenderConstrainedBox(additionalConstraints = additionalConstraints, child = child?.createRenderTree())
-    }
+    override fun createRenderTree(): RenderBox =
+        RenderConstrainedBox(additionalConstraints = additionalConstraints, child = child?.createRenderBox())
 
     companion object {
         @JvmStatic

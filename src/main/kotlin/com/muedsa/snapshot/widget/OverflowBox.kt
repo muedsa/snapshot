@@ -19,6 +19,6 @@ class OverflowBox(
         minHeight = minHeight,
         maxHeight = maxHeight,
         alignment = alignment,
-        child = child?.createRenderTree()
+        child = child?.createRenderBox()
     )
 }

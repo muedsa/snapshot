@@ -10,6 +10,6 @@ class ConstrainedBox(
 ) : SingleChildWidget(childBuilder = childBuilder) {
     override fun createRenderTree(): RenderBox = RenderConstrainedBox(
         additionalConstraints = constraints,
-        child = child?.createRenderTree()
+        child = child?.createRenderBox()
     )
 }

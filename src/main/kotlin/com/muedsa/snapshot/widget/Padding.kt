@@ -9,5 +9,5 @@ class Padding(
     childBuilder: SingleWidgetBuilder? = null,
 ) : SingleChildWidget(childBuilder = childBuilder) {
 
-    override fun createRenderTree(): RenderBox = RenderPadding(padding, child = child?.createRenderTree())
+    override fun createRenderTree(): RenderBox = RenderPadding(padding, child = child?.createRenderBox())
 }
