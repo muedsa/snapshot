@@ -1,6 +1,7 @@
 package com.muedsa.snapshot.widget
 
 import com.muedsa.snapshot.rendering.box.RenderBox
+import com.muedsa.snapshot.rendering.box.RenderSingleChildBox
 
 abstract class SingleChildWidget(
     val child: Widget?,
@@ -18,8 +19,8 @@ abstract class SingleChildWidget(
 
     final override fun createRenderBox(): RenderBox {
         val renderTree = createRenderTree()
-        if (child is ParentDataWidget) {
-            child.applyChildParentDate(renderTree)
+        if (child is ParentDataWidget && renderTree is RenderSingleChildBox) {
+            child.applyParentData(renderTree.child!!)
         }
         return renderTree
     }

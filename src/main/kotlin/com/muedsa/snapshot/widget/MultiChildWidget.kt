@@ -1,6 +1,7 @@
 package com.muedsa.snapshot.widget
 
 import com.muedsa.snapshot.rendering.box.RenderBox
+import com.muedsa.snapshot.rendering.box.RenderContainerBox
 
 abstract class MultiChildWidget(
     val children: Array<out Widget>?,
@@ -17,9 +18,15 @@ abstract class MultiChildWidget(
 
     final override fun createRenderBox(): RenderBox {
         val renderTree = createRenderTree()
-        children?.forEach {
-            if (it is ParentDataWidget) {
-                it.applyChildParentDate(renderTree)
+        if (children != null) {
+            if (renderTree is RenderContainerBox
+                && (renderTree.children?.size ?: 0) == children.size
+            ) {
+                children.forEachIndexed { index, child ->
+                    if (child is ParentDataWidget) {
+                        child.applyParentData(renderTree.children!![index])
+                    }
+                }
             }
         }
         return renderTree

@@ -48,12 +48,13 @@ open class RenderStack(
             val childParentData: StackParentData = child.parentData as StackParentData
             if (!childParentData.isPositioned) {
                 hasNonPositionedChildren = true
-            }
-            child.layout(nonPositionedConstraints)
-            val childSize: Size = child.definiteSize
 
-            width = max(width, childSize.width)
-            height = max(height, childSize.height)
+                child.layout(nonPositionedConstraints)
+                val childSize: Size = child.definiteSize
+
+                width = max(width, childSize.width)
+                height = max(height, childSize.height)
+            }
         }
 
         val size: Size
@@ -69,7 +70,7 @@ open class RenderStack(
     }
 
     override fun performLayout() {
-        var hasVisualOverflow = false
+        hasVisualOverflow = false
         size = computeSize(definiteConstraints)
 
         children?.forEach { child ->
