@@ -12,7 +12,7 @@ class ColumnTest {
         println("\n\n\nColumnTest.crossAxisAlignment_test()")
         val crossAxisAlignmentArr = CrossAxisAlignment.entries.toTypedArray()
         crossAxisAlignmentArr.forEachIndexed { index, crossAxisAlignment ->
-            val name = "column/crossAxis$index"
+            val name = "widget/column/crossAxis$index"
             val description = "Column($crossAxisAlignment)"
             println("\n\ndraw: $name\n$description")
             drawWidget(imagePathWithoutSuffix = name, debugInfo = description) {

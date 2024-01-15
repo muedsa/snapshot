@@ -1,6 +1,7 @@
 package com.muedsa.snapshot.paint.decoration
 
 import com.muedsa.geometry.Radius
+import org.jetbrains.skia.paragraph.Direction
 
 internal class MixedBorderRadius(
     override val topLeft: Radius,
@@ -78,4 +79,23 @@ internal class MixedBorderRadius(
         bottomStart = bottomStart % other,
         bottomEnd = bottomEnd % other
     )
+
+    override fun resolve(direction: Direction?): BorderRadius {
+        assert(direction != null)
+        return when (direction!!) {
+            Direction.RTL -> BorderRadius.only(
+                topLeft = topLeft + topEnd,
+                topRight = topRight + topStart,
+                bottomLeft = bottomLeft + bottomEnd,
+                bottomRight = bottomRight + bottomStart,
+            )
+
+            else -> BorderRadius.only(
+                topLeft = topLeft + topStart,
+                topRight = topRight + topEnd,
+                bottomLeft = bottomLeft + bottomStart,
+                bottomRight = bottomRight + bottomEnd,
+            )
+        }
+    }
 }

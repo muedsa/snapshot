@@ -34,7 +34,7 @@ class StackTest {
         val directionArr = Direction.entries.toTypedArray()
         alignmentArr.forEachIndexed { alignmentIndex, alignment ->
             directionArr.forEachIndexed { directionIndex, direction ->
-                val name = "stack/a${alignmentIndex}_d${directionIndex}"
+                val name = "widget/stack/a${alignmentIndex}_d${directionIndex}"
                 val description = "Stack(\n$alignment\n$direction\n)"
                 println("\n\ndraw: $name\n$description")
                 drawWidget(imagePathWithoutSuffix = name, debugInfo = description) {

@@ -2,31 +2,37 @@ package com.muedsa.snapshot.rendering.box
 
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
+import com.muedsa.geometry.shift
+import com.muedsa.geometry.tlRadiusX
+import com.muedsa.snapshot.paint.decoration.BorderRadius
+import com.muedsa.snapshot.paint.decoration.BorderRadiusGeometry
 import com.muedsa.snapshot.rendering.ClipBehavior
 import com.muedsa.snapshot.rendering.PaintingContext
-import org.jetbrains.skia.Path
+import org.jetbrains.skia.RRect
+import org.jetbrains.skia.paragraph.Direction
 
-
-class RenderClipPath(
-    clipper: ((Size) -> Path)? = null,
+class RenderClipRRect(
+    val borderRadius: BorderRadiusGeometry = BorderRadius.ZERO,
+    clipper: ((Size) -> RRect)? = null,
     clipBehavior: ClipBehavior = ClipBehavior.ANTI_ALIAS,
+    val textDirection: Direction? = null,
     child: RenderBox? = null,
-) : RenderCustomClip<Path>(
+) : RenderCustomClip<RRect>(
     clipper = clipper,
     clipBehavior = clipBehavior,
     child = child
 ) {
-    override val defaultClip: Path
-        get() = Path().addRect(Offset.ZERO combine definiteSize)
 
+    override val defaultClip: RRect
+        get() = borderRadius.resolve(textDirection).toRRect(rect = Offset.ZERO combine definiteSize)
 
     override fun paint(context: PaintingContext, offset: Offset) {
         if (child != null) {
             if (clipBehavior != ClipBehavior.NONE) {
-                context.doClipPath(
+                context.doClipRRect(
                     offset = offset,
-                    bounds = Offset.ZERO combine definiteSize,
-                    clipPath = getClip(),
+                    bounds = getClip(),
+                    clipRRect = getClip(),
                     clipBehavior = clipBehavior
                 ) { c, o ->
                     super.paint(c, o)
@@ -42,8 +48,8 @@ class RenderClipPath(
         if (child != null) {
             super.debugPaint(context, offset)
             if (clipBehavior != ClipBehavior.NONE) {
-                context.canvas.drawPath(Path().also { getClip().offset(offset.x, offset.y, it) }, debugPaint!!)
-                debugText!!.paint(context.canvas, offset)
+                context.canvas.drawRRect(getClip().shift(offset), debugPaint!!)
+                debugText!!.paint(context.canvas, offset + Offset(getClip().tlRadiusX, -debugText!!.fontSize * 1.1f))
             }
         }
     }

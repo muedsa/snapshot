@@ -2,31 +2,31 @@ package com.muedsa.snapshot.rendering.box
 
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
+import com.muedsa.geometry.shift
 import com.muedsa.snapshot.rendering.ClipBehavior
 import com.muedsa.snapshot.rendering.PaintingContext
-import org.jetbrains.skia.Path
+import org.jetbrains.skia.Rect
 
-
-class RenderClipPath(
-    clipper: ((Size) -> Path)? = null,
+class RenderClipRect(
+    clipper: ((Size) -> Rect)? = null,
     clipBehavior: ClipBehavior = ClipBehavior.ANTI_ALIAS,
     child: RenderBox? = null,
-) : RenderCustomClip<Path>(
+) : RenderCustomClip<Rect>(
     clipper = clipper,
     clipBehavior = clipBehavior,
     child = child
 ) {
-    override val defaultClip: Path
-        get() = Path().addRect(Offset.ZERO combine definiteSize)
+
+    override val defaultClip: Rect
+        get() = Offset.ZERO combine definiteSize
 
 
     override fun paint(context: PaintingContext, offset: Offset) {
         if (child != null) {
             if (clipBehavior != ClipBehavior.NONE) {
-                context.doClipPath(
+                context.doClipRect(
                     offset = offset,
-                    bounds = Offset.ZERO combine definiteSize,
-                    clipPath = getClip(),
+                    clipRect = getClip(),
                     clipBehavior = clipBehavior
                 ) { c, o ->
                     super.paint(c, o)
@@ -42,8 +42,8 @@ class RenderClipPath(
         if (child != null) {
             super.debugPaint(context, offset)
             if (clipBehavior != ClipBehavior.NONE) {
-                context.canvas.drawPath(Path().also { getClip().offset(offset.x, offset.y, it) }, debugPaint!!)
-                debugText!!.paint(context.canvas, offset)
+                context.canvas.drawRect(getClip().shift(offset), debugPaint!!)
+                debugText!!.paint(context.canvas, offset + Offset(getClip().width / 8f, -debugText!!.fontSize * 1.1f))
             }
         }
     }

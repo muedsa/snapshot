@@ -12,7 +12,7 @@ class LinearGradientTest {
     @Test
     fun linear_test() {
         val size = Size(600f, 200f)
-        drawPainter("gradient/linear", size = size) {
+        drawPainter("paint/gradient/linear", size = size) {
             val gradient = LinearGradient(
                 begin = BoxAlignment.TOP_LEFT,
                 end = BoxAlignment.BOTTOM_RIGHT,

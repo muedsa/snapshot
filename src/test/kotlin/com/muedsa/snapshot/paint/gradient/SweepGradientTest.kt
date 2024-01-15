@@ -12,7 +12,7 @@ class SweepGradientTest {
     @Test
     fun sweep_test() {
         val size = Size(600f, 600f)
-        drawPainter("gradient/sweep", size = size) {
+        drawPainter("paint/gradient/sweep", size = size) {
             val gradient = SweepGradient(
                 colors = intArrayOf(
                     0xFF4285F4.toInt(),
@@ -31,7 +31,7 @@ class SweepGradientTest {
     @Test
     fun sweep_stops_test() {
         val size = Size(600f, 600f)
-        drawPainter("gradient/sweep_stops", size = size) {
+        drawPainter("paint/gradient/sweep_stops", size = size) {
             val gradient = SweepGradient(
                 colors = intArrayOf(
                     0xFF4285F4.toInt(),
@@ -51,7 +51,7 @@ class SweepGradientTest {
     @Test
     fun sweep_stops_transform_test() {
         val size = Size(600f, 600f)
-        drawPainter("gradient/sweep_stops_transform", size = size) {
+        drawPainter("paint/gradient/sweep_stops_transform", size = size) {
             val gradient = SweepGradient(
                 colors = intArrayOf(
                     0xFF4285F4.toInt(),

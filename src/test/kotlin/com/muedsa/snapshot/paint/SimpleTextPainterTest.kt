@@ -38,7 +38,7 @@ class SimpleTextPainterTest {
             }
         }
 
-        drawPainter("text/fonts", width, height) { canvas ->
+        drawPainter("paint/text/fonts", width, height) { canvas ->
             painterArr.forEachIndexed { index, painter ->
                 painter.paint(canvas, offset = offsetArr[index])
             }
@@ -66,7 +66,7 @@ class SimpleTextPainterTest {
             }
         }
 
-        drawPainter("text/text_align_ltr", boxWidth, boxHeight * Alignment.entries.size) { canvas ->
+        drawPainter("paint/text/text_align_ltr", boxWidth, boxHeight * Alignment.entries.size) { canvas ->
             painterArr.forEachIndexed { index, painter ->
                 val offset = offsetArr[index]
                 canvas.drawRect(Rect.makeXYWH(offset.x, offset.y, boxWidth, boxHeight),
@@ -105,7 +105,7 @@ class SimpleTextPainterTest {
             }
         }
 
-        drawPainter("text/text_align_rtl", boxWidth, boxHeight * Alignment.entries.size) { canvas ->
+        drawPainter("paint/text/text_align_rtl", boxWidth, boxHeight * Alignment.entries.size) { canvas ->
             painterArr.forEachIndexed { index, painter ->
                 val offset = offsetArr[index]
                 canvas.drawRect(Rect.makeXYWH(offset.x, offset.y, boxWidth, boxHeight),
@@ -146,7 +146,7 @@ class SimpleTextPainterTest {
             }
         }
 
-        drawPainter("text/height_mode", width, height) { canvas ->
+        drawPainter("paint/text/height_mode", width, height) { canvas ->
             painterArr.forEachIndexed { index, painter ->
                 painter.paint(canvas, offset = offsetArr[index])
                 painter.debugPaint(canvas, offset = offsetArr[index])
@@ -165,7 +165,7 @@ class SimpleTextPainterTest {
         ).apply {
             layout(0f, 600f)
         }
-        drawPainter("text/emoji", textPainter.size) { canvas ->
+        drawPainter("paint/text/emoji", textPainter.size) { canvas ->
             textPainter.paint(canvas, offset = Offset.ZERO)
             textPainter.debugPaint(canvas, offset = Offset.ZERO)
         }

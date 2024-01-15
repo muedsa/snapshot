@@ -13,7 +13,7 @@ class RowTest {
         println("\n\n\nRowTest.crossAxisAlignment_test()")
         val crossAxisAlignmentArr = CrossAxisAlignment.entries.toTypedArray()
         crossAxisAlignmentArr.forEachIndexed { index, crossAxisAlignment ->
-            val name = "row/crossAxis$index"
+            val name = "widget/row/crossAxis$index"
             val description = "Row($crossAxisAlignment)"
             println("\n\ndraw: $name \n$description")
             drawWidget(imagePathWithoutSuffix = name, debugInfo = description) {
@@ -44,7 +44,7 @@ class RowTest {
     @OptIn(ExperimentalStdlibApi::class)
     fun baseline_test() {
         println("\n\n\nRowTest.baseline_test()")
-        drawWidget(imagePathWithoutSuffix = "row/baseline", debugInfo = "Row(${CrossAxisAlignment.BASELINE})") {
+        drawWidget(imagePathWithoutSuffix = "widget/row/baseline", debugInfo = "Row(${CrossAxisAlignment.BASELINE})") {
             Row(
                 crossAxisAlignment = CrossAxisAlignment.BASELINE,
                 textBaseline = BaselineMode.ALPHABETIC

@@ -1,4 +1,4 @@
-package com.muedsa.snapshot
+package com.muedsa.snapshot.rendering.flex
 
 enum class VerticalDirection {
     // Boxes should start at the bottom and be stacked vertically towards the top.

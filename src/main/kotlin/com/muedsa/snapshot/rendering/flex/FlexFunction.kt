@@ -1,6 +1,5 @@
 package com.muedsa.snapshot.rendering.flex
 
-import com.muedsa.snapshot.VerticalDirection
 import com.muedsa.snapshot.paint.Axis
 import org.jetbrains.skia.paragraph.Direction
 

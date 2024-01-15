@@ -12,7 +12,7 @@ class RadialGradientTest {
     @Test
     fun radial_test() {
         val size = Size(600f, 600f)
-        drawPainter("gradient/radial", size = size) {
+        drawPainter("paint/gradient/radial", size = size) {
             val gradient = RadialGradient(
                 colors = intArrayOf(
                     0XFF_FC_EF_64.toInt(),
@@ -28,7 +28,7 @@ class RadialGradientTest {
     @Test
     fun radial_focal_test() {
         val size = Size(600f, 600f)
-        drawPainter("gradient/radial_focal_bottom_center", size = size) {
+        drawPainter("paint/gradient/radial_focal_bottom_center", size = size) {
             val gradient = RadialGradient(
                 colors = intArrayOf(
                     0XFF_FC_EF_64.toInt(),

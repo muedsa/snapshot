@@ -3,16 +3,16 @@ package com.muedsa.snapshot.widget
 import com.muedsa.geometry.Size
 import com.muedsa.snapshot.rendering.ClipBehavior
 import com.muedsa.snapshot.rendering.box.RenderBox
-import com.muedsa.snapshot.rendering.box.RenderClipPath
-import org.jetbrains.skia.Path
+import com.muedsa.snapshot.rendering.box.RenderClipOval
+import org.jetbrains.skia.Rect
 
-class ClipPath(
-    val clipper: ((Size) -> Path)? = null,
+class ClipOval(
+    val clipper: ((Size) -> Rect)? = null,
     val clipBehavior: ClipBehavior = ClipBehavior.ANTI_ALIAS,
     childBuilder: SingleWidgetBuilder? = null,
 ) : SingleChildWidget(childBuilder = childBuilder) {
 
-    override fun createRenderTree(): RenderBox = RenderClipPath(
+    override fun createRenderTree(): RenderBox = RenderClipOval(
         clipper = clipper,
         clipBehavior = clipBehavior,
         child = child?.createRenderTree()

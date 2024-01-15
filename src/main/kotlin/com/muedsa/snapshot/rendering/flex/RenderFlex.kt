@@ -2,7 +2,6 @@ package com.muedsa.snapshot.rendering.flex
 
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
-import com.muedsa.snapshot.VerticalDirection
 import com.muedsa.snapshot.paint.Axis
 import com.muedsa.snapshot.precisionErrorTolerance
 import com.muedsa.snapshot.rendering.ClipBehavior

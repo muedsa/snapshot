@@ -3,6 +3,7 @@ package com.muedsa.snapshot.paint.decoration
 import com.muedsa.geometry.Radius
 import com.muedsa.geometry.makeRRectFromRectAndCorners
 import org.jetbrains.skia.Rect
+import org.jetbrains.skia.paragraph.Direction
 
 class BorderRadius(
     override val topLeft: Radius,
@@ -37,6 +38,8 @@ class BorderRadius(
         }
         return super.add(other)
     }
+
+    override fun resolve(direction: Direction?): BorderRadius = this
 
     operator fun plus(other: BorderRadius): BorderRadius = only(
         topLeft = topLeft + other.topLeft,

@@ -1,6 +1,7 @@
 package com.muedsa.snapshot.paint.decoration
 
 import com.muedsa.geometry.Radius
+import org.jetbrains.skia.paragraph.Direction
 
 abstract class BorderRadiusGeometry {
 
@@ -34,6 +35,8 @@ abstract class BorderRadiusGeometry {
         bottomStart = bottomStart + other.bottomStart,
         bottomEnd = bottomEnd + other.bottomEnd
     )
+
+    abstract fun resolve(direction: Direction?): BorderRadius
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
