@@ -3,13 +3,11 @@ package com.muedsa.snapshot.widget
 import com.muedsa.geometry.BoxAlignment
 import com.muedsa.snapshot.paint.BoxFit
 import com.muedsa.snapshot.paint.ImageRepeat
-import com.muedsa.snapshot.tools.NetworkImageCache
-import com.muedsa.snapshot.tools.NetworkImageCacheManager
 import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.Image
 
-open class CachedNetworkImage(
-    val url: String,
+open class ProviderImage(
+    val provider: () -> Image,
     width: Float? = null,
     height: Float? = null,
     fit: BoxFit? = null,
@@ -18,10 +16,9 @@ open class CachedNetworkImage(
     scale: Float = 1f,
     opacity: Float = 1f,
     color: Int? = null,
-    colorBlendMode: BlendMode? = null,
-    val cache: NetworkImageCache = NetworkImageCacheManager.defaultCache
-) : ProviderImage(
-    provider = { Image.makeFromEncoded(cache.getImage(url)) },
+    colorBlendMode: BlendMode? = null
+): RawImage(
+    image = provider.invoke(),
     width = width,
     height = height,
     fit = fit,

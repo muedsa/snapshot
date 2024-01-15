@@ -8,7 +8,7 @@ import com.muedsa.snapshot.rendering.box.RenderImage
 import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.Image
 
-open class LocalImage(
+open class RawImage(
     val image: Image,
     val width: Float? = null,
     val height: Float? = null,

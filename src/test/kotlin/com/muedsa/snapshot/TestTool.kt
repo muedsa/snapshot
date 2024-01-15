@@ -39,7 +39,7 @@ fun drawWidget(imagePathWithoutSuffix: String, debugInfo: String? = null, drawDe
             background = Color.TRANSPARENT
         ) {
             Column { arrayOf(
-                LocalImage(image = snapshotImage),
+                RawImage(image = snapshotImage),
                 Container(
                     padding = EdgeInsets.all(10f),
                     color = Color.WHITE,
