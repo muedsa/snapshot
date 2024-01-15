@@ -23,7 +23,7 @@ class Container(
     val transform: Matrix44CMO? = null,
     val transformAlignment: BoxAlignment? = null,
     val clipBehavior: ClipBehavior = ClipBehavior.NONE,
-    childBuilder: SingleWidgetBuilder? = null
+    childBuilder: SingleWidgetBuilder? = null,
 ) : SingleChildWidget(childBuilder = childBuilder) {
 
     init {

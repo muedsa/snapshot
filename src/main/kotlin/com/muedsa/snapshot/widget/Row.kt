@@ -17,8 +17,8 @@ class Row(
     verticalDirection: VerticalDirection = VerticalDirection.DOWN,
     textBaseline: BaselineMode? = null,
     clipBehavior: ClipBehavior = ClipBehavior.NONE,
-    childrenBuilder: MultiWidgetBuilder? = null
-): Flex(
+    childrenBuilder: MultiWidgetBuilder? = null,
+) : Flex(
     direction = Axis.HORIZONTAL,
     mainAxisSize = mainAxisSize,
     mainAxisAlignment = mainAxisAlignment,

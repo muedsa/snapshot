@@ -7,7 +7,7 @@ import org.jetbrains.skia.Paint
 
 class RenderConstrainedBox(
     var additionalConstraints: BoxConstraints,
-    child: RenderBox? = null
+    child: RenderBox? = null,
 ) : RenderSingleChildBox(child = child) {
 
     override fun performLayout() {

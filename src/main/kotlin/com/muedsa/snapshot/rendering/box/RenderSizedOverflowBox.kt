@@ -6,7 +6,7 @@ import com.muedsa.geometry.Size
 class RenderSizedOverflowBox(
     val requestedSize: Size,
     alignment: BoxAlignment = BoxAlignment.CENTER,
-    child: RenderBox? = null
+    child: RenderBox? = null,
 ) : RenderAligningBox(
     alignment = alignment,
     child = child

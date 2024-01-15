@@ -4,7 +4,6 @@ import com.muedsa.geometry.AlignmentGeometry
 import com.muedsa.geometry.BoxAlignment
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.shortestSide
-import com.muedsa.snapshot.paint.lerpColor
 import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.GradientStyle
 import org.jetbrains.skia.Rect
@@ -19,7 +18,7 @@ class RadialGradient(
     val tileMode: FilterTileMode = FilterTileMode.CLAMP,
     val focal: AlignmentGeometry? = null,
     val focalRadius: Float = 0.5f,
-    transform: GradientTransform? = null
+    transform: GradientTransform? = null,
 ) : Gradient(
     colors = colors,
     stops = stops,
@@ -60,14 +59,4 @@ class RadialGradient(
             )
         }
     }
-
-    override fun scale(factor: Float): Gradient = RadialGradient(
-        center = center,
-        radius = radius,
-        colors = colors.map { lerpColor(null, it, factor)!! }.toIntArray(),
-        stops = stops!!,
-        tileMode = tileMode,
-        focal = focal,
-        focalRadius= focalRadius
-    )
 }

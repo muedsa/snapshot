@@ -4,7 +4,7 @@ import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.Paragraph
 
 class TextLayout(
-    val paragraph: Paragraph
+    val paragraph: Paragraph,
 ) {
 
     val width: Float = paragraph.maxWidth
@@ -18,7 +18,7 @@ class TextLayout(
     val longestLine: Float = paragraph.longestLine
 
     fun getDistanceToBaseline(baseline: BaselineMode): Float =
-        when(baseline) {
+        when (baseline) {
             BaselineMode.ALPHABETIC -> paragraph.alphabeticBaseline
             BaselineMode.IDEOGRAPHIC -> paragraph.ideographicBaseline
         }

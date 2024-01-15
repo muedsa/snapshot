@@ -20,7 +20,7 @@ open class Flex(
     val verticalDirection: VerticalDirection = VerticalDirection.DOWN,
     val textBaseline: BaselineMode? = null,
     val clipBehavior: ClipBehavior = ClipBehavior.NONE,
-    childrenBuilder: MultiWidgetBuilder? = null
+    childrenBuilder: MultiWidgetBuilder? = null,
 ) : MultiChildWidget(
     childrenBuilder = childrenBuilder
 ) {

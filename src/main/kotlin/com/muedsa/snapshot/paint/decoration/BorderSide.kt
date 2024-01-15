@@ -9,7 +9,7 @@ class BorderSide(
     val color: Int = Color.BLACK,
     val width: Float = 1f,
     val style: BorderStyle = BorderStyle.SOLID,
-    val strokeAlign: Float = STROKE_ALIGN_INSIDE
+    val strokeAlign: Float = STROKE_ALIGN_INSIDE,
 ) {
 
     val strokeInset: Float by lazy {
@@ -27,15 +27,16 @@ class BorderSide(
     fun scale(t: Float) = BorderSide(
         color = color,
         width = max(0f, width * t),
-        style =  if(t <= 0f) BorderStyle.NONE else style
+        style = if (t <= 0f) BorderStyle.NONE else style
     )
 
-    fun toPaint(): Paint = when(style) {
+    fun toPaint(): Paint = when (style) {
         BorderStyle.SOLID -> Paint().apply {
             color = this@BorderSide.color
             strokeWidth = this@BorderSide.width
             mode = PaintMode.STROKE
         }
+
         BorderStyle.NONE -> Paint().apply {
             color = Color.BLACK
             strokeWidth = 0f

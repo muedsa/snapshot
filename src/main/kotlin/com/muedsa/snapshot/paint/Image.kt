@@ -20,7 +20,7 @@ fun paintImage(
     repeat: ImageRepeat = ImageRepeat.NO_REPEAT,
     flipHorizontally: Boolean = false,
     isAntiAlias: Boolean = false,
-    blendMode: BlendMode = BlendMode.SRC_OVER
+    blendMode: BlendMode = BlendMode.SRC_OVER,
 ) {
     assert(!image.isClosed) { "Cannot paint an image that is disposed." }
     if (image.isEmpty) {
@@ -40,7 +40,8 @@ fun paintImage(
         BoxFit.FILL
     }
     assert(centerSlice == null || (imageFit != BoxFit.NONE && imageFit != BoxFit.COVER))
-    val fittedSizes: FittedSizes = FittedSizes.applyBoxFit(fit = imageFit, inputSize = inputSize, outputSize = outputSize)
+    val fittedSizes: FittedSizes =
+        FittedSizes.applyBoxFit(fit = imageFit, inputSize = inputSize, outputSize = outputSize)
     val sourceSize: Size = fittedSizes.source * scale
     var destinationSize: Size = fittedSizes.destination
     if (centerSlice != null) {
@@ -67,7 +68,7 @@ fun paintImage(
     }
 
     val halfWidthDelta: Float = (outputSize.width - destinationSize.width) / 2f
-    val halfHeightDelta: Float =  (outputSize.height - destinationSize.height) / 2f
+    val halfHeightDelta: Float = (outputSize.height - destinationSize.height) / 2f
     val dx: Float = halfWidthDelta + (if (flipHorizontally) -alignment.x else alignment.x) * halfWidthDelta
     val dy: Float = halfHeightDelta + alignment.y * halfHeightDelta
     val destinationPosition: Offset = rect.topLeft.translate(dx, dy)
@@ -114,14 +115,15 @@ fun paintImage(
     } else {
         canvas.scale(1f / scale, 1f / scale)
         if (imageRepeat == ImageRepeat.NO_REPEAT) {
-            canvas.drawImageNine(image = image,
+            canvas.drawImageNine(
+                image = image,
                 center = centerSlice.scale(scale).toIRect(),
                 dst = destinationRect.scale(scale),
                 filterMode = FilterMode.LINEAR,
                 paint = paint
             )
         } else {
-            for (tileRect  in generateImageTileRects(rect, destinationRect, imageRepeat)) {
+            for (tileRect in generateImageTileRects(rect, destinationRect, imageRepeat)) {
                 canvas.drawImageNine(
                     image = image,
                     centerSlice.scale(scale).toIRect(),
@@ -160,7 +162,7 @@ internal fun generateImageTileRects(outputRect: Rect, fundamentalRect: Rect, rep
     }
 
     return buildList {
-        for (i in startX .. stopX) {
+        for (i in startX..stopX) {
             for (j in startY..stopY) {
                 add(fundamentalRect.shift(Offset(i * strideX, j * strideY)))
             }

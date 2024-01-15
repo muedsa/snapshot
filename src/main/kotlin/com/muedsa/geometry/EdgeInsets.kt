@@ -7,7 +7,7 @@ class EdgeInsets(
     val left: Float,
     val top: Float,
     val right: Float,
-    val bottom: Float
+    val bottom: Float,
 ) {
 
     val horizontal: Float by lazy {

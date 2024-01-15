@@ -6,7 +6,7 @@ import com.muedsa.snapshot.rendering.box.RenderConstrainedBox
 
 class ConstrainedBox(
     val constraints: BoxConstraints,
-    childBuilder: SingleWidgetBuilder?= null
+    childBuilder: SingleWidgetBuilder? = null,
 ) : SingleChildWidget(childBuilder = childBuilder) {
     override fun createRenderTree(): RenderBox = RenderConstrainedBox(
         additionalConstraints = constraints,

@@ -8,7 +8,7 @@ open class Align(
     val alignment: BoxAlignment = BoxAlignment.CENTER,
     val widthFactor: Float? = null,
     val heightFactor: Float? = null,
-    childBuilder: SingleWidgetBuilder? = null
+    childBuilder: SingleWidgetBuilder? = null,
 ) : SingleChildWidget(childBuilder = childBuilder) {
 
     init {

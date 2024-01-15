@@ -13,7 +13,7 @@ class Stack(
     val textDirection: Direction = Direction.LTR,
     val fit: StackFit = StackFit.LOOSE,
     val clipBehavior: ClipBehavior = ClipBehavior.HARD_EDGE,
-    childrenBuilder: MultiWidgetBuilder? = null
+    childrenBuilder: MultiWidgetBuilder? = null,
 ) : MultiChildWidget(
     childrenBuilder = childrenBuilder
 ) {

@@ -17,7 +17,7 @@ open class RenderStack(
     children: Array<RenderBox>? = null,
 ) : RenderContainerBox(
     children = children
-)  {
+) {
 
     var hasVisualOverflow: Boolean = false
 
@@ -33,12 +33,12 @@ open class RenderStack(
     private fun computeSize(constraints: BoxConstraints): Size {
         var hasNonPositionedChildren: Boolean = false
         if (childCount == 0) {
-            return if(constraints.biggest.isFinite) constraints.biggest else constraints.smallest
+            return if (constraints.biggest.isFinite) constraints.biggest else constraints.smallest
         }
         var width = constraints.minWidth
         var height = constraints.minHeight
 
-        val nonPositionedConstraints: BoxConstraints = when(fit) {
+        val nonPositionedConstraints: BoxConstraints = when (fit) {
             StackFit.LOOSE -> constraints.loosen()
             StackFit.EXPAND -> BoxConstraints.tight(constraints.biggest)
             StackFit.PASSTHROUGH -> constraints
@@ -93,7 +93,11 @@ open class RenderStack(
 
     override fun paint(context: PaintingContext, offset: Offset) {
         if (clipBehavior != ClipBehavior.NONE && hasVisualOverflow) {
-            context.doClipRect(offset = offset, clipRect = Offset.ZERO combine definiteSize, clipBehavior = clipBehavior) { c, o ->
+            context.doClipRect(
+                offset = offset,
+                clipRect = Offset.ZERO combine definiteSize,
+                clipBehavior = clipBehavior
+            ) { c, o ->
                 paintStack(c, o)
             }
         } else {
@@ -102,19 +106,26 @@ open class RenderStack(
     }
 
     companion object {
-        fun layoutPositionedChild(child: RenderBox, childParentData: StackParentData, size: Size, alignment: BoxAlignment): Boolean {
+        fun layoutPositionedChild(
+            child: RenderBox,
+            childParentData: StackParentData,
+            size: Size,
+            alignment: BoxAlignment,
+        ): Boolean {
             assert(childParentData.isPositioned)
             assert(child.parentData == childParentData)
             var hasVisualOverflow: Boolean = false
             var childConstraints: BoxConstraints = BoxConstraints()
             if (childParentData.left != null && childParentData.right != null) {
-                childConstraints = childConstraints.tighten(width = size.width - childParentData.right!! - childParentData.left!!)
+                childConstraints =
+                    childConstraints.tighten(width = size.width - childParentData.right!! - childParentData.left!!)
             } else if (childParentData.width != null) {
-                childConstraints = childConstraints.tighten(width =  childParentData.width)
+                childConstraints = childConstraints.tighten(width = childParentData.width)
             }
 
             if (childParentData.top != null && childParentData.bottom != null) {
-                childConstraints = childConstraints.tighten(height = size.height - childParentData.bottom!! - childParentData.top!!)
+                childConstraints =
+                    childConstraints.tighten(height = size.height - childParentData.bottom!! - childParentData.top!!)
             } else if (childParentData.height != null) {
                 childConstraints = childConstraints.tighten(height = childParentData.height)
             }

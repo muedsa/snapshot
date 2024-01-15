@@ -17,7 +17,7 @@ class SimpleTextPainter(
     val maxLines: Int? = null,
     val ellipsis: String? = null,
     val textWidthBasis: TextWidthBasis = TextWidthBasis.PARENT,
-    val textHeightMode: HeightMode? = null
+    val textHeightMode: HeightMode? = null,
 ) {
 
     init {
@@ -55,7 +55,7 @@ class SimpleTextPainter(
 
     private fun createParagraph(text: String, color: Int, fontSize: Float): Paragraph =
         ParagraphBuilder(
-            style =  ParagraphStyle().apply {
+            style = ParagraphStyle().apply {
                 strutStyle = StrutStyle()
                 this.direction = textDirection
                 this.alignment = textAlign
@@ -85,7 +85,7 @@ class SimpleTextPainter(
         assert(!minWidth.isNaN())
 
         val cachedLayout = layoutCache
-        if (cachedLayout != null  && cachedLayout.resizeToFit(minWidth, maxWidth, textWidthBasis)) {
+        if (cachedLayout != null && cachedLayout.resizeToFit(minWidth, maxWidth, textWidthBasis)) {
             return
         }
 
@@ -94,7 +94,7 @@ class SimpleTextPainter(
         // when the text is not left-aligned, so we don't have to deal with an
         // infinite paint offset.
         val adjustMaxWidth: Boolean = !maxWidth.isFinite() && paintOffsetAlignment != 0f
-        val adjustedMaxWidth: Float? = if(!adjustMaxWidth) maxWidth else cachedLayout?.layout?.maxIntrinsicLineExtent
+        val adjustedMaxWidth: Float? = if (!adjustMaxWidth) maxWidth else cachedLayout?.layout?.maxIntrinsicLineExtent
         inputWidth = adjustedMaxWidth ?: maxWidth
 
         // Only rebuild the paragraph when there're layout changes, even when
@@ -276,8 +276,8 @@ class SimpleTextPainter(
             return painter.maxIntrinsicWidth
         }
 
-        private fun computePaintOffsetFraction(textAlign: Alignment, textDirection: Direction) :Float =
-            when(textAlign) {
+        private fun computePaintOffsetFraction(textAlign: Alignment, textDirection: Direction): Float =
+            when (textAlign) {
                 Alignment.LEFT -> 0f
                 Alignment.RIGHT -> 1f
                 Alignment.CENTER -> 0.5f

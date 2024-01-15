@@ -13,7 +13,7 @@ class RelativeRect(
     val right: Float,
     val bottom: Float,
 ) {
-    val hasInsets: Boolean =  left > 0f || top > 0f || right > 0f || bottom > 0f
+    val hasInsets: Boolean = left > 0f || top > 0f || right > 0f || bottom > 0f
 
 
     fun shift(offset: Offset): RelativeRect = fromLTRB(
@@ -38,7 +38,7 @@ class RelativeRect(
     )
 
 
-    fun toSize(container: Size): Size =  Size(
+    fun toSize(container: Size): Size = Size(
         container.width - left - right, container.height - top - bottom
     )
 
@@ -67,7 +67,13 @@ class RelativeRect(
             bottom = container.bottom - rect.bottom
         )
 
-        fun fromDirectional(textDirection: Direction, start: Float, top: Float, end: Float, bottom: Float): RelativeRect {
+        fun fromDirectional(
+            textDirection: Direction,
+            start: Float,
+            top: Float,
+            end: Float,
+            bottom: Float,
+        ): RelativeRect {
             val left: Float
             val right: Float
             when (textDirection) {
@@ -75,6 +81,7 @@ class RelativeRect(
                     left = end
                     right = start
                 }
+
                 Direction.LTR -> {
                     left = start
                     right = end

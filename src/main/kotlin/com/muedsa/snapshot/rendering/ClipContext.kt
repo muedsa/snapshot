@@ -11,7 +11,7 @@ abstract class ClipContext {
         clipBehavior: ClipBehavior,
         bounds: Rect,
         painter: () -> Unit,
-        canvasClipCall: (Boolean) -> Unit
+        canvasClipCall: (Boolean) -> Unit,
     ) {
         canvas.save()
         when (clipBehavior) {

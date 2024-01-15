@@ -14,7 +14,7 @@ class RenderLimitedBox(
         minWidth = constraints.minWidth,
         maxWidth = if (constraints.hasBoundedWidth) constraints.maxWidth else constraints.constrainWidth(maxWidth),
         minHeight = constraints.minHeight,
-        maxHeight =  if (constraints.hasBoundedHeight) constraints.maxHeight else constraints.constrainHeight(maxHeight)
+        maxHeight = if (constraints.hasBoundedHeight) constraints.maxHeight else constraints.constrainHeight(maxHeight)
     )
 
     override fun performLayout() {

@@ -37,28 +37,28 @@ class Matrix44CMO(vararg mat: Float) {
 
     fun leftTranslate(tx: Float, ty: Float = 0f, tz: Float = 0f, tw: Float = 1f) {
         // Column 1
-        mat [0] += tx * mat [3]
-        mat [1] += ty * mat [3]
-        mat [2] += tz * mat [3]
-        mat [3] = tw * mat [3]
+        mat[0] += tx * mat[3]
+        mat[1] += ty * mat[3]
+        mat[2] += tz * mat[3]
+        mat[3] = tw * mat[3]
 
         // Column 2
-        mat [4] += tx * mat [7]
-        mat [5] += ty * mat [7]
-        mat [6] += tz * mat [7]
-        mat [7] = tw * mat [7]
+        mat[4] += tx * mat[7]
+        mat[5] += ty * mat[7]
+        mat[6] += tz * mat[7]
+        mat[7] = tw * mat[7]
 
         // Column 3
-        mat [8] += tx * mat [11]
-        mat [9] += ty * mat [11]
-        mat [10] += tz * mat [11]
-        mat [11] = tw * mat [11]
+        mat[8] += tx * mat[11]
+        mat[9] += ty * mat[11]
+        mat[10] += tz * mat[11]
+        mat[11] = tw * mat[11]
 
         // Column 4
-        mat [12] += tx * mat [15]
-        mat [13] += ty * mat [15]
-        mat [14] += tz * mat [15]
-        mat [15] = tw * mat [15]
+        mat[12] += tx * mat[15]
+        mat[13] += ty * mat[15]
+        mat[14] += tz * mat[15]
+        mat[15] = tw * mat[15]
     }
 
     fun transform(x: Float, y: Float, z: Float) {
@@ -88,30 +88,30 @@ class Matrix44CMO(vararg mat: Float) {
         val m31 = z * x * cr - y * s
         val m32 = z * y * cr + x * s
         val m33 = z * z * cr + c
-        val t1 = mat [0] * m11 + mat [4] * m21 + mat [8] * m31
-        val t2 = mat [1] * m11 + mat [5] * m21 + mat [9] * m31
-        val t3 = mat [2] * m11 + mat [6] * m21 + mat [10] * m31
-        val t4 = mat [3] * m11 + mat [7] * m21 + mat [11] * m31
-        val t5 = mat [0] * m12 + mat [4] * m22 + mat [8] * m32
-        val t6 = mat [1] * m12 + mat [5] * m22 + mat [9] * m32
-        val t7 = mat [2] * m12 + mat [6] * m22 + mat [10] * m32
-        val t8 = mat [3] * m12 + mat [7] * m22 + mat [11] * m32
-        val t9 = mat [0] * m13 + mat [4] * m23 + mat [8] * m33
-        val t10 = mat [1] * m13 + mat [5] * m23 + mat [9] * m33
-        val t11 = mat [2] * m13 + mat [6] * m23 + mat [10] * m33
-        val t12 = mat [3] * m13 + mat [7] * m23 + mat [11] * m33
-        mat [0] = t1
-        mat [1] = t2
-        mat [2] = t3
-        mat [3] = t4
-        mat [4] = t5
-        mat [5] = t6
-        mat [6] = t7
-        mat [7] = t8
-        mat [8] = t9
-        mat [9] = t10
-        mat [10] = t11
-        mat [11] = t12
+        val t1 = mat[0] * m11 + mat[4] * m21 + mat[8] * m31
+        val t2 = mat[1] * m11 + mat[5] * m21 + mat[9] * m31
+        val t3 = mat[2] * m11 + mat[6] * m21 + mat[10] * m31
+        val t4 = mat[3] * m11 + mat[7] * m21 + mat[11] * m31
+        val t5 = mat[0] * m12 + mat[4] * m22 + mat[8] * m32
+        val t6 = mat[1] * m12 + mat[5] * m22 + mat[9] * m32
+        val t7 = mat[2] * m12 + mat[6] * m22 + mat[10] * m32
+        val t8 = mat[3] * m12 + mat[7] * m22 + mat[11] * m32
+        val t9 = mat[0] * m13 + mat[4] * m23 + mat[8] * m33
+        val t10 = mat[1] * m13 + mat[5] * m23 + mat[9] * m33
+        val t11 = mat[2] * m13 + mat[6] * m23 + mat[10] * m33
+        val t12 = mat[3] * m13 + mat[7] * m23 + mat[11] * m33
+        mat[0] = t1
+        mat[1] = t2
+        mat[2] = t3
+        mat[3] = t4
+        mat[4] = t5
+        mat[5] = t6
+        mat[6] = t7
+        mat[7] = t8
+        mat[8] = t9
+        mat[9] = t10
+        mat[10] = t11
+        mat[11] = t12
     }
 
     fun rotateX(angle: Float) {
@@ -286,7 +286,7 @@ class Matrix44CMO(vararg mat: Float) {
         return -det3x201x123 * mat[12] + det3x201x023 * mat[13] - det3x201x013 * mat[14] + det3x201x012 * mat[15]
     }
 
-    fun trace(): Float  = mat[0] + mat[5] + mat[10] + mat[15]
+    fun trace(): Float = mat[0] + mat[5] + mat[10] + mat[15]
 
     fun getTranslation(): Vector3 = Vector3(mat[12], mat[13], mat[14])
 
@@ -405,7 +405,8 @@ class Matrix44CMO(vararg mat: Float) {
 
         private val IDENTITY: Matrix44CMO = Matrix44CMO(1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f)
 
-        @JvmStatic val MATRIX44_RANGE: IntRange = IntRange(0, 15)
+        @JvmStatic
+        val MATRIX44_RANGE: IntRange = IntRange(0, 15)
 
         @JvmStatic
         fun zero() = IDENTITY.clone()

@@ -10,7 +10,7 @@ open class RenderPositionedBox(
     val heightFactor: Float? = null,
     alignment: AlignmentGeometry = BoxAlignment.CENTER,
     textDirection: Direction? = null,
-    child: RenderBox? = null
+    child: RenderBox? = null,
 ) : RenderAligningBox(
     alignment = alignment,
     textDirection = textDirection,

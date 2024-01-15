@@ -16,8 +16,8 @@ open class ProviderImage(
     scale: Float = 1f,
     opacity: Float = 1f,
     color: Int? = null,
-    colorBlendMode: BlendMode? = null
-): RawImage(
+    colorBlendMode: BlendMode? = null,
+) : RawImage(
     image = provider.invoke(),
     width = width,
     height = height,

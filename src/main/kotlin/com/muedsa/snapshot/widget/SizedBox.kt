@@ -8,7 +8,7 @@ import com.muedsa.snapshot.rendering.box.RenderConstrainedBox
 class SizedBox(
     val width: Float?,
     val height: Float?,
-    childBuilder: SingleWidgetBuilder?= null
+    childBuilder: SingleWidgetBuilder? = null,
 ) : SingleChildWidget(childBuilder = childBuilder) {
 
     protected val additionalConstraints by lazy {

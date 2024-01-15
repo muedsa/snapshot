@@ -62,20 +62,4 @@ abstract class BorderRadiusGeometry {
         result = 31 * result + bottomEnd.hashCode()
         return result
     }
-
-
-    companion object {
-
-        @JvmStatic
-        fun lerp(a: BorderRadiusGeometry?, b: BorderRadiusGeometry?, t: Float): BorderRadiusGeometry? {
-            if (a == b) {
-                return a
-            }
-            val ta = a ?: BorderRadius.ZERO
-            val tb = b ?: BorderRadius.ZERO
-
-
-            TODO()
-        }
-    }
 }

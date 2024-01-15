@@ -10,7 +10,7 @@ import kotlin.test.Test
 class SweepGradientTest {
 
     @Test
-    fun sweep_test(){
+    fun sweep_test() {
         val size = Size(600f, 600f)
         drawPainter("gradient/sweep", size = size) {
             val gradient = SweepGradient(
@@ -27,8 +27,9 @@ class SweepGradientTest {
             it.drawRect(rect, Paint().apply { this@apply.shader = shader })
         }
     }
+
     @Test
-    fun sweep_stops_test(){
+    fun sweep_stops_test() {
         val size = Size(600f, 600f)
         drawPainter("gradient/sweep_stops", size = size) {
             val gradient = SweepGradient(
@@ -48,7 +49,7 @@ class SweepGradientTest {
     }
 
     @Test
-    fun sweep_stops_transform_test(){
+    fun sweep_stops_transform_test() {
         val size = Size(600f, 600f)
         drawPainter("gradient/sweep_stops_transform", size = size) {
             val gradient = SweepGradient(

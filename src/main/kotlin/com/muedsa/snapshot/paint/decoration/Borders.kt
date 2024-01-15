@@ -8,7 +8,7 @@ fun paintBorder(
     top: BorderSide = BorderSide.NONE,
     right: BorderSide = BorderSide.NONE,
     bottom: BorderSide = BorderSide.NONE,
-    left: BorderSide = BorderSide.NONE
+    left: BorderSide = BorderSide.NONE,
 ) {
     // We draw the borders as filled shapes, unless the borders are hairline
     // borders, in which case we use PaintingStyle.stroke, with the stroke width

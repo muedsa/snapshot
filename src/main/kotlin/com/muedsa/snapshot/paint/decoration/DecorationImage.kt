@@ -1,7 +1,6 @@
 package com.muedsa.snapshot.paint.decoration
 
 
-
 import com.muedsa.geometry.BoxAlignment
 import com.muedsa.snapshot.paint.BoxFit
 import com.muedsa.snapshot.paint.ImageRepeat

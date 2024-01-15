@@ -18,7 +18,7 @@ class RenderIndexedStack(
     textDirection: Direction = Direction.LTR,
     fit: StackFit = StackFit.LOOSE,
     clipBehavior: ClipBehavior = ClipBehavior.HARD_EDGE,
-    children: Array<RenderBox>? = null
+    children: Array<RenderBox>? = null,
 ) : RenderStack(
     alignment = alignment,
     textDirection = textDirection,

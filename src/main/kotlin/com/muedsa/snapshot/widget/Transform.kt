@@ -11,7 +11,7 @@ class Transform(
     val transform: Matrix44CMO,
     val origin: Offset? = null,
     val alignment: BoxAlignment?,
-    childBuilder: SingleWidgetBuilder?= null
+    childBuilder: SingleWidgetBuilder? = null,
 ) : SingleChildWidget(childBuilder = childBuilder) {
 
 
@@ -26,10 +26,10 @@ class Transform(
 
         @JvmStatic
         fun rotate(
-            angle :Float,
+            angle: Float,
             origin: Offset? = null,
             alignment: BoxAlignment = BoxAlignment.CENTER,
-            childBuilder: SingleWidgetBuilder? = null
+            childBuilder: SingleWidgetBuilder? = null,
         ): Transform = Transform(
             transform = computeRotation(angle),
             origin = origin,
@@ -40,7 +40,7 @@ class Transform(
         @JvmStatic
         fun translate(
             offset: Offset,
-            childBuilder: SingleWidgetBuilder? = null
+            childBuilder: SingleWidgetBuilder? = null,
         ): Transform = Transform(
             transform = Matrix44CMO.translationValues(x = offset.x, y = offset.y, z = 0f),
             origin = null,

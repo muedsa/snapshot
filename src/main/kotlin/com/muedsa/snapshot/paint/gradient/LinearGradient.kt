@@ -2,7 +2,6 @@ package com.muedsa.snapshot.paint.gradient
 
 import com.muedsa.geometry.AlignmentGeometry
 import com.muedsa.geometry.BoxAlignment
-import com.muedsa.snapshot.paint.lerpColor
 import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.GradientStyle
 import org.jetbrains.skia.Rect
@@ -15,7 +14,7 @@ class LinearGradient(
     colors: IntArray,
     stops: FloatArray? = null,
     val tileMode: FilterTileMode = FilterTileMode.CLAMP,
-    transform: GradientTransform? = null
+    transform: GradientTransform? = null,
 ) : Gradient(
     colors = colors,
     stops = stops,
@@ -40,14 +39,4 @@ class LinearGradient(
             )
         )
     }
-
-    override fun scale(factor: Float): Gradient = LinearGradient(
-        begin = begin,
-        end = end,
-        colors = colors.map { lerpColor(null, it, factor)!! }.toIntArray(),
-        stops = stops!!,
-        tileMode = tileMode
-    )
-
-
 }

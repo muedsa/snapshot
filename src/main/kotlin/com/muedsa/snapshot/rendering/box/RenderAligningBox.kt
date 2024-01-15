@@ -7,7 +7,7 @@ import org.jetbrains.skia.paragraph.Direction
 abstract class RenderAligningBox(
     val alignment: AlignmentGeometry = BoxAlignment.CENTER,
     val textDirection: Direction? = null,
-    child : RenderBox? = null
+    child: RenderBox? = null,
 ) : RenderSingleChildBox(child = child) {
 
     val resolveAlignment: BoxAlignment = alignment.resolve(textDirection)

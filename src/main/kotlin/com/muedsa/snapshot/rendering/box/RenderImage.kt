@@ -24,10 +24,10 @@ class RenderImage(
     val alignment: BoxAlignment = BoxAlignment.CENTER,
     val repeat: ImageRepeat = ImageRepeat.NO_REPEAT,
     val centerSlice: Rect? = null,
-    val isAntiAlias: Boolean = false
+    val isAntiAlias: Boolean = false,
 ) : RenderBox() {
 
-    val colorFilter : ColorFilter? = color?.let { ColorFilter.makeBlend(it, colorBlendMode ?: BlendMode.SRC_IN) }
+    val colorFilter: ColorFilter? = color?.let { ColorFilter.makeBlend(it, colorBlendMode ?: BlendMode.SRC_IN) }
 
     private fun sizeForConstraints(constraints: BoxConstraints): Size {
         val temp = BoxConstraints.tightFor(
@@ -35,10 +35,12 @@ class RenderImage(
             height = height,
         ).enforce(constraints)
         return image?.let {
-            temp.constrainSizeAndAttemptToPreserveAspectRatio(Size(
-                it.width / scale,
-                it.height / scale,
-            ))
+            temp.constrainSizeAndAttemptToPreserveAspectRatio(
+                Size(
+                    it.width / scale,
+                    it.height / scale,
+                )
+            )
         } ?: temp.smallest
     }
 

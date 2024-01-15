@@ -10,7 +10,7 @@ import kotlin.test.Test
 class RadialGradientTest {
 
     @Test
-    fun radial_test(){
+    fun radial_test() {
         val size = Size(600f, 600f)
         drawPainter("gradient/radial", size = size) {
             val gradient = RadialGradient(
@@ -26,7 +26,7 @@ class RadialGradientTest {
     }
 
     @Test
-    fun radial_focal_test(){
+    fun radial_focal_test() {
         val size = Size(600f, 600f)
         drawPainter("gradient/radial_focal_bottom_center", size = size) {
             val gradient = RadialGradient(

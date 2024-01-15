@@ -10,7 +10,7 @@ class OverflowBox(
     val maxWidth: Float? = null,
     val minHeight: Float? = null,
     val maxHeight: Float? = null,
-    childBuilder: SingleWidgetBuilder?= null
+    childBuilder: SingleWidgetBuilder? = null,
 ) : SingleChildWidget(childBuilder = childBuilder) {
 
     override fun createRenderTree(): RenderBox = RenderConstrainedOverflowBox(

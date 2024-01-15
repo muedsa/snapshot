@@ -2,8 +2,8 @@ package com.muedsa.snapshot.widget
 
 import com.muedsa.snapshot.rendering.box.RenderBox
 
-abstract class ParentDataWidget (
-    childBuilder: SingleWidgetBuilder
+abstract class ParentDataWidget(
+    childBuilder: SingleWidgetBuilder,
 ) : SingleChildWidget(
     childBuilder = childBuilder
 ) {

@@ -10,7 +10,7 @@ class RenderTransform(
     transform: Matrix44CMO,
     val origin: Offset? = null,
     val alignment: BoxAlignment? = null,
-    child: RenderBox? = null
+    child: RenderBox? = null,
 ) : RenderSingleChildBox(child = child) {
 
     val transform: Matrix44CMO = transform.clone()
@@ -21,7 +21,7 @@ class RenderTransform(
                 return transform
             }
             val result = Matrix44CMO.identity()
-            if (origin != null){
+            if (origin != null) {
                 result.translate(origin.x, origin.y)
             }
             var translation: Offset? = null

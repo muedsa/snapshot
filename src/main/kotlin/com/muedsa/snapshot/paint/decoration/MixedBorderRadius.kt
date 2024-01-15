@@ -10,7 +10,7 @@ internal class MixedBorderRadius(
     override val topStart: Radius,
     override val topEnd: Radius,
     override val bottomStart: Radius,
-    override val bottomEnd: Radius
+    override val bottomEnd: Radius,
 ) : BorderRadiusGeometry() {
 
     operator fun unaryMinus(): MixedBorderRadius = MixedBorderRadius(

@@ -4,7 +4,6 @@ import com.muedsa.geometry.AlignmentGeometry
 import com.muedsa.geometry.BoxAlignment
 import com.muedsa.geometry.MATH_PI
 import com.muedsa.geometry.Offset
-import com.muedsa.snapshot.paint.lerpColor
 import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.GradientStyle
 import org.jetbrains.skia.Rect
@@ -18,7 +17,7 @@ class SweepGradient(
     colors: IntArray,
     stops: FloatArray? = null,
     val tileMode: FilterTileMode = FilterTileMode.CLAMP,
-    transform: GradientTransform? = null
+    transform: GradientTransform? = null,
 ) : Gradient(
     colors = colors,
     stops = stops,
@@ -40,14 +39,4 @@ class SweepGradient(
             )
         )
     }
-
-    override fun scale(factor: Float): Gradient = SweepGradient(
-        center = center,
-        startAngle = startAngle,
-        endAngle = endAngle,
-        colors = colors.map { lerpColor(null, it, factor)!! }.toIntArray(),
-        stops = stops!!,
-        tileMode = tileMode,
-    )
-
 }

@@ -1,6 +1,5 @@
 package com.muedsa.geometry
 
-import com.muedsa.snapshot.paint.lerpFloat
 import org.jetbrains.skia.Point
 import org.jetbrains.skia.Rect
 
@@ -49,23 +48,7 @@ open class Offset(val x: Float, val y: Float) : Comparable<Offset> {
     }
 
     companion object {
-        @JvmStatic val ZERO = Offset(0f, 0f)
-
         @JvmStatic
-        fun lerp(a: Offset?, b: Offset?, t: Float): Offset? {
-            return if (b == null) {
-                if (a == null) {
-                    null
-                } else {
-                    a * (1f - t)
-                }
-            } else {
-                if (a == null) {
-                    return b * t
-                } else {
-                    return Offset(lerpFloat(a.x, b.x, t), lerpFloat(a.y, b.y, t))
-                }
-            }
-        }
+        val ZERO = Offset(0f, 0f)
     }
 }

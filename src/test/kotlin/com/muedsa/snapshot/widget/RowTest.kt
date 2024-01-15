@@ -20,11 +20,13 @@ class RowTest {
                 var widget: Widget = Row(
                     crossAxisAlignment = crossAxisAlignment,
                     textBaseline = if (crossAxisAlignment == CrossAxisAlignment.BASELINE) BaselineMode.ALPHABETIC else null
-                ) { arrayOf(
-                    Container(width = 100f, height = 100f, color = Color.RED),
-                    Container(width = 300f, height = 300f, color = Color.GREEN),
-                    Container(width = 200f, height = 200f, color = Color.BLUE)
-                ) }
+                ) {
+                    arrayOf(
+                        Container(width = 100f, height = 100f, color = Color.RED),
+                        Container(width = 300f, height = 300f, color = Color.GREEN),
+                        Container(width = 200f, height = 200f, color = Color.BLUE)
+                    )
+                }
                 if (crossAxisAlignment == CrossAxisAlignment.STRETCH) {
                     widget = LimitedBox(
                         maxWidth = 1000f,
@@ -46,24 +48,30 @@ class RowTest {
             Row(
                 crossAxisAlignment = CrossAxisAlignment.BASELINE,
                 textBaseline = BaselineMode.ALPHABETIC
-            ) { arrayOf(
-                Row(
-                    crossAxisAlignment = CrossAxisAlignment.BASELINE,
-                    textBaseline = BaselineMode.ALPHABETIC
-                ) { arrayOf(
-                    SimpleText("test", fontSize = 30f, color = Color.RED),
-                    SimpleText("foo", fontSize = 20f, color = Color.GREEN),
-                    SimpleText("bar", fontSize = 40f, color = Color.BLUE)
-                ) },
-                Row(
-                    crossAxisAlignment = CrossAxisAlignment.BASELINE,
-                    textBaseline = BaselineMode.ALPHABETIC
-                ) { arrayOf(
-                    SimpleText("test", fontSize = 100f, color = Color.RED),
-                    SimpleText("foo", fontSize = 300f, color = Color.GREEN),
-                    SimpleText("bar", fontSize = 200f, color = Color.BLUE)
-                ) }
-            ) }
+            ) {
+                arrayOf(
+                    Row(
+                        crossAxisAlignment = CrossAxisAlignment.BASELINE,
+                        textBaseline = BaselineMode.ALPHABETIC
+                    ) {
+                        arrayOf(
+                            SimpleText("test", fontSize = 30f, color = Color.RED),
+                            SimpleText("foo", fontSize = 20f, color = Color.GREEN),
+                            SimpleText("bar", fontSize = 40f, color = Color.BLUE)
+                        )
+                    },
+                    Row(
+                        crossAxisAlignment = CrossAxisAlignment.BASELINE,
+                        textBaseline = BaselineMode.ALPHABETIC
+                    ) {
+                        arrayOf(
+                            SimpleText("test", fontSize = 100f, color = Color.RED),
+                            SimpleText("foo", fontSize = 300f, color = Color.GREEN),
+                            SimpleText("bar", fontSize = 200f, color = Color.BLUE)
+                        )
+                    }
+                )
+            }
         }
     }
 }

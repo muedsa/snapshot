@@ -48,7 +48,8 @@ abstract class RenderBox {
         var result: Float? = null
         try {
             result = computeDistanceToActualBaseline(baseline)
-        } catch (_: Throwable) { }
+        } catch (_: Throwable) {
+        }
         if (result == null && !onlyReal) {
             return definiteSize.height
         }

@@ -26,7 +26,12 @@ val testImagesDirection: Path = Path.of("testOutputs").apply {
 }
 
 @OptIn(ExperimentalStdlibApi::class)
-fun drawWidget(imagePathWithoutSuffix: String, debugInfo: String? = null, drawDebug: Boolean = false, singleWidgetBuilder: SingleWidgetBuilder) {
+fun drawWidget(
+    imagePathWithoutSuffix: String,
+    debugInfo: String? = null,
+    drawDebug: Boolean = false,
+    singleWidgetBuilder: SingleWidgetBuilder,
+) {
     var snapshot = Snapshot(
         background = Color.TRANSPARENT,
         widgetBuilder = singleWidgetBuilder,
@@ -38,18 +43,20 @@ fun drawWidget(imagePathWithoutSuffix: String, debugInfo: String? = null, drawDe
         snapshot = Snapshot(
             background = Color.TRANSPARENT
         ) {
-            Column { arrayOf(
-                RawImage(image = snapshotImage),
-                Container(
-                    padding = EdgeInsets.all(10f),
-                    color = Color.WHITE,
-                    constraints = BoxConstraints(
-                        maxWidth = snapshotImage.width.toFloat()
-                    )
-                ) {
-                    SimpleText(debugInfo)
-                }
-            ) }
+            Column {
+                arrayOf(
+                    RawImage(image = snapshotImage),
+                    Container(
+                        padding = EdgeInsets.all(10f),
+                        color = Color.WHITE,
+                        constraints = BoxConstraints(
+                            maxWidth = snapshotImage.width.toFloat()
+                        )
+                    ) {
+                        SimpleText(debugInfo)
+                    }
+                )
+            }
         }
         snapshot.draw()
     }
@@ -65,7 +72,7 @@ fun drawPainter(
     height: Float,
     debugInfo: String? = null,
     background: Int = Color.WHITE,
-    painter: (Canvas) ->Unit = {}
+    painter: (Canvas) -> Unit = {},
 ) {
     var h = height
     val debugInfoPainter: SimpleTextPainter? = debugInfo?.let {
@@ -94,7 +101,7 @@ fun drawPainter(
     size: Size,
     background: Int = Color.WHITE,
     debugInfo: String? = null,
-    painter: (Canvas) ->Unit = {}
+    painter: (Canvas) -> Unit = {},
 ) {
     drawPainter(
         imagePathWithoutSuffix = imagePathWithoutSuffix,

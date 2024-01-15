@@ -18,7 +18,7 @@ open class RawImage(
     val scale: Float = 1f,
     val opacity: Float = 1f,
     val color: Int? = null,
-    val colorBlendMode: BlendMode? = null
+    val colorBlendMode: BlendMode? = null,
 ) : Widget() {
 
     override fun createRenderTree(): RenderBox {

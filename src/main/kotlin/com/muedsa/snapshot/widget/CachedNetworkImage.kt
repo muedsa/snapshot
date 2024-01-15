@@ -19,7 +19,7 @@ open class CachedNetworkImage(
     opacity: Float = 1f,
     color: Int? = null,
     colorBlendMode: BlendMode? = null,
-    val cache: NetworkImageCache = NetworkImageCacheManager.defaultCache
+    val cache: NetworkImageCache = NetworkImageCacheManager.defaultCache,
 ) : ProviderImage(
     provider = { Image.makeFromEncoded(cache.getImage(url)) },
     width = width,

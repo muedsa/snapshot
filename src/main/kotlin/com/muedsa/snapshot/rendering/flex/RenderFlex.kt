@@ -214,22 +214,27 @@ open class RenderFlex(
                 leadingSpace = 0f
                 betweenSpace = 0f
             }
+
             MainAxisAlignment.END -> {
                 leadingSpace = remainingSpace
                 betweenSpace = 0f
             }
+
             MainAxisAlignment.CENTER -> {
                 leadingSpace = remainingSpace / 2f
                 betweenSpace = 0f
             }
+
             MainAxisAlignment.SPACE_BETWEEN -> {
                 leadingSpace = 0f
-                betweenSpace =  if (childCount > 1) remainingSpace / (childCount - 1) else 0f
+                betweenSpace = if (childCount > 1) remainingSpace / (childCount - 1) else 0f
             }
+
             MainAxisAlignment.SPACE_AROUND -> {
                 leadingSpace = if (childCount > 0) remainingSpace / childCount else 0f
                 betweenSpace = leadingSpace / 2
             }
+
             MainAxisAlignment.SPACE_EVENLY -> {
                 val bs = if (childCount > 0) remainingSpace / (childCount + 1) else 0f
                 leadingSpace = if (childCount > 0) remainingSpace / (childCount + 1) else 0f

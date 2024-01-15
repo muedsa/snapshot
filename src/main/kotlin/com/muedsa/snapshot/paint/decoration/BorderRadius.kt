@@ -8,7 +8,7 @@ class BorderRadius(
     override val topLeft: Radius,
     override val topRight: Radius,
     override val bottomLeft: Radius,
-    override val bottomRight: Radius
+    override val bottomRight: Radius,
 ) : BorderRadiusGeometry() {
 
     override val topStart: Radius = topLeft
@@ -72,6 +72,7 @@ class BorderRadius(
         bottomLeft = bottomLeft - other,
         bottomRight = bottomRight - other
     )
+
     operator fun times(other: Float): BorderRadius = only(
         topLeft = topLeft * other,
         topRight = topRight * other,
@@ -97,7 +98,7 @@ class BorderRadius(
         topLeft: Radius? = null,
         topRight: Radius? = null,
         bottomLeft: Radius? = null,
-        bottomRight: Radius? = null
+        bottomRight: Radius? = null,
     ): BorderRadius = only(
         topLeft = topLeft ?: this.topLeft,
         topRight = topRight ?: this.topRight,
@@ -106,7 +107,8 @@ class BorderRadius(
     )
 
     companion object {
-        @JvmStatic val ZERO = BorderRadius(
+        @JvmStatic
+        val ZERO = BorderRadius(
             topLeft = Radius.ZERO,
             topRight = Radius.ZERO,
             bottomLeft = Radius.ZERO,
@@ -118,7 +120,7 @@ class BorderRadius(
             topLeft: Radius = Radius.ZERO,
             topRight: Radius = Radius.ZERO,
             bottomLeft: Radius = Radius.ZERO,
-            bottomRight: Radius = Radius.ZERO
+            bottomRight: Radius = Radius.ZERO,
         ): BorderRadius = BorderRadius(
             topLeft = topLeft,
             topRight = topRight,
@@ -152,25 +154,5 @@ class BorderRadius(
             bottomLeft = right,
             bottomRight = right
         )
-
-        @JvmStatic
-        fun lerp(a: BorderRadius?, b: BorderRadius?, t: Float): BorderRadius? {
-            if (a == b) {
-                return a
-            }
-            if (a == null) {
-                return b!! * t
-            }
-            if (b == null) {
-                return a * (1f - t)
-            }
-
-            return only(
-                topLeft = Radius.lerp(a.topLeft, b.topLeft, t)!!,
-                topRight = Radius.lerp(a.topRight, b.topRight, t)!!,
-                bottomLeft = Radius.lerp(a.bottomLeft, b.bottomLeft, t)!!,
-                bottomRight = Radius.lerp(a.bottomRight, b.bottomRight, t)!!
-            )
-        }
     }
 }

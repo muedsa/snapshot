@@ -9,15 +9,32 @@ open class BoxAlignment(override val x: Float, override val y: Float) : Alignmen
     override fun resolve(direction: Direction?): BoxAlignment = this
 
     companion object {
-        @JvmStatic val TOP_LEFT = BoxAlignment(-1f, -1f)
-        @JvmStatic val TOP_CENTER = BoxAlignment(0f, -1f)
-        @JvmStatic val TOP_RIGHT = BoxAlignment(1f, -1f)
-        @JvmStatic val CENTER_LEFT = BoxAlignment(-1f, 0f)
-        @JvmStatic val CENTER = BoxAlignment(0f, 0f)
-        @JvmStatic val CENTER_RIGHT = BoxAlignment(1f, 0f)
-        @JvmStatic val BOTTOM_LEFT = BoxAlignment(-1f, 1f)
-        @JvmStatic val BOTTOM_CENTER = BoxAlignment(0f, 1f)
-        @JvmStatic val BOTTOM_RIGHT = BoxAlignment(1f, 1f)
+        @JvmStatic
+        val TOP_LEFT = BoxAlignment(-1f, -1f)
+
+        @JvmStatic
+        val TOP_CENTER = BoxAlignment(0f, -1f)
+
+        @JvmStatic
+        val TOP_RIGHT = BoxAlignment(1f, -1f)
+
+        @JvmStatic
+        val CENTER_LEFT = BoxAlignment(-1f, 0f)
+
+        @JvmStatic
+        val CENTER = BoxAlignment(0f, 0f)
+
+        @JvmStatic
+        val CENTER_RIGHT = BoxAlignment(1f, 0f)
+
+        @JvmStatic
+        val BOTTOM_LEFT = BoxAlignment(-1f, 1f)
+
+        @JvmStatic
+        val BOTTOM_CENTER = BoxAlignment(0f, 1f)
+
+        @JvmStatic
+        val BOTTOM_RIGHT = BoxAlignment(1f, 1f)
 
 
         fun stringify(x: Float, y: Float): String {

@@ -1,7 +1,5 @@
 package com.muedsa.geometry
 
-import com.muedsa.snapshot.paint.lerpFloat
-
 class Radius(val x: Float, val y: Float) {
 
     fun coerce(minimum: Radius?, maximum: Radius? = null): Radius = elliptical(
@@ -65,28 +63,8 @@ class Radius(val x: Float, val y: Float) {
 
         @JvmStatic
         fun circular(radius: Float): Radius = elliptical(radius, radius)
-        @JvmStatic
-        fun elliptical(x: Float, y: Float): Radius = Radius(x, y)
 
         @JvmStatic
-        fun lerp(a: Radius?, b: Radius?, t: Float): Radius? {
-            if (b == null) {
-                if (a == null) {
-                    return null
-                } else {
-                    val k: Float = 1f - t
-                    return elliptical(x = a.x * k, y = a.y * k)
-                }
-            } else {
-                if (a == null) {
-                    return elliptical(x = b.x * t, y = b.y * t)
-                } else {
-                    return elliptical(
-                        x = lerpFloat(a.x, b.x, t),
-                        y = lerpFloat(a.y, b.y, t)
-                    )
-                }
-            }
-        }
+        fun elliptical(x: Float, y: Float): Radius = Radius(x, y)
     }
 }

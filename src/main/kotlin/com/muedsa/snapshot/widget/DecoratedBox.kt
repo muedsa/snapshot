@@ -8,7 +8,7 @@ import com.muedsa.snapshot.rendering.box.RenderDecoratedBox
 class DecoratedBox(
     val decoration: Decoration,
     val position: DecorationPosition = DecorationPosition.BACKGROUND,
-    childBuilder: SingleWidgetBuilder?= null
+    childBuilder: SingleWidgetBuilder? = null,
 ) : SingleChildWidget(childBuilder = childBuilder) {
     override fun createRenderTree(): RenderBox = RenderDecoratedBox(
         decoration = decoration,

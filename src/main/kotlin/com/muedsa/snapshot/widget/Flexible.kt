@@ -7,10 +7,10 @@ import com.muedsa.snapshot.rendering.flex.FlexParentData
 open class Flexible(
     val flex: Int = 1,
     val fit: FlexFit = FlexFit.LOOSE,
-    childBuilder: SingleWidgetBuilder
+    childBuilder: SingleWidgetBuilder,
 ) : ParentDataWidget(
     childBuilder = childBuilder
-){
+) {
     override fun applyParentData(renderBox: RenderBox) {
         assert(renderBox.parentData is FlexParentData)
         val parentData: FlexParentData = renderBox.parentData as FlexParentData

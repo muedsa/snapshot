@@ -9,7 +9,7 @@ import org.jetbrains.skia.Path
 class ClipPath(
     val clipper: ((Size) -> Path)?,
     val clipBehavior: ClipBehavior = ClipBehavior.ANTI_ALIAS,
-    childBuilder: SingleWidgetBuilder?= null
+    childBuilder: SingleWidgetBuilder? = null,
 ) : SingleChildWidget(childBuilder = childBuilder) {
 
     override fun createRenderTree(): RenderBox = RenderClipPath(

@@ -16,7 +16,7 @@ object NetworkImageCacheManager {
         }
     }
 
-    fun getOrDefault(name: String?): NetworkImageCache = if(name != null) this[name] ?: defaultCache else defaultCache
+    fun getOrDefault(name: String?): NetworkImageCache = if (name != null) this[name] ?: defaultCache else defaultCache
 
     operator fun get(name: String) = map[name]
 }

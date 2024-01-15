@@ -35,14 +35,6 @@ abstract class BoxBorder : ShapeBorder() {
 
     companion object {
 
-        @JvmStatic
-        fun lerp(a: BoxBorder?, b: BoxBorder?, t: Float): BoxBorder? {
-            if (a == b) {
-                return a
-            }
-            TODO()
-        }
-
         fun paintUniformBorderWithRadius(
             canvas: Canvas,
             rect: Rect,
@@ -99,7 +91,12 @@ abstract class BoxBorder : ShapeBorder() {
             )
             val outer: RRect = inflateRRect(
                 rect = borderRect,
-                insets = EdgeInsets.fromLTRB(left.strokeOutset, top.strokeOutset, right.strokeOutset, bottom.strokeOutset)
+                insets = EdgeInsets.fromLTRB(
+                    left.strokeOutset,
+                    top.strokeOutset,
+                    right.strokeOutset,
+                    bottom.strokeOutset
+                )
             )
             canvas.drawDRRect(outer = outer, inner = inner, paint = paint)
         }
@@ -111,7 +108,10 @@ abstract class BoxBorder : ShapeBorder() {
             bottom = rect.bottom + insets.bottom,
             topLeft = (rect.tlRadius + Radius.elliptical(insets.left, insets.top)).coerce(minimum = Radius.ZERO),
             topRight = (rect.trRadius + Radius.elliptical(insets.right, insets.top)).coerce(minimum = Radius.ZERO),
-            bottomRight = (rect.brRadius + Radius.elliptical(insets.right, insets.bottom)).coerce(minimum = Radius.ZERO),
+            bottomRight = (rect.brRadius + Radius.elliptical(
+                insets.right,
+                insets.bottom
+            )).coerce(minimum = Radius.ZERO),
             bottomLeft = (rect.blRadius + Radius.elliptical(insets.left, insets.bottom)).coerce(minimum = Radius.ZERO),
         )
 
@@ -122,7 +122,10 @@ abstract class BoxBorder : ShapeBorder() {
             bottom = rect.bottom - insets.bottom,
             topLeft = (rect.tlRadius - Radius.elliptical(insets.left, insets.top)).coerce(minimum = Radius.ZERO),
             topRight = (rect.trRadius - Radius.elliptical(insets.right, insets.top)).coerce(minimum = Radius.ZERO),
-            bottomRight = (rect.brRadius - Radius.elliptical(insets.right, insets.bottom)).coerce(minimum = Radius.ZERO),
+            bottomRight = (rect.brRadius - Radius.elliptical(
+                insets.right,
+                insets.bottom
+            )).coerce(minimum = Radius.ZERO),
             bottomLeft = (rect.blRadius - Radius.elliptical(insets.left, insets.bottom)).coerce(minimum = Radius.ZERO),
         )
 

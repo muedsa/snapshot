@@ -1,7 +1,7 @@
 package com.muedsa.snapshot.render
 
-import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.noLimitedLayout
+import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderConstrainedBox
 import kotlin.test.Test
 import kotlin.test.expect

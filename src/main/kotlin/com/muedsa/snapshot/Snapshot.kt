@@ -11,7 +11,7 @@ import kotlin.math.ceil
 class Snapshot(
     val background: Int = Color.makeARGB(255, 255, 255, 255),
     val debug: Boolean = false,
-    val widgetBuilder: SingleWidgetBuilder
+    val widgetBuilder: SingleWidgetBuilder,
 ) {
 
     var isDrawed: Boolean = false
@@ -31,7 +31,8 @@ class Snapshot(
         if (rootSize.isInfinite) {
             throw IllegalArgumentException("layout size is infinite")
         }
-        val surface = Surface.makeRaster(ImageInfo.makeN32Premul(ceil(rootSize.width).toInt(), ceil(rootSize.height).toInt()))
+        val surface =
+            Surface.makeRaster(ImageInfo.makeN32Premul(ceil(rootSize.width).toInt(), ceil(rootSize.height).toInt()))
         surface.canvas.clear(background)
         val context = PaintingContext(canvas = surface.canvas, debug = debug)
         context.paintChild(rootRenderBox, Offset.ZERO)

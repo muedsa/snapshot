@@ -9,7 +9,7 @@ data class BoxConstraints(
     val minWidth: Float = 0f,
     val maxWidth: Float = Float.POSITIVE_INFINITY,
     val minHeight: Float = 0f,
-    val maxHeight: Float = Float.POSITIVE_INFINITY
+    val maxHeight: Float = Float.POSITIVE_INFINITY,
 ) {
     init {
         assert(maxWidth <= Float.POSITIVE_INFINITY)
@@ -22,7 +22,7 @@ data class BoxConstraints(
         minWidth: Float? = null,
         maxWidth: Float? = null,
         minHeight: Float? = null,
-        maxHeight: Float? = null
+        maxHeight: Float? = null,
     ): BoxConstraints = BoxConstraints(
         minWidth = minWidth ?: this.minWidth,
         maxWidth = maxWidth ?: this.maxWidth,
@@ -178,7 +178,7 @@ data class BoxConstraints(
         @JvmStatic
         fun tightForFinite(
             width: Float = Float.POSITIVE_INFINITY,
-            height: Float = Float.POSITIVE_INFINITY
+            height: Float = Float.POSITIVE_INFINITY,
         ) = BoxConstraints(
             minWidth = if (width != Float.POSITIVE_INFINITY) width else 0f,
             maxWidth = if (width != Float.POSITIVE_INFINITY) width else Float.POSITIVE_INFINITY,

@@ -9,7 +9,7 @@ import com.muedsa.snapshot.rendering.flex.MainAxisSize
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.Direction
 
-class Column (
+class Column(
     mainAxisAlignment: MainAxisAlignment = MainAxisAlignment.START,
     mainAxisSize: MainAxisSize = MainAxisSize.MAX,
     crossAxisAlignment: CrossAxisAlignment = CrossAxisAlignment.CENTER,
@@ -17,9 +17,9 @@ class Column (
     verticalDirection: VerticalDirection = VerticalDirection.DOWN,
     textBaseline: BaselineMode? = null,
     clipBehavior: ClipBehavior = ClipBehavior.NONE,
-    childrenBuilder: MultiWidgetBuilder? = null
-): Flex(
-    direction =Axis.VERTICAL,
+    childrenBuilder: MultiWidgetBuilder? = null,
+) : Flex(
+    direction = Axis.VERTICAL,
     mainAxisSize = mainAxisSize,
     mainAxisAlignment = mainAxisAlignment,
     crossAxisAlignment = crossAxisAlignment,

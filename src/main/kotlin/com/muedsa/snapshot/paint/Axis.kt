@@ -8,7 +8,7 @@ enum class Axis {
     VERTICAL,
     ;
 
-    fun flipAxis(): Axis =  when (this) {
+    fun flipAxis(): Axis = when (this) {
         HORIZONTAL -> VERTICAL
         VERTICAL -> HORIZONTAL
     }

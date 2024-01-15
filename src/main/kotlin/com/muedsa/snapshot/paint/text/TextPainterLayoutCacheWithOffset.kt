@@ -10,7 +10,7 @@ class TextPainterLayoutCacheWithOffset(
     val textAlignment: Float,
     val minWidth: Float,
     val maxWidth: Float,
-    val widthBasis: TextWidthBasis
+    val widthBasis: TextWidthBasis,
 ) {
 
     init {
@@ -64,7 +64,7 @@ class TextPainterLayoutCacheWithOffset(
             return false
         }
         val maxIntrinsicWidth: Float = paragraph.maxIntrinsicWidth
-        if ((paragraph.maxWidth - maxIntrinsicWidth) > - precisionErrorTolerance && (maxWidth - maxIntrinsicWidth) > -precisionErrorTolerance) {
+        if ((paragraph.maxWidth - maxIntrinsicWidth) > -precisionErrorTolerance && (maxWidth - maxIntrinsicWidth) > -precisionErrorTolerance) {
             // Adjust the paintOffset and contentWidth to the new input constraints.
             contentWidth = newContentWidth
             return true
@@ -73,8 +73,13 @@ class TextPainterLayoutCacheWithOffset(
     }
 
     companion object {
-        private fun contentWidthFor(minWidth: Float, maxWidth: Float, widthBasis: TextWidthBasis, layout: TextLayout): Float =
-            when(widthBasis) {
+        private fun contentWidthFor(
+            minWidth: Float,
+            maxWidth: Float,
+            widthBasis: TextWidthBasis,
+            layout: TextLayout,
+        ): Float =
+            when (widthBasis) {
                 TextWidthBasis.PARENT -> layout.longestLine.coerceIn(minWidth, maxWidth)
                 TextWidthBasis.LONGESTLINE -> layout.maxIntrinsicLineExtent.coerceIn(minWidth, maxWidth)
             }

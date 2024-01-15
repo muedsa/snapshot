@@ -127,7 +127,8 @@ class Border(
         if (visibleColors.size == 1 &&
             !hasHairlineBorder &&
             (shape == BoxShape.CIRCLE ||
-                    (borderRadius != null && borderRadius != BorderRadius.ZERO))) {
+                    (borderRadius != null && borderRadius != BorderRadius.ZERO))
+        ) {
             paintNonUniformBorder(
                 canvas = canvas,
                 rect = rect,

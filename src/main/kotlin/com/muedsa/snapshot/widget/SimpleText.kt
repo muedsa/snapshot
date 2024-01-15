@@ -11,7 +11,7 @@ class SimpleText(
     val color: Int = Color.BLACK,
     val fontSize: Float = 14f,
     val fontFamilyName: Array<String>? = null,
-    val fontStyle: FontStyle = FontStyle.NORMAL
+    val fontStyle: FontStyle = FontStyle.NORMAL,
 ) : Widget() {
 
     override fun createRenderTree(): RenderBox = RenderSimpleText(

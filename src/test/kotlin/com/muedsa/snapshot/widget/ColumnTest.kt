@@ -19,13 +19,15 @@ class ColumnTest {
                 var widget: Widget = Column(
                     crossAxisAlignment = crossAxisAlignment,
                     textBaseline = if (crossAxisAlignment == CrossAxisAlignment.BASELINE) BaselineMode.ALPHABETIC else null
-                ) { arrayOf(
-                    Container(width = 100f, height = 100f, color = Color.RED),
-                    Container(width = 300f, height = 300f, color = Color.GREEN),
-                    Container(width = 200f, height = 200f, color = Color.BLUE)
-                ) }
+                ) {
+                    arrayOf(
+                        Container(width = 100f, height = 100f, color = Color.RED),
+                        Container(width = 300f, height = 300f, color = Color.GREEN),
+                        Container(width = 200f, height = 200f, color = Color.BLUE)
+                    )
+                }
                 if (crossAxisAlignment == CrossAxisAlignment.STRETCH) {
-                    widget =LimitedBox(
+                    widget = LimitedBox(
                         maxWidth = 1000f,
                         maxHeight = 1000f,
                     ) {

@@ -16,7 +16,7 @@ class RenderSimpleText(
     val color: Int = Color.BLACK,
     val fontSize: Float = 14f,
     val fontFamilyName: Array<String>? = null,
-    val fontStyle: FontStyle = FontStyle.NORMAL
+    val fontStyle: FontStyle = FontStyle.NORMAL,
 ) : RenderBox() {
 
     val textPainter: SimpleTextPainter = SimpleTextPainter(
@@ -34,7 +34,7 @@ class RenderSimpleText(
     }
 
     private fun layoutTextWithConstraints(constraints: BoxConstraints) {
-        textPainter.layout(minWidth = constraints.minWidth, maxWidth= constraints.maxWidth)
+        textPainter.layout(minWidth = constraints.minWidth, maxWidth = constraints.maxWidth)
     }
 
     override fun performLayout() {
@@ -51,8 +51,8 @@ class RenderSimpleText(
     override fun paint(context: PaintingContext, offset: Offset) {
         layoutTextWithConstraints(definiteConstraints)
         if (needsClipping) {
-            context.doClipRect(offset = offset, clipRect = Offset.ZERO combine definiteSize) {
-                c, o -> textPainter.paint(c.canvas, o)
+            context.doClipRect(offset = offset, clipRect = Offset.ZERO combine definiteSize) { c, o ->
+                textPainter.paint(c.canvas, o)
             }
         } else {
             textPainter.paint(context.canvas, offset)

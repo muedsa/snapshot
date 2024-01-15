@@ -50,7 +50,7 @@ class RenderFlexTest {
         }
 
         Axis.entries.forEachIndexed { directionIndex, direction ->
-            MainAxisAlignment.entries.forEachIndexed{ mainAxisAlignmentIndex, mainAxisAlignment ->
+            MainAxisAlignment.entries.forEachIndexed { mainAxisAlignmentIndex, mainAxisAlignment ->
                 CrossAxisAlignment.entries.forEachIndexed { crossAxisAlignmentIndex, crossAxisAlignment ->
                     val children: Array<RenderBox> = Array(childSizeArr.size) {
                         val childSize = childSizeArr[it]
@@ -98,13 +98,13 @@ class RenderFlexTest {
         size: Size,
         children: Array<RenderBox>,
         childSizeArr: Array<Size>,
-        space: Float
+        space: Float,
     ) {
         assert(renderFlex.definiteSize == size) {
             "$renderFlex \n${renderFlex.definiteSize} != $size"
         }
         println(renderFlex)
-        children.forEachIndexed{ childIndex: Int, child: RenderBox ->
+        children.forEachIndexed { childIndex: Int, child: RenderBox ->
             val childOffset = child.parentData?.offset!!
             val mainAxisOffset = getMainAxisOffset(offset = childOffset, direction = renderFlex.direction)
             val crossAxisOffset = getCrossAxisOffset(offset = childOffset, direction = renderFlex.direction)
@@ -143,10 +143,14 @@ class RenderFlexTest {
             childParentData.flex = index + 1
             mainAxisSize += childParentData.flex!! * defaultSize
         }
-        renderFlex.layout(BoxConstraints.loose(Size(
-            width = if(renderFlex.direction == Axis.HORIZONTAL) mainAxisSize else defaultSize,
-            height = if(renderFlex.direction == Axis.HORIZONTAL) defaultSize else mainAxisSize,
-        )))
+        renderFlex.layout(
+            BoxConstraints.loose(
+                Size(
+                    width = if (renderFlex.direction == Axis.HORIZONTAL) mainAxisSize else defaultSize,
+                    height = if (renderFlex.direction == Axis.HORIZONTAL) defaultSize else mainAxisSize,
+                )
+            )
+        )
 
         println("renderFlex ${renderFlex.definiteSize}")
         children.forEachIndexed { index, child ->
@@ -200,10 +204,12 @@ class RenderFlexTest {
                 mainAxisSize += expandedSpace
             }
         }
-        renderFlex.layout(BoxConstraints.expand(
-            width = if(renderFlex.direction == Axis.HORIZONTAL) mainAxisSize else defaultSize,
-            height = if(renderFlex.direction == Axis.HORIZONTAL) defaultSize else mainAxisSize,
-        ))
+        renderFlex.layout(
+            BoxConstraints.expand(
+                width = if (renderFlex.direction == Axis.HORIZONTAL) mainAxisSize else defaultSize,
+                height = if (renderFlex.direction == Axis.HORIZONTAL) defaultSize else mainAxisSize,
+            )
+        )
 
         println("renderFlex ${renderFlex.definiteSize}, expandIndex=$expandIndex, expandedSpace=$expandedSpace")
         children.forEachIndexed { index, child ->
@@ -219,7 +225,7 @@ class RenderFlexTest {
                     childParentData.offset.y
                 }
             }
-            val childMainAxisSize = defaultSize + if(index == expandIndex) expandedSpace else 0f
+            val childMainAxisSize = defaultSize + if (index == expandIndex) expandedSpace else 0f
             expect(childMainAxisSize, message = "child$index, size=${child.definiteSize}") {
                 if (renderFlex.direction == Axis.HORIZONTAL) {
                     child.definiteSize.width
@@ -233,13 +239,13 @@ class RenderFlexTest {
 
     companion object {
         private fun getMainAxisOffset(offset: Offset, direction: Axis): Float =
-            when(direction) {
+            when (direction) {
                 Axis.HORIZONTAL -> offset.x
                 Axis.VERTICAL -> offset.y
             }
 
         private fun getCrossAxisOffset(offset: Offset, direction: Axis): Float =
-            when(direction) {
+            when (direction) {
                 Axis.HORIZONTAL -> offset.y
                 Axis.VERTICAL -> offset.x
             }

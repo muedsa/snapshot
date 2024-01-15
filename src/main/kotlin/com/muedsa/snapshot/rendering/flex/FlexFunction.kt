@@ -4,9 +4,13 @@ import com.muedsa.snapshot.VerticalDirection
 import com.muedsa.snapshot.paint.Axis
 import org.jetbrains.skia.paragraph.Direction
 
-internal fun startIsTopLeft(direction: Axis, textDirection: Direction? = null, verticalDirection: VerticalDirection? = null): Boolean? =
+internal fun startIsTopLeft(
+    direction: Axis,
+    textDirection: Direction? = null,
+    verticalDirection: VerticalDirection? = null,
+): Boolean? =
     // If the relevant value of textDirection or verticalDirection is null, this returns null too.
-    when(direction) {
+    when (direction) {
         Axis.HORIZONTAL -> when (textDirection) {
             Direction.LTR -> true
             Direction.RTL -> false

@@ -9,7 +9,7 @@ import org.jetbrains.skia.*
 
 class RenderPadding(
     val padding: EdgeInsets,
-    child: RenderBox? = null
+    child: RenderBox? = null,
 ) : RenderSingleChildBox(child = child) {
 
     override fun performLayout() {

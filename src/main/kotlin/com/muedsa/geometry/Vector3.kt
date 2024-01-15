@@ -6,6 +6,7 @@ import kotlin.math.sqrt
 
 class Vector3(vararg storage: Float) {
     val storage: FloatArray
+
     init {
         assert(storage.size == 3)
         this.storage = storage

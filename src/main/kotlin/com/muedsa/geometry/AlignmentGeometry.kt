@@ -14,6 +14,7 @@ abstract class AlignmentGeometry {
         val centerY: Float = other.y / 2f
         return Offset((centerX + x * centerX), (centerY + y * centerY))
     }
+
     fun alongSize(other: Size): Offset {
         val centerX: Float = other.width / 2f
         val centerY: Float = other.height / 2f
@@ -31,7 +32,7 @@ abstract class AlignmentGeometry {
 
     fun inscribe(size: Size, rect: Rect): Rect {
         val halfWidthDelta: Float = (rect.width - size.width) / 2f
-        val halfHeightDelta: Float  = (rect.height - size.height) / 2f
+        val halfHeightDelta: Float = (rect.height - size.height) / 2f
         return Rect.makeXYWH(
             rect.left + halfWidthDelta + x * halfWidthDelta,
             rect.top + halfHeightDelta + y * halfHeightDelta,

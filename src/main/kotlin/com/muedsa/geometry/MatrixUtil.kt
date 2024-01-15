@@ -18,7 +18,8 @@ fun getAsTranslation(transform: Matrix44CMO): Offset? {
         transform.mat[10] == 1f &&
         transform.mat[11] == 0f &&
         transform.mat[14] == 0f && // bottom of col 4 (transform.mat 12 and 13 are the x and y offsets)
-        transform.mat[15] == 1f) {
+        transform.mat[15] == 1f
+    ) {
         Offset(transform.mat[12], transform.mat[13])
     } else null
 }

@@ -7,7 +7,7 @@ import org.jetbrains.skia.Path
 import org.jetbrains.skia.Rect
 
 internal class BoxDecorationPainter(
-    val decoration: BoxDecoration
+    val decoration: BoxDecoration,
 ) : BoxPainter() {
 
     var cachedBackgroundPaint: Paint? = null
@@ -19,7 +19,8 @@ internal class BoxDecorationPainter(
 
         if (cachedBackgroundPaint == null ||
             (decoration.gradient != null &&
-                    rectForCachedBackgroundPaint != rect)) {
+                    rectForCachedBackgroundPaint != rect)
+        ) {
             val paint: Paint = Paint()
             if (decoration.backgroundBlendMode != null) {
                 paint.blendMode = decoration.backgroundBlendMode
@@ -39,13 +40,14 @@ internal class BoxDecorationPainter(
 
 
     private fun paintBox(canvas: Canvas, rect: Rect, paint: Paint) {
-        when(decoration.shape) {
+        when (decoration.shape) {
             BoxShape.CIRCLE -> {
                 assert(decoration.borderRadius == null)
                 val center: Offset = rect.center
                 val radius: Float = rect.shortestSide / 2f
                 canvas.drawCircle(x = center.x, y = center.y, radius = radius, paint = paint)
             }
+
             BoxShape.RECTANGLE -> {
                 if (decoration.borderRadius == null ||
                     decoration.borderRadius == BorderRadius.ZERO
@@ -81,7 +83,7 @@ internal class BoxDecorationPainter(
             imagePainter = decoration.image.createPainter()
         }
         var clipPath: Path? = null
-        when(decoration.shape) {
+        when (decoration.shape) {
             BoxShape.CIRCLE -> {
                 assert(decoration.borderRadius == null)
                 val center: Offset = rect.center
@@ -89,6 +91,7 @@ internal class BoxDecorationPainter(
                 val square: Rect = makeRectFromCircle(center = center, radius = radius)
                 clipPath = Path().addOval(square)
             }
+
             BoxShape.RECTANGLE -> {
                 if (decoration.borderRadius != null) {
                     clipPath = Path().addRRect(decoration.borderRadius.toRRect(rect))

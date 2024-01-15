@@ -6,7 +6,7 @@ import com.muedsa.snapshot.rendering.box.RenderPadding
 
 class Padding(
     val padding: EdgeInsets,
-    childBuilder: SingleWidgetBuilder?= null
+    childBuilder: SingleWidgetBuilder? = null,
 ) : SingleChildWidget(childBuilder = childBuilder) {
 
     override fun createRenderTree(): RenderBox = RenderPadding(padding, child = child?.createRenderTree())

@@ -8,7 +8,7 @@ import com.muedsa.snapshot.rendering.box.RenderSizedOverflowBox
 class SizedOverflowBox(
     val size: Size,
     val alignment: BoxAlignment = BoxAlignment.CENTER,
-    childBuilder: SingleWidgetBuilder?= null
+    childBuilder: SingleWidgetBuilder? = null,
 ) : SingleChildWidget(childBuilder = childBuilder) {
 
     override fun createRenderTree(): RenderBox =

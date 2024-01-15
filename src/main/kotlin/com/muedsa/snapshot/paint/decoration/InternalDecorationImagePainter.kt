@@ -7,7 +7,7 @@ import org.jetbrains.skia.Path
 import org.jetbrains.skia.Rect
 
 internal class InternalDecorationImagePainter(
-    private val details: DecorationImage
+    private val details: DecorationImage,
 ) : DecorationImagePainter {
 
     override fun paint(canvas: Canvas, rect: Rect, clipPath: Path?, blend: Float, blendMode: BlendMode) {

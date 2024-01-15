@@ -10,7 +10,7 @@ import kotlin.test.Test
 class LinearGradientTest {
 
     @Test
-    fun linear_test(){
+    fun linear_test() {
         val size = Size(600f, 200f)
         drawPainter("gradient/linear", size = size) {
             val gradient = LinearGradient(

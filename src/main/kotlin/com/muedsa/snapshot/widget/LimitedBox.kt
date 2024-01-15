@@ -6,7 +6,7 @@ import com.muedsa.snapshot.rendering.box.RenderLimitedBox
 class LimitedBox(
     val maxWidth: Float = Float.POSITIVE_INFINITY,
     val maxHeight: Float = Float.POSITIVE_INFINITY,
-    childBuilder: SingleWidgetBuilder?= null
+    childBuilder: SingleWidgetBuilder? = null,
 ) : SingleChildWidget(childBuilder = childBuilder) {
 
     override fun createRenderTree(): RenderBox = RenderLimitedBox(
