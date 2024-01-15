@@ -18,7 +18,7 @@ class RenderOpacity(
             return
         }
         context.canvas.saveLayer(bounds = offset combine definiteSize, paint = Paint().setAlphaf(opacity))
-        context.paintChild(child, offset)
+        super.paint(context, offset)
         context.canvas.restore()
     }
 }
