@@ -9,7 +9,7 @@ open class Flexible(
     val fit: FlexFit = FlexFit.LOOSE,
     childBuilder: SingleWidgetBuilder,
 ) : ParentDataWidget(
-    childBuilder = childBuilder
+    child = childBuilder.invoke()!!
 ) {
     override fun applyParentData(renderBox: RenderBox) {
         assert(renderBox.parentData is FlexParentData)

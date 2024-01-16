@@ -14,7 +14,7 @@ class Positioned(
     val width: Float? = null,
     val height: Float? = null,
     childBuilder: SingleWidgetBuilder,
-) : ParentDataWidget(childBuilder = childBuilder) {
+) : ParentDataWidget(child = childBuilder.invoke()!!) {
     init {
         assert(left == null || right == null || width == null)
         assert(top == null || bottom == null || height == null)
