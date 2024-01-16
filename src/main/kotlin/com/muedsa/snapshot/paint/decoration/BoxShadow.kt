@@ -4,9 +4,8 @@ import com.muedsa.geometry.Offset
 import org.jetbrains.skia.FilterBlurMode
 import org.jetbrains.skia.MaskFilter
 import org.jetbrains.skia.Paint
-import org.jetbrains.skia.paragraph.Shadow
 
-class BoxShadow(
+data class BoxShadow(
     val color: Int,
     val offset: Offset,
     val blurRadius: Float,
@@ -19,12 +18,12 @@ class BoxShadow(
     }
 
 
-    open fun toPaint(): Paint = Paint().apply {
+    fun toPaint(): Paint = Paint().apply {
         color = this@BoxShadow.color
         maskFilter = MaskFilter.makeBlur(blurStyle, blurSigma)
     }
 
-    open fun scale(factor: Float): BoxShadow = BoxShadow(
+    fun scale(factor: Float): BoxShadow = BoxShadow(
         color = color,
         offset = offset * factor,
         blurRadius = blurRadius * factor,
@@ -32,11 +31,10 @@ class BoxShadow(
         blurStyle = blurStyle
     )
 
-    fun toSkShadow(): Shadow = Shadow(
-        color = color,
-        offset = offset.toSkPoint(),
-        blurSigma = blurSigma.toDouble()
-    )
+    override fun toString(): String {
+        return "BoxShadow(color=$color, offset=$offset, blurRadius=$blurRadius, spreadRadius=$spreadRadius, blurStyle=$blurStyle)"
+    }
+
 
     companion object {
 

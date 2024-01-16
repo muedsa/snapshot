@@ -14,7 +14,7 @@ class BoxDecoration(
     val image: DecorationImage? = null,
     val border: BoxBorder? = null,
     val borderRadius: BorderRadius? = null,
-    val boxShadow: List<BoxShadow>? = null,
+    val boxShadow: Array<BoxShadow>? = null,
     val gradient: Gradient? = null,
     val backgroundBlendMode: BlendMode? = null,
     val shape: BoxShape = BoxShape.RECTANGLE,
