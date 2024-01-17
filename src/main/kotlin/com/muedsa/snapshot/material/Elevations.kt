@@ -1,4 +1,4 @@
-package com.muedsa.material
+package com.muedsa.snapshot.material
 
 import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.paint.decoration.BoxShadow
