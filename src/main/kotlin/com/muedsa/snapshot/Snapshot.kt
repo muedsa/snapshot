@@ -34,8 +34,9 @@ class Snapshot(
         val surface =
             Surface.makeRaster(ImageInfo.makeN32Premul(ceil(rootSize.width).toInt(), ceil(rootSize.height).toInt()))
         surface.canvas.clear(background)
-        val context = PaintingContext(canvas = surface.canvas, debug = debug)
+        val context = PaintingContext(bounds = Offset.ZERO combine rootSize, debug = debug)
         context.paintChild(rootRenderBox, Offset.ZERO)
+        surface.canvas.drawPicture(context.stopRecord())
         surface.flush()
         image = surface.makeImageSnapshot()
         surface.close()

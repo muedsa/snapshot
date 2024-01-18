@@ -1,4 +1,4 @@
-package com.muedsa.snapshot.rendering
+package com.muedsa.snapshot.rendering.box
 
 // Where to paint a box decoration.
 enum class DecorationPosition {

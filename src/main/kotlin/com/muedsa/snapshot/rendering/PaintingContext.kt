@@ -4,15 +4,32 @@ import com.muedsa.geometry.Matrix44CMO
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.shift
 import com.muedsa.snapshot.rendering.box.RenderBox
-import org.jetbrains.skia.Canvas
-import org.jetbrains.skia.Path
-import org.jetbrains.skia.RRect
-import org.jetbrains.skia.Rect
+import org.jetbrains.skia.*
 
 class PaintingContext(
-    override val canvas: Canvas,
+    val bounds: Rect,
     var debug: Boolean = false,
 ) : ClipContext() {
+
+    override val canvas: Canvas
+        get() = recorderCanvas
+
+    private lateinit var recorder: PictureRecorder
+
+    private lateinit var recorderCanvas: Canvas
+
+    init {
+        record()
+    }
+
+    fun stopRecord(): Picture = recorder.finishRecordingAsPicture()
+
+    fun record() {
+        recorder = PictureRecorder()
+        recorderCanvas = recorder.beginRecording(bounds)
+    }
+
+
 
     fun paintChild(child: RenderBox, offset: Offset) {
         child.paint(this, offset)
@@ -89,5 +106,29 @@ class PaintingContext(
         canvas.concat(effectiveTransform.toRMO())
         painter(this, offset)
         canvas.restore()
+    }
+
+    fun pushBackdrop(
+        offset: Offset,
+        clipRect: Rect,
+        imageFilter: ImageFilter,
+        blendMode: BlendMode = BlendMode.SRC_OVER,
+    ) {
+        val rect = clipRect.shift(offset)
+        val picture = stopRecord()
+        record()
+        canvas.clipRect(rect)
+        canvas.saveLayer(bounds = bounds, paint = Paint().apply {
+            this@apply.imageFilter = imageFilter
+            this@apply.blendMode = blendMode
+            this@apply.isAntiAlias = true
+        })
+        canvas.drawPicture(picture)
+        canvas.restore() // saveLayer
+        canvas.restore() // clipRect
+        val backdropPicture = stopRecord()
+        record()
+        canvas.drawPicture(picture = picture)
+        canvas.drawPicture(picture = backdropPicture)
     }
 }

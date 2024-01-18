@@ -6,8 +6,8 @@ import com.muedsa.geometry.Matrix44CMO
 import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.paint.decoration.Decoration
 import com.muedsa.snapshot.rendering.ClipBehavior
-import com.muedsa.snapshot.rendering.DecorationPosition
 import com.muedsa.snapshot.rendering.box.BoxConstraints
+import com.muedsa.snapshot.rendering.box.DecorationPosition
 import com.muedsa.snapshot.rendering.box.RenderBox
 
 class Container(

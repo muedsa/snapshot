@@ -1,4 +1,4 @@
-package com.muedsa.snapshot.render
+package com.muedsa.snapshot.render.box
 
 import com.muedsa.snapshot.rendering.box.BoxConstraints
 import org.junit.jupiter.api.Test

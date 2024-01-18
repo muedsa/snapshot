@@ -1,4 +1,4 @@
-package com.muedsa.snapshot.render
+package com.muedsa.snapshot.render.box
 
 import com.muedsa.snapshot.noLimitedLayout
 import com.muedsa.snapshot.rendering.box.RenderBox
