@@ -180,6 +180,31 @@ class PaintingContext private constructor(
         return layer
     }
 
+    fun pushBackDropFilter(
+        offset: Offset,
+        imageFilter: ImageFilter,
+        blendMode: BlendMode = BlendMode.SRC_OVER,
+        painter: (PaintingContext, Offset) -> Unit,
+    ): BackdropFilterLayer {
+        val layer = BackdropFilterLayer(
+            bounds = estimatedBounds,
+            filter = imageFilter,
+            blendMode = blendMode,
+        )
+        pushLayer(layer, painter, offset, childPaintBounds = estimatedBounds)
+        return layer
+    }
+
+    fun pushImageFilter(
+        offset: Offset,
+        imageFilter: ImageFilter,
+        painter: (PaintingContext, Offset) -> Unit,
+    ): ImageFilterLayer {
+        val layer = ImageFilterLayer(filter = imageFilter)
+        pushLayer(layer, painter, offset, childPaintBounds = estimatedBounds)
+        return layer
+    }
+
     companion object {
 
         fun paintRoot(bounds: Rect, renderBox: RenderBox, debug: Boolean = false): PaintingContext {

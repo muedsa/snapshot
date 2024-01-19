@@ -2,12 +2,10 @@ package com.muedsa.snapshot.rendering.box
 
 import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.rendering.PaintingContext
-import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.ImageFilter
 
-class RenderBackdropFilter(
+internal class ImageFilterRenderObject(
     val imageFilter: ImageFilter,
-    val blendMode: BlendMode = BlendMode.SRC_OVER,
     child: RenderBox? = null,
 ) : RenderSingleChildBox(
     child = child
@@ -15,13 +13,10 @@ class RenderBackdropFilter(
 
     override fun paint(context: PaintingContext, offset: Offset) {
         if (child != null) {
-            context.pushBackDropFilter(
+            context.pushImageFilter(
                 offset = offset,
-                imageFilter = imageFilter,
-                blendMode = blendMode
-            ) { c, o ->
-                super.paint(c, o)
-            }
+                imageFilter = imageFilter
+            ) { c, o -> super.paint(c, o) }
         }
     }
 }
