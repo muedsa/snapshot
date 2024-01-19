@@ -298,7 +298,7 @@ open class RenderFlex(
             return
         }
 
-        context.doClipRect(
+        context.pushClipRect(
             offset = offset,
             clipRect = Offset.ZERO combine definiteSize,
             clipBehavior = clipBehavior,

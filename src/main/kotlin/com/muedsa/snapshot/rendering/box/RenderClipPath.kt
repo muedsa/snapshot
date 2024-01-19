@@ -23,7 +23,7 @@ class RenderClipPath(
     override fun paint(context: PaintingContext, offset: Offset) {
         if (child != null) {
             if (clipBehavior != ClipBehavior.NONE) {
-                context.doClipPath(
+                context.pushClipPath(
                     offset = offset,
                     bounds = Offset.ZERO combine definiteSize,
                     clipPath = getClip(),

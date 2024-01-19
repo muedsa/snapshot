@@ -34,7 +34,8 @@ class ClipTest {
                 ) {
                     Container(
                         width = 200f,
-                        height = 200f
+                        height = 200f,
+                        color = Color.GREEN
                     )
                 }
             }

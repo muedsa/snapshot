@@ -49,7 +49,7 @@ class RenderTransform(
                 if (det == 0f || !det.isFinite()) {
                     return
                 }
-                context.doTransform(offset = offset, transform = effectiveTransform) { cc, oo ->
+                context.pushTransform(offset = offset, transform = effectiveTransform) { cc, oo ->
                     super.paint(cc, oo)
                 }
             } else {

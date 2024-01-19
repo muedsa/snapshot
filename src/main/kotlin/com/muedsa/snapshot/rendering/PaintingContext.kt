@@ -6,30 +6,20 @@ import com.muedsa.geometry.shift
 import com.muedsa.snapshot.rendering.box.RenderBox
 import org.jetbrains.skia.*
 
-class PaintingContext(
-    val bounds: Rect,
+class PaintingContext private constructor(
+    val containerLayer: ContainerLayer,
+    val estimatedBounds: Rect,
     var debug: Boolean = false,
 ) : ClipContext() {
 
     override val canvas: Canvas
-        get() = recorderCanvas
-
-    private lateinit var recorder: PictureRecorder
-
-    private lateinit var recorderCanvas: Canvas
-
-    init {
-        record()
-    }
-
-    fun stopRecord(): Picture = recorder.finishRecordingAsPicture()
-
-    fun record() {
-        recorder = PictureRecorder()
-        recorderCanvas = recorder.beginRecording(bounds)
-    }
-
-
+        get() {
+            if (recorderCanvas == null) {
+                startRecording()
+            }
+            assert(currentLayer != null)
+            return recorderCanvas!!
+        }
 
     fun paintChild(child: RenderBox, offset: Offset) {
         child.paint(this, offset)
@@ -38,61 +28,143 @@ class PaintingContext(
         }
     }
 
-    fun doClipPath(
+    protected fun appendLayer(layer: Layer) {
+        assert(!isRecording)
+        containerLayer.append(layer)
+    }
+
+
+    private var currentLayer: PictureLayer? = null
+    private var recorder: PictureRecorder? = null
+    private var recorderCanvas: Canvas? = null
+
+    val isRecording: Boolean
+        get() {
+            val hasCanvas: Boolean = recorderCanvas != null
+            if (hasCanvas) {
+                assert(currentLayer != null)
+                assert(recorder != null)
+                assert(recorderCanvas != null)
+            } else {
+                assert(currentLayer == null)
+                assert(recorder == null)
+                assert(recorderCanvas == null)
+            }
+            return hasCanvas
+        }
+
+
+    protected fun startRecording() {
+        assert(!isRecording)
+        currentLayer = PictureLayer()
+        recorder = PictureRecorder()
+        recorderCanvas = recorder!!.beginRecording(estimatedBounds)
+        containerLayer.append(currentLayer!!)
+    }
+
+    protected fun stopRecordingIfNeeded() {
+        if (!isRecording) {
+            return
+        }
+
+        // todo debug paint
+
+        currentLayer!!.picture = recorder!!.finishRecordingAsPicture()
+        currentLayer = null
+        recorder = null
+        recorderCanvas = null
+    }
+
+    fun addLayer(layer: Layer) {
+        stopRecordingIfNeeded()
+        appendLayer(layer)
+    }
+
+    fun pushLayer(
+        childLayer: ContainerLayer,
+        painter: (PaintingContext, Offset) -> Unit,
+        offset: Offset,
+        childPaintBounds: Rect? = null,
+    ) {
+        stopRecordingIfNeeded()
+        appendLayer(childLayer)
+        val childContext: PaintingContext = createChildContext(childLayer, childPaintBounds ?: estimatedBounds)
+        painter(childContext, offset)
+        childContext.stopRecordingIfNeeded()
+    }
+
+    protected fun createChildContext(childLayer: ContainerLayer, bounds: Rect): PaintingContext {
+        return PaintingContext(childLayer, bounds)
+    }
+
+    fun pushClipPath(
         offset: Offset,
         bounds: Rect,
         clipPath: Path,
         clipBehavior: ClipBehavior = ClipBehavior.ANTI_ALIAS,
         painter: (PaintingContext, Offset) -> Unit,
-    ) {
+    ): ClipPathLayer? {
         if (clipBehavior == ClipBehavior.NONE) {
             painter(this, offset)
-            return
+            return null
         }
         val offsetBounds: Rect = bounds.shift(offset)
         val offsetClipPath: Path = Path().also {
             clipPath.offset(offset.x, offset.y, it)
         }
-        clipPathAndPaint(offsetClipPath, clipBehavior, offsetBounds) {
-            painter(this, offset)
-        }
+        val layer = ClipPathLayer(
+            clipPath = offsetClipPath,
+            clipBehavior = clipBehavior
+        )
+        pushLayer(layer, painter, offset, childPaintBounds = offsetBounds)
+        return layer
     }
 
-    fun doClipRect(
+    fun pushClipRect(
         offset: Offset,
         clipRect: Rect,
         clipBehavior: ClipBehavior = ClipBehavior.HARD_EDGE,
         painter: (PaintingContext, Offset) -> Unit,
-    ) {
+    ): ClipRectLayer? {
         if (clipBehavior == ClipBehavior.NONE) {
             painter(this, offset)
-            return
+            return null
         }
         val offsetClipRect: Rect = clipRect.shift(offset)
-        clipRectAndPaint(offsetClipRect, clipBehavior, offsetClipRect) {
-            painter(this, offset)
-        }
+        val layer = ClipRectLayer(
+            clipRect = offsetClipRect,
+            clipBehavior = clipBehavior
+        )
+        pushLayer(layer, painter, offset, childPaintBounds = offsetClipRect)
+        return layer
     }
 
-    fun doClipRRect(
+    fun pushClipRRect(
         offset: Offset,
         bounds: Rect,
         clipRRect: RRect,
         clipBehavior: ClipBehavior = ClipBehavior.ANTI_ALIAS,
         painter: (PaintingContext, Offset) -> Unit,
-    ) {
+    ): ClipRRectLayer? {
         if (clipBehavior == ClipBehavior.NONE) {
             painter(this, offset)
-            return
+            return null
         }
         val offsetBounds: Rect = bounds.shift(offset)
         val offsetClipRRect: RRect = clipRRect.shift(offset)
-        clipRRectAndPaint(offsetClipRRect, clipBehavior, offsetBounds) {
-            painter(this, offset)
-        }
+        val layer = ClipRRectLayer(
+            clipRRect = offsetClipRRect,
+            clipBehavior = clipBehavior
+        )
+        pushLayer(layer, painter, offset, childPaintBounds = offsetBounds)
+        return layer
     }
 
-    fun doTransform(offset: Offset, transform: Matrix44CMO, painter: (PaintingContext, Offset) -> Unit) {
+    fun pushTransform(
+        offset: Offset,
+        transform: Matrix44CMO,
+        painter: (PaintingContext, Offset) -> Unit,
+    ): TransformLayer {
         val effectiveTransform: Matrix44CMO = Matrix44CMO.translationValues(
             x = offset.x,
             y = offset.y,
@@ -101,34 +173,24 @@ class PaintingContext(
             multiply(transform)
             translate(-offset.x, -offset.y)
         }
-        canvas.save()
-        // skia的Matrix44为行顺序
-        canvas.concat(effectiveTransform.toRMO())
-        painter(this, offset)
-        canvas.restore()
+        val layer = TransformLayer(
+            transform = effectiveTransform
+        )
+        pushLayer(layer, painter, offset, childPaintBounds = estimatedBounds)
+        return layer
     }
 
-    fun pushBackdrop(
-        offset: Offset,
-        clipRect: Rect,
-        imageFilter: ImageFilter,
-        blendMode: BlendMode = BlendMode.SRC_OVER,
-    ) {
-        val rect = clipRect.shift(offset)
-        val picture = stopRecord()
-        record()
-        canvas.clipRect(rect)
-        canvas.saveLayer(bounds = bounds, paint = Paint().apply {
-            this@apply.imageFilter = imageFilter
-            this@apply.blendMode = blendMode
-            this@apply.isAntiAlias = true
-        })
-        canvas.drawPicture(picture)
-        canvas.restore() // saveLayer
-        canvas.restore() // clipRect
-        val backdropPicture = stopRecord()
-        record()
-        canvas.drawPicture(picture = picture)
-        canvas.drawPicture(picture = backdropPicture)
+    companion object {
+
+        fun paintRoot(bounds: Rect, renderBox: RenderBox, debug: Boolean = false): PaintingContext {
+            val paintingContext = PaintingContext(
+                containerLayer = ContainerLayer(),
+                estimatedBounds = bounds,
+                debug = debug
+            )
+            paintingContext.paintChild(renderBox, Offset.ZERO)
+            paintingContext.stopRecordingIfNeeded()
+            return paintingContext
+        }
     }
 }

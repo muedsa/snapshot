@@ -94,7 +94,7 @@ open class RenderStack(
 
     override fun paint(context: PaintingContext, offset: Offset) {
         if (clipBehavior != ClipBehavior.NONE && hasVisualOverflow) {
-            context.doClipRect(
+            context.pushClipRect(
                 offset = offset,
                 clipRect = Offset.ZERO combine definiteSize,
                 clipBehavior = clipBehavior

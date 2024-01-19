@@ -1,6 +1,7 @@
 package com.muedsa.snapshot.rendering.box
 
 import com.muedsa.geometry.Offset
+import com.muedsa.snapshot.rendering.BackdropFilterLayer
 import com.muedsa.snapshot.rendering.PaintingContext
 import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.ImageFilter
@@ -15,13 +16,16 @@ class RenderBackdropFilter(
 
     override fun paint(context: PaintingContext, offset: Offset) {
         if (child != null) {
-            context.pushBackdrop(
-                offset = offset,
-                clipRect = Offset.ZERO combine definiteSize,
-                imageFilter = imageFilter,
-                blendMode = blendMode
+            val layer = BackdropFilterLayer(
+                bounds = context.estimatedBounds,
+                filter = imageFilter,
+                blendMode = blendMode,
+            )
+            context.pushLayer(
+                childLayer = layer,
+                painter = { c, o -> super.paint(c, o) },
+                offset = offset
             )
         }
-        super.paint(context, offset)
     }
 }

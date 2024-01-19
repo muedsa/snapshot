@@ -13,4 +13,6 @@ interface NetworkImageCache {
     fun count(): Int
 
     fun size(): Int
+
+    operator fun get(url: String): ByteArray = getImage(url)
 }

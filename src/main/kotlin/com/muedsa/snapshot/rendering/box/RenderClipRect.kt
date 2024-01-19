@@ -24,7 +24,7 @@ class RenderClipRect(
     override fun paint(context: PaintingContext, offset: Offset) {
         if (child != null) {
             if (clipBehavior != ClipBehavior.NONE) {
-                context.doClipRect(
+                context.pushClipRect(
                     offset = offset,
                     clipRect = getClip(),
                     clipBehavior = clipBehavior

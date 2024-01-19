@@ -51,7 +51,7 @@ class RenderSimpleText(
     override fun paint(context: PaintingContext, offset: Offset) {
         layoutTextWithConstraints(definiteConstraints)
         if (needsClipping) {
-            context.doClipRect(offset = offset, clipRect = Offset.ZERO combine definiteSize) { c, o ->
+            context.pushClipRect(offset = offset, clipRect = Offset.ZERO combine definiteSize) { c, o ->
                 textPainter.paint(c.canvas, o)
             }
         } else {
