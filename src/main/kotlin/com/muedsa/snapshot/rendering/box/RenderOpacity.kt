@@ -2,7 +2,6 @@ package com.muedsa.snapshot.rendering.box
 
 import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.rendering.PaintingContext
-import org.jetbrains.skia.Paint
 
 class RenderOpacity(
     val opacity: Float = 1f,
@@ -17,8 +16,11 @@ class RenderOpacity(
         if (child == null || opacity == 0f) {
             return
         }
-        context.canvas.saveLayer(bounds = offset combine definiteSize, paint = Paint().setAlphaf(opacity))
-        super.paint(context, offset)
-        context.canvas.restore()
+        context.pushOpacity(
+            offset = offset,
+            opacity = opacity
+        ) { c, o ->
+            super.paint(c, o)
+        }
     }
 }

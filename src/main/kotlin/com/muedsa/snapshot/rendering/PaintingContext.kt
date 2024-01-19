@@ -205,6 +205,16 @@ class PaintingContext private constructor(
         return layer
     }
 
+    fun pushOpacity(
+        offset: Offset,
+        opacity: Float = 1f,
+        painter: (PaintingContext, Offset) -> Unit,
+    ): OpacityLayer {
+        val layer = OpacityLayer(opacity = opacity)
+        pushLayer(layer, painter, offset, childPaintBounds = estimatedBounds)
+        return layer
+    }
+
     companion object {
 
         fun paintRoot(bounds: Rect, renderBox: RenderBox, debug: Boolean = false): PaintingContext {

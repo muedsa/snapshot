@@ -15,6 +15,9 @@ class OpacityTest {
 
         println("\n\n\nOpacity.zero_value_test()")
         with_value_test(0f)
+
+        println("\n\n\nOpacity.1_test()")
+        with_value_test(1f)
     }
 
     private fun with_value_test(opacity: Float) {
