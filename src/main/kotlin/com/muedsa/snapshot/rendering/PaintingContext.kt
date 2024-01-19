@@ -205,6 +205,16 @@ class PaintingContext private constructor(
         return layer
     }
 
+    fun pushColorFilter(
+        offset: Offset,
+        colorFilter: ColorFilter,
+        painter: (PaintingContext, Offset) -> Unit,
+    ): ColorFilterLayer {
+        val layer = ColorFilterLayer(filter = colorFilter)
+        pushLayer(layer, painter, offset, childPaintBounds = estimatedBounds)
+        return layer
+    }
+
     fun pushOpacity(
         offset: Offset,
         opacity: Float = 1f,
