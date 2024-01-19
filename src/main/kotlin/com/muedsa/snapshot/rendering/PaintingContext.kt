@@ -3,6 +3,7 @@ package com.muedsa.snapshot.rendering
 import com.muedsa.geometry.Matrix44CMO
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.shift
+import com.muedsa.snapshot.debugCurrentRepaintColor
 import com.muedsa.snapshot.rendering.box.RenderBox
 import org.jetbrains.skia.*
 
@@ -67,7 +68,20 @@ class PaintingContext private constructor(
             return
         }
 
-        // todo debug paint
+        // debug paint
+        if (debug) {
+            canvas.drawRect(estimatedBounds.inflate(-3f), Paint().also {
+                it.mode = PaintMode.STROKE
+                it.strokeWidth = 6f
+                it.color = debugCurrentRepaintColor
+            })
+
+            canvas.drawRect(estimatedBounds, Paint().also {
+                it.mode = PaintMode.STROKE
+                it.strokeWidth = 1f
+                it.color = 0xFF_FF_98_00.toInt()
+            })
+        }
 
         currentLayer!!.picture = recorder!!.finishRecordingAsPicture()
         currentLayer = null
