@@ -10,6 +10,7 @@ abstract class RenderContainerBox(val children: Array<RenderBox>?) : RenderBox()
     init {
         children?.let {
             children.forEachIndexed { index, child ->
+                // TODO 这里不太对 构造函数this泄露
                 child.parent = this
                 val childParentData: ContainerBoxParentData = child.parentData!! as ContainerBoxParentData
                 if (index > 0) {

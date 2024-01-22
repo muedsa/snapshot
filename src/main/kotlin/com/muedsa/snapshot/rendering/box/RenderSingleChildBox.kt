@@ -7,6 +7,7 @@ import org.jetbrains.skia.paragraph.BaselineMode
 abstract class RenderSingleChildBox(val child: RenderBox?) : RenderBox() {
 
     init {
+        // TODO 这里不太对 构造函数this泄露
         child?.let {
             it.parent = this
         }
