@@ -4,12 +4,27 @@ import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.flex.FlexFit
 import com.muedsa.snapshot.rendering.flex.FlexParentData
 
+inline fun Flex.Flexible(
+    flex: Int = 1,
+    fit: FlexFit = FlexFit.LOOSE,
+    content: Flexible.() -> Unit = {},
+) {
+    buildChild(
+        widget = Flexible(
+            flex = flex,
+            fit = fit,
+            parent = this
+        ),
+        content = content
+    )
+}
+
 open class Flexible(
     val flex: Int = 1,
     val fit: FlexFit = FlexFit.LOOSE,
-    childBuilder: SingleWidgetBuilder,
+    parent: Widget? = null,
 ) : ParentDataWidget(
-    child = childBuilder.invoke()!!
+    parent = parent
 ) {
     override fun applyParentData(renderBox: RenderBox) {
         assert(renderBox.parentData is FlexParentData)

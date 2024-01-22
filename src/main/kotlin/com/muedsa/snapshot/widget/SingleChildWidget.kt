@@ -4,24 +4,18 @@ import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderSingleChildBox
 
 abstract class SingleChildWidget(
-    val child: Widget?,
-) : Widget() {
+    parent: Widget?,
+) : Widget(parent = parent) {
+    var child: Widget? = null
 
-    constructor(childBuilder: SingleWidgetBuilder?) : this(child = childBuilder?.invoke())
-
-    init {
-        child?.let {
-            it.parent = this
-        }
-    }
-
-    protected abstract fun createRenderTree(): RenderBox
+    protected abstract fun createRenderBox(child: Widget?): RenderBox
 
     final override fun createRenderBox(): RenderBox {
-        val renderTree = createRenderTree()
-        if (child is ParentDataWidget && renderTree is RenderSingleChildBox) {
-            child.applyParentData(renderTree.child!!)
+        val child = this.child
+        val renderBox = createRenderBox(child)
+        if (child is ParentDataWidget && renderBox is RenderSingleChildBox) {
+            child.applyParentData(renderBox.child!!)
         }
-        return renderTree
+        return renderBox
     }
 }

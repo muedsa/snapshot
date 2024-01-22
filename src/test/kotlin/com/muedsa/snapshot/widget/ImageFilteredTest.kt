@@ -23,70 +23,68 @@ class ImageFilteredTest {
                 height = 256f,
             ) {
                 Stack {
-                    arrayOf(
-                        Positioned(
-                            top = 0f,
-                            left = 0f
+                    Positioned(
+                        top = 0f,
+                        left = 0f
+                    ) {
+                        Container(
+                            width = 128f,
+                            height = 128f,
+                            color = Color.RED
+                        )
+                    }
+                    Positioned(
+                        top = 0f,
+                        right = 0f
+                    ) {
+                        Container(
+                            width = 128f,
+                            height = 128f,
+                            color = Color.BLUE
+                        )
+                    }
+                    Positioned(
+                        bottom = 0f,
+                        left = 0f
+                    ) {
+                        Container(
+                            width = 128f,
+                            height = 128f,
+                            color = Color.BLUE
+                        )
+                    }
+                    Positioned(
+                        bottom = 0f,
+                        right = 0f
+                    ) {
+                        Container(
+                            width = 128f,
+                            height = 128f,
+                            color = Color.RED
+                        )
+                    }
+                    Positioned(
+                        top = 64f,
+                        right = 64f
+                    ) {
+                        ImageFiltered(
+                            imageFilter = ImageFilter.makeBlur(2f, 2f, FilterTileMode.CLAMP)
                         ) {
                             Container(
                                 width = 128f,
                                 height = 128f,
-                                color = Color.RED
-                            )
-                        },
-                        Positioned(
-                            top = 0f,
-                            right = 0f
-                        ) {
-                            Container(
-                                width = 128f,
-                                height = 128f,
-                                color = Color.BLUE
-                            )
-                        },
-                        Positioned(
-                            bottom = 0f,
-                            left = 0f
-                        ) {
-                            Container(
-                                width = 128f,
-                                height = 128f,
-                                color = Color.BLUE
-                            )
-                        },
-                        Positioned(
-                            bottom = 0f,
-                            right = 0f
-                        ) {
-                            Container(
-                                width = 128f,
-                                height = 128f,
-                                color = Color.RED
-                            )
-                        },
-                        Positioned(
-                            top = 64f,
-                            right = 64f
-                        ) {
-                            ImageFiltered(
-                                imageFilter = ImageFilter.makeBlur(2f, 2f, FilterTileMode.CLAMP)
+                                padding = EdgeInsets.all(10f),
+                                alignment = BoxAlignment.CENTER,
+                                // color = Color.GREEN
                             ) {
-                                Container(
-                                    width = 128f,
-                                    height = 128f,
-                                    padding = EdgeInsets.all(10f),
-                                    alignment = BoxAlignment.CENTER,
-                                    // color = Color.GREEN
-                                ) {
-                                    SimpleText(
-                                        content = "233".repeat(5),
-                                        color = Color.WHITE,
-                                        fontSize = 30f
-                                    )
-                                }
+                                SimpleText(
+                                    text = "233".repeat(5),
+                                    color = Color.WHITE,
+                                    fontSize = 30f
+                                )
                             }
-                        },
-                    )
+                        }
+                    }
                 }
             }
         }
@@ -105,70 +103,68 @@ class ImageFilteredTest {
                 height = 256f,
             ) {
                 Stack {
-                    arrayOf(
-                        Positioned(
-                            top = 0f,
-                            left = 0f
+                    Positioned(
+                        top = 0f,
+                        left = 0f
+                    ) {
+                        Container(
+                            width = 128f,
+                            height = 128f,
+                            color = Color.RED
+                        )
+                    }
+                    Positioned(
+                        top = 0f,
+                        right = 0f
+                    ) {
+                        Container(
+                            width = 128f,
+                            height = 128f,
+                            color = Color.BLUE
+                        )
+                    }
+                    Positioned(
+                        bottom = 0f,
+                        left = 0f
+                    ) {
+                        Container(
+                            width = 128f,
+                            height = 128f,
+                            color = Color.BLUE
+                        )
+                    }
+                    Positioned(
+                        bottom = 0f,
+                        right = 0f
+                    ) {
+                        Container(
+                            width = 128f,
+                            height = 128f,
+                            color = Color.RED
+                        )
+                    }
+                    Positioned(
+                        top = 64f,
+                        right = 64f
+                    ) {
+                        ImageFiltered(
+                            imageFilter = ImageFilter.makeBlur(2f, 2f, FilterTileMode.CLAMP)
                         ) {
                             Container(
                                 width = 128f,
                                 height = 128f,
-                                color = Color.RED
-                            )
-                        },
-                        Positioned(
-                            top = 0f,
-                            right = 0f
-                        ) {
-                            Container(
-                                width = 128f,
-                                height = 128f,
-                                color = Color.BLUE
-                            )
-                        },
-                        Positioned(
-                            bottom = 0f,
-                            left = 0f
-                        ) {
-                            Container(
-                                width = 128f,
-                                height = 128f,
-                                color = Color.BLUE
-                            )
-                        },
-                        Positioned(
-                            bottom = 0f,
-                            right = 0f
-                        ) {
-                            Container(
-                                width = 128f,
-                                height = 128f,
-                                color = Color.RED
-                            )
-                        },
-                        Positioned(
-                            top = 64f,
-                            right = 64f
-                        ) {
-                            ImageFiltered(
-                                imageFilter = ImageFilter.makeBlur(2f, 2f, FilterTileMode.CLAMP)
+                                padding = EdgeInsets.all(10f),
+                                alignment = BoxAlignment.CENTER,
+                                // color = Color.GREEN
                             ) {
-                                Container(
-                                    width = 128f,
-                                    height = 128f,
-                                    padding = EdgeInsets.all(10f),
-                                    alignment = BoxAlignment.CENTER,
-                                    // color = Color.GREEN
-                                ) {
-                                    SimpleText(
-                                        content = "233".repeat(100), // text will clip
-                                        color = Color.WHITE,
-                                        fontSize = 30f
-                                    )
-                                }
+                                SimpleText(
+                                    text = "233".repeat(100), // text will clip
+                                    color = Color.WHITE,
+                                    fontSize = 30f
+                                )
                             }
-                        },
-                    )
+                        }
+                    }
                 }
             }
         }

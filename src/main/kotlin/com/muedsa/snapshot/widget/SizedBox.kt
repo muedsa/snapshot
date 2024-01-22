@@ -5,46 +5,62 @@ import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderConstrainedBox
 
+inline fun Widget.SizedBox(
+    width: Float? = null,
+    height: Float? = null,
+    content: SizedBox.() -> Unit = {},
+) {
+    buildChild(
+        widget = SizedBox(
+            width = width,
+            height = height,
+            parent = this
+        ),
+        content = content
+    )
+}
+
+
 class SizedBox(
     val width: Float? = null,
     val height: Float? = null,
-    childBuilder: SingleWidgetBuilder? = null,
-) : SingleChildWidget(childBuilder = childBuilder) {
+    parent: Widget? = null,
+) : SingleChildWidget(parent = parent) {
 
     protected val additionalConstraints by lazy {
         BoxConstraints.tightFor(width = width, height = height)
     }
 
-    override fun createRenderTree(): RenderBox =
+    override fun createRenderBox(child: Widget?): RenderBox =
         RenderConstrainedBox(additionalConstraints = additionalConstraints, child = child?.createRenderBox())
 
     companion object {
         @JvmStatic
-        fun expand(childBuilder: SingleWidgetBuilder? = null): SizedBox = SizedBox(
+        fun expand(parent: Widget? = null): SizedBox = SizedBox(
             width = Float.POSITIVE_INFINITY,
             height = Float.POSITIVE_INFINITY,
-            childBuilder = childBuilder
+            parent = parent
         )
 
         @JvmStatic
-        fun shrink(childBuilder: SingleWidgetBuilder? = null): SizedBox = SizedBox(
+        fun shrink(parent: Widget? = null): SizedBox = SizedBox(
             width = 0f,
             height = 0f,
-            childBuilder = childBuilder
+            parent = parent
         )
 
         @JvmStatic
-        fun fromSize(size: Size, childBuilder: SingleWidgetBuilder? = null): SizedBox = SizedBox(
+        fun fromSize(size: Size, parent: Widget? = null): SizedBox = SizedBox(
             width = size.width,
             height = size.height,
-            childBuilder = childBuilder
+            parent = parent
         )
 
         @JvmStatic
-        fun square(dimension: Float, childBuilder: SingleWidgetBuilder? = null): SizedBox = SizedBox(
+        fun square(dimension: Float, parent: Widget? = null): SizedBox = SizedBox(
             width = dimension,
             height = dimension,
-            childBuilder = childBuilder
+            parent = parent
         )
     }
 }

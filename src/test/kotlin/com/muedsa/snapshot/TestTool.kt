@@ -30,12 +30,12 @@ fun drawWidget(
     imagePathWithoutSuffix: String,
     debugInfo: String? = null,
     drawDebug: Boolean = false,
-    singleWidgetBuilder: SingleWidgetBuilder,
+    content: Widget.() -> Unit,
 ) {
     var snapshot = Snapshot(
         background = Color.TRANSPARENT,
-        widgetBuilder = singleWidgetBuilder,
-        debug = drawDebug
+        debug = drawDebug,
+        content = content
     )
     snapshot.draw()
     val snapshotImage = snapshot.image!!
@@ -44,18 +44,16 @@ fun drawWidget(
             background = Color.TRANSPARENT
         ) {
             Column {
-                arrayOf(
-                    RawImage(image = snapshotImage),
-                    Container(
-                        padding = EdgeInsets.all(10f),
-                        color = Color.WHITE,
-                        constraints = BoxConstraints(
-                            maxWidth = snapshotImage.width.toFloat()
-                        )
-                    ) {
-                        SimpleText(debugInfo)
-                    }
-                )
+                RawImage(image = snapshotImage)
+                Container(
+                    padding = EdgeInsets.all(10f),
+                    color = Color.WHITE,
+                    constraints = BoxConstraints(
+                        maxWidth = snapshotImage.width.toFloat()
+                    )
+                ) {
+                    SimpleText(debugInfo)
+                }
             }
         }
         snapshot.draw()

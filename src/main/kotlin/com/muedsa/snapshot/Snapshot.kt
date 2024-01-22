@@ -4,7 +4,8 @@ import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.rendering.LayerPaintContext
 import com.muedsa.snapshot.rendering.PaintingContext
 import com.muedsa.snapshot.rendering.box.BoxConstraints
-import com.muedsa.snapshot.widget.SingleWidgetBuilder
+import com.muedsa.snapshot.widget.ProxyWidget
+import com.muedsa.snapshot.widget.Widget
 import org.jetbrains.skia.*
 import kotlin.math.ceil
 
@@ -12,7 +13,7 @@ import kotlin.math.ceil
 class Snapshot(
     val background: Int = Color.makeARGB(255, 255, 255, 255),
     val debug: Boolean = false,
-    val widgetBuilder: SingleWidgetBuilder,
+    val content: Widget.() -> Unit,
 ) {
 
     var isDrawed: Boolean = false
@@ -21,9 +22,9 @@ class Snapshot(
     var image: Image? = null
 
     fun draw() {
-        val rootWidget = widgetBuilder.invoke()
-        assert(rootWidget != null)
-        val rootRenderBox = rootWidget!!.createRenderBox()
+        val rootWidget = ProxyWidget().apply(content)
+        assert(rootWidget.widget != null)
+        val rootRenderBox = rootWidget.createRenderBox()
         rootRenderBox.layout(constraints = BoxConstraints())
         val rootSize = rootRenderBox.definiteSize
         if (rootSize.isEmpty) {

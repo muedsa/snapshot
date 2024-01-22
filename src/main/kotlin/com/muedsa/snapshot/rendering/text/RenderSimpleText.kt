@@ -12,7 +12,7 @@ import org.jetbrains.skia.paragraph.BaselineMode
 
 @ExperimentalStdlibApi
 class RenderSimpleText(
-    val content: String,
+    val text: String,
     val color: Int = Color.BLACK,
     val fontSize: Float = 14f,
     val fontFamilyName: Array<String>? = null,
@@ -20,7 +20,7 @@ class RenderSimpleText(
 ) : RenderBox() {
 
     val textPainter: SimpleTextPainter = SimpleTextPainter(
-        text = content,
+        text = text,
         color = color,
         fontSize = fontSize,
         fontFamilyName = fontFamilyName,

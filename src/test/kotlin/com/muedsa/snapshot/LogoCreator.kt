@@ -22,65 +22,61 @@ class LogoCreator {
                 padding = EdgeInsets.all(20f)
             ) {
                 Row {
-                    arrayOf(
-                        Stack {
-                            arrayOf(
-                                Container(
-                                    width = wholeSize,
-                                    height = wholeSize,
-                                    alignment = BoxAlignment.TOP_LEFT
-                                ) {
-                                    ClipPath(
-                                        clipper = {
-                                            Path().apply {
-                                                arcTo(
-                                                    oval = Rect.Companion.makeWH(it.width, it.height),
-                                                    startAngle = 45f,
-                                                    sweepAngle = 180f,
-                                                    forceMoveTo = true
-                                                )
-                                            }
-                                        }
-                                    ) {
-                                        Container(
-                                            width = size,
-                                            height = size,
-                                            color = 0xFF_FF_D1_33.toInt()
+                    Stack {
+                        Container(
+                            width = wholeSize,
+                            height = wholeSize,
+                            alignment = BoxAlignment.BOTTOM_RIGHT
+                        ) {
+                            ClipPath(
+                                clipper = {
+                                    Path().apply {
+                                        arcTo(
+                                            oval = Rect.Companion.makeWH(it.width, it.height),
+                                            startAngle = 45f + 180f,
+                                            sweepAngle = 180f,
+                                            forceMoveTo = true
                                         )
                                     }
-                                },
+                                }
+                            ) {
                                 Container(
-                                    width = wholeSize,
-                                    height = wholeSize,
-                                    alignment = BoxAlignment.BOTTOM_RIGHT
-                                ) {
-                                    ClipPath(
-                                        clipper = {
-                                            Path().apply {
-                                                arcTo(
-                                                    oval = Rect.Companion.makeWH(it.width, it.height),
-                                                    startAngle = 45f + 180f,
-                                                    sweepAngle = 180f,
-                                                    forceMoveTo = true
-                                                )
-                                            }
-                                        }
-                                    ) {
-                                        Container(
-                                            width = size,
-                                            height = size,
-                                            color = 0xFF_FF_57_33.toInt()
+                                    width = size,
+                                    height = size,
+                                    color = 0xFF_FF_57_33.toInt()
+                                )
+                            }
+                        }
+                        Container(
+                            width = wholeSize,
+                            height = wholeSize,
+                            alignment = BoxAlignment.TOP_LEFT
+                        ) {
+                            ClipPath(
+                                clipper = {
+                                    Path().apply {
+                                        arcTo(
+                                            oval = Rect.Companion.makeWH(it.width, it.height),
+                                            startAngle = 45f,
+                                            sweepAngle = 180f,
+                                            forceMoveTo = true
                                         )
                                     }
-                                },
-                            )
-                        },
-                        SimpleText(
-                            content = "Snapshot",
-                            color = 0xFF_A6_A6_A6.toInt(),
-                            fontSize = size * 0.8f,
-                            fontStyle = FontStyle.BOLD
-                        )
+                                }
+                            ) {
+                                Container(
+                                    width = size,
+                                    height = size,
+                                    color = 0xFF_FF_D1_33.toInt()
+                                )
+                            }
+                        }
+                    }
+                    SimpleText(
+                        text = "Snapshot",
+                        color = 0xFF_A6_A6_A6.toInt(),
+                        fontSize = size * 0.8f,
+                        fontStyle = FontStyle.BOLD
                     )
                 }
             }

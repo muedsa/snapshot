@@ -4,10 +4,28 @@ import com.muedsa.geometry.EdgeInsets
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderPadding
 
+fun Widget.Padding(
+    padding: EdgeInsets,
+    content: Padding.() -> Unit = {},
+) {
+    buildChild(
+        widget = Padding(
+            padding = padding,
+            parent = this
+        ),
+        content = content
+    )
+}
+
 class Padding(
     val padding: EdgeInsets,
-    childBuilder: SingleWidgetBuilder? = null,
-) : SingleChildWidget(childBuilder = childBuilder) {
+    parent: Widget?,
+) : SingleChildWidget(parent = parent) {
 
-    override fun createRenderTree(): RenderBox = RenderPadding(padding, child = child?.createRenderBox())
+    override fun createRenderBox(child: Widget?): RenderBox {
+        return RenderPadding(
+            padding = padding,
+            child = child?.createRenderBox()
+        )
+    }
 }

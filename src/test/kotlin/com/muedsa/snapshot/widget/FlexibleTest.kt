@@ -12,14 +12,15 @@ class FlexibleTest {
     fun applyParentData_test() {
         println("\n\n\nFlexibleTest.applyParentData_test()")
         val flexArr = intArrayOf(1, 2, 3)
-        val children: Array<Widget> = Array(flexArr.size) {
-            Flexible(
-                flex = flexArr[it]
-            ) {
-                Container()
+        val flex = Flex(direction = Axis.HORIZONTAL).apply {
+            flexArr.forEach {
+                Flexible(
+                    flex = it
+                ) {
+                    Container()
+                }
             }
         }
-        val flex = Flex(direction = Axis.HORIZONTAL) { children }
         val renderFlex = flex.createRenderBox() as RenderFlex
         renderFlex.children!!.forEachIndexed { index, renderBox ->
             val flexParentData: FlexParentData = renderBox.parentData as FlexParentData

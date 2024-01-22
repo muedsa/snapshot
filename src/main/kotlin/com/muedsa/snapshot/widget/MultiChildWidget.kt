@@ -4,32 +4,27 @@ import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderContainerBox
 
 abstract class MultiChildWidget(
-    val children: Array<out Widget>?,
-) : Widget() {
-    constructor(childrenBuilder: MultiWidgetBuilder?) : this(children = childrenBuilder?.invoke())
+    parent: Widget?,
+) : Widget(parent = parent) {
+    val children: MutableList<Widget> = mutableListOf()
 
-    init {
-        children?.forEach {
-            it.parent = this
-        }
-    }
-
-    protected abstract fun createRenderTree(): RenderBox
+    protected abstract fun createRenderBox(children: List<Widget>): RenderBox
 
     final override fun createRenderBox(): RenderBox {
-        val renderTree = createRenderTree()
-        if (children != null) {
-            if (renderTree is RenderContainerBox
-                && (renderTree.children?.size ?: 0) == children.size
-            ) {
-                children.forEachIndexed { index, child ->
-                    if (child is ParentDataWidget) {
-                        child.applyParentData(renderTree.children!![index])
-                    }
+        val children = this.children.toList()
+        val renderBox = createRenderBox(children)
+        if (renderBox is RenderContainerBox
+            && (renderBox.children?.size ?: 0) == children.size
+        ) {
+            children.forEachIndexed { index, child ->
+                if (child is ParentDataWidget) {
+                    child.applyParentData(renderBox.children!![index])
                 }
             }
         }
-        return renderTree
+        return renderBox
     }
-
 }
+
+fun List<Widget>.createRenderBox(): Array<RenderBox>? =
+    if (isEmpty()) null else Array(this.size) { this[it].createRenderBox() }

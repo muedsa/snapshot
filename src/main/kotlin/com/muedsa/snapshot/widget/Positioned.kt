@@ -6,6 +6,29 @@ import com.muedsa.snapshot.rendering.stack.StackParentData
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.paragraph.Direction
 
+inline fun Stack.Positioned(
+    left: Float? = null,
+    top: Float? = null,
+    right: Float? = null,
+    bottom: Float? = null,
+    width: Float? = null,
+    height: Float? = null,
+    content: Positioned.() -> Unit = {},
+) {
+    buildChild(
+        widget = Positioned(
+            left = left,
+            top = top,
+            right = right,
+            bottom = bottom,
+            width = width,
+            height = height,
+            parent = this
+        ),
+        content = content
+    )
+}
+
 class Positioned(
     val left: Float? = null,
     val top: Float? = null,
@@ -13,8 +36,9 @@ class Positioned(
     val bottom: Float? = null,
     val width: Float? = null,
     val height: Float? = null,
-    childBuilder: SingleWidgetBuilder,
-) : ParentDataWidget(child = childBuilder.invoke()!!) {
+    parent: Widget? = null,
+) : ParentDataWidget(parent = parent) {
+
     init {
         assert(left == null || right == null || width == null)
         assert(top == null || bottom == null || height == null)
@@ -44,26 +68,27 @@ class Positioned(
     }
 
     companion object {
+
         @JvmStatic
-        fun fromRect(rect: Rect, childBuilder: SingleWidgetBuilder): Positioned = Positioned(
+        fun fromRect(rect: Rect, parent: Widget? = null): Positioned = Positioned(
             left = rect.left,
             top = rect.top,
             right = null,
             bottom = null,
             width = rect.width,
             height = rect.height,
-            childBuilder = childBuilder
+            parent = parent
         )
 
         @JvmStatic
-        fun fromRelativeRect(rect: RelativeRect, childBuilder: SingleWidgetBuilder): Positioned = Positioned(
+        fun fromRelativeRect(rect: RelativeRect, parent: Widget? = null): Positioned = Positioned(
             left = rect.left,
             top = rect.top,
             right = rect.right,
             bottom = rect.bottom,
             width = null,
             height = null,
-            childBuilder = childBuilder
+            parent = parent
         )
 
         @JvmStatic
@@ -72,7 +97,7 @@ class Positioned(
             top: Float = 0f,
             right: Float = 0f,
             bottom: Float = 0f,
-            childBuilder: SingleWidgetBuilder,
+            parent: Widget? = null,
         ): Positioned = Positioned(
             left = left,
             top = top,
@@ -80,7 +105,7 @@ class Positioned(
             bottom = bottom,
             width = null,
             height = null,
-            childBuilder = childBuilder
+            parent = parent
         )
 
         @JvmStatic
@@ -92,7 +117,7 @@ class Positioned(
             bottom: Float? = null,
             width: Float? = null,
             height: Float? = null,
-            childBuilder: SingleWidgetBuilder,
+            parent: Widget? = null,
         ): Positioned {
             val left: Float?
             val right: Float?
@@ -114,7 +139,7 @@ class Positioned(
                 bottom = bottom,
                 width = width,
                 height = height,
-                childBuilder = childBuilder
+                parent = parent
             )
         }
     }

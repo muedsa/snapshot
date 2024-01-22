@@ -42,11 +42,9 @@ class StackTest {
                         alignment = alignment,
                         textDirection = direction
                     ) {
-                        arrayOf(
-                            Container(width = 200f, height = 80f, color = Color.withA(Color.RED, 128)),
-                            Container(width = 50f, height = 150f, color = Color.withA(Color.YELLOW, 128)),
-                            Container(width = 100f, height = 100f, color = Color.withA(Color.GREEN, 128))
-                        )
+                        Container(width = 200f, height = 80f, color = Color.withA(Color.RED, 128))
+                        Container(width = 50f, height = 150f, color = Color.withA(Color.YELLOW, 128))
+                        Container(width = 100f, height = 100f, color = Color.withA(Color.GREEN, 128))
                     }
                 }
             }

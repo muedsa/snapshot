@@ -16,25 +16,29 @@ class ColumnTest {
             val description = "Column($crossAxisAlignment)"
             println("\n\ndraw: $name\n$description")
             drawWidget(imagePathWithoutSuffix = name, debugInfo = description) {
-                var widget: Widget = Column(
-                    crossAxisAlignment = crossAxisAlignment,
-                    textBaseline = if (crossAxisAlignment == CrossAxisAlignment.BASELINE) BaselineMode.ALPHABETIC else null
-                ) {
-                    arrayOf(
-                        Container(width = 100f, height = 100f, color = Color.RED),
-                        Container(width = 300f, height = 300f, color = Color.GREEN),
-                        Container(width = 200f, height = 200f, color = Color.BLUE)
-                    )
-                }
                 if (crossAxisAlignment == CrossAxisAlignment.STRETCH) {
-                    widget = LimitedBox(
+                    LimitedBox(
                         maxWidth = 1000f,
                         maxHeight = 1000f,
                     ) {
-                        widget
+                        Column(
+                            crossAxisAlignment = crossAxisAlignment
+                        ) {
+                            Container(width = 100f, height = 100f, color = Color.RED)
+                            Container(width = 300f, height = 300f, color = Color.GREEN)
+                            Container(width = 200f, height = 200f, color = Color.BLUE)
+                        }
+                    }
+                } else {
+                    Column(
+                        crossAxisAlignment = crossAxisAlignment,
+                        textBaseline = if (crossAxisAlignment == CrossAxisAlignment.BASELINE) BaselineMode.ALPHABETIC else null
+                    ) {
+                        Container(width = 100f, height = 100f, color = Color.RED)
+                        Container(width = 300f, height = 300f, color = Color.GREEN)
+                        Container(width = 200f, height = 200f, color = Color.BLUE)
                     }
                 }
-                widget
             }
         }
     }

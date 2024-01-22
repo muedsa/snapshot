@@ -7,6 +7,33 @@ import com.muedsa.snapshot.rendering.flex.*
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.Direction
 
+inline fun Widget.Flex(
+    direction: Axis,
+    mainAxisAlignment: MainAxisAlignment = MainAxisAlignment.START,
+    mainAxisSize: MainAxisSize = MainAxisSize.MAX,
+    crossAxisAlignment: CrossAxisAlignment = CrossAxisAlignment.CENTER,
+    textDirection: Direction? = null,
+    verticalDirection: VerticalDirection = VerticalDirection.DOWN,
+    textBaseline: BaselineMode? = null,
+    clipBehavior: ClipBehavior = ClipBehavior.NONE,
+    content: Flex.() -> Unit = {},
+) {
+    buildChild(
+        widget = Flex(
+            direction = direction,
+            mainAxisSize = mainAxisSize,
+            mainAxisAlignment = mainAxisAlignment,
+            crossAxisAlignment = crossAxisAlignment,
+            textDirection = textDirection,
+            verticalDirection = verticalDirection,
+            textBaseline = textBaseline,
+            clipBehavior = clipBehavior,
+            parent = this
+        ),
+        content = content
+    )
+}
+
 open class Flex(
     val direction: Axis,
     val mainAxisAlignment: MainAxisAlignment = MainAxisAlignment.START,
@@ -16,12 +43,9 @@ open class Flex(
     val verticalDirection: VerticalDirection = VerticalDirection.DOWN,
     val textBaseline: BaselineMode? = null,
     val clipBehavior: ClipBehavior = ClipBehavior.NONE,
-    childrenBuilder: MultiWidgetBuilder? = null,
-) : MultiChildWidget(
-    childrenBuilder = childrenBuilder
-) {
-
-    override fun createRenderTree(): RenderBox = RenderFlex(
+    parent: Widget? = null,
+) : MultiChildWidget(parent = parent) {
+    override fun createRenderBox(children: List<Widget>): RenderBox = RenderFlex(
         direction = direction,
         mainAxisSize = mainAxisSize,
         mainAxisAlignment = mainAxisAlignment,
@@ -30,6 +54,6 @@ open class Flex(
         verticalDirection = verticalDirection,
         textBaseline = textBaseline,
         clipBehavior = clipBehavior,
-        children = children?.createRenderBox()
+        children = children.createRenderBox()
     )
 }

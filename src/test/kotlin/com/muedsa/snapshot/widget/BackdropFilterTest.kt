@@ -11,7 +11,6 @@ import kotlin.test.Test
 
 class BackdropFilterTest {
 
-
     @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun blur_test() {
@@ -25,70 +24,68 @@ class BackdropFilterTest {
                 height = 256f,
             ) {
                 Stack {
-                    arrayOf(
-                        Positioned(
-                            top = 0f,
-                            left = 0f
-                        ) {
-                            Container(
-                                width = 128f,
-                                height = 128f,
-                                color = Color.RED
-                            )
-                        },
-                        Positioned(
-                            top = 0f,
-                            right = 0f
-                        ) {
-                            Container(
-                                width = 128f,
-                                height = 128f,
-                                color = Color.BLUE
-                            )
-                        },
-                        Positioned(
-                            bottom = 0f,
-                            left = 0f
-                        ) {
-                            Container(
-                                width = 128f,
-                                height = 128f,
-                                color = Color.BLUE
-                            )
-                        },
-                        Positioned(
-                            bottom = 0f,
-                            right = 0f
-                        ) {
-                            Container(
-                                width = 128f,
-                                height = 128f,
-                                color = Color.RED
-                            )
-                        },
-                        Positioned(
-                            top = 64f,
-                            right = 64f
-                        ) {
-                            ClipRect {
-                                BackdropFilter(
-                                    imageFilter = ImageFilter.makeBlur(25f, 25f, FilterTileMode.CLAMP)
+                    Positioned(
+                        top = 0f,
+                        left = 0f
+                    ) {
+                        Container(
+                            width = 128f,
+                            height = 128f,
+                            color = Color.RED
+                        )
+                    }
+                    Positioned(
+                        top = 0f,
+                        right = 0f
+                    ) {
+                        Container(
+                            width = 128f,
+                            height = 128f,
+                            color = Color.BLUE
+                        )
+                    }
+                    Positioned(
+                        bottom = 0f,
+                        left = 0f
+                    ) {
+                        Container(
+                            width = 128f,
+                            height = 128f,
+                            color = Color.BLUE
+                        )
+                    }
+                    Positioned(
+                        bottom = 0f,
+                        right = 0f
+                    ) {
+                        Container(
+                            width = 128f,
+                            height = 128f,
+                            color = Color.RED
+                        )
+                    }
+                    Positioned(
+                        top = 64f,
+                        right = 64f
+                    ) {
+                        ClipRect {
+                            BackdropFilter(
+                                imageFilter = ImageFilter.makeBlur(25f, 25f, FilterTileMode.CLAMP)
+                            ) {
+                                Container(
+                                    width = 128f,
+                                    height = 128f,
+                                    padding = EdgeInsets.all(10f),
+                                    alignment = BoxAlignment.CENTER
                                 ) {
-                                    Container(
-                                        width = 128f,
-                                        height = 128f,
-                                        padding = EdgeInsets.all(10f),
-                                        alignment = BoxAlignment.CENTER
-                                    ) {
-                                        SimpleText(
-                                            content = "233".repeat(100),
-                                            color = Color.WHITE
-                                        )
-                                    }
+                                    SimpleText(
+                                        text = "233".repeat(100),
+                                        color = Color.WHITE
+                                    )
                                 }
                             }
-                        },
-                    )
+                        }
+                    }
                 }
             }
         }
@@ -108,68 +105,66 @@ class BackdropFilterTest {
                 height = 256f,
             ) {
                 Stack {
-                    arrayOf(
-                        Positioned(
-                            top = 0f,
-                            left = 0f
+                    Positioned(
+                        top = 0f,
+                        left = 0f
+                    ) {
+                        Container(
+                            width = 128f,
+                            height = 128f,
+                            color = Color.RED
+                        )
+                    }
+                    Positioned(
+                        top = 0f,
+                        right = 0f
+                    ) {
+                        Container(
+                            width = 128f,
+                            height = 128f,
+                            color = Color.BLUE
+                        )
+                    }
+                    Positioned(
+                        bottom = 0f,
+                        left = 0f
+                    ) {
+                        Container(
+                            width = 128f,
+                            height = 128f,
+                            color = Color.BLUE
+                        )
+                    }
+                    Positioned(
+                        bottom = 0f,
+                        right = 0f
+                    ) {
+                        Container(
+                            width = 128f,
+                            height = 128f,
+                            color = Color.RED
+                        )
+                    }
+                    Positioned(
+                        top = 64f,
+                        right = 64f
+                    ) {
+                        BackdropFilter(
+                            imageFilter = ImageFilter.makeBlur(25f, 25f, FilterTileMode.CLAMP)
                         ) {
                             Container(
                                 width = 128f,
                                 height = 128f,
-                                color = Color.RED
-                            )
-                        },
-                        Positioned(
-                            top = 0f,
-                            right = 0f
-                        ) {
-                            Container(
-                                width = 128f,
-                                height = 128f,
-                                color = Color.BLUE
-                            )
-                        },
-                        Positioned(
-                            bottom = 0f,
-                            left = 0f
-                        ) {
-                            Container(
-                                width = 128f,
-                                height = 128f,
-                                color = Color.BLUE
-                            )
-                        },
-                        Positioned(
-                            bottom = 0f,
-                            right = 0f
-                        ) {
-                            Container(
-                                width = 128f,
-                                height = 128f,
-                                color = Color.RED
-                            )
-                        },
-                        Positioned(
-                            top = 64f,
-                            right = 64f
-                        ) {
-                            BackdropFilter(
-                                imageFilter = ImageFilter.makeBlur(25f, 25f, FilterTileMode.CLAMP)
+                                padding = EdgeInsets.all(10f),
+                                alignment = BoxAlignment.CENTER
                             ) {
-                                Container(
-                                    width = 128f,
-                                    height = 128f,
-                                    padding = EdgeInsets.all(10f),
-                                    alignment = BoxAlignment.CENTER
-                                ) {
-                                    SimpleText(
-                                        content = "233".repeat(100),
-                                        color = Color.WHITE
-                                    )
-                                }
+                                SimpleText(
+                                    text = "233".repeat(100),
+                                    color = Color.WHITE
+                                )
                             }
-                        },
-                    )
+                        }
+                    }
                 }
             }
         }
@@ -220,7 +215,7 @@ class BackdropFilterTest {
                                     alignment = BoxAlignment.CENTER
                                 ) {
                                     SimpleText(
-                                        content = "233".repeat(1000),
+                                        text = "233".repeat(1000),
                                         color = Color.WHITE
                                     )
                                 }

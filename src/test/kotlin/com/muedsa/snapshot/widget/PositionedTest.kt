@@ -12,25 +12,23 @@ class PositionedTest {
     @Test
     fun applyParentData_test() {
         println("\n\n\nPositionedTest.applyParentData_test()")
-        val stack = Stack {
-            arrayOf(
-                Positioned.fill(
-                    left = 8f,
-                    top = 10f,
-                    right = 6f,
-                    bottom = 13f
-                ) {
-                    SizedBox(width = 100f, height = 100f)
-                },
-                Positioned.fill(
-                    left = 22f,
-                    top = 5f,
-                    right = 11f,
-                    bottom = 16f
-                ) {
-                    SizedBox(width = 100f, height = 100f)
-                }
-            )
+        val stack = Stack().apply {
+            Positioned(
+                left = 8f,
+                top = 10f,
+                right = 6f,
+                bottom = 13f
+            ) {
+                SizedBox(width = 100f, height = 100f)
+            }
+            Positioned(
+                left = 22f,
+                top = 5f,
+                right = 11f,
+                bottom = 16f
+            ) {
+                SizedBox(width = 100f, height = 100f)
+            }
         }
         val renderStack = stack.createRenderBox() as RenderStack
         val stackParentData1 = renderStack.children!![0].parentData as StackParentData
@@ -57,14 +55,12 @@ class PositionedTest {
                 height = 200f
             ) {
                 Stack {
-                    arrayOf(
-                        Positioned(
-                            left = 10f,
-                            top = 10f,
-                        ) {
-                            Container(width = 100f, height = 100f, color = Color.RED)
-                        }
-                    )
+                    Positioned(
+                        left = 10f,
+                        top = 10f,
+                    ) {
+                        Container(width = 100f, height = 100f, color = Color.RED)
+                    }
                 }
             }
         }

@@ -39,10 +39,7 @@ class ClipTest {
                     )
                 }
             }
-
-
         }
-
     }
 
     @Test

@@ -5,13 +5,28 @@ import com.muedsa.snapshot.rendering.box.RenderBox
 import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.ImageFilter
 
+inline fun Widget.BackdropFilter(
+    imageFilter: ImageFilter,
+    blendMode: BlendMode = BlendMode.SRC_OVER,
+    content: BackdropFilter.() -> Unit = {},
+) {
+    buildChild(
+        widget = BackdropFilter(
+            imageFilter = imageFilter,
+            blendMode = blendMode,
+            parent = this
+        ),
+        content = content
+    )
+}
+
 class BackdropFilter(
     val imageFilter: ImageFilter,
     val blendMode: BlendMode = BlendMode.SRC_OVER,
-    childBuilder: SingleWidgetBuilder? = null,
-) : SingleChildWidget(childBuilder = childBuilder) {
+    parent: Widget? = null,
+) : SingleChildWidget(parent = parent) {
 
-    override fun createRenderTree(): RenderBox = RenderBackdropFilter(
+    override fun createRenderBox(child: Widget?): RenderBox = RenderBackdropFilter(
         imageFilter = imageFilter,
         blendMode = blendMode,
         child = child?.createRenderBox()

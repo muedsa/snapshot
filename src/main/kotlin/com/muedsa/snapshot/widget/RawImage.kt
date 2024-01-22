@@ -8,6 +8,36 @@ import com.muedsa.snapshot.rendering.box.RenderImage
 import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.Image
 
+inline fun Widget.RawImage(
+    image: Image,
+    width: Float? = null,
+    height: Float? = null,
+    fit: BoxFit? = null,
+    alignment: BoxAlignment = BoxAlignment.CENTER,
+    repeat: ImageRepeat = ImageRepeat.NO_REPEAT,
+    scale: Float = 1f,
+    opacity: Float = 1f,
+    color: Int? = null,
+    colorBlendMode: BlendMode? = null,
+) {
+    buildChild(
+        widget = RawImage(
+            image = image,
+            width = width,
+            height = height,
+            fit = fit,
+            alignment = alignment,
+            repeat = repeat,
+            scale = scale,
+            opacity = opacity,
+            color = color,
+            colorBlendMode = colorBlendMode,
+            parent = this
+        ),
+        content = {}
+    )
+}
+
 open class RawImage(
     val image: Image,
     val width: Float? = null,
@@ -19,7 +49,8 @@ open class RawImage(
     val opacity: Float = 1f,
     val color: Int? = null,
     val colorBlendMode: BlendMode? = null,
-) : Widget() {
+    parent: Widget? = null,
+) : Widget(parent = parent) {
 
     override fun createRenderBox(): RenderBox {
         return RenderImage(

@@ -10,6 +10,42 @@ import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.DecorationPosition
 import com.muedsa.snapshot.rendering.box.RenderBox
 
+inline fun Widget.Container(
+    alignment: BoxAlignment? = null,
+    padding: EdgeInsets? = null,
+    color: Int? = null,
+    decoration: Decoration? = null,
+    foregroundDecoration: Decoration? = null,
+    width: Float? = null,
+    height: Float? = null,
+    constraints: BoxConstraints? = null,
+    margin: EdgeInsets? = null,
+    transform: Matrix44CMO? = null,
+    transformAlignment: BoxAlignment? = null,
+    clipBehavior: ClipBehavior = ClipBehavior.NONE,
+    content: Container.() -> Unit = {},
+) {
+    buildChild(
+        widget = Container(
+            alignment = alignment,
+            padding = padding,
+            color = color,
+            decoration = decoration,
+            foregroundDecoration = foregroundDecoration,
+            width = width,
+            height = height,
+            constraints = constraints,
+            margin = margin,
+            transform = transform,
+            transformAlignment = transformAlignment,
+            clipBehavior = clipBehavior,
+            parent = this
+        ),
+        content = content
+    )
+}
+
+
 class Container(
     val alignment: BoxAlignment? = null,
     val padding: EdgeInsets? = null,
@@ -23,8 +59,8 @@ class Container(
     val transform: Matrix44CMO? = null,
     val transformAlignment: BoxAlignment? = null,
     val clipBehavior: ClipBehavior = ClipBehavior.NONE,
-    childBuilder: SingleWidgetBuilder? = null,
-) : SingleChildWidget(childBuilder = childBuilder) {
+    parent: Widget? = null,
+) : SingleChildWidget(parent = parent) {
 
     init {
         constraints = if (width != null || height != null)
@@ -35,87 +71,88 @@ class Container(
         else constraints
     }
 
-    private val compositedWidget: Widget by lazy {
+    private fun composeWidget(): Widget {
         var current: Widget? = child
 
         if (child == null && (constraints == null || constraints!!.isTight)) {
             current = LimitedBox(
                 maxWidth = 0f,
-                maxHeight = 0f
-            ) {
-                ConstrainedBox(constraints = BoxConstraints.expand())
-            }
+                maxHeight = 0f,
+                parent = null
+            ).bind(ConstrainedBox(constraints = BoxConstraints.expand(), parent = null))
         } else if (alignment != null) {
-            current = Align(alignment = alignment) {
-                current
-            }
+            current = Align(alignment = alignment, parent = null)
+                .bind(current)
         }
 
         if (padding != null) {
-            current = Padding(padding = padding) {
-                current
-            }
+            current = Padding(padding = padding, parent = null)
+                .bind(current)
         }
 
         if (color != null) {
-            current = ColoredBox(color = color) {
-                current
-            }
+            current = ColoredBox(color = color, parent = null).bind(current)
         }
 
         if (clipBehavior != ClipBehavior.NONE) {
             assert(decoration != null)
             current = ClipPath(
-                clipper = {
-                    decoration!!.getClipPath(Offset.ZERO combine it)
-                },
-                clipBehavior = clipBehavior
-            ) {
-                current
-            }
+                clipper = { decoration!!.getClipPath(Offset.ZERO combine it) },
+                clipBehavior = clipBehavior,
+                parent = null
+            ).bind(current)
         }
 
         if (decoration != null) {
             current = DecoratedBox(
                 decoration = decoration,
-                position = DecorationPosition.BACKGROUND
-            ) {
-                current
-            }
+                position = DecorationPosition.BACKGROUND,
+                parent = null
+            ).bind(current)
         }
 
         if (foregroundDecoration != null) {
             current = DecoratedBox(
                 decoration = foregroundDecoration,
-                position = DecorationPosition.FOREGROUND
-            ) {
-                current
-            }
+                position = DecorationPosition.FOREGROUND,
+                parent = null
+            ).bind(current)
         }
 
         if (constraints != null) {
-            current = ConstrainedBox(constraints = constraints!!) {
-                current
-            }
+            current = ConstrainedBox(constraints = constraints!!, parent = null)
+                .bind(current)
         }
 
         if (margin != null) {
-            current = Padding(padding = margin) {
-                current
-            }
+            current = Padding(padding = margin, parent = null).bind(current)
         }
 
         if (transform != null) {
             current = Transform(
                 transform = transform,
-                alignment = transformAlignment
-            ) {
-                current
-            }
+                alignment = transformAlignment,
+                parent = null
+            ).bind(current)
         }
 
-        current!!
+        return current!!
     }
 
-    override fun createRenderTree(): RenderBox = compositedWidget.createRenderBox()
+    override fun createRenderBox(child: Widget?): RenderBox = composeWidget().createRenderBox()
+}
+
+private fun Widget.bind(
+    child: Widget?,
+): Widget {
+    child?.let {
+        when (this) {
+            is ProxyWidget -> this.widget = it
+            is SingleChildWidget -> this.child = it
+            is MultiChildWidget -> this.children.add(it)
+            else -> throw IllegalCallerException()
+        }
+        it.parent = this
+    }
+    return this
 }

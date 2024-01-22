@@ -4,11 +4,24 @@ import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderConstrainedBox
 
+inline fun Widget.ConstrainedBox(
+    constraints: BoxConstraints,
+    content: ConstrainedBox.() -> Unit = {},
+) {
+    buildChild(
+        widget = ConstrainedBox(
+            constraints = constraints,
+            parent = this
+        ),
+        content = content
+    )
+}
+
 class ConstrainedBox(
     val constraints: BoxConstraints,
-    childBuilder: SingleWidgetBuilder? = null,
-) : SingleChildWidget(childBuilder = childBuilder) {
-    override fun createRenderTree(): RenderBox = RenderConstrainedBox(
+    parent: Widget? = null,
+) : SingleChildWidget(parent = parent) {
+    override fun createRenderBox(child: Widget?): RenderBox = RenderConstrainedBox(
         additionalConstraints = constraints,
         child = child?.createRenderBox()
     )

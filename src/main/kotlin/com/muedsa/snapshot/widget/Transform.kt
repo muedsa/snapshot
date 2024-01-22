@@ -7,15 +7,33 @@ import com.muedsa.geometry.computeRotation
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderTransform
 
+inline fun Widget.Transform(
+    transform: Matrix44CMO,
+    origin: Offset? = null,
+    alignment: BoxAlignment?,
+    content: Transform.() -> Unit = {},
+) {
+    buildChild(
+        widget = Transform(
+            transform = transform,
+            origin = origin,
+            alignment = alignment,
+            parent = this
+        ),
+        content = content
+    )
+}
+
+
 class Transform(
     val transform: Matrix44CMO,
     val origin: Offset? = null,
     val alignment: BoxAlignment?,
-    childBuilder: SingleWidgetBuilder? = null,
-) : SingleChildWidget(childBuilder = childBuilder) {
+    parent: Widget? = null,
+) : SingleChildWidget(parent = parent) {
 
 
-    override fun createRenderTree(): RenderBox = RenderTransform(
+    override fun createRenderBox(child: Widget?): RenderBox = RenderTransform(
         transform = transform,
         origin = origin,
         alignment = alignment,
@@ -29,23 +47,23 @@ class Transform(
             angle: Float,
             origin: Offset? = null,
             alignment: BoxAlignment = BoxAlignment.CENTER,
-            childBuilder: SingleWidgetBuilder? = null,
+            parent: Widget? = null,
         ): Transform = Transform(
             transform = computeRotation(angle),
             origin = origin,
             alignment = alignment,
-            childBuilder = childBuilder
+            parent = parent
         )
 
         @JvmStatic
         fun translate(
             offset: Offset,
-            childBuilder: SingleWidgetBuilder? = null,
+            parent: Widget? = null,
         ): Transform = Transform(
             transform = Matrix44CMO.translationValues(x = offset.x, y = offset.y, z = 0f),
             origin = null,
             alignment = null,
-            childBuilder = childBuilder
+            parent = parent
         )
     }
 }

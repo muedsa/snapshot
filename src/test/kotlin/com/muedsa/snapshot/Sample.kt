@@ -1,46 +1,24 @@
 package com.muedsa.snapshot
 
-import com.muedsa.geometry.BoxAlignment
-import com.muedsa.snapshot.paint.decoration.BoxDecoration
-import com.muedsa.snapshot.paint.gradient.SweepGradient
-import com.muedsa.snapshot.widget.Container
-import com.muedsa.snapshot.widget.SizedBox
+import com.muedsa.geometry.EdgeInsets
+import com.muedsa.snapshot.widget.Align
+import com.muedsa.snapshot.widget.Padding
 import org.jetbrains.skia.*
 import org.jetbrains.skia.paragraph.*
 
-fun sample() {
-    val snapshot = Snapshot(background = Color.WHITE) {
-        SizedBox(
-            width = 500f,
-            height = 500f,
-        ) {
-            Container(
-                decoration = BoxDecoration(
-                    gradient = SweepGradient(
-                        center = BoxAlignment.CENTER,
-                        colors = intArrayOf(
-                            0xFF4285F4.toInt(),
-                            0xFF34A853.toInt(),
-                            0xFFFBBC05.toInt(),
-                            0xFFEA4335.toInt(),
-                            0xFF4285F4.toInt(),
-                        ),
-                        stops = floatArrayOf(0f, 0.25f, 0.5f, 0.75f, 1f),
-                    )
-                )
-            )
+fun main() {
+    //textTest()
+
+    val snapshot = Snapshot {
+        Align {
+            Padding(padding = EdgeInsets.ZERO) {
+                Align {
+                    Padding(padding = EdgeInsets.ZERO)
+                }
+            }
         }
     }
     snapshot.draw()
-    val filePath = java.nio.file.Path.of("test.png")
-    filePath.toFile().apply {
-        writeBytes(snapshot.toPNGImageBytes())
-    }
-}
-
-fun main() {
-    sample()
-    //textTest()
 }
 
 fun textTest() {
@@ -68,6 +46,15 @@ fun textTest() {
     })
     paragraphBuilder.addText("标题")
     paragraphBuilder.popStyle()
+    paragraphBuilder.addPlaceholder(
+        PlaceholderStyle(
+            width = 50f,
+            height = 50f,
+            alignment = PlaceholderAlignment.MIDDLE,
+            baselineMode = BaselineMode.ALPHABETIC,
+            baseline = 50f
+        )
+    )
     paragraphBuilder.addText("（这里是内容）")
     val paragraph = paragraphBuilder.build()
     paragraph.layout(500f - 20f)
@@ -78,5 +65,4 @@ fun textTest() {
     filePath.toFile().apply {
         writeBytes(image.encodeToData(format = EncodedImageFormat.PNG)!!.bytes)
     }
-    // val record: PictureRecorder = PictureRecorder()
 }
