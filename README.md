@@ -1,5 +1,3 @@
-# Snapshot
-
 ![logo](logo.png)
 
 抄[Flutter](https://github.com/flutter/flutter)实现了一个可以直观~~简单快捷~~地构建图片的工具
