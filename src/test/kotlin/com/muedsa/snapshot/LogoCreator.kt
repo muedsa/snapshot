@@ -9,14 +9,20 @@ import kotlin.test.Test
 
 class LogoCreator {
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun logo() {
-        val radius = 200f
-        val size = radius * 2
-        val delta = radius / 5f
-        val wholeSize = size + delta
         drawWidget("../logo") {
+            logoContent()
+        }
+    }
+
+    companion object {
+        @OptIn(ExperimentalStdlibApi::class)
+        fun Widget.logoContent() {
+            val radius = 200f
+            val size = radius * 2
+            val delta = radius / 5f
+            val wholeSize = size + delta
             Padding(
                 padding = EdgeInsets.all(20f)
             ) {
@@ -84,4 +90,5 @@ class LogoCreator {
             }
         }
     }
+
 }
