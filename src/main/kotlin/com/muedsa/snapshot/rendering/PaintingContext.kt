@@ -89,11 +89,6 @@ class PaintingContext private constructor(
         recorderCanvas = null
     }
 
-    fun addLayer(layer: Layer) {
-        stopRecordingIfNeeded()
-        appendLayer(layer)
-    }
-
     fun pushLayer(
         childLayer: ContainerLayer,
         painter: (PaintingContext, Offset) -> Unit,
@@ -237,6 +232,11 @@ class PaintingContext private constructor(
         val layer = OpacityLayer(opacity = opacity)
         pushLayer(layer, painter, offset, childPaintBounds = estimatedBounds)
         return layer
+    }
+
+    fun composite(layerPaintContext: LayerPaintContext) {
+        stopRecordingIfNeeded()
+        containerLayer.paint(layerPaintContext)
     }
 
     companion object {

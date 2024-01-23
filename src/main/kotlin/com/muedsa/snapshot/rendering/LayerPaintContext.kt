@@ -7,4 +7,12 @@ class LayerPaintContext(
     val canvas: Canvas,
 ) {
     val pictures: MutableList<Picture> = mutableListOf()
+
+    companion object {
+
+        @JvmStatic
+        fun composite(context: PaintingContext, canvas: Canvas) {
+            context.composite(LayerPaintContext(canvas))
+        }
+    }
 }

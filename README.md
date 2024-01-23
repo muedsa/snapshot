@@ -5,74 +5,69 @@
 之前像 [taffy-pvp-card-sw](https://github.com/muedsa/taffy-pvp-card-sw) 这样直接使用Canvas的方式，会让后期维护和修改变的十分困难,
 所以急需一个可以结构化构建图像的工具
 
+### Sample: Container
 ```kotlin
-val radius = 200f
-val size = radius * 2
-val delta = radius / 5f
-val wholeSize = size + delta
-Padding(
-    padding = EdgeInsets.all(20f)
-) {
-    Row {
-        SizedBox(
-            width = wholeSize,
-            height = wholeSize
-        ) {
-            Stack {
-                Positioned(
-                    top = 0f,
-                    left = 0f
-                ) {
-                    ClipPath(
-                        clipper = {
-                            Path().apply {
-                                arcTo(
-                                    oval = Rect.Companion.makeWH(it.width, it.height),
-                                    startAngle = 45f,
-                                    sweepAngle = 180f,
-                                    forceMoveTo = true
-                                )
-                            }
-                        }
-                    ) {
-                        Container(
-                            width = size,
-                            height = size,
-                            color = 0xFF_FF_57_33.toInt()
-                        )
-                    }
-                }
-                Positioned(
-                    bottom = 0f,
-                    right = 0f
-                ) {
-                    ClipPath(
-                        clipper = {
-                            Path().apply {
-                                arcTo(
-                                    oval = Rect.Companion.makeWH(it.width, it.height),
-                                    startAngle = 45f + 180f,
-                                    sweepAngle = 180f,
-                                    forceMoveTo = true
-                                )
-                            }
-                        }
-                    ) {
-                        Container(
-                            width = size,
-                            height = size,
-                            color = 0xFF_FF_D1_33.toInt()
-                        )
-                    }
-                }
-            }
-        }
-        SimpleText(
-            text = "Snapshot",
-            color = 0xFF_A6_A6_A6.toInt(),
-            fontSize = size * 0.8f,
-            fontStyle = FontStyle.BOLD
+File("sample_container.png").writeBytes(
+    SnapshotPNG {
+        Container(
+            width = 200f,
+            height = 200f,
+            color = Color.RED
         )
     }
-}
+)
 ```
+
+![Sample: Container](sample_container.png)
+
+### Sample: Layout
+
+```kotlin
+File("sample_layout.png").writeBytes(
+    SnapshotPNG {
+        Column {
+            Row {
+                Container(
+                    width = 200f,
+                    height = 200f,
+                    color = Color.RED
+                )
+                Container(
+                    width = 200f,
+                    height = 200f,
+                    color = Color.GREEN
+                )
+            }
+            Row {
+                Container(
+                    width = 200f,
+                    height = 200f,
+                    color = Color.BLUE
+                )
+                Container(
+                    width = 200f,
+                    height = 200f,
+                    color = Color.YELLOW
+                )
+            }
+        }
+    }
+)
+```
+
+![Sample: Layout](sample_layout.png)
+
+### Sample: Image & Text
+
+```kotlin
+File("sample_image_and_text.png").writeBytes(
+    SnapshotPNG {
+        Stack {
+            CachedNetworkImage("https://picsum.photos/500")
+            SimpleText("Hello World!", color = Color.RED, fontSize = 40f)
+        }
+    }
+)
+```
+
+![Sample: Image & Text](sample_image_and_text.png)

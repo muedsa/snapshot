@@ -32,15 +32,13 @@ fun drawWidget(
     drawDebug: Boolean = false,
     content: Widget.() -> Unit,
 ) {
-    var snapshot = Snapshot(
+    var snapshotImage = SnapshotImage(
         background = Color.TRANSPARENT,
         debug = drawDebug,
         content = content
     )
-    snapshot.draw()
-    val snapshotImage = snapshot.image!!
     if (!debugInfo.isNullOrEmpty()) {
-        snapshot = Snapshot(
+        snapshotImage = SnapshotImage(
             background = Color.TRANSPARENT
         ) {
             Column {
@@ -56,11 +54,10 @@ fun drawWidget(
                 }
             }
         }
-        snapshot.draw()
     }
     val path = testImagesDirection.resolve("$imagePathWithoutSuffix.png")
     path.createParentDirectories()
-    path.toFile().writeBytes(snapshot.toPNGImageBytes())
+    path.toFile().writeBytes(snapshotImage.encodeToData(EncodedImageFormat.PNG)!!.bytes)
 }
 
 @OptIn(ExperimentalStdlibApi::class)
