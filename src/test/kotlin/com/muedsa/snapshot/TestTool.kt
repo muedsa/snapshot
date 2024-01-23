@@ -7,7 +7,11 @@ import com.muedsa.snapshot.paint.text.SimpleTextPainter
 import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.widget.*
-import org.jetbrains.skia.*
+import org.jetbrains.skia.Canvas
+import org.jetbrains.skia.Color
+import org.jetbrains.skia.EncodedImageFormat
+import org.jetbrains.skia.Surface
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.createDirectory
 import kotlin.io.path.createParentDirectories
@@ -18,11 +22,20 @@ fun noLimitedLayout(renderBox: RenderBox) {
     renderBox.layout(BoxConstraints())
 }
 
-
 val testImagesDirection: Path = Path.of("testOutputs").apply {
     if (!exists()) {
         createDirectory()
     }
+}
+
+fun getTestPngFile(imagePathWithoutSuffix: String): File {
+    var suffix = imagePathWithoutSuffix
+    if (imagePathWithoutSuffix.startsWith("/")) {
+        suffix = suffix.substring(1)
+    }
+    val path = testImagesDirection.resolve("$suffix.png")
+    path.createParentDirectories()
+    return path.toFile()
 }
 
 @OptIn(ExperimentalStdlibApi::class)
@@ -55,9 +68,7 @@ fun drawWidget(
             }
         }
     }
-    val path = testImagesDirection.resolve("$imagePathWithoutSuffix.png")
-    path.createParentDirectories()
-    path.toFile().writeBytes(snapshotImage.encodeToData(EncodedImageFormat.PNG)!!.bytes)
+    getTestPngFile(imagePathWithoutSuffix).writeBytes(snapshotImage.encodeToData(EncodedImageFormat.PNG)!!.bytes)
 }
 
 @OptIn(ExperimentalStdlibApi::class)
@@ -76,19 +87,13 @@ fun drawPainter(
             h += this@apply.height + 20f
         }
     }
-    val surface = Surface.makeRaster(ImageInfo.makeN32Premul(ceil(width).toInt(), ceil(h).toInt()))
+    val surface = Surface.makeRasterN32Premul(ceil(width).toInt(), ceil(h).toInt())
     surface.canvas.clear(background)
     painter.invoke(surface.canvas)
     debugInfoPainter?.paint(surface.canvas, Offset(10f, height + 10f))
-    var suffix = imagePathWithoutSuffix
-    if (imagePathWithoutSuffix.startsWith("/")) {
-        suffix = suffix.substring(1)
-    }
-    val path = testImagesDirection.resolve("$suffix.png")
-    path.createParentDirectories()
-    surface.makeImageSnapshot().use {
-        path.toFile().writeBytes(it.encodeToData(EncodedImageFormat.PNG)!!.bytes)
-    }
+    getTestPngFile(imagePathWithoutSuffix).writeBytes(
+        surface.makeImageSnapshot().encodeToData(EncodedImageFormat.PNG)!!.bytes
+    )
 }
 
 fun drawPainter(
