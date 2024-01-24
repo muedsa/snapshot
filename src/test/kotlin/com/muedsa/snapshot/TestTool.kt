@@ -4,6 +4,7 @@ import com.muedsa.geometry.EdgeInsets
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
 import com.muedsa.snapshot.paint.text.SimpleTextPainter
+import com.muedsa.snapshot.rendering.Layer
 import com.muedsa.snapshot.rendering.LayerPaintContext
 import com.muedsa.snapshot.rendering.PaintingContext
 import com.muedsa.snapshot.rendering.box.BoxConstraints
@@ -112,15 +113,49 @@ fun drawPainter(
     )
 }
 
-fun renderBoxToPixels(renderBox: RenderBox): Pixmap {
+fun renderBoxToPixels(renderBox: RenderBox, background: Int = Color.WHITE): Pixmap {
     val size = renderBox.definiteSize
-    val surface = Surface.makeRasterN32Premul(ceil(size.width).toInt(), ceil(size.width).toInt())
-    surface.canvas.clear(Color.WHITE)
+    val surface = Surface.makeRasterN32Premul(ceil(size.width).toInt(), ceil(size.height).toInt())
+    surface.canvas.clear(background)
     LayerPaintContext.composite(
         PaintingContext.paintRoot(
             bounds = Offset.ZERO combine size,
             renderBox = renderBox
-        ), surface.canvas
+        ),
+        surface.canvas
     )
+    return surface.makeImageSnapshot().peekPixels()!!
+}
+
+fun painterToPicture(
+    width: Float,
+    height: Float,
+    background: Int = Color.WHITE,
+    painter: (Canvas) -> Unit = {},
+): Picture {
+    val record = PictureRecorder()
+    val canvas = record.beginRecording(Rect.makeXYWH(0f, 0f, width, height))
+    canvas.clear(background)
+    painter(canvas)
+    return record.finishRecordingAsPicture()
+}
+
+fun layerToPixels(width: Float, height: Float, layer: Layer): Pixmap {
+    val surface = Surface.makeRasterN32Premul(ceil(width).toInt(), ceil(height).toInt())
+    layer.paint(LayerPaintContext(surface.canvas))
+    return surface.makeImageSnapshot().peekPixels()!!
+}
+
+fun layersToPixels(width: Float, height: Float, layers: List<Layer>): Pixmap {
+    val surface = Surface.makeRasterN32Premul(ceil(width).toInt(), ceil(height).toInt())
+    val context = LayerPaintContext(surface.canvas)
+    layers.forEach { it.paint(context) }
+    return surface.makeImageSnapshot().peekPixels()!!
+}
+
+fun pictureToPixels(picture: Picture): Pixmap {
+    val rect = picture.cullRect
+    val surface = Surface.makeRasterN32Premul(ceil(rect.width).toInt(), ceil(rect.height).toInt())
+    surface.canvas.drawPicture(picture)
     return surface.makeImageSnapshot().peekPixels()!!
 }

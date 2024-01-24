@@ -29,7 +29,7 @@ class RenderClipOvalTest {
         val renderClip = RenderClipOval(
             clipBehavior = ClipBehavior.ANTI_ALIAS,
             clipper = {
-                Rect.makeXYWH(quarterSize, quarterSize, halfSize, halfSize)
+                Rect.makeXYWH(quarterSize, quarterSize, halfSize, halfSize) // clip ◙
             },
             child = originRenderBox
         )
@@ -37,7 +37,7 @@ class RenderClipOvalTest {
         val renderNoneClip = RenderClipOval(
             clipBehavior = ClipBehavior.NONE,
             clipper = {
-                Rect.makeXYWH(quarterSize, quarterSize, halfSize, halfSize)
+                Rect.makeXYWH(quarterSize, quarterSize, halfSize, halfSize) // clip ◙
             },
             child = originRenderBox
         )

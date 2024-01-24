@@ -27,7 +27,7 @@ class RenderClipRectTest {
         val renderClip = RenderClipRect(
             clipBehavior = ClipBehavior.ANTI_ALIAS,
             clipper = {
-                Rect.makeXYWH(quarterSize, quarterSize, halfSize, halfSize)
+                Rect.makeXYWH(quarterSize, quarterSize, halfSize, halfSize) // clip ▣
             },
             child = originRenderBox
         )
@@ -35,7 +35,7 @@ class RenderClipRectTest {
         val renderNoneClip = RenderClipRect(
             clipBehavior = ClipBehavior.NONE,
             clipper = {
-                Rect.makeXYWH(quarterSize, quarterSize, halfSize, halfSize)
+                Rect.makeXYWH(quarterSize, quarterSize, halfSize, halfSize) // clip ▣
             },
             child = originRenderBox
         )

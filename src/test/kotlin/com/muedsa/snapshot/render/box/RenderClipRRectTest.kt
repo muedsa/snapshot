@@ -30,7 +30,7 @@ class RenderClipRRectTest {
             clipBehavior = ClipBehavior.ANTI_ALIAS,
             clipper = {
                 // make oval
-                RRect.makeXYWH(quarterSize, quarterSize, halfSize, halfSize, radius = quarterSize)
+                RRect.makeXYWH(quarterSize, quarterSize, halfSize, halfSize, radius = quarterSize) // clip ◙
             },
             child = originRenderBox
         )
@@ -39,7 +39,7 @@ class RenderClipRRectTest {
             clipBehavior = ClipBehavior.NONE,
             clipper = {
                 // make oval
-                RRect.makeXYWH(quarterSize, quarterSize, halfSize, halfSize, radius = quarterSize)
+                RRect.makeXYWH(quarterSize, quarterSize, halfSize, halfSize, radius = quarterSize) // clip ◙
             },
             child = originRenderBox
         )
