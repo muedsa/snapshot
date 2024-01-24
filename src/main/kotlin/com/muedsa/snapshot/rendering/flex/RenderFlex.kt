@@ -235,7 +235,6 @@ open class RenderFlex(
             }
 
             MainAxisAlignment.SPACE_EVENLY -> {
-                val bs = if (childCount > 0) remainingSpace / (childCount + 1) else 0f
                 leadingSpace = if (childCount > 0) remainingSpace / (childCount + 1) else 0f
                 betweenSpace = leadingSpace
             }
