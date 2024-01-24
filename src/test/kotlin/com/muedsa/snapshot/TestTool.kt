@@ -4,13 +4,12 @@ import com.muedsa.geometry.EdgeInsets
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
 import com.muedsa.snapshot.paint.text.SimpleTextPainter
+import com.muedsa.snapshot.rendering.LayerPaintContext
+import com.muedsa.snapshot.rendering.PaintingContext
 import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.widget.*
-import org.jetbrains.skia.Canvas
-import org.jetbrains.skia.Color
-import org.jetbrains.skia.EncodedImageFormat
-import org.jetbrains.skia.Surface
+import org.jetbrains.skia.*
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.createDirectory
@@ -111,4 +110,17 @@ fun drawPainter(
         debugInfo = debugInfo,
         painter = painter
     )
+}
+
+fun renderBoxToPixels(renderBox: RenderBox): Pixmap {
+    val size = renderBox.definiteSize
+    val surface = Surface.makeRasterN32Premul(ceil(size.width).toInt(), ceil(size.width).toInt())
+    surface.canvas.clear(Color.WHITE)
+    LayerPaintContext.composite(
+        PaintingContext.paintRoot(
+            bounds = Offset.ZERO combine size,
+            renderBox = renderBox
+        ), surface.canvas
+    )
+    return surface.makeImageSnapshot().peekPixels()!!
 }

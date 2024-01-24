@@ -32,7 +32,7 @@ class RenderClipPath(
                     super.paint(c, o)
                 }
             } else {
-                context.paintChild(child, offset)
+                super.paint(context, offset)
             }
         }
     }
