@@ -141,18 +141,3 @@ class Container(
 
     override fun createRenderBox(child: Widget?): RenderBox = composeWidget().createRenderBox()
 }
-
-private fun Widget.bind(
-    child: Widget?,
-): Widget {
-    child?.let {
-        when (this) {
-            is ProxyWidget -> this.widget = it
-            is SingleChildWidget -> this.child = it
-            is MultiChildWidget -> this.children.add(it)
-            else -> throw IllegalCallerException()
-        }
-        it.parent = this
-    }
-    return this
-}

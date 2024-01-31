@@ -15,6 +15,21 @@ inline fun <T : Widget> Widget.buildChild(
     widget.content()
 }
 
+fun Widget.bind(
+    child: Widget?,
+): Widget {
+    child?.let {
+        when (this) {
+            is ProxyWidget -> this.widget = it
+            is SingleChildWidget -> this.child = it
+            is MultiChildWidget -> this.children.add(it)
+            else -> throw IllegalCallerException()
+        }
+        it.parent = this
+    }
+    return this
+}
+
 abstract class Widget(
     parent: Widget? = null,
 ) {

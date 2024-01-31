@@ -43,6 +43,23 @@ abstract class AlignmentGeometry {
 
     abstract fun resolve(direction: Direction?): BoxAlignment
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is AlignmentGeometry) return false
+
+        if (x != other.x) return false
+        if (start != other.start) return false
+        if (y != other.y) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = x.hashCode()
+        result = 31 * result + start.hashCode()
+        result = 31 * result + y.hashCode()
+        return result
+    }
 
     override fun toString(): String {
         if (start == 0f) {
