@@ -90,7 +90,7 @@ inline fun SnapshotWEBP(
         )
     },
     content: Widget.() -> Unit,
-): ByteArray = SnapshotImage(background = background, debug = debug, content = content)
+): ByteArray = SnapshotImage(background = background, debug = debug, initSurface = initSurface, content = content)
     .encodeToData(format = EncodedImageFormat.WEBP)!!.bytes
 
 inline fun layoutWidget(
