@@ -1,5 +1,6 @@
 package com.muedsa.snapshot.parser
 
+import com.muedsa.snapshot.parser.attr.CommonAttrDefine
 import com.muedsa.snapshot.parser.token.RawAttr
 import com.muedsa.snapshot.parser.token.Token
 import com.muedsa.snapshot.parser.token.Tokenizer
@@ -98,9 +99,26 @@ class Parser {
     }
 
     protected fun insertCharacterFor(token: Token.Character) {
-        // println("insert character:$token")
-        if (!token.data.isNullOrBlank()) {
-            throw ParseException(token.startPos, "Not Support RAWTEXT: ${token.data}")
+        println("insert character:${token.data}")
+        val currentElement = getCurrentElement()
+        if (currentElement?.tag == Tag.TEXT) {
+            if (token.data != null) {
+                val rawAttr = currentElement.attrs[CommonAttrDefine.TEXT.name]
+                currentElement.attrs[CommonAttrDefine.TEXT.name] = rawAttr?.copy(
+                    value = (rawAttr.value ?: "") + token.data
+                ) ?: RawAttr(
+                    name = CommonAttrDefine.TEXT.name,
+                    value = token.data,
+                    nameStartPos = token.startPos,
+                    nameEndPos = token.startPos,
+                    valueStartPos = token.startPos,
+                    valueEndPos = token.endPos
+                )
+            }
+        } else {
+            if (!token.data.isNullOrBlank()) {
+                throw ParseException(token.startPos, "Not Support RAWTEXT: ${token.data}")
+            }
         }
     }
 
@@ -116,6 +134,7 @@ class Parser {
         } else if (stack.isEmpty()) {
             throw ParseException(element.pos, "Duplicate root element ${element.tag.id} at ${element.pos}")
         }
+        element.owner = snapshotElement
         stack.add(element)
     }
 

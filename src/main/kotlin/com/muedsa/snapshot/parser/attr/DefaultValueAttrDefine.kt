@@ -1,5 +1,6 @@
 package com.muedsa.snapshot.parser.attr
 
+import com.muedsa.snapshot.parser.attr.required.AttrDefine
 import com.muedsa.snapshot.parser.token.RawAttr
 
 abstract class DefaultValueAttrDefine<T>(
@@ -23,6 +24,10 @@ abstract class DefaultValueAttrDefine<T>(
             parseValue(rawAttr.value)
         } else defaultValue
     }
+
+    override fun copyWith(name: String): AttrDefine<T> = copyWith(name, defaultValue)
+
+    abstract fun copyWith(name: String, defaultValue: T): AttrDefine<T>
 
     override fun toString(): String = "$name = $defaultValue"
 }

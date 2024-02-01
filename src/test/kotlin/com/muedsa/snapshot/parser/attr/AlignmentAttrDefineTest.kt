@@ -12,6 +12,8 @@ class AlignmentAttrDefineTest {
         val attrName = "test"
         val attr = AlignmentAttrDefine(attrName)
 
+        DefaultValueAttrDefineTest.tryDefaultValueTest(attr)
+
         expect(BoxAlignment.TOP_LEFT) {
             attr.parseValue(RawAttr(attrName, "TOP_LEFT"))
         }

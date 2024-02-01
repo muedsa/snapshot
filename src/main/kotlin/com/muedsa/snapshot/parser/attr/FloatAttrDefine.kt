@@ -8,4 +8,6 @@ class FloatAttrDefine(name: String, defaultValue: Float = 0f) :
         return valueStr.toFloat()
     }
 
+    override fun copyWith(name: String, defaultValue: Float): FloatAttrDefine =
+        FloatAttrDefine(name, defaultValue)
 }

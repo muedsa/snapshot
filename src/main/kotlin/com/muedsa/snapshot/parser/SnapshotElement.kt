@@ -13,7 +13,7 @@ import org.jetbrains.skia.Surface
 import kotlin.math.ceil
 
 class SnapshotElement(
-    attrs: Map<String, RawAttr>,
+    attrs: MutableMap<String, RawAttr>,
     pos: TrackPos,
 ) : Element(tag = Tag.SNAPSHOT, attrs = attrs, pos = pos) {
 

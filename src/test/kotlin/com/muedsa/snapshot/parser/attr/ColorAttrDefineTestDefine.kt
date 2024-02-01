@@ -11,6 +11,8 @@ class ColorAttrDefineTestDefine {
         val attrName = "test"
         val attr = ColorAttrDefine(attrName)
 
+        DefaultValueAttrDefineTest.tryDefaultValueTest(attr)
+
         expect(0xFF_FF_FF_FF.toInt()) {
             attr.parseValue(RawAttr(attrName, "#FFFFFFFF"))
         }

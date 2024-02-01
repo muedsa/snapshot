@@ -1,5 +1,6 @@
-package com.muedsa.snapshot.parser
+package com.muedsa.snapshot.parser.tag
 
+import com.muedsa.snapshot.parser.Tag
 import kotlin.test.Test
 
 class TagTest {

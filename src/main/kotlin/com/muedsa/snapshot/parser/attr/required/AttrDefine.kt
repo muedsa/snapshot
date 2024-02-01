@@ -1,4 +1,4 @@
-package com.muedsa.snapshot.parser.attr
+package com.muedsa.snapshot.parser.attr.required
 
 import com.muedsa.snapshot.parser.token.RawAttr
 
@@ -19,8 +19,10 @@ abstract class AttrDefine<T>(
     open fun parseValue(rawAttr: RawAttr?): T {
         check(rawAttr != null) { "Attr $name must not be null" }
         check(rawAttr.name == name) { "Attr $name not equal $rawAttr" }
-        return parseValue(rawAttr)
+        return parseValue(rawAttr.value)
     }
+
+    abstract fun copyWith(name: String): AttrDefine<T>
 
     override fun toString(): String = name
 }

@@ -1,11 +1,15 @@
 package com.muedsa.snapshot.parser.attr
 
 import com.muedsa.geometry.BoxAlignment
+import com.muedsa.snapshot.parser.attr.required.AttrDefine
 
 class AlignmentAttrDefine(name: String, defaultValue: BoxAlignment = BoxAlignment.CENTER) :
     DefaultValueAttrDefine<BoxAlignment>(name = name, defaultValue = defaultValue) {
 
     override fun parseValue(valueStr: String?): BoxAlignment = parseAlignmentFromText(valueStr, this)
+
+    override fun copyWith(name: String, defaultValue: BoxAlignment): AttrDefine<BoxAlignment> =
+        AlignmentAttrDefine(name, defaultValue)
 
     companion object {
 

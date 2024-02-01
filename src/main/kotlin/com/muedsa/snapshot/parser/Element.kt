@@ -6,9 +6,11 @@ import com.muedsa.snapshot.widget.bind
 
 open class Element(
     val tag: Tag,
-    val attrs: Map<String, RawAttr>,
+    val attrs: MutableMap<String, RawAttr>,
     val pos: TrackPos,
 ) {
+    var owner: SnapshotElement? = null
+    var parent: Element? = null
     private val _children: MutableList<Element> = mutableListOf()
     val children: List<Element> = _children
 
@@ -27,11 +29,12 @@ open class Element(
             ContainerMode.MULTIPLE -> Unit
         }
         _children.add(element)
+        element.parent = this
     }
 
     open fun createWidget(): Widget {
         val widget = try {
-            tag.buildWidget(attrs)
+            tag.buildWidget(this)
         } catch (pex: ParseException) {
             throw pex
         } catch (t: Throwable) {

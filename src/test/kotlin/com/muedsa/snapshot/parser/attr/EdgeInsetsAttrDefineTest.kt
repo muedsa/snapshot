@@ -13,9 +13,7 @@ class EdgeInsetsAttrDefineTest {
         val attrName = "test"
         val attr = EdgeInsetsAttrDefine(attrName, EdgeInsets(1f, 2f, 3f, 4f))
 
-        expect(attr.defaultValue) {
-            attr.parseValue(null)
-        }
+        DefaultValueAttrDefineTest.tryDefaultValueTest(attr)
 
         expect(EdgeInsets.all(4f)) {
             attr.parseValue(RawAttr(attrName, "4"))
