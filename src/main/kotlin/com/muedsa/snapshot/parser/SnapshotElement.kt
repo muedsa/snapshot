@@ -17,7 +17,10 @@ class SnapshotElement(
     pos: TrackPos,
 ) : Element(tag = Tag.SNAPSHOT, attrs = attrs, pos = pos) {
 
-    override fun createWidget(): Widget = children[0].createWidget()
+    override fun createWidget(): Widget {
+        check(children.isNotEmpty()) { "Snapshot element content is empty" }
+        return children[0].createWidget()
+    }
 
     fun snapshot(): ByteArray {
         val type: String = Tag.parseAttrValue(ATTR_TYPE, attrs)

@@ -110,9 +110,11 @@ class Parser {
     private fun push(element: Element) {
         if (snapshotElement == null) {
             check(element is SnapshotElement) {
-                "Unexpected tag ${element.tag.id}, root element tag must be ${Tag.SNAPSHOT.id}"
+                "Unexpected element ${element.tag.id}, root element tag must be ${Tag.SNAPSHOT.id}"
             }
             snapshotElement = element
+        } else if (stack.isEmpty()) {
+            throw ParseException(element.pos, "Duplicate root element ${element.tag.id} at ${element.pos}")
         }
         stack.add(element)
     }

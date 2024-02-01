@@ -4,6 +4,7 @@ import com.muedsa.geometry.BoxAlignment
 import com.muedsa.geometry.EdgeInsets
 import com.muedsa.snapshot.getTestPngFile
 import com.muedsa.snapshot.widget.Container
+import org.junit.jupiter.api.assertThrows
 import java.io.StringReader
 import kotlin.test.Test
 
@@ -11,15 +12,15 @@ class ParserTest {
 
     @Test
     fun parse_test() {
-        val snapshotElement = parse(
-            """
+        val text = """
             <Snapshot background="#FFFFFFFF" format="png" debug>
                 <Container color="#FF00FF00" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
                     <Container color="#FFFF0000" width="100" height="50"/>
                 </Container>
             </Snapshot>
-        """
-        )
+        """.trimIndent()
+        println(text)
+        val snapshotElement = parse(text)
         println(snapshotElement.toTreeString(0))
         val widget = snapshotElement.createWidget()
         assert(widget is Container)
@@ -39,17 +40,64 @@ class ParserTest {
 
     @Test
     fun draw_test() {
-        val snapshotElement = parse(
-            """
+        val text = """
             <Snapshot background="#FFFFFFFF" format="png">
                 <Container color="#FF00FF00" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
                     <Container color="#FFFF0000" width="100" height="50"/>
                 </Container>
             </Snapshot>
-        """
-        )
+        """.trimIndent()
+        println(text)
+        val snapshotElement = parse(text)
         println(snapshotElement.toTreeString(0))
         getTestPngFile("parser/container").writeBytes(snapshotElement.snapshot())
+    }
+
+    @Test
+    fun duplicate_snapshot_element_test() {
+        assertThrows<ParseException> {
+            val text = """
+                <Snapshot background="#FFFFFFFF" format="png" debug>
+                    <Snapshot/>
+                </Snapshot>
+                <Snapshot background="#FFFFFFFF" format="png" debug>
+                    <Container color="#FF00FF00" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
+                        <Container color="#FFFF0000" width="100" height="50"/>
+                    </Container>
+                </Snapshot>
+            """.trimIndent()
+            println(text)
+            parse(text)
+        }
+    }
+
+    @Test
+    fun duplicate_root_element_test() {
+        assertThrows<ParseException> {
+            val text = """
+                <Snapshot background="#FFFFFFFF" format="png" debug>
+                    <Container color="#FF00FF00" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
+                        <Container color="#FFFF0000" width="100" height="50"/>
+                    </Container>
+                </Snapshot>
+                <Container color="#FF00FF00" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
+                        <Container color="#FFFF0000" width="100" height="50"/>
+                    </Container>
+            """.trimIndent()
+            println(text)
+            parse(text)
+        }
+    }
+
+    @Test
+    fun snapshot_content_empty_test() {
+        assertThrows<ParseException> {
+            val text = """
+                <Snapshot background="#FFFFFFFF" format="png" debug></Snapshot>>
+            """.trimIndent()
+            println(text)
+            parse(text)
+        }
     }
 
     private fun parse(text: String): SnapshotElement = Parser().parse(StringReader(text))

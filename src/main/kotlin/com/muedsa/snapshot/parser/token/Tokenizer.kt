@@ -183,18 +183,26 @@ class Tokenizer(reader: Reader) {
     internal fun emitTagPending() {
         tagPending.finaliseTag()
         if (shouldAsFirstTagChecked) {
-            check(Tag.SNAPSHOT.id == tagPending.tagName) {
+            check(Tag.SNAPSHOT.id == tagPending.tagName, lazyTrackPos = { getMarkupStartTrackPos() }) {
                 "First tag must be '${Tag.SNAPSHOT.id}', but get '${tagPending.tagName}'"
             }
             shouldAsFirstTagChecked = false
         } else {
             if (tagPending is Token.StartTag) {
-                check(Tag.SNAPSHOT.id != tagPending.tagName) {
-                    "Tag '${Tag.SNAPSHOT.id}' only be used as the first"
+                check(Tag.SNAPSHOT.id != tagPending.tagName, lazyTrackPos = { getMarkupStartTrackPos() }) {
+                    "Tag '${Tag.SNAPSHOT.id}' only be used as the first, but get '${tagPending.tagName}' at ${getMarkupStartTrackPos()}"
                 }
             }
         }
         emit(tagPending)
+    }
+
+    private fun getMarkupStartTrackPos(): TrackPos {
+        return TrackPos(
+            markupStartPos,
+            reader.getLineNumber(markupStartPos),
+            reader.getColumnNumber(markupStartPos)
+        )
     }
 
     internal fun createTempBuffer() {
@@ -228,6 +236,20 @@ class Tokenizer(reader: Reader) {
 
     internal fun eofError(state: TokenizerState) {
         throw ParseException(reader, "Unexpectedly reached end of file (EOF) in input state [$state]")
+    }
+
+    internal fun check(value: Boolean, lazyTrackPos: () -> TrackPos, lazyMessage: () -> Any) {
+        if (!value) {
+            val message = lazyMessage()
+            throw ParseException(lazyTrackPos(), message.toString())
+        }
+    }
+
+    internal fun check(value: Boolean, lazyMessage: () -> Any) {
+        if (!value) {
+            val message = lazyMessage()
+            throw ParseException(reader, message.toString())
+        }
     }
 
     companion object {
