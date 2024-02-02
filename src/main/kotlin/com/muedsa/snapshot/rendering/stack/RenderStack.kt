@@ -14,10 +14,7 @@ open class RenderStack(
     val textDirection: Direction = Direction.LTR,
     val fit: StackFit = StackFit.LOOSE,
     val clipBehavior: ClipBehavior = ClipBehavior.HARD_EDGE,
-    children: Array<RenderBox>? = null,
-) : RenderContainerBox(
-    children = children
-) {
+) : RenderContainerBox() {
 
     var hasVisualOverflow: Boolean = false
 
@@ -44,7 +41,7 @@ open class RenderStack(
             StackFit.PASSTHROUGH -> constraints
         }
 
-        children?.forEach { child ->
+        children.forEach { child ->
             val childParentData: StackParentData = child.parentData as StackParentData
             if (!childParentData.isPositioned) {
                 hasNonPositionedChildren = true
@@ -73,7 +70,7 @@ open class RenderStack(
         hasVisualOverflow = false
         size = computeSize(definiteConstraints)
 
-        children?.forEach { child ->
+        children.forEach { child ->
             val childParentData = child.parentData as StackParentData
             if (!childParentData.isPositioned) {
                 childParentData.offset = resolvedAlignment.alongOffset(definiteSize - child.definiteSize)

@@ -8,10 +8,7 @@ import org.jetbrains.skia.ImageFilter
 class RenderBackdropFilter(
     val imageFilter: ImageFilter,
     val blendMode: BlendMode = BlendMode.SRC_OVER,
-    child: RenderBox? = null,
-) : RenderSingleChildBox(
-    child = child
-) {
+) : RenderSingleChildBox() {
 
     override fun paint(context: PaintingContext, offset: Offset) {
         if (child != null) {

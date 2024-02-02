@@ -27,6 +27,9 @@ class LimitedBox(
     override fun createRenderBox(child: Widget?): RenderBox = RenderLimitedBox(
         maxWidth = maxWidth,
         maxHeight = maxHeight,
-        child = child?.createRenderBox()
-    )
+    ).also { p ->
+        child?.createRenderBox()?.let {
+            p.appendChild(it)
+        }
+    }
 }

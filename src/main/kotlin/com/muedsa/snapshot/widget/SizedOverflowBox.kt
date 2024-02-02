@@ -30,6 +30,9 @@ class SizedOverflowBox(
         RenderSizedOverflowBox(
             requestedSize = size,
             alignment = alignment,
-            child = child?.createRenderBox()
-        )
+        ).also { p ->
+            child?.createRenderBox()?.let {
+                p.appendChild(it)
+            }
+        }
 }

@@ -4,13 +4,13 @@ import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.rendering.PaintingContext
 import org.jetbrains.skia.paragraph.BaselineMode
 
-abstract class RenderSingleChildBox(val child: RenderBox?) : RenderBox() {
+abstract class RenderSingleChildBox : RenderBox() {
 
-    init {
-        // TODO 这里不太对 构造函数this泄露
-        child?.let {
-            it.parent = this
-        }
+    var child: RenderBox? = null
+
+    open fun appendChild(child: RenderBox) {
+        this.child = child
+        child.parent = this
     }
 
     override fun computeDistanceToActualBaseline(baseline: BaselineMode): Float? {
@@ -18,9 +18,10 @@ abstract class RenderSingleChildBox(val child: RenderBox?) : RenderBox() {
     }
 
     override fun performLayout() {
-        if (child != null) {
-            child.layout(definiteConstraints)
-            size = child.definiteSize
+        val currentChild: RenderBox? = this.child
+        if (currentChild != null) {
+            currentChild.layout(definiteConstraints)
+            size = currentChild.definiteSize
         } else {
             size = definiteConstraints.smallest
         }

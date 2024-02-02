@@ -23,6 +23,9 @@ class ColoredBox(
 
     override fun createRenderBox(child: Widget?): RenderBox = RenderColoredBox(
         color = color,
-        child = child?.createRenderBox()
-    )
+    ).also { p ->
+        child?.createRenderBox()?.let {
+            p.appendChild(it)
+        }
+    }
 }

@@ -5,33 +5,43 @@ import com.muedsa.snapshot.rendering.PaintingContext
 import org.jetbrains.skia.paragraph.BaselineMode
 import kotlin.math.min
 
-abstract class RenderContainerBox(val children: Array<RenderBox>?) : RenderBox() {
+abstract class RenderContainerBox : RenderBox() {
 
-    init {
-        children?.let {
-            children.forEachIndexed { index, child ->
-                // TODO 这里不太对 构造函数this泄露
-                child.parent = this
-                val childParentData: ContainerBoxParentData = child.parentData!! as ContainerBoxParentData
-                if (index > 0) {
-                    childParentData.previousSibling = children[index - 1]
-                }
-                if (index < children.size - 1) {
-                    childParentData.nextSibling = children[index + 1]
-                }
-            }
+    private val _children: MutableList<RenderBox> = mutableListOf()
+
+    val children: List<RenderBox> = _children
+
+    @Synchronized
+    fun appendChild(child: RenderBox) {
+        check(!_children.contains(child)) {
+            "RenderContainerBox cant append duplicate child"
+        }
+        _children.add(child)
+        val index = _children.size - 1
+        child.parent = this
+        val childParentData: ContainerBoxParentData = child.parentData!! as ContainerBoxParentData
+        if (index > 0) {
+            childParentData.previousSibling = _children[index - 1]
+        }
+        if (index < _children.size - 1) {
+            childParentData.nextSibling = _children[index + 1]
         }
     }
 
-    val childCount: Int = children?.size ?: 0
+    @Synchronized
+    fun appendChildren(list: List<RenderBox>) {
+        if (list.isNotEmpty()) {
+            list.forEach { appendChild(child = it) }
+        }
+    }
+
+    val childCount: Int get() = _children.size
 
     fun defaultComputeDistanceToFirstActualBaseline(baseline: BaselineMode): Float? {
-        children?.let {
-            for (child in it) {
-                val result: Float? = child.getDistanceToBaseline(baseline)
-                if (result != null) {
-                    return result + child.parentData!!.offset.y
-                }
+        for (child in children) {
+            val result: Float? = child.getDistanceToBaseline(baseline)
+            if (result != null) {
+                return result + child.parentData!!.offset.y
             }
         }
         return null
@@ -39,7 +49,7 @@ abstract class RenderContainerBox(val children: Array<RenderBox>?) : RenderBox()
 
     fun defaultComputeDistanceToHighestActualBaseline(baseline: BaselineMode): Float? {
         var result: Float? = null
-        if (!children.isNullOrEmpty()) {
+        if (children.isNotEmpty()) {
             for (child in children) {
                 var candidate: Float? = child.getDistanceToBaseline(baseline)
                 if (candidate != null) {
@@ -57,7 +67,7 @@ abstract class RenderContainerBox(val children: Array<RenderBox>?) : RenderBox()
     }
 
     open fun defaultPaint(context: PaintingContext, offset: Offset) {
-        children?.forEach {
+        children.forEach {
             context.paintChild(it, offset + it.parentData!!.offset)
         }
     }

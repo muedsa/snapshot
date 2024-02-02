@@ -20,27 +20,34 @@ class RenderClipOvalTest {
         val halfSize = size / 2
         val quarterSize = size / 4
         val eighthSize = size / 8
+
         val originRenderBox = RenderColoredBox(
             color = Color.RED,
-            child = RenderConstrainedBox(
+        ).apply {
+            appendChild(
+                RenderConstrainedBox(
                 additionalConstraints = BoxConstraints.expand(size, size)
+                )
             )
-        )
+        }
+
         val renderClip = RenderClipOval(
             clipBehavior = ClipBehavior.ANTI_ALIAS,
             clipper = {
                 Rect.makeXYWH(quarterSize, quarterSize, halfSize, halfSize) // clip ◙
-            },
-            child = originRenderBox
-        )
+            }
+        ).apply {
+            appendChild(originRenderBox)
+        }
 
         val renderNoneClip = RenderClipOval(
             clipBehavior = ClipBehavior.NONE,
             clipper = {
                 Rect.makeXYWH(quarterSize, quarterSize, halfSize, halfSize) // clip ◙
             },
-            child = originRenderBox
-        )
+        ).apply {
+            appendChild(originRenderBox)
+        }
 
         noLimitedLayout(originRenderBox)
         val originPixels = renderBoxToPixels(originRenderBox)

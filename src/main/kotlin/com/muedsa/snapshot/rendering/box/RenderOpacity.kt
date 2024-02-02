@@ -5,8 +5,7 @@ import com.muedsa.snapshot.rendering.PaintingContext
 
 class RenderOpacity(
     val opacity: Float = 1f,
-    child: RenderBox? = null,
-) : RenderSingleChildBox(child = child) {
+) : RenderSingleChildBox() {
 
     init {
         assert(opacity in 0f..1f)

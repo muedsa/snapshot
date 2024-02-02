@@ -30,6 +30,9 @@ class ClipOval(
     override fun createRenderBox(child: Widget?): RenderBox = RenderClipOval(
         clipper = clipper,
         clipBehavior = clipBehavior,
-        child = child?.createRenderBox()
-    )
+    ).also { p ->
+        child?.createRenderBox()?.let {
+            p.appendChild(it)
+        }
+    }
 }

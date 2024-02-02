@@ -7,21 +7,22 @@ import org.jetbrains.skia.Paint
 
 class RenderConstrainedBox(
     var additionalConstraints: BoxConstraints,
-    child: RenderBox? = null,
-) : RenderSingleChildBox(child = child) {
+) : RenderSingleChildBox() {
 
     override fun performLayout() {
-        if (child != null) {
-            child.layout(additionalConstraints.enforce(definiteConstraints))
-            size = child.definiteSize
+        val currentChild: RenderBox? = this.child
+        if (currentChild != null) {
+            currentChild.layout(additionalConstraints.enforce(definiteConstraints))
+            size = currentChild.definiteSize
         } else {
             size = additionalConstraints.enforce(definiteConstraints).constrain(Size.ZERO)
         }
     }
 
     override fun debugPaint(context: PaintingContext, offset: Offset) {
+        val currentChild: RenderBox? = this.child
         super.debugPaint(context, offset)
-        if (child == null || child.definiteSize.isEmpty) {
+        if (currentChild == null || currentChild.definiteSize.isEmpty) {
             context.canvas.drawRect(offset combine definiteSize, Paint().setARGB(144, 144, 144, 144))
         }
     }

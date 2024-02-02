@@ -8,8 +8,7 @@ import com.muedsa.snapshot.rendering.PaintingContext
 class RenderDecoratedBox(
     val decoration: Decoration,
     val position: DecorationPosition = DecorationPosition.BACKGROUND,
-    child: RenderBox? = null,
-) : RenderSingleChildBox(child = child) {
+) : RenderSingleChildBox() {
 
     val painter: BoxPainter = decoration.createBoxPainter()
 

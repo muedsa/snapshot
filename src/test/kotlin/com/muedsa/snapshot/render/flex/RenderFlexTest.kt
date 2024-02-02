@@ -29,10 +29,12 @@ class RenderFlexTest {
         val child3 = RenderConstrainedBox(
             BoxConstraints.expand(width = 80f, 120f)
         )
-        val renderFlex = RenderFlex(
-            children = arrayOf(child1, child2, child3)
-        )
-        renderFlex.children!!.forEach { child ->
+        val renderFlex = RenderFlex().apply {
+            appendChild(child1)
+            appendChild(child2)
+            appendChild(child3)
+        }
+        renderFlex.children.forEach { child ->
             assert(child.parentData is FlexParentData)
         }
     }
@@ -52,19 +54,24 @@ class RenderFlexTest {
         Axis.entries.forEachIndexed { directionIndex, direction ->
             MainAxisAlignment.entries.forEachIndexed { mainAxisAlignmentIndex, mainAxisAlignment ->
                 CrossAxisAlignment.entries.forEachIndexed { crossAxisAlignmentIndex, crossAxisAlignment ->
-                    val children: Array<RenderBox> = Array(childSizeArr.size) {
-                        val childSize = childSizeArr[it]
-                        RenderConstrainedBox(
-                            BoxConstraints.expand(width = childSize.width, childSize.height)
-                        )
+                    val children: List<RenderBox> = buildList(childSizeArr.size) {
+                        for (index in childSizeArr.indices) {
+                            val childSize = childSizeArr[index]
+                            add(
+                                RenderConstrainedBox(
+                                    BoxConstraints.expand(width = childSize.width, childSize.height)
+                                )
+                            )
+                        }
                     }
                     val renderFlex = RenderFlex(
                         direction = direction,
                         mainAxisAlignment = mainAxisAlignment,
                         crossAxisAlignment = crossAxisAlignment,
-                        children = children,
                         textBaseline = BaselineMode.ALPHABETIC
-                    )
+                    ).apply {
+                        appendChildren(children)
+                    }
                     renderFlex.layout(BoxConstraints.expand(size.width, size.height))
                     valid_direction_mainAxisAlign_crossAxisAlign_test(renderFlex, size, children, childSizeArr, space)
                     drawPainter(
@@ -96,7 +103,7 @@ class RenderFlexTest {
     private fun valid_direction_mainAxisAlign_crossAxisAlign_test(
         renderFlex: RenderFlex,
         size: Size,
-        children: Array<RenderBox>,
+        children: List<RenderBox>,
         childSizeArr: Array<Size>,
         space: Float,
     ) {
@@ -132,10 +139,14 @@ class RenderFlexTest {
     }
 
     private fun direction_parent_data_flex_test(direction: Axis) {
-        val children: Array<RenderBox> = Array(5) {
-            RenderConstrainedBox(additionalConstraints = BoxConstraints())
+        val children: List<RenderBox> = buildList(5) {
+            for (i in 0 until 5) {
+                add(RenderConstrainedBox(additionalConstraints = BoxConstraints()))
+            }
         }
-        val renderFlex = RenderFlex(direction = direction, children = children)
+        val renderFlex = RenderFlex(direction = direction).apply {
+            appendChildren(children)
+        }
         val defaultSize = 100f
         var mainAxisSize = 0f
         children.forEachIndexed { index, child ->
@@ -187,14 +198,16 @@ class RenderFlexTest {
         var mainAxisSize = 0f
         val expandIndex = Random(System.currentTimeMillis()).nextInt(childrenCount)
         val expandedSpace = defaultSize * (expandIndex + 1)
-        val children: Array<RenderBox> = Array(childrenCount) {
-            if (it == expandIndex) {
-                RenderConstrainedBox(additionalConstraints = BoxConstraints())
-            } else {
-                RenderConstrainedBox(additionalConstraints = BoxConstraints.expand(defaultSize, defaultSize))
+        val children: List<RenderBox> = buildList(childrenCount) {
+            for (index in 0 until childrenCount) {
+                if (index == expandIndex) {
+                    add(RenderConstrainedBox(additionalConstraints = BoxConstraints()))
+                } else {
+                    add(RenderConstrainedBox(additionalConstraints = BoxConstraints.expand(defaultSize, defaultSize)))
+                }
             }
         }
-        val renderFlex = RenderFlex(direction = direction, children = children)
+        val renderFlex = RenderFlex(direction = direction).apply { appendChildren(children) }
         children.forEachIndexed { index, child ->
             val childParentData: FlexParentData = child.parentData!! as FlexParentData
             mainAxisSize += defaultSize

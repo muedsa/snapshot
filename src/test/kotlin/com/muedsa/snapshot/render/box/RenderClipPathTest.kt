@@ -16,12 +16,17 @@ class RenderClipPathTest {
     @Test
     fun clip_test() {
         val size = 100f
+
         val originRenderBox = RenderColoredBox(
             color = Color.RED,
-            child = RenderConstrainedBox(
+        ).apply {
+            appendChild(
+                RenderConstrainedBox(
                 additionalConstraints = BoxConstraints.expand(size, size)
+                )
             )
-        )
+        }
+
         val renderClip = RenderClipPath(
             clipBehavior = ClipBehavior.ANTI_ALIAS,
             clipper = {
@@ -30,8 +35,9 @@ class RenderClipPathTest {
                     .lineTo(it.x, it.y)
                     .lineTo(0f, 0f) // clip ◥
             },
-            child = originRenderBox
-        )
+        ).apply {
+            appendChild(originRenderBox)
+        }
 
         val renderNoneClip = RenderClipPath(
             clipBehavior = ClipBehavior.NONE,
@@ -41,8 +47,9 @@ class RenderClipPathTest {
                     .lineTo(it.x, it.y)
                     .lineTo(0f, 0f) // clip ◥
             },
-            child = originRenderBox
-        )
+        ).apply {
+            appendChild(originRenderBox)
+        }
 
         noLimitedLayout(originRenderBox)
         val originPixels = renderBoxToPixels(originRenderBox)

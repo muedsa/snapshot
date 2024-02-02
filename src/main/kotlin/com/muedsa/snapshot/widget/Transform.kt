@@ -37,8 +37,11 @@ class Transform(
         transform = transform,
         origin = origin,
         alignment = alignment,
-        child = child?.createRenderBox()
-    )
+    ).also { p ->
+        child?.createRenderBox()?.let {
+            p.appendChild(it)
+        }
+    }
 
     companion object {
 

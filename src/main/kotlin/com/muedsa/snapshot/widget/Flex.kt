@@ -54,6 +54,9 @@ open class Flex(
         verticalDirection = verticalDirection,
         textBaseline = textBaseline,
         clipBehavior = clipBehavior,
-        children = children.createRenderBox()
-    )
+    ).also { p ->
+        children.createRenderBox()?.let {
+            p.appendChildren(it)
+        }
+    }
 }

@@ -32,7 +32,10 @@ open class Align(
         alignment = alignment,
         widthFactor = widthFactor,
         heightFactor = heightFactor,
-        child = child?.createRenderBox()
-    )
+    ).also { p ->
+        child?.createRenderBox()?.let {
+            p.appendChild(it)
+        }
+    }
 
 }

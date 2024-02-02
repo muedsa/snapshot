@@ -10,11 +10,9 @@ import org.jetbrains.skia.Rect
 class RenderClipOval(
     clipper: ((Size) -> Rect)? = null,
     clipBehavior: ClipBehavior = ClipBehavior.ANTI_ALIAS,
-    child: RenderBox? = null,
 ) : RenderCustomClip<Rect>(
     clipper = clipper,
     clipBehavior = clipBehavior,
-    child = child
 ) {
     override val defaultClip: Rect
         get() = Offset.ZERO combine definiteSize

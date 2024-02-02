@@ -28,6 +28,9 @@ class DecoratedBox(
     override fun createRenderBox(child: Widget?): RenderBox = RenderDecoratedBox(
         decoration = decoration,
         position = position,
-        child = child?.createRenderBox()
-    )
+    ).also { p ->
+        child?.createRenderBox()?.let {
+            p.appendChild(it)
+        }
+    }
 }

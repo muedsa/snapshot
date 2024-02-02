@@ -32,7 +32,11 @@ class SizedBox(
     }
 
     override fun createRenderBox(child: Widget?): RenderBox =
-        RenderConstrainedBox(additionalConstraints = additionalConstraints, child = child?.createRenderBox())
+        RenderConstrainedBox(additionalConstraints = additionalConstraints).also { p ->
+            child?.createRenderBox()?.let {
+                p.appendChild(it)
+            }
+        }
 
     companion object {
         @JvmStatic

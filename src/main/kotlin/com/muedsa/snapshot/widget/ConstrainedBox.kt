@@ -23,6 +23,9 @@ class ConstrainedBox(
 ) : SingleChildWidget(parent = parent) {
     override fun createRenderBox(child: Widget?): RenderBox = RenderConstrainedBox(
         additionalConstraints = constraints,
-        child = child?.createRenderBox()
-    )
+    ).also { p ->
+        child?.createRenderBox()?.let {
+            p.appendChild(it)
+        }
+    }
 }

@@ -6,16 +6,15 @@ import com.muedsa.geometry.Size
 class RenderSizedOverflowBox(
     val requestedSize: Size,
     alignment: BoxAlignment = BoxAlignment.CENTER,
-    child: RenderBox? = null,
 ) : RenderAligningBox(
     alignment = alignment,
-    child = child
 ) {
 
     override fun performLayout() {
         size = definiteConstraints.constrain(requestedSize)
-        if (child != null) {
-            child.layout(definiteConstraints)
+        val currentChild: RenderBox? = this.child
+        if (currentChild != null) {
+            currentChild.layout(definiteConstraints)
             alignChild()
         }
     }

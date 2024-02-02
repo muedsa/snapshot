@@ -11,11 +11,9 @@ class RenderConstrainedOverflowBox(
     val maxHeight: Float? = null,
     alignment: AlignmentGeometry = BoxAlignment.CENTER,
     textDirection: Direction? = null,
-    child: RenderBox? = null,
 ) : RenderPositionedBox(
     alignment = alignment,
     textDirection = textDirection,
-    child = child
 ) {
 
     private fun getInnerConstraints(constraints: BoxConstraints): BoxConstraints = BoxConstraints(
@@ -27,8 +25,9 @@ class RenderConstrainedOverflowBox(
 
     override fun performLayout() {
         size = definiteConstraints.biggest
-        if (child != null) {
-            child.layout(getInnerConstraints(definiteConstraints))
+        val currentChild: RenderBox? = this.child
+        if (currentChild != null) {
+            currentChild.layout(getInnerConstraints(definiteConstraints))
             alignChild()
         }
     }

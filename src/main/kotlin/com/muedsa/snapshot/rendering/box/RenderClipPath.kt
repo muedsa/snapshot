@@ -10,11 +10,9 @@ import org.jetbrains.skia.Path
 class RenderClipPath(
     clipper: ((Size) -> Path)? = null,
     clipBehavior: ClipBehavior = ClipBehavior.ANTI_ALIAS,
-    child: RenderBox? = null,
 ) : RenderCustomClip<Path>(
     clipper = clipper,
-    clipBehavior = clipBehavior,
-    child = child
+    clipBehavior = clipBehavior
 ) {
     override val defaultClip: Path
         get() = Path().addRect(Offset.ZERO combine definiteSize)

@@ -30,6 +30,9 @@ class ClipRect(
     override fun createRenderBox(child: Widget?): RenderBox = RenderClipRect(
         clipper = clipper,
         clipBehavior = clipBehavior,
-        child = child?.createRenderBox()
-    )
+    ).also { p ->
+        child?.createRenderBox()?.let {
+            p.appendChild(it)
+        }
+    }
 }

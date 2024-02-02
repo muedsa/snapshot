@@ -40,6 +40,9 @@ class Stack(
         textDirection = textDirection,
         fit = fit,
         clipBehavior = clipBehavior,
-        children = children.createRenderBox()
-    )
+    ).also { p ->
+        children.createRenderBox()?.let {
+            p.appendChildren(it)
+        }
+    }
 }

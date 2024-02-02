@@ -13,8 +13,9 @@ class RenderConstrainedBoxTest {
         val child = RenderConstrainedBox(additionalConstraints = BoxConstraints.tightFor(height = 300f, width = 400f))
         val parent = RenderConstrainedBox(
             additionalConstraints = BoxConstraints.tightFor(height = 100f, width = 200f),
-            child = child
-        )
+        ).apply {
+            appendChild(child)
+        }
         noLimitedLayout(parent)
 
         expect(100f) { child.definiteSize.height }

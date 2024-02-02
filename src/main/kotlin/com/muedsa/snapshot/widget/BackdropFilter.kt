@@ -29,6 +29,9 @@ class BackdropFilter(
     override fun createRenderBox(child: Widget?): RenderBox = RenderBackdropFilter(
         imageFilter = imageFilter,
         blendMode = blendMode,
-        child = child?.createRenderBox()
-    )
+    ).also { p ->
+        child?.createRenderBox()?.let {
+            p.appendChild(it)
+        }
+    }
 }

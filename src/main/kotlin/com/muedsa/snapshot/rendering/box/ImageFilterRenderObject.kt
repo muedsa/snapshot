@@ -6,10 +6,7 @@ import org.jetbrains.skia.ImageFilter
 
 internal class ImageFilterRenderObject(
     val imageFilter: ImageFilter,
-    child: RenderBox? = null,
-) : RenderSingleChildBox(
-    child = child
-) {
+) : RenderSingleChildBox() {
 
     override fun paint(context: PaintingContext, offset: Offset) {
         if (child != null) {

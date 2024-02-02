@@ -22,10 +22,7 @@ open class RenderFlex(
     val verticalDirection: VerticalDirection = VerticalDirection.DOWN,
     val textBaseline: BaselineMode? = null,
     val clipBehavior: ClipBehavior = ClipBehavior.NONE,
-    children: Array<RenderBox>? = null,
-) : RenderContainerBox(
-    children = children
-) {
+) : RenderContainerBox() {
 
     override fun setupParentData(child: RenderBox) {
         if (child.parentData !is FlexParentData) {

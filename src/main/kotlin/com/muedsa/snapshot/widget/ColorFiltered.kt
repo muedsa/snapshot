@@ -24,7 +24,10 @@ class ColorFiltered(
 
     override fun createRenderBox(child: Widget?): RenderBox = ColorFilterRenderObject(
         colorFilter = colorFilter,
-        child = child?.createRenderBox()
-    )
+    ).also { p ->
+        child?.createRenderBox()?.let {
+            p.appendChild(it)
+        }
+    }
 
 }

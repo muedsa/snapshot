@@ -25,7 +25,10 @@ class Padding(
     override fun createRenderBox(child: Widget?): RenderBox {
         return RenderPadding(
             padding = padding,
-            child = child?.createRenderBox()
-        )
+        ).also { p ->
+            child?.createRenderBox()?.let {
+                p.appendChild(it)
+            }
+        }
     }
 }

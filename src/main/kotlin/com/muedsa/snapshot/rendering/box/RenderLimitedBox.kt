@@ -5,10 +5,7 @@ import com.muedsa.geometry.Size
 class RenderLimitedBox(
     val maxWidth: Float = Float.POSITIVE_INFINITY,
     val maxHeight: Float = Float.POSITIVE_INFINITY,
-    child: RenderBox? = null,
-) : RenderSingleChildBox(
-    child = child
-) {
+) : RenderSingleChildBox() {
 
     private fun limitConstraints(constraints: BoxConstraints): BoxConstraints = BoxConstraints(
         minWidth = constraints.minWidth,
@@ -18,9 +15,10 @@ class RenderLimitedBox(
     )
 
     override fun performLayout() {
-        size = if (child != null) {
-            child.layout(limitConstraints(definiteConstraints))
-            definiteConstraints.constrain(child.definiteSize)
+        val currentChild: RenderBox? = this.child
+        size = if (currentChild != null) {
+            currentChild.layout(limitConstraints(definiteConstraints))
+            definiteConstraints.constrain(currentChild.definiteSize)
         } else {
             limitConstraints(definiteConstraints).constrain(Size.ZERO)
         }

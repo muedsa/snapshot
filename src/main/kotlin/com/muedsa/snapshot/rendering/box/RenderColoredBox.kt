@@ -7,8 +7,7 @@ import org.jetbrains.skia.Paint
 
 class RenderColoredBox(
     var color: Int,
-    child: RenderBox? = null,
-) : RenderSingleChildBox(child = child) {
+) : RenderSingleChildBox() {
 
     override fun paint(context: PaintingContext, offset: Offset) {
         val size = definiteSize

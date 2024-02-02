@@ -27,6 +27,9 @@ class Opacity(
 
     override fun createRenderBox(child: Widget?): RenderBox = RenderOpacity(
         opacity = opacity,
-        child = child?.createRenderBox()
-    )
+    ).also { p ->
+        child?.createRenderBox()?.let {
+            p.appendChild(it)
+        }
+    }
 }

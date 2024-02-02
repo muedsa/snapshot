@@ -18,13 +18,11 @@ class RenderIndexedStack(
     textDirection: Direction = Direction.LTR,
     fit: StackFit = StackFit.LOOSE,
     clipBehavior: ClipBehavior = ClipBehavior.HARD_EDGE,
-    children: Array<RenderBox>? = null,
 ) : RenderStack(
     alignment = alignment,
     textDirection = textDirection,
     fit = fit,
     clipBehavior = clipBehavior,
-    children = children
 ) {
 
     private fun childAtIndex(): RenderBox {

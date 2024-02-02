@@ -10,8 +10,7 @@ class RenderTransform(
     transform: Matrix44CMO,
     val origin: Offset? = null,
     val alignment: BoxAlignment? = null,
-    child: RenderBox? = null,
-) : RenderSingleChildBox(child = child) {
+) : RenderSingleChildBox() {
 
     val transform: Matrix44CMO = transform.clone()
 

@@ -9,7 +9,7 @@ inline fun <T : Widget> Widget.buildChild(
     when (this) {
         is ProxyWidget -> this.widget = widget
         is SingleChildWidget -> this.child = widget
-        is MultiChildWidget -> this.children.add(widget)
+        is MultiChildWidget -> this.appendChild(widget)
         else -> throw IllegalCallerException()
     }
     widget.content()
@@ -22,7 +22,7 @@ fun Widget.bind(
         when (this) {
             is ProxyWidget -> this.widget = it
             is SingleChildWidget -> this.child = it
-            is MultiChildWidget -> this.children.add(it)
+            is MultiChildWidget -> this.appendChild(it)
             else -> throw IllegalCallerException()
         }
         it.parent = this

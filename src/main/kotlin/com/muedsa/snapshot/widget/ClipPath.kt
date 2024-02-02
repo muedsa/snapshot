@@ -30,6 +30,9 @@ class ClipPath(
     override fun createRenderBox(child: Widget?): RenderBox = RenderClipPath(
         clipper = clipper,
         clipBehavior = clipBehavior,
-        child = child?.createRenderBox()
-    )
+    ).also { p ->
+        child?.createRenderBox()?.let {
+            p.appendChild(it)
+        }
+    }
 }

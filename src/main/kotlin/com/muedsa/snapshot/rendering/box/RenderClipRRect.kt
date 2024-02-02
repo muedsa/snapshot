@@ -16,11 +16,9 @@ class RenderClipRRect(
     clipper: ((Size) -> RRect)? = null,
     clipBehavior: ClipBehavior = ClipBehavior.ANTI_ALIAS,
     val textDirection: Direction? = null,
-    child: RenderBox? = null,
 ) : RenderCustomClip<RRect>(
     clipper = clipper,
-    clipBehavior = clipBehavior,
-    child = child
+    clipBehavior = clipBehavior
 ) {
 
     override val defaultClip: RRect

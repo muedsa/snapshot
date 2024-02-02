@@ -23,7 +23,10 @@ class ImageFiltered(
 ) : SingleChildWidget(parent = parent) {
     override fun createRenderBox(child: Widget?): RenderBox = ImageFilterRenderObject(
         imageFilter = imageFilter,
-        child = child?.createRenderBox()
-    )
+    ).also { p ->
+        child?.createRenderBox()?.let {
+            p.appendChild(it)
+        }
+    }
 
 }

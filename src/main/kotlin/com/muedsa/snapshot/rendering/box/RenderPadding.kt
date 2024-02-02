@@ -9,11 +9,11 @@ import org.jetbrains.skia.*
 
 class RenderPadding(
     val padding: EdgeInsets,
-    child: RenderBox? = null,
-) : RenderSingleChildBox(child = child) {
+) : RenderSingleChildBox() {
 
     override fun performLayout() {
-        if (child == null) {
+        val currentChild: RenderBox? = this.child
+        if (currentChild == null) {
             size = definiteConstraints.constrain(
                 Size(
                     padding.left + padding.right,
@@ -22,12 +22,12 @@ class RenderPadding(
             )
         } else {
             val innerConstraints = definiteConstraints.deflate(padding)
-            child.layout(innerConstraints)
-            child.parentData!!.offset = Offset(x = padding.left, y = padding.top)
+            currentChild.layout(innerConstraints)
+            currentChild.parentData!!.offset = Offset(x = padding.left, y = padding.top)
             size = definiteConstraints.constrain(
                 Size(
-                    width = padding.left + child.definiteSize.width + padding.right,
-                    height = padding.top + child.definiteSize.height + padding.bottom
+                    width = padding.left + currentChild.definiteSize.width + padding.right,
+                    height = padding.top + currentChild.definiteSize.height + padding.bottom
                 )
             )
         }
