@@ -60,7 +60,7 @@ class Sample {
         File("sample_image_and_text.png").writeBytes(
             SnapshotPNG {
                 Stack {
-                    CachedNetworkImage("https://picsum.photos/500")
+                    CachedNetworkImage("https://picsum.photos/id/201/500/")
                     SimpleText("Hello World!", color = Color.RED, fontSize = 40f)
                 }
             }

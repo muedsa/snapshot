@@ -99,7 +99,7 @@ class Parser {
     }
 
     protected fun insertCharacterFor(token: Token.Character) {
-        println("insert character:${token.data}")
+        // println("insert character:${token.data}")
         val currentElement = getCurrentElement()
         if (currentElement?.tag == Tag.TEXT) {
             if (token.data != null) {

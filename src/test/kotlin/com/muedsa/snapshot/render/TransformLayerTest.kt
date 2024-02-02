@@ -1,6 +1,8 @@
-package com.muedsa.snapshot
+package com.muedsa.snapshot.render
 
 import com.muedsa.geometry.Matrix44CMO
+import com.muedsa.snapshot.layerToPixels
+import com.muedsa.snapshot.painterToPicture
 import com.muedsa.snapshot.rendering.PictureLayer
 import com.muedsa.snapshot.rendering.TransformLayer
 import org.jetbrains.skia.Color
