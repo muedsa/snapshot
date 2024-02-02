@@ -93,7 +93,7 @@ class ParserTest {
         val text = """
             <Snapshot>
                 <Container width="400" height="300">
-                    <Text>char_to<![CDATA[ken_test <a></a> 233 哈哈]]>哈</Text>
+                    <Text>char_to<![CDATA[ken_test <a></a> 233 哈哈]]>✅🤣哈</Text>
                 </Container>
             </Snapshot>
         """.trimIndent()
@@ -106,7 +106,7 @@ class ParserTest {
         assert(container.width == 400f)
         assert(container.height == 300f)
         val textWidget: SimpleText = container.child as SimpleText
-        assert(textWidget.text == "char_token_test <a></a> 233 哈哈哈")
+        assert(textWidget.text == "char_token_test <a></a> 233 哈哈✅🤣哈")
         getTestPngFile("parser/text").writeBytes(snapshotElement.snapshot())
     }
 

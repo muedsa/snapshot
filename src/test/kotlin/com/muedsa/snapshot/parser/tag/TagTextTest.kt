@@ -8,7 +8,7 @@ class TagTextTest {
 
     @Test
     fun parse_text_attr_test() {
-        CommonAttrDefine.TEXT.parseValue(RawAttr(CommonAttrDefine.TEXT.name, "123 1231321ada asda"))
+        CommonAttrDefine.TEXT.parseValue(RawAttr(CommonAttrDefine.TEXT.name, "123 123132✅1ada asda 🤣"))
     }
 
     //@Test
