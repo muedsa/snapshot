@@ -51,7 +51,7 @@ enum class Tag(
         containerMode = ContainerMode.MULTIPLE
     ) {
         val textDirection = CommonAttrDefine.DIRECTION.copyWith("textDirection")
-        val textBaseline = CommonAttrDefine.BASELINE.copyWith("textBaseline")
+        val textBaseline = CommonAttrDefine.BASELINE_N.copyWith("textBaseline")
 
         override fun buildWidget(element: Element): Widget =
             Row(
@@ -68,7 +68,7 @@ enum class Tag(
         containerMode = ContainerMode.MULTIPLE
     ) {
         val textDirection = CommonAttrDefine.DIRECTION.copyWith("textDirection")
-        val textBaseline = CommonAttrDefine.BASELINE.copyWith("textBaseline")
+        val textBaseline = CommonAttrDefine.BASELINE_N.copyWith("textBaseline")
 
         override fun buildWidget(element: Element): Widget = Column(
             mainAxisAlignment = parseAttrValue(CommonAttrDefine.MAIN_AXIS_ALIGNMENT, element.attrs),

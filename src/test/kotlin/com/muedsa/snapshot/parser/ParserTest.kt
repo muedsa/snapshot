@@ -110,5 +110,7 @@ class ParserTest {
         getTestPngFile("parser/text").writeBytes(snapshotElement.snapshot())
     }
 
-    private fun parse(text: String): SnapshotElement = Parser().parse(StringReader(text))
+    companion object {
+        fun parse(text: String): SnapshotElement = Parser().parse(StringReader(text))
+    }
 }

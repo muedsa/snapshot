@@ -60,6 +60,7 @@ object CommonAttrDefine {
     val WIDTH_N: NullableFloatAttrDefine = NullableFloatAttrDefine(name = "width")
     val HEIGHT_N: NullableFloatAttrDefine = NullableFloatAttrDefine(name = "height")
     val MARGIN_N: NullableEdgeInsetsAttrDefine = NullableEdgeInsetsAttrDefine("margin")
+    val BASELINE_N: NullableBaselineAttrDefine = NullableBaselineAttrDefine("baseline")
     val FIT_N: NullableBoxFitAttrDefine = NullableBoxFitAttrDefine("fit")
     val BLEND_MODE_N: NullableBlendModeAttrDefine = NullableBlendModeAttrDefine("blendMode")
     val FONT_FAMILY_N = NullableStringAttrDefine(name = "fontFamily")
