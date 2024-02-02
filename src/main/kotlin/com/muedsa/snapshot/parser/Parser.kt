@@ -57,13 +57,13 @@ class Parser {
         val element = if (tag == Tag.SNAPSHOT) {
             SnapshotElement(
                 attrs = buildTokenTagAttrMap(token),
-                pos = token.startPos
+                pos = token.startPos.copy()
             )
         } else {
             Element(
                 tag = tag,
                 attrs = buildTokenTagAttrMap(token),
-                pos = token.startPos
+                pos = token.startPos.copy()
             )
         }
         getCurrentElement()?.appendChild(element)
