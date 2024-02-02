@@ -1,8 +1,10 @@
 package com.muedsa.snapshot
 
+import com.muedsa.snapshot.parser.Parser
 import com.muedsa.snapshot.widget.*
 import org.jetbrains.skia.Color
 import java.io.File
+import java.io.StringReader
 import kotlin.test.Test
 
 class Sample {
@@ -65,5 +67,26 @@ class Sample {
                 }
             }
         )
+    }
+
+    @Test
+    fun sample_parse_dom_like() {
+        val text = """
+            <Snapshot background="#FFFFFFFF" format="png">
+                <Column>
+                    <Row>
+                        <Container color="#FF0000" width="200" height="200"/>
+                        <Container color="#FFFFFF" width="200" height="200">
+                            <Text color="#0000FF" fontSize="20">哈哈 233<![CDATA[ken_test <a></a> 233 哈哈]]>哈🤣🤣🤣</Text>
+                        </Container>
+                    </Row>
+                    <Row>
+                        <Image width="200" height="200" url="https://picsum.photos/id/201/200"/>
+                        <Container color="#FFFF00" width="200" height="200"/>
+                    </Row>
+                </Column>
+            </Snapshot>
+        """.trimIndent()
+        File("sample_parse_dom_like.png").writeBytes(Parser().parse(StringReader(text)).snapshot())
     }
 }
