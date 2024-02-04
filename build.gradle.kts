@@ -34,7 +34,8 @@ dependencies {
     testImplementation(libs.junit.jupiter.engine)
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-    api(versionCatalog.findLibrary("skiko-$targetOs-$targetArch").get())
+    api(libs.skiko.awt)
+    testImplementation(versionCatalog.findLibrary("skiko-$targetOs-$targetArch").get())
 }
 
 tasks.test {
