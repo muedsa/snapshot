@@ -27,11 +27,11 @@ class RenderIndexedStack(
 
     private fun childAtIndex(): RenderBox {
         assert(index != null)
-        return children!![index!!]
+        return children[index!!]
     }
 
     override fun paintStack(context: PaintingContext, offset: Offset) {
-        if (children.isNullOrEmpty() || index == null) {
+        if (children.isEmpty() || index == null) {
             return
         }
         val child = childAtIndex()

@@ -8,7 +8,7 @@ import com.muedsa.snapshot.rendering.box.RenderImage
 import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.Image
 
-inline fun Widget.RawImage(
+fun Widget.RawImage(
     image: Image,
     width: Float? = null,
     height: Float? = null,

@@ -31,12 +31,12 @@ class PositionedTest {
             }
         }
         val renderStack = stack.createRenderBox() as RenderStack
-        val stackParentData1 = renderStack.children!![0].parentData as StackParentData
+        val stackParentData1 = renderStack.children[0].parentData as StackParentData
         expect(8f) { stackParentData1.left }
         expect(10f) { stackParentData1.top }
         expect(6f) { stackParentData1.right }
         expect(13f) { stackParentData1.bottom }
-        val stackParentData2 = renderStack.children!![1].parentData as StackParentData
+        val stackParentData2 = renderStack.children[1].parentData as StackParentData
         expect(22f) { stackParentData2.left }
         expect(5f) { stackParentData2.top }
         expect(11f) { stackParentData2.right }

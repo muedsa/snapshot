@@ -22,7 +22,7 @@ class FlexibleTest {
             }
         }
         val renderFlex = flex.createRenderBox() as RenderFlex
-        renderFlex.children!!.forEachIndexed { index, renderBox ->
+        renderFlex.children.forEachIndexed { index, renderBox ->
             val flexParentData: FlexParentData = renderBox.parentData as FlexParentData
             expect(flexArr[index]) { flexParentData.flex }
         }

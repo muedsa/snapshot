@@ -63,7 +63,7 @@ open class RenderFlex(
         var allocatedSize: Float = 0f
 
         var lastFlexChild: RenderBox? = null
-        children?.forEach { child ->
+        children.forEach { child ->
             val childParentData: FlexParentData = child.parentData as FlexParentData
             val flex: Int = childParentData.flex ?: 0
             if (flex > 0) {
@@ -93,7 +93,7 @@ open class RenderFlex(
         var allocatedFlexSpace: Float = 0f
         if (totalFlex > 0) {
             val spacePerFlex: Float = if (canFlex) freeSpace / totalFlex else Float.NaN
-            children?.forEach { child ->
+            children.forEach { child ->
                 val childParentData: FlexParentData = (child.parentData as FlexParentData?)!!
                 val flex: Int = childParentData.flex ?: 0
                 if (flex > 0) {
@@ -167,7 +167,7 @@ open class RenderFlex(
         if (crossAxisAlignment == CrossAxisAlignment.BASELINE) {
             var maxSizeAboveBaseline: Float = 0f
             var maxSizeBelowBaseline: Float = 0f
-            children?.forEach { child ->
+            children.forEach { child ->
                 assert(textBaseline != null) { "To use CrossAxisAlignment.baseline, you must also specify which baseline to use using the \"BaselineMode\" argument." }
                 val distance: Float? = child.getDistanceToBaseline(textBaseline!!, onlyReal = true)
                 if (distance != null) {
@@ -239,7 +239,7 @@ open class RenderFlex(
 
         // Position elements
         var childMainPosition: Float = if (flipMainAxis) actualSize - leadingSpace else leadingSpace
-        children?.forEach { child ->
+        children.forEach { child ->
             val childParentData: FlexParentData = child.parentData as FlexParentData
             val childCrossPosition: Float = when (crossAxisAlignment) {
                 CrossAxisAlignment.START, CrossAxisAlignment.END -> {
