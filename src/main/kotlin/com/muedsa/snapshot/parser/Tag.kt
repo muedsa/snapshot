@@ -104,9 +104,8 @@ enum class Tag(
             scale = parseAttrValue(CommonAttrDefine.SCALE, element.attrs),
             opacity = parseAttrValue(CommonAttrDefine.OPACITY, element.attrs),
             color = parseAttrValue(CommonAttrDefine.COLOR_N, element.attrs),
-            colorBlendMode = parseAttrValue(colorBlendMode, element.attrs)
-            // TODO 为SnapshotElement单独提供一个可以限制大小的NetworkImageCache
-            // cache = element.owner!!.networkImageCache
+            colorBlendMode = parseAttrValue(colorBlendMode, element.attrs),
+            cache = element.owner!!.getNetworkImageCache()
         )
     },
     TEXT(

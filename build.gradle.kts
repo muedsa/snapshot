@@ -15,6 +15,7 @@ val target = "${targetOs}-${targetArch}"
 
 plugins {
     alias(libs.plugins.jvm)
+    // `maven-publish`
 }
 
 group = "com.muedsa.snapshot"
@@ -52,3 +53,18 @@ tasks.jar {
         )
     }
 }
+tasks.kotlinSourcesJar {
+    archiveClassifier = "sources"
+}
+
+//publishing {
+//    publications {
+//        create<MavenPublication>("maven") {
+//            groupId = project.group.toString()
+//            artifactId = project.name
+//            version = project.version.toString()
+//
+//            from(components["kotlin"])
+//        }
+//    }
+//}

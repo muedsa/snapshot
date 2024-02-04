@@ -199,7 +199,7 @@ class BackdropFilterTest {
                         height = 500f,
                         decoration = BoxDecoration(
                             image = DecorationImage(
-                                image = Image.makeFromEncoded(NetworkImageCacheManager.defaultCache["https://picsum.photos/id/1/200/300"])
+                                image = NetworkImageCacheManager.defaultCache["https://picsum.photos/id/1/200/300"]
                             )
                         ),
                         alignment = BoxAlignment.CENTER

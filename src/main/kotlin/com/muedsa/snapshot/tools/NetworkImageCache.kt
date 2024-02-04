@@ -1,10 +1,12 @@
 package com.muedsa.snapshot.tools
 
+import org.jetbrains.skia.Image
+
 interface NetworkImageCache {
 
     val name: String
 
-    fun getImage(url: String): ByteArray
+    fun getImage(url: String): Image
 
     fun clearAll()
 
@@ -14,5 +16,5 @@ interface NetworkImageCache {
 
     fun size(): Int
 
-    operator fun get(url: String): ByteArray = getImage(url)
+    operator fun get(url: String): Image = getImage(url)
 }

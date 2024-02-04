@@ -12,6 +12,7 @@ import org.jetbrains.skia.Color
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.Direction
+import java.net.URL
 
 object CommonAttrDefine {
 
@@ -66,8 +67,9 @@ object CommonAttrDefine {
     val FONT_FAMILY_N = NullableStringAttrDefine(name = "fontFamily")
 
     // 必须的
-    val URL = RequiredStringAttrDefine("url") { _, _ ->
-        // TODO url checker
+    val URL = RequiredStringAttrDefine("url") { _, valueStr ->
+        // 简单校验
+        URL(valueStr)
     }
     val TEXT = RequiredStringAttrDefine("text")
 }

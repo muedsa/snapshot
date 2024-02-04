@@ -6,7 +6,6 @@ import com.muedsa.snapshot.paint.ImageRepeat
 import com.muedsa.snapshot.tools.NetworkImageCache
 import com.muedsa.snapshot.tools.NetworkImageCacheManager
 import org.jetbrains.skia.BlendMode
-import org.jetbrains.skia.Image
 
 fun Widget.CachedNetworkImage(
     url: String,
@@ -52,7 +51,7 @@ open class CachedNetworkImage(
     colorBlendMode: BlendMode? = null,
     val cache: NetworkImageCache = NetworkImageCacheManager.defaultCache,
 ) : ProviderImage(
-    provider = { Image.makeFromEncoded(cache.getImage(url)) },
+    provider = { cache.getImage(url) },
     width = width,
     height = height,
     fit = fit,

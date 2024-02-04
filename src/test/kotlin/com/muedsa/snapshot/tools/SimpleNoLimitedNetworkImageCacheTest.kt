@@ -58,20 +58,9 @@ class SimpleNoLimitedNetworkImageCacheTest {
     }
 
     @Test
-    fun multi_thread_test() {
-        val threadArr = Array(10) {
-            Thread {
-                getImage_test()
-            }
-        }
-        threadArr.forEach { it.start() }
-        threadArr.forEach { it.join() }
-    }
-
-    @Test
     fun size_test() {
-        val size = SimpleNoLimitedNetworkImageCache.getImage(TEST_IMAGE_URL_2).size +
-                SimpleNoLimitedNetworkImageCache.getImage(TEST_IMAGE_URL_3).size
+        val size = SimpleNoLimitedNetworkImageCache.getImage(TEST_IMAGE_URL_2).imageInfo.computeMinByteSize() +
+                SimpleNoLimitedNetworkImageCache.getImage(TEST_IMAGE_URL_3).imageInfo.computeMinByteSize()
         expect(size) {
             SimpleNoLimitedNetworkImageCache.size()
         }

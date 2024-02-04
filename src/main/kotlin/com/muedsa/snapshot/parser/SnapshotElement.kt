@@ -6,6 +6,8 @@ import com.muedsa.snapshot.parser.attr.ColorAttrDefine
 import com.muedsa.snapshot.parser.attr.StringAttrDefine
 import com.muedsa.snapshot.parser.token.RawAttr
 import com.muedsa.snapshot.rendering.box.BoxConstraints
+import com.muedsa.snapshot.tools.NetworkImageCache
+import com.muedsa.snapshot.tools.SimpleLimitedNetworkImageCache
 import com.muedsa.snapshot.widget.Widget
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.EncodedImageFormat
@@ -16,6 +18,16 @@ class SnapshotElement(
     attrs: MutableMap<String, RawAttr>,
     pos: TrackPos,
 ) : Element(tag = Tag.SNAPSHOT, attrs = attrs, pos = pos) {
+
+    private var _networkImageCache: NetworkImageCache? = null
+
+    @Synchronized
+    fun getNetworkImageCache(): NetworkImageCache {
+        if (_networkImageCache == null) {
+            _networkImageCache = NETWORK_IMAGE_CACHE_BUILDER.invoke(this)
+        }
+        return _networkImageCache!!
+    }
 
     override fun createWidget(): Widget {
         check(children.isNotEmpty()) { "Snapshot element content is empty" }
@@ -59,5 +71,14 @@ class SnapshotElement(
             }
         }
         val ATTR_DEBUG: BooleanAttrDefine = BooleanAttrDefine(name = "debug", defaultValue = false)
+
+        var MAX_IMAGE_NUM: Int = 10
+        var MAX_SINGLE_IMAGE_SIZE: Int = 5 * 1024 * 1024
+        var NETWORK_IMAGE_CACHE_BUILDER: (SnapshotElement) -> NetworkImageCache = {
+            SimpleLimitedNetworkImageCache(
+                maxImageNum = MAX_IMAGE_NUM,
+                maxSingleImageSize = MAX_SINGLE_IMAGE_SIZE
+            )
+        }
     }
 }
