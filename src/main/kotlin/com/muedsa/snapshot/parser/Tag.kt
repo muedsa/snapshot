@@ -99,6 +99,7 @@ enum class Tag(
             url = parseAttrValue(CommonAttrDefine.URL, element.attrs),
             width = parseAttrValue(CommonAttrDefine.WIDTH_N, element.attrs),
             height = parseAttrValue(CommonAttrDefine.WIDTH_N, element.attrs),
+            fit = parseAttrValue(CommonAttrDefine.FIT_N, element.attrs),
             alignment = parseAttrValue(CommonAttrDefine.ALIGNMENT, element.attrs),
             repeat = parseAttrValue(CommonAttrDefine.REPEAT, element.attrs),
             scale = parseAttrValue(CommonAttrDefine.SCALE, element.attrs),
