@@ -19,6 +19,16 @@ class SnapshotElement(
     pos: TrackPos,
 ) : Element(tag = Tag.SNAPSHOT, attrs = attrs, pos = pos) {
 
+    val type: String = Tag.parseAttrValue(ATTR_TYPE, attrs)
+    val format = when (type) {
+        "png" -> EncodedImageFormat.PNG
+        "jpg" -> EncodedImageFormat.JPEG
+        "webp" -> EncodedImageFormat.WEBP
+        else -> EncodedImageFormat.PNG
+    }
+    val background: Int = Tag.parseAttrValue(ATTR_BACKGROUND, attrs)
+    val debug: Boolean = Tag.parseAttrValue(ATTR_DEBUG, attrs)
+
     private var _networkImageCache: NetworkImageCache? = null
 
     @Synchronized
@@ -35,15 +45,6 @@ class SnapshotElement(
     }
 
     fun snapshot(): ByteArray {
-        val type: String = Tag.parseAttrValue(ATTR_TYPE, attrs)
-        val format = when (type) {
-            "png" -> EncodedImageFormat.PNG
-            "jpg" -> EncodedImageFormat.JPEG
-            "webp" -> EncodedImageFormat.WEBP
-            else -> EncodedImageFormat.PNG
-        }
-        val background: Int = Tag.parseAttrValue(ATTR_BACKGROUND, attrs)
-        val debug: Boolean = Tag.parseAttrValue(ATTR_DEBUG, attrs)
         val widget = createWidget()
         val rootRenderBox = widget.createRenderBox()
         rootRenderBox.layout(constraints = BoxConstraints())
