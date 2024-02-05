@@ -12,6 +12,7 @@ import org.jetbrains.skia.Color
 import org.jetbrains.skia.Paint
 import org.jetbrains.skia.PathEffect
 import org.jetbrains.skia.paragraph.BaselineMode
+import org.jetbrains.skia.paragraph.Direction
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.expect
@@ -68,6 +69,7 @@ class RenderFlexTest {
                         direction = direction,
                         mainAxisAlignment = mainAxisAlignment,
                         crossAxisAlignment = crossAxisAlignment,
+                        textDirection = Direction.LTR,
                         textBaseline = BaselineMode.ALPHABETIC
                     ).apply {
                         appendChildren(children)

@@ -45,12 +45,13 @@ open class Flex(
     val clipBehavior: ClipBehavior = ClipBehavior.NONE,
     parent: Widget? = null,
 ) : MultiChildWidget(parent = parent) {
+
     override fun createRenderBox(children: List<Widget>): RenderBox = RenderFlex(
         direction = direction,
         mainAxisSize = mainAxisSize,
         mainAxisAlignment = mainAxisAlignment,
         crossAxisAlignment = crossAxisAlignment,
-        textDirection = textDirection,
+        textDirection = textDirection ?: Direction.LTR,
         verticalDirection = verticalDirection,
         textBaseline = textBaseline,
         clipBehavior = clipBehavior,

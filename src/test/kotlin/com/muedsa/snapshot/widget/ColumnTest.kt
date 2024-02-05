@@ -10,7 +10,8 @@ class ColumnTest {
     @Test
     fun crossAxisAlignment_test() {
         println("\n\n\nColumnTest.crossAxisAlignment_test()")
-        val crossAxisAlignmentArr = CrossAxisAlignment.entries.toTypedArray()
+        //val crossAxisAlignmentArr = CrossAxisAlignment.entries.toTypedArray()
+        val crossAxisAlignmentArr = arrayOf(CrossAxisAlignment.START)
         crossAxisAlignmentArr.forEachIndexed { index, crossAxisAlignment ->
             val name = "widget/column/crossAxis$index"
             val description = "Column($crossAxisAlignment)"

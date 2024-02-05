@@ -158,6 +158,13 @@ open class RenderFlex(
     }
 
     override fun performLayout() {
+        if (crossAxisAlignment == CrossAxisAlignment.START || crossAxisAlignment == CrossAxisAlignment.END) {
+            requireNotNull(textDirection) {
+                "the [crossAxisAlignment] is either [CrossAxisAlignment.START] " +
+                        "or [CrossAxisAlignment.END], then the [textDirection] must not be null"
+            }
+        }
+
         // debugCheckConstraints()
         val sizes: LayoutSizes = computeSizes(constraints = definiteConstraints)
         val allocatedSize: Float = sizes.allocatedSize
