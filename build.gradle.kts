@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 val osName: String = System.getProperty("os.name")
 val targetOs = when {
     osName == "Mac OS X" -> "macos"
@@ -39,6 +41,14 @@ dependencies {
     testImplementation(versionCatalog.findLibrary("skiko-$targetOs-$targetArch").get())
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(11))
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "11"
+}
+
 tasks.test {
     useJUnitPlatform()
 }
@@ -53,6 +63,7 @@ tasks.jar {
         )
     }
 }
+
 tasks.kotlinSourcesJar {
     archiveClassifier = "sources"
 }
