@@ -61,7 +61,7 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
     private var newlinePositions: MutableList<Int> = ArrayList(MAX_BUFFER_LEN / 80)
     private var lineNumberOffset: Int = 1
 
-    fun currentLineNumber(): Int = getLineNumberIndex(pos())
+    fun currentLineNumber(): Int = getLineNumber(pos())
 
     fun getLineNumber(pos: Int): Int {
         val i: Int = getLineNumberIndex(pos)
