@@ -17,8 +17,8 @@ abstract class AttrDefine<T>(
      * @param rawAttr 当rawAttr为NULL时 说明未被指定
      */
     open fun parseValue(rawAttr: RawAttr?): T {
-        check(rawAttr != null) { "Attr $name must not be null" }
-        check(rawAttr.name == name) { "Attr $name not equal $rawAttr" }
+        check(rawAttr != null) { "Attr [$name] must not be null" }
+        check(rawAttr.name == name) { "Attr [$name] not equal $rawAttr" }
         return parseValue(rawAttr.value)
     }
 

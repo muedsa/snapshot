@@ -14,7 +14,7 @@ class AlignmentAttrDefine(name: String, defaultValue: BoxAlignment = BoxAlignmen
     companion object {
 
         fun parseAlignmentFromText(valueStr: String?, attrDefine: AttrDefine<*>): BoxAlignment {
-            requireNotNull(valueStr) { "Attr ${attrDefine.name} value can not be null" }
+            requireNotNull(valueStr) { "Attr [${attrDefine.name}] value can not be null" }
             return when (valueStr) {
                 "TOP_LEFT" -> BoxAlignment.TOP_LEFT
                 "TOP_CENTER" -> BoxAlignment.TOP_CENTER
@@ -27,8 +27,8 @@ class AlignmentAttrDefine(name: String, defaultValue: BoxAlignment = BoxAlignmen
                 "BOTTOM_RIGHT" -> BoxAlignment.BOTTOM_RIGHT
                 else -> {
                     val result = AttrStrValueConst.TWO_FLOAT_VALUE_REGEX.find(valueStr)
-                    requireNotNull(result) { "Attr ${attrDefine.name} value format error" }
-                    require(result.groupValues.size == 3) { "Attr ${attrDefine.name} value format error" }
+                    requireNotNull(result) { "Attr [${attrDefine.name}] value format error" }
+                    require(result.groupValues.size == 3) { "Attr [${attrDefine.name}] value format error" }
                     val x = result.groupValues[1].toFloat()
                     val y = result.groupValues[2].toFloat()
                     BoxAlignment(x, y)

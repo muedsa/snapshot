@@ -14,9 +14,9 @@ class ColorAttrDefine(name: String, defaultValue: Int = Color.TRANSPARENT) :
 
         @OptIn(ExperimentalStdlibApi::class)
         fun parseColorFromText(valueStr: String?, attrDefine: AttrDefine<*>): Int {
-            requireNotNull(valueStr) { "Attr ${attrDefine.name} value can not be null" }
-            require(valueStr.startsWith("#")) { "Attr ${attrDefine.name} value must start with #" }
-            require(valueStr.length == 1 + 8 || valueStr.length == 1 + 6) { "Attr ${attrDefine.name} value must be ARGB or RGB color hex" }
+            requireNotNull(valueStr) { "Attr [${attrDefine.name}] value can not be null" }
+            require(valueStr.startsWith("#")) { "Attr [${attrDefine.name}] value must start with #" }
+            require(valueStr.length == 1 + 8 || valueStr.length == 1 + 6) { "Attr [${attrDefine.name}] value must be ARGB or RGB color hex" }
             return if (valueStr.length == 1 + 6) {
                 Color.makeARGB(
                     a = 255,

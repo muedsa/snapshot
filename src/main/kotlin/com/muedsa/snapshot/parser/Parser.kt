@@ -27,7 +27,7 @@ class Parser {
             } catch (t: Throwable) {
                 throw ParseException(
                     token.startPos,
-                    t.message ?: "Unexpected token $token"
+                    t.message ?: "Unexpected token [$token]"
                 )
             }
             token.reset()
@@ -46,7 +46,7 @@ class Parser {
             is Token.EOF -> Unit
             else -> throw ParseException(
                 token.startPos,
-                "Unexpected token ${token.type}"
+                "Unexpected token [${token.type}]"
             )
         }
     }
@@ -128,11 +128,11 @@ class Parser {
     private fun push(element: Element) {
         if (snapshotElement == null) {
             check(element is SnapshotElement) {
-                "Unexpected element ${element.tag.id}, root element tag must be ${Tag.SNAPSHOT.id}"
+                "Unexpected element [${element.tag.id}], root element tag must be ${Tag.SNAPSHOT.id}"
             }
             snapshotElement = element
         } else if (stack.isEmpty()) {
-            throw ParseException(element.pos, "Duplicate root element ${element.tag.id} at ${element.pos}")
+            throw ParseException(element.pos, "Duplicate root element [${element.tag.id}] at ${element.pos}")
         }
         element.owner = snapshotElement
         stack.add(element)
@@ -156,12 +156,12 @@ class Parser {
             if (token.tagName == null) {
                 throw ParseException(
                     token.startPos,
-                    "Tag name can not be null"
+                    "element tag name can not be null"
                 )
             }
             return Tag.TAG_MAP[token.tagName] ?: throw ParseException(
                 token.startPos,
-                "Unknown tag ${token.tagName}"
+                "Unknown element tag [${token.tagName}]"
             )
         }
 
@@ -172,7 +172,7 @@ class Parser {
                 if (map.containsKey(it.name)) {
                     throw ParseException(
                         it.nameStartPos,
-                        "Tag ${token.tagName} exist duplicate attr"
+                        "Element tag [${token.tagName}] exist duplicate attr"
                     )
                 }
                 map[it.name] = it

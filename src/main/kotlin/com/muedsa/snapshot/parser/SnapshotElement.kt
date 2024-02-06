@@ -40,7 +40,7 @@ class SnapshotElement(
     }
 
     override fun createWidget(): Widget {
-        check(children.isNotEmpty()) { "Snapshot element content is empty" }
+        check(children.isNotEmpty()) { "element [Snapshot] content is empty" }
         return children[0].createWidget()
     }
 
@@ -50,10 +50,10 @@ class SnapshotElement(
         rootRenderBox.layout(constraints = BoxConstraints())
         val rootSize = rootRenderBox.definiteSize
         if (rootSize.isEmpty) {
-            throw IllegalArgumentException("layout size is empty")
+            throw IllegalArgumentException("Layout size is empty")
         }
         if (rootSize.isInfinite) {
-            throw IllegalArgumentException("layout size is infinite")
+            throw IllegalArgumentException("Layout size is infinite")
         }
         val surface = Surface.makeRasterN32Premul(
             width = ceil(rootSize.width).toInt(),
@@ -68,7 +68,7 @@ class SnapshotElement(
         val ATTR_BACKGROUND: ColorAttrDefine = ColorAttrDefine(name = "background", defaultValue = Color.TRANSPARENT)
         val ATTR_TYPE: StringAttrDefine = StringAttrDefine(name = "type", defaultValue = "png") { _, valueStr ->
             require(valueStr == "png" || valueStr == "jpg" || valueStr == "webp") {
-                "attr value must be one of 'png' 'jpg' 'webp', but get '${valueStr}'"
+                "Attr [type] value must be one of 'png' 'jpg' 'webp', but get '${valueStr}'"
             }
         }
         val ATTR_DEBUG: BooleanAttrDefine = BooleanAttrDefine(name = "debug", defaultValue = false)

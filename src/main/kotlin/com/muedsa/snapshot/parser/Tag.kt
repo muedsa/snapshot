@@ -15,7 +15,7 @@ enum class Tag(
         containerMode = ContainerMode.SINGLE
     ) {
         override fun buildWidget(element: Element): Widget {
-            throw IllegalCallerException("SNAPSHOT cant not buildWidget")
+            throw IllegalCallerException("Element [$id] cant not buildWidget")
         }
     },
     CONTAINER(
@@ -148,7 +148,7 @@ enum class Tag(
             } catch (t: Throwable) {
                 if (rawAttr != null) throw ParseException(
                     rawAttr.nameStartPos,
-                    t.message ?: "Parse attr ${attrDefine.name} error"
+                    t.message ?: "Parse attr [${attrDefine.name}] error"
                 )
                 else throw t
             }

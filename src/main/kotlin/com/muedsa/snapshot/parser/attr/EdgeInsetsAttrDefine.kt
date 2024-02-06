@@ -32,13 +32,13 @@ class EdgeInsetsAttrDefine(name: String, defaultValue: EdgeInsets = EdgeInsets.Z
         )
 
         fun parseEdgeInsetsFromText(valueStr: String?, attrDefine: AttrDefine<*>): EdgeInsets {
-            requireNotNull(valueStr) { "Attr ${attrDefine.name} value can not be null" }
+            requireNotNull(valueStr) { "Attr [${attrDefine.name}] value can not be null" }
             var insets: EdgeInsets? = null
             for (parser in PARSERS) {
                 if (insets != null) break
                 insets = tryRegexParse(parser.first, valueStr, parser.second)
             }
-            requireNotNull(insets) { "Attr ${attrDefine.name} value format error" }
+            requireNotNull(insets) { "Attr [${attrDefine.name}] value format error" }
             return insets
         }
 

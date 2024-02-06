@@ -20,7 +20,7 @@ class StringAttrDefine(
             valueStr: String?,
             checker: ((AttrDefine<T>, String?) -> Unit)? = null,
         ): String {
-            requireNotNull(valueStr) { "Attr ${attr.name} value can not be null" }
+            requireNotNull(valueStr) { "Attr [${attr.name}] value can not be null" }
             checker?.invoke(attr, valueStr)
             return valueStr
         }
