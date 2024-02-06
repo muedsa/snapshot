@@ -72,7 +72,7 @@ class SimpleTextPainter(
             pushStyle(TextStyle().apply {
                 this.color = color
                 this.fontSize = fontSize
-                fontFamilyName?.let {
+                (fontFamilyName ?: DEFAULT_FONT_FAMILY_NAME)?.let {
                     this.fontFamilies = it
                 }
                 this.fontStyle = fontStyle
@@ -286,10 +286,11 @@ class SimpleTextPainter(
                 Alignment.END -> if (textDirection == Direction.LTR) 1f else 0f
             }
 
-
-        internal val FONT_COLLECTION = FontCollection().apply {
+        val FONT_COLLECTION = FontCollection().apply {
             setDefaultFontManager(FontMgr.default)
             setEnableFallback(true)
         }
+
+        var DEFAULT_FONT_FAMILY_NAME: Array<String>? = null
     }
 }
