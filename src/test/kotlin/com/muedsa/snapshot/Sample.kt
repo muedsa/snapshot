@@ -72,7 +72,7 @@ class Sample {
     @Test
     fun sample_parse_dom_like() {
         val text = """
-            <Snapshot background="#FFFFFFFF" format="png">
+            <Snapshot background="#FFFFFFFF" type="png">
                 <Column>
                     <Row>
                         <Container color="#FF0000" width="200" height="200"/>

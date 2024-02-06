@@ -14,7 +14,7 @@ class ParserTest {
     @Test
     fun parse_test() {
         val text = """
-            <Snapshot background="#FFFFFFFF" format="png" debug>
+            <Snapshot background="#FFFFFFFF" type="png" debug>
                 <Container color="#FF00FF00" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
                     <Container color="#FFFF0000" width="100" height="50"/>
                 </Container>
@@ -44,10 +44,10 @@ class ParserTest {
     fun duplicate_snapshot_element_test() {
         assertThrows<ParseException> {
             val text = """
-                <Snapshot background="#FFFFFFFF" format="png" debug>
+                <Snapshot background="#FFFFFFFF" type="png" debug>
                     <Snapshot/>
                 </Snapshot>
-                <Snapshot background="#FFFFFFFF" format="png" debug>
+                <Snapshot background="#FFFFFFFF" type="png" debug>
                     <Container color="#FF00FF00" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
                         <Container color="#FFFF0000" width="100" height="50"/>
                     </Container>
@@ -62,7 +62,7 @@ class ParserTest {
     fun duplicate_root_element_test() {
         assertThrows<ParseException> {
             val text = """
-                <Snapshot background="#FFFFFFFF" format="png" debug>
+                <Snapshot background="#FFFFFFFF" type="png" debug>
                     <Container color="#FF00FF00" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
                         <Container color="#FFFF0000" width="100" height="50"/>
                     </Container>
@@ -80,7 +80,7 @@ class ParserTest {
     fun snapshot_content_empty_test() {
         assertThrows<ParseException> {
             val text = """
-                <Snapshot background="#FFFFFFFF" format="png" debug></Snapshot>>
+                <Snapshot background="#FFFFFFFF" type="png" debug></Snapshot>>
             """.trimIndent()
             println(text)
             parse(text)

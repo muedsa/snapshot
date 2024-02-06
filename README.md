@@ -76,7 +76,7 @@ File("sample_image_and_text.png").writeBytes(
 
 ```kotlin
 val text = """
-<Snapshot background="#FFFFFFFF" format="png">
+<Snapshot background="#FFFFFFFF" type="png">
     <Column>
         <Row>
             <Container color="#FF0000" width="200" height="200"/>
