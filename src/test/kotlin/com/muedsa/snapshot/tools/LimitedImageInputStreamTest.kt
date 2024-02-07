@@ -40,7 +40,7 @@ class LimitedImageInputStreamTest {
         // jpg
         readAll("https://samples-files.com/samples/Images/jpg/480-360-sample.jpg")
         // png
-        readAll("https://samples-files.com/samples/Images/jpg/480-360-sample.jpg")
+        readAll("https://samples-files.com/samples/Images/png/480-360-sample.png")
         // webp
         readAll("https://samples-files.com/samples/Images/webp/480-360-sample.webp")
 

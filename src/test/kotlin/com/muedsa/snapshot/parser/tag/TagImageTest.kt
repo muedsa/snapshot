@@ -9,7 +9,7 @@ class TagImageTest {
     fun build_widget_test() {
         val text = """
             <Snapshot>
-                <Image url="https://picsum.photos/id/201/500"/>
+                <Image url="https://samples-files.com/samples/Images/jpg/480-360-sample.jpg"/>
             </Snapshot>
         """.trimIndent()
         println(text)
@@ -19,7 +19,7 @@ class TagImageTest {
         assert(widget is RawImage)
         val rawImage: RawImage = widget as RawImage
         assert(!rawImage.image.isEmpty)
-        assert(rawImage.image.imageInfo.width == 500)
-        assert(rawImage.image.imageInfo.height == 500)
+        assert(rawImage.image.imageInfo.width == 480)
+        assert(rawImage.image.imageInfo.height == 360)
     }
 }

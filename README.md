@@ -63,7 +63,11 @@ File("sample_layout.png").writeBytes(
 File("sample_image_and_text.png").writeBytes(
     SnapshotPNG {
         Stack {
-            CachedNetworkImage("https://picsum.photos/500")
+            CachedNetworkImage(
+                url = "https://samples-files.com/samples/Images/jpg/1280-720-sample.jpg",
+                width = 400f,
+                height = 400f,
+            )
             SimpleText("Hello World!", color = Color.RED, fontSize = 40f)
         }
     }
@@ -85,7 +89,7 @@ val text = """
             </Container>
         </Row>
         <Row>
-            <Image width="200" height="200" url="https://picsum.photos/id/201/200"/>
+            <Image width="200" height="200" url="https://samples-files.com/samples/Images/jpg/480-360-sample.jpg"/>
             <Container color="#FFFF00" width="200" height="200"/>
         </Row>
     </Column>

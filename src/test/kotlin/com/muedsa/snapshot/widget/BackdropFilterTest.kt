@@ -6,6 +6,7 @@ import com.muedsa.snapshot.drawWidget
 import com.muedsa.snapshot.paint.decoration.BoxDecoration
 import com.muedsa.snapshot.paint.decoration.DecorationImage
 import com.muedsa.snapshot.tools.NetworkImageCacheManager
+import com.muedsa.snapshot.tools.SimpleNoLimitedNetworkImageCacheTest
 import org.jetbrains.skia.*
 import kotlin.test.Test
 
@@ -199,7 +200,7 @@ class BackdropFilterTest {
                         height = 500f,
                         decoration = BoxDecoration(
                             image = DecorationImage(
-                                image = NetworkImageCacheManager.defaultCache["https://picsum.photos/id/1/200/300"]
+                                image = NetworkImageCacheManager.defaultCache[SimpleNoLimitedNetworkImageCacheTest.TEST_IMAGE_URL_2]
                             )
                         ),
                         alignment = BoxAlignment.CENTER
