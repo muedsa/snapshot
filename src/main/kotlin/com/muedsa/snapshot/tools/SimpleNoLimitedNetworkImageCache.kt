@@ -1,6 +1,7 @@
 package com.muedsa.snapshot.tools
 
 import org.jetbrains.skia.Image
+import java.io.FileNotFoundException
 import java.net.URL
 
 object SimpleNoLimitedNetworkImageCache : NetworkImageCache {
@@ -47,6 +48,10 @@ object SimpleNoLimitedNetworkImageCache : NetworkImageCache {
 
     private fun getImageOverHttp(url: String): ByteArray {
         if (debug) println("Thread[${Thread.currentThread().name}] request http image: $url")
-        return URL(url).openStream().use { it.readAllBytes() }
+        try {
+            return URL(url).openStream().use { it.readAllBytes() }
+        } catch (e: FileNotFoundException) {
+            throw IllegalStateException("Get http 404 from $url")
+        }
     }
 }

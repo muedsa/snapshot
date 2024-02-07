@@ -26,4 +26,11 @@ class SimpleLimitedNetworkImageCacheTest {
             cache1.getImage(SimpleNoLimitedNetworkImageCacheTest.TEST_IMAGE_URL_1)
         }
     }
+
+    @Test
+    fun http_404_test() {
+        assertThrows<IllegalStateException> {
+            SimpleLimitedNetworkImageCache().getImage("https://pic3.zhimg.com/v2-875bc0f51908e99b6e88a2b53552")
+        }
+    }
 }

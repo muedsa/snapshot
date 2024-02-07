@@ -1,5 +1,6 @@
 package com.muedsa.snapshot.tools
 
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.expect
@@ -63,6 +64,13 @@ class SimpleNoLimitedNetworkImageCacheTest {
                 SimpleNoLimitedNetworkImageCache.getImage(TEST_IMAGE_URL_3).imageInfo.computeMinByteSize()
         expect(size) {
             SimpleNoLimitedNetworkImageCache.size()
+        }
+    }
+
+    @Test
+    fun http_404_test() {
+        assertThrows<IllegalStateException> {
+            SimpleNoLimitedNetworkImageCache.getImage("https://pic3.zhimg.com/v2-875bc0f51908e99b6e88a2b53552")
         }
     }
 
