@@ -49,7 +49,11 @@ object SimpleNoLimitedNetworkImageCache : NetworkImageCache {
     private fun getImageOverHttp(url: String): ByteArray {
         if (debug) println("Thread[${Thread.currentThread().name}] request http image: $url")
         try {
-            return URL(url).openStream().use { it.readAllBytes() }
+            return URL(url).openStream().use {
+                val readAllBytes = it.readAllBytes()
+                check(ImageFormatValidator.valid(readAllBytes)) { "Data stream is not available image format" }
+                readAllBytes
+            }
         } catch (e: FileNotFoundException) {
             throw IllegalStateException("Get http 404 from $url")
         }

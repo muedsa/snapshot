@@ -40,9 +40,10 @@ object ImageFormatValidator {
             throw IllegalArgumentException("Can not check data is WEBP image because there is not enough data length")
         }
         val data1: ByteArray = data.copyOfRange(0, WEBP_MAGIC_NUMBER_1.size)
-        val data2: ByteArray = data.copyOfRange(WEBP_MAGIC_NUMBER_1.size + WEBP_SKIP_LENGTH - 1, data.size)
+        val data2Start: Int = WEBP_MAGIC_NUMBER_1.size + WEBP_SKIP_LENGTH
+        val data2: ByteArray = data.copyOfRange(data2Start, data2Start + WEBP_MAGIC_NUMBER_2.size)
         return checkDataHeaderWithMagicNumber(data1, WEBP_MAGIC_NUMBER_1, "WEBP")
-                || checkDataHeaderWithMagicNumber(data2, WEBP_MAGIC_NUMBER_2, "WEBP")
+                && checkDataHeaderWithMagicNumber(data2, WEBP_MAGIC_NUMBER_2, "WEBP")
     }
 
     private fun checkDataHeaderWithMagicNumber(data: ByteArray, magic: ByteArray, type: String): Boolean {
