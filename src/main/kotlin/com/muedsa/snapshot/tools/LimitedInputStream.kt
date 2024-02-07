@@ -4,14 +4,14 @@ import java.io.FilterInputStream
 import java.io.IOException
 import java.io.InputStream
 
-class LimitedInputStream(
+open class LimitedInputStream(
     inputStream: InputStream,
     val limit: Int,
 ) : FilterInputStream(inputStream) {
 
-    private var left: Int = limit
+    protected var left: Int = limit
 
-    private var leftMark: Int = -1
+    protected var leftMark: Int = -1
 
     override fun mark(readlimit: Int) {
         super.mark(readlimit)

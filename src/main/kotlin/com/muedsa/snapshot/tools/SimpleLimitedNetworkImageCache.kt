@@ -42,7 +42,7 @@ class SimpleLimitedNetworkImageCache(
         if (SimpleNoLimitedNetworkImageCache.debug) println("Thread[${Thread.currentThread().name}] request http image: $url")
         check(count() + 1 <= maxImageNum) { "Exceeded maximum number [$maxImageNum] of image http requests" }
         return URL(url).openStream().use {
-            LimitedInputStream(it, maxSingleImageSize).readAllBytes()
+            LimitedImageInputStream(it, maxSingleImageSize).readAllBytes()
         }
     }
 
