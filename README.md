@@ -5,8 +5,7 @@
 之前像 [taffy-pvp-card-sw](https://github.com/muedsa/taffy-pvp-card-sw) 这样直接使用Canvas的方式，会让后期维护和修改变的十分困难,
 所以急需一个可以结构化构建图像的工具
 
-## Demo
-Host: `https://snapshot.muedsa.com`
+**Demo**: https://snapshot.muedsa.com
 
 <details>
  <summary><code>POST</code> <code>/snapshot</code> 生成图片</summary>
