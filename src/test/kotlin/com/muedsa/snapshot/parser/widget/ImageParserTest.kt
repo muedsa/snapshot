@@ -1,10 +1,10 @@
-package com.muedsa.snapshot.parser.tag
+package com.muedsa.snapshot.parser.widget
 
 import com.muedsa.snapshot.parser.ParserTest
 import com.muedsa.snapshot.widget.RawImage
 import kotlin.test.Test
 
-class TagImageTest {
+class ImageParserTest {
     @Test
     fun build_widget_test() {
         val text = """

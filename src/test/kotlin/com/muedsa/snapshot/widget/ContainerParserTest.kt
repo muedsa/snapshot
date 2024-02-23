@@ -3,7 +3,7 @@ package com.muedsa.snapshot.widget
 import com.muedsa.snapshot.drawWidget
 import kotlin.test.Test
 
-class ContainerTest {
+class ContainerParserTest {
 
     @Test
     fun sized_test() {

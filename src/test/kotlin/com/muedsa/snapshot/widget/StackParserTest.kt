@@ -7,7 +7,7 @@ import org.jetbrains.skia.Color
 import org.jetbrains.skia.paragraph.Direction
 import kotlin.test.Test
 
-class StackTest {
+class StackParserTest {
 
     @Test
     fun alignment_direction_test() {

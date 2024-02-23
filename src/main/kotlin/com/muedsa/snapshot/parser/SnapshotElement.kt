@@ -5,6 +5,8 @@ import com.muedsa.snapshot.parser.attr.BooleanAttrDefine
 import com.muedsa.snapshot.parser.attr.ColorAttrDefine
 import com.muedsa.snapshot.parser.attr.StringAttrDefine
 import com.muedsa.snapshot.parser.token.RawAttr
+import com.muedsa.snapshot.parser.widget.SnapshotParser
+import com.muedsa.snapshot.parser.widget.WidgetParser
 import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.tools.NetworkImageCache
 import com.muedsa.snapshot.tools.SimpleLimitedNetworkImageCache
@@ -17,17 +19,17 @@ import kotlin.math.ceil
 class SnapshotElement(
     attrs: MutableMap<String, RawAttr>,
     pos: TrackPos,
-) : Element(tag = Tag.SNAPSHOT, attrs = attrs, pos = pos) {
+) : Element(widgetParser = SnapshotParser, attrs = attrs, pos = pos) {
 
-    val type: String = Tag.parseAttrValue(ATTR_TYPE, attrs)
+    val type: String = WidgetParser.parseAttrValue(ATTR_TYPE, attrs)
     val format = when (type) {
         "png" -> EncodedImageFormat.PNG
         "jpg" -> EncodedImageFormat.JPEG
         "webp" -> EncodedImageFormat.WEBP
         else -> EncodedImageFormat.PNG
     }
-    val background: Int = Tag.parseAttrValue(ATTR_BACKGROUND, attrs)
-    val debug: Boolean = Tag.parseAttrValue(ATTR_DEBUG, attrs)
+    val background: Int = WidgetParser.parseAttrValue(ATTR_BACKGROUND, attrs)
+    val debug: Boolean = WidgetParser.parseAttrValue(ATTR_DEBUG, attrs)
 
     private var _networkImageCache: NetworkImageCache? = null
 

@@ -6,7 +6,7 @@ import org.jetbrains.skia.Color
 import org.jetbrains.skia.paragraph.BaselineMode
 import kotlin.test.Test
 
-class RowTest {
+class RowParserTest {
 
     @Test
     fun crossAxisAlignment_test() {

@@ -1,4 +1,4 @@
-package com.muedsa.snapshot.parser.tag
+package com.muedsa.snapshot.parser.widget
 
 import com.muedsa.geometry.BoxAlignment
 import com.muedsa.snapshot.parser.ParserTest
@@ -7,7 +7,7 @@ import com.muedsa.snapshot.widget.Stack
 import org.jetbrains.skia.paragraph.Direction
 import kotlin.test.Test
 
-class TagStackTest {
+class StackParserTest {
     @Test
     fun build_widget_test() {
         val text = """

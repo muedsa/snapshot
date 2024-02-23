@@ -1,10 +1,10 @@
-package com.muedsa.snapshot.parser.tag
+package com.muedsa.snapshot.parser.widget
 
 import com.muedsa.snapshot.parser.attr.CommonAttrDefine
 import com.muedsa.snapshot.parser.token.RawAttr
 import kotlin.test.Test
 
-class TagTextTest {
+class TextParserTest {
 
     @Test
     fun parse_text_attr_test() {

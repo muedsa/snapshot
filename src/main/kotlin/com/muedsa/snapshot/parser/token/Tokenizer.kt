@@ -2,8 +2,8 @@ package com.muedsa.snapshot.parser.token
 
 import com.muedsa.snapshot.parser.CharacterReader
 import com.muedsa.snapshot.parser.ParseException
-import com.muedsa.snapshot.parser.Tag
 import com.muedsa.snapshot.parser.TrackPos
+import com.muedsa.snapshot.parser.widget.SnapshotParser
 import java.io.Reader
 
 class Tokenizer(reader: Reader) {
@@ -183,14 +183,14 @@ class Tokenizer(reader: Reader) {
     internal fun emitTagPending() {
         tagPending.finaliseTag()
         if (shouldAsFirstTagChecked) {
-            check(Tag.SNAPSHOT.id == tagPending.tagName, lazyTrackPos = { getMarkupStartTrackPos() }) {
-                "First tag must be '${Tag.SNAPSHOT.id}', but get '${tagPending.tagName}'"
+            check(SnapshotParser.id == tagPending.tagName, lazyTrackPos = { getMarkupStartTrackPos() }) {
+                "First tag must be '${SnapshotParser.id}', but get '${tagPending.tagName}'"
             }
             shouldAsFirstTagChecked = false
         } else {
             if (tagPending is Token.StartTag) {
-                check(Tag.SNAPSHOT.id != tagPending.tagName, lazyTrackPos = { getMarkupStartTrackPos() }) {
-                    "Tag '${Tag.SNAPSHOT.id}' only be used as the first, but get '${tagPending.tagName}' at ${getMarkupStartTrackPos()}"
+                check(SnapshotParser.id != tagPending.tagName, lazyTrackPos = { getMarkupStartTrackPos() }) {
+                    "Tag '${SnapshotParser.id}' only be used as the first, but get '${tagPending.tagName}' at ${getMarkupStartTrackPos()}"
                 }
             }
         }

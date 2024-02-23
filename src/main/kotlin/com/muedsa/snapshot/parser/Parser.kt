@@ -4,9 +4,15 @@ import com.muedsa.snapshot.parser.attr.CommonAttrDefine
 import com.muedsa.snapshot.parser.token.RawAttr
 import com.muedsa.snapshot.parser.token.Token
 import com.muedsa.snapshot.parser.token.Tokenizer
+import com.muedsa.snapshot.parser.widget.SnapshotParser
+import com.muedsa.snapshot.parser.widget.TextParser
+import com.muedsa.snapshot.parser.widget.WidgetParser
+import com.muedsa.snapshot.parser.widget.WidgetParserManager
 import java.io.Reader
 
-class Parser {
+open class Parser(
+    protected var widgetParserManager: WidgetParserManager = WidgetParserManager.DEFAULT_MANAGER,
+) {
 
     protected lateinit var reader: Reader
     protected lateinit var tokenizer: Tokenizer
@@ -52,16 +58,16 @@ class Parser {
     }
 
     protected fun insertElementFor(token: Token.StartTag) {
-        val tag: Tag = parseTag(token)
+        val widgetParser: WidgetParser = getWidgetParser(token)
 
-        val element = if (tag == Tag.SNAPSHOT) {
+        val element = if (widgetParser is SnapshotParser) {
             SnapshotElement(
                 attrs = buildTokenTagAttrMap(token),
                 pos = token.startPos.copy()
             )
         } else {
             Element(
-                tag = tag,
+                widgetParser = widgetParser,
                 attrs = buildTokenTagAttrMap(token),
                 pos = token.startPos.copy()
             )
@@ -74,6 +80,18 @@ class Parser {
         }
     }
 
+    private fun getWidgetParser(token: Token.StartTag): WidgetParser {
+        val tagName = token.tagName
+            ?: throw ParseException(
+                token.startPos,
+                "element tag name can not be null"
+            )
+        return widgetParserManager[tagName] ?: throw ParseException(
+            token.startPos,
+            "Unknown element tag [${tagName}]"
+        )
+    }
+
     protected fun popStackToClose(token: Token.EndTag) {
         var firstFound: Element? = null
 
@@ -81,7 +99,7 @@ class Parser {
         val upper = if (bottom >= MAX_QUEUE_DEPTH) bottom - MAX_QUEUE_DEPTH else 0
         for (pos: Int in bottom downTo upper) {
             val next: Element = stack[pos]
-            if (next.tag.id == token.tagName) {
+            if (next.widgetParser.id == token.tagName) {
                 firstFound = next
                 break
             }
@@ -101,7 +119,7 @@ class Parser {
     protected fun insertCharacterFor(token: Token.Character) {
         // println("insert character:${token.data}")
         val currentElement = getCurrentElement()
-        if (currentElement?.tag == Tag.TEXT) {
+        if (currentElement?.widgetParser is TextParser) {
             if (token.data != null) {
                 val rawAttr = currentElement.attrs[CommonAttrDefine.TEXT.name]
                 currentElement.attrs[CommonAttrDefine.TEXT.name] = rawAttr?.copy(
@@ -128,11 +146,11 @@ class Parser {
     private fun push(element: Element) {
         if (snapshotElement == null) {
             check(element is SnapshotElement) {
-                "Unexpected element [${element.tag.id}], root element tag must be ${Tag.SNAPSHOT.id}"
+                "Unexpected element [${element.widgetParser.id}], root element tag must be ${SnapshotParser.id}"
             }
             snapshotElement = element
         } else if (stack.isEmpty()) {
-            throw ParseException(element.pos, "Duplicate root element [${element.tag.id}] at ${element.pos}")
+            throw ParseException(element.pos, "Duplicate root element [${element.widgetParser.id}] at ${element.pos}")
         }
         element.owner = snapshotElement
         stack.add(element)
@@ -151,19 +169,6 @@ class Parser {
     companion object {
 
         const val MAX_QUEUE_DEPTH: Int = 256
-
-        fun parseTag(token: Token.StartTag): Tag {
-            if (token.tagName == null) {
-                throw ParseException(
-                    token.startPos,
-                    "element tag name can not be null"
-                )
-            }
-            return Tag.TAG_MAP[token.tagName] ?: throw ParseException(
-                token.startPos,
-                "Unknown element tag [${token.tagName}]"
-            )
-        }
 
         private fun buildTokenTagAttrMap(token: Token.StartTag): MutableMap<String, RawAttr> {
             val attrList = token.attrList

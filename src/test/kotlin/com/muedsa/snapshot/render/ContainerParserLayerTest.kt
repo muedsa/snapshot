@@ -12,7 +12,7 @@ import org.jetbrains.skia.Rect
 import kotlin.test.Test
 import kotlin.test.assertFalse
 
-class ContainerLayerTest {
+class ContainerParserLayerTest {
 
     @Test
     fun paint_test() {

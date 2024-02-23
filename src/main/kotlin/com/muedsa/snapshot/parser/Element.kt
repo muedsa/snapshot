@@ -1,11 +1,12 @@
 package com.muedsa.snapshot.parser
 
 import com.muedsa.snapshot.parser.token.RawAttr
+import com.muedsa.snapshot.parser.widget.WidgetParser
 import com.muedsa.snapshot.widget.Widget
 import com.muedsa.snapshot.widget.bind
 
 open class Element(
-    val tag: Tag,
+    val widgetParser: WidgetParser,
     val attrs: MutableMap<String, RawAttr>,
     val pos: TrackPos,
 ) {
@@ -15,14 +16,14 @@ open class Element(
     val children: List<Element> = _children
 
     fun appendChild(element: Element) {
-        when (tag.containerMode) {
+        when (widgetParser.containerMode) {
             ContainerMode.NONE -> {
-                throw IllegalStateException("Tag ${tag.id} can not have child element ${element.tag.id}")
+                throw IllegalStateException("Tag ${widgetParser.id} can not have child element ${element.widgetParser.id}")
             }
 
             ContainerMode.SINGLE -> {
                 if (children.isNotEmpty()) {
-                    throw IllegalStateException("Tag ${tag.id} only can have one child, but get other ${element.tag.id}")
+                    throw IllegalStateException("Tag ${widgetParser.id} only can have one child, but get other ${element.widgetParser.id}")
                 }
             }
 
@@ -34,11 +35,11 @@ open class Element(
 
     open fun createWidget(): Widget {
         val widget = try {
-            tag.buildWidget(this)
+            widgetParser.buildWidget(this)
         } catch (pex: ParseException) {
             throw pex
         } catch (t: Throwable) {
-            throw ParseException(pos, t.message ?: "Parse Tag ${tag.id} error")
+            throw ParseException(pos, t.message ?: "Parse Tag ${widgetParser.id} error")
         }
         children.forEach {
             widget.bind(it.createWidget())
@@ -48,12 +49,12 @@ open class Element(
 
     fun toTreeString(depth: Int): String {
         val prefix = if (depth == 0) "" else " ".repeat(depth * 2) + "|-"
-        var s = "$prefix${tag.id}(attrs=${attrs.values})"
+        var s = "$prefix${widgetParser.id}(attrs=${attrs.values})"
         s += children.joinToString("", "\n") {
             it.toTreeString(depth + 1)
         }
         return s
     }
 
-    override fun toString(): String = "${tag.id}(\nattrs=$attrs\n){$children}"
+    override fun toString(): String = "${widgetParser.id}(\nattrs=$attrs\n){$children}"
 }

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.assertThrows
 import kotlin.test.Test
 import kotlin.test.expect
 
-class SnapshotElementTest {
+class SnapshotParserElementTest {
 
     @Test
     fun attr_parse_test() {

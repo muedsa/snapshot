@@ -2,6 +2,7 @@ package com.muedsa.snapshot.parser
 
 import com.muedsa.snapshot.parser.token.Token
 import com.muedsa.snapshot.parser.token.Tokenizer
+import com.muedsa.snapshot.parser.widget.SnapshotParser
 import org.junit.jupiter.api.assertThrows
 import java.io.StringReader
 import kotlin.test.Test
@@ -25,20 +26,20 @@ class TokenizerTest {
 
     @Test
     fun first_tag_test() {
-        println("### First is ${Tag.SNAPSHOT.id}")
-        parseUntilEOF("<${Tag.SNAPSHOT.id} aaa=1 bbb=2>123</${Tag.SNAPSHOT.id}>")
+        println("### First is ${SnapshotParser.id}")
+        parseUntilEOF("<${SnapshotParser.id} aaa=1 bbb=2>123</${SnapshotParser.id}>")
 
-        println("### First not is ${Tag.SNAPSHOT.id}")
+        println("### First not is ${SnapshotParser.id}")
         assertThrows<Throwable> {
-            parseUntilEOF("<${Tag.CONTAINER.id} aaa=1 bbb=2>123</${Tag.CONTAINER.id}>")
+            parseUntilEOF("<Container aaa=1 bbb=2>123</Container>")
         }
 
-        println("### Second is ${Tag.SNAPSHOT.id}")
+        println("### Second is ${SnapshotParser.id}")
         assertThrows<Throwable> {
             parseUntilEOF(
-                "<${Tag.SNAPSHOT.id} aaa=1 bbb=2>" +
-                        "<${Tag.SNAPSHOT.id} aaa=1 bbb=2>123</${Tag.SNAPSHOT.id}>" +
-                        "</${Tag.SNAPSHOT.id}>"
+                "<${SnapshotParser.id} aaa=1 bbb=2>" +
+                        "<${SnapshotParser.id} aaa=1 bbb=2>123</${SnapshotParser.id}>" +
+                        "</${SnapshotParser.id}>"
             )
         }
     }
@@ -61,5 +62,5 @@ class TokenizerTest {
         } while (token !is Token.EOF)
     }
 
-    private fun warpFirstTag(text: String) = "<${Tag.SNAPSHOT.id}>$text</${Tag.SNAPSHOT.id}>"
+    private fun warpFirstTag(text: String) = "<${SnapshotParser.id}>$text</${SnapshotParser.id}>"
 }
