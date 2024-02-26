@@ -9,15 +9,15 @@ class LimitedImageInputStream(
     inputStream = inputStream,
     limit = limit
 ) {
+    var headerBufferPos: Int = 0
     val headerBuffer: ByteArray = ByteArray(ImageFormatValidator.NECESSARY_MAGIC_LENGTH)
 
     override fun read(): Int {
         val result: Int = super.read()
         if (result != -1) {
-            val pos = limit - left - 1
-            if (pos in headerBuffer.indices) {
-                headerBuffer[pos] = result.toByte()
-                if (pos == headerBuffer.size - 1) {
+            if (headerBufferPos in headerBuffer.indices) {
+                headerBuffer[headerBufferPos++] = result.toByte()
+                if (headerBufferPos == headerBuffer.size) {
                     checkImage()
                 }
             }
@@ -28,15 +28,15 @@ class LimitedImageInputStream(
     override fun read(b: ByteArray, off: Int, len: Int): Int {
         val result: Int = super.read(b, off, len)
         if (result != -1) {
-            val start = limit - left - len
+            val start = headerBufferPos
             for (i in 0..<len) {
                 val pos = start + i
                 if (pos >= headerBuffer.size) {
                     break
                 }
                 if (pos in headerBuffer.indices) {
-                    headerBuffer[pos] = b[off + i]
-                    if (pos == headerBuffer.size - 1) {
+                    headerBuffer[headerBufferPos++] = b[off + i]
+                    if (headerBufferPos == headerBuffer.size) {
                         checkImage()
                     }
                 }
