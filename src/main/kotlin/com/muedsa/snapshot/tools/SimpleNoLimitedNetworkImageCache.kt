@@ -46,12 +46,20 @@ object SimpleNoLimitedNetworkImageCache : NetworkImageCache {
         acc + image.imageInfo.computeMinByteSize()
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     private fun getImageOverHttp(url: String): ByteArray {
         if (debug) println("Thread[${Thread.currentThread().name}] request http image: $url")
         try {
             return URL(url).openStream().use {
                 val readAllBytes = it.readAllBytes()
-                check(ImageFormatValidator.valid(readAllBytes)) { "Data stream is not available image format" }
+                check(ImageFormatValidator.valid(readAllBytes)) {
+                    "Data stream is not available image format, header hex: ${
+                        readAllBytes.copyOfRange(
+                            0,
+                            ImageFormatValidator.NECESSARY_MAGIC_LENGTH
+                        ).toHexString()
+                    }"
+                }
                 readAllBytes
             }
         } catch (e: FileNotFoundException) {

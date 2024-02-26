@@ -45,7 +45,8 @@ class LimitedImageInputStream(
         return result
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     private fun checkImage() {
-        check(ImageFormatValidator.valid(headerBuffer)) { "Data stream is not available image format" }
+        check(ImageFormatValidator.valid(headerBuffer)) { "Data stream is not available image format, header hex: ${headerBuffer.toHexString()}" }
     }
 }
