@@ -17,7 +17,7 @@ open class ImageParser : WidgetParser {
     override fun buildWidget(element: Element): Widget = CachedNetworkImage(
         url = WidgetParser.parseAttrValue(CommonAttrDefine.URL, element.attrs),
         width = WidgetParser.parseAttrValue(CommonAttrDefine.WIDTH_N, element.attrs),
-        height = WidgetParser.parseAttrValue(CommonAttrDefine.WIDTH_N, element.attrs),
+        height = WidgetParser.parseAttrValue(CommonAttrDefine.HEIGHT_N, element.attrs),
         fit = WidgetParser.parseAttrValue(CommonAttrDefine.FIT_N, element.attrs),
         alignment = WidgetParser.parseAttrValue(CommonAttrDefine.ALIGNMENT, element.attrs),
         repeat = WidgetParser.parseAttrValue(CommonAttrDefine.REPEAT, element.attrs),
