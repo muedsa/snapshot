@@ -26,6 +26,7 @@ class WidgetParserManager {
             it.register(RowParser())
             it.register(ColumnParser())
             it.register(StackParser())
+            it.register(PositionedParser())
             it.register(ImageParser())
             it.register(TextParser())
         }
