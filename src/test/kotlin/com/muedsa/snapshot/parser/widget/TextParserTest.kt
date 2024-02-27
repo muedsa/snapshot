@@ -1,5 +1,6 @@
 package com.muedsa.snapshot.parser.widget
 
+import com.muedsa.snapshot.getTestPngFile
 import com.muedsa.snapshot.paint.SimpleTextPainterTest
 import com.muedsa.snapshot.parser.ParserTest
 import com.muedsa.snapshot.parser.attr.CommonAttrDefine
@@ -41,5 +42,24 @@ class TextParserTest {
         assert(simpleText.fontStyle.weight == FontStyle.BOLD.weight)
         assert(simpleText.fontStyle.width == FontStyle.BOLD.width)
         assert(simpleText.fontStyle.slant == FontStyle.BOLD.slant)
+    }
+
+    @Test
+    fun font_diff_test() {
+        val text = ("""
+                <Snapshot background="#FFFFFFFF">
+                    <Column>
+                        <Text color="#FFFF0000" 
+                              fontSize="32" 
+                              fontFamily="Noto Sans SC"
+                        >${SimpleTextPainterTest.SAMPLE_TEXT}</Text>
+                        <Text color="#FFFF0000" 
+                              fontSize="32"
+                        >${SimpleTextPainterTest.SAMPLE_TEXT}</Text>
+                    </Column>
+                </Snapshot>
+            """).trimIndent()
+        val snapshotElement = ParserTest.parse(text)
+        getTestPngFile("parser/text_diff_font").writeBytes(snapshotElement.snapshot())
     }
 }
