@@ -66,6 +66,7 @@ class SimpleTextPainter(
                 textHeightMode?.let {
                     this.heightMode = it
                 }
+                fontRastrSettings = DEFAULT_FONT_RASTR_SETTINGS
             },
             fc = FONT_COLLECTION
         ).apply {
@@ -292,5 +293,11 @@ class SimpleTextPainter(
         }
 
         var DEFAULT_FONT_FAMILY_NAME: Array<String>? = null
+
+        val DEFAULT_FONT_RASTR_SETTINGS: FontRastrSettings = FontRastrSettings(
+            edging = FontEdging.SUBPIXEL_ANTI_ALIAS,
+            hinting = FontHinting.NORMAL,
+            subpixel = true
+        )
     }
 }
