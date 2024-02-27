@@ -51,7 +51,7 @@ object CommonAttrDefine {
     val OPACITY: FloatAttrDefine = FloatAttrDefine(name = "opacity", defaultValue = 1f)
     val COLOR: ColorAttrDefine = ColorAttrDefine(name = "color", defaultValue = Color.BLACK)
     val FONT_SIZE = FloatAttrDefine(name = "fontSize", defaultValue = 14f)
-    val FONT_STYLE = FontStyleAttrDefine("fontFamily", defaultValue = FontStyle.NORMAL)
+    val FONT_STYLE = FontStyleAttrDefine("fontStyle", defaultValue = FontStyle.NORMAL)
 
     // _N 后缀表示可以为空的
 
