@@ -69,6 +69,17 @@ object CommonAttrDefine {
     val FIT_N: NullableBoxFitAttrDefine = NullableBoxFitAttrDefine("fit")
     val BLEND_MODE_N: NullableBlendModeAttrDefine = NullableBlendModeAttrDefine("blendMode")
     val FONT_FAMILY_N = NullableStringAttrDefine(name = "fontFamily")
+    val BORDER_N: NullableBorderSideAttrDefine = NullableBorderSideAttrDefine("border")
+    val BORDER_LEFT_N: NullableBorderSideAttrDefine = NullableBorderSideAttrDefine("borderLeft")
+    val BORDER_TOP_N: NullableBorderSideAttrDefine = NullableBorderSideAttrDefine("borderTop")
+    val BORDER_RIGHT_N: NullableBorderSideAttrDefine = NullableBorderSideAttrDefine("borderRight")
+    val BORDER_BOTTOM_N: NullableBorderSideAttrDefine = NullableBorderSideAttrDefine("borderBottom")
+    val BORDER_RADIUS_N: NullableRadiusAttrDefine = NullableRadiusAttrDefine("borderRadius")
+    val BORDER_RADIUS_TOP_LEFT_N: NullableRadiusAttrDefine = NullableRadiusAttrDefine("borderRadiusTopLeft")
+    val BORDER_RADIUS_TOP_RIGHT_N: NullableRadiusAttrDefine = NullableRadiusAttrDefine("borderRadiusTopRight")
+    val BORDER_RADIUS_BOTTOM_LEFT_N: NullableRadiusAttrDefine = NullableRadiusAttrDefine("borderRadiusBottomLeft")
+    val BORDER_RADIUS_BOTTOM_RIGHT_N: NullableRadiusAttrDefine = NullableRadiusAttrDefine("borderRadiusBottomRight")
+    val BOX_SHADOW_N: NullableBoxShadowAttrDefine = NullableBoxShadowAttrDefine("boxShadow")
 
     // 必须的
     val URL = RequiredStringAttrDefine("url") { _, valueStr ->

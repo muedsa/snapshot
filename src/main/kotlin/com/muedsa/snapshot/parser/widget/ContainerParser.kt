@@ -27,7 +27,7 @@ open class ContainerParser : WidgetParser {
                 maxHeight = WidgetParser.parseAttrValue(CommonAttrDefine.MAX_HEIGHT, element.attrs)
             )
         } else null
-
+        val borderDecoration = BorderParser.parseBorderDecoration(element)
         return Container(
             alignment = WidgetParser.parseAttrValue(CommonAttrDefine.ALIGNMENT_N, element.attrs),
             padding = WidgetParser.parseAttrValue(CommonAttrDefine.PADDING_N, element.attrs),
@@ -35,7 +35,8 @@ open class ContainerParser : WidgetParser {
             width = WidgetParser.parseAttrValue(CommonAttrDefine.WIDTH_N, element.attrs),
             height = WidgetParser.parseAttrValue(CommonAttrDefine.HEIGHT_N, element.attrs),
             constraints = constraints,
-            margin = WidgetParser.parseAttrValue(CommonAttrDefine.MARGIN_N, element.attrs)
+            margin = WidgetParser.parseAttrValue(CommonAttrDefine.MARGIN_N, element.attrs),
+            decoration = if (BorderParser.isNullBorder(borderDecoration)) null else borderDecoration
         )
     }
 }

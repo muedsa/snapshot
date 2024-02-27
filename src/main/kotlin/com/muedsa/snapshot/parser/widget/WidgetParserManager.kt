@@ -23,6 +23,7 @@ class WidgetParserManager {
         val DEFAULT_MANAGER: WidgetParserManager = WidgetParserManager().also {
             it.register(SnapshotParser)
             it.register(ContainerParser())
+            it.register(BorderParser())
             it.register(RowParser())
             it.register(ColumnParser())
             it.register(StackParser())

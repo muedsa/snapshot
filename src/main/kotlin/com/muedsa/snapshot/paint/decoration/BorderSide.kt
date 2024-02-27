@@ -44,6 +44,26 @@ class BorderSide(
         }
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is BorderSide) return false
+
+        if (color != other.color) return false
+        if (width != other.width) return false
+        if (style != other.style) return false
+        if (strokeAlign != other.strokeAlign) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = color
+        result = 31 * result + width.hashCode()
+        result = 31 * result + style.hashCode()
+        result = 31 * result + strokeAlign.hashCode()
+        return result
+    }
+
     companion object {
         @JvmStatic
         val NONE: BorderSide = BorderSide(width = 0f, style = BorderStyle.NONE)

@@ -47,6 +47,23 @@ open class Offset(val x: Float, val y: Float) : Comparable<Offset> {
         return "Offset(x=$x, y=$y)"
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Offset) return false
+
+        if (x != other.x) return false
+        if (y != other.y) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = x.hashCode()
+        result = 31 * result + y.hashCode()
+        return result
+    }
+
+
     companion object {
         @JvmStatic
         val ZERO = Offset(0f, 0f)
