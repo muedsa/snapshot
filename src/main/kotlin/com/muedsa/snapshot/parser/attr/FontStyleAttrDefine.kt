@@ -9,8 +9,8 @@ class FontStyleAttrDefine(name: String, defaultValue: FontStyle = FontStyle.NORM
     override fun parseValue(valueStr: String?): FontStyle {
         requireNotNull(valueStr)
         return when (valueStr) {
-            "BOLD" -> FontStyle.NORMAL
-            "BOLD_ITALIC" -> FontStyle.NORMAL
+            "BOLD" -> FontStyle.BOLD
+            "BOLD_ITALIC" -> FontStyle.BOLD_ITALIC
             "ITALIC" -> FontStyle.ITALIC
             "NORMAL" -> FontStyle.NORMAL
             else -> throw IllegalArgumentException("Unexpected font style $valueStr")
