@@ -78,7 +78,7 @@ open class BorderParser : WidgetParser {
                     && borderRadius.topRight == Radius.ZERO
                     && borderRadius.bottomLeft == Radius.ZERO
                     && borderRadius.bottomRight == Radius.ZERO)
-            flag = flag && !boxDecoration.boxShadow.isNullOrEmpty()
+            flag = flag && boxDecoration.boxShadow.isNullOrEmpty()
             return flag
         }
     }

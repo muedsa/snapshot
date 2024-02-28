@@ -3,10 +3,7 @@ package com.muedsa.snapshot.paint
 import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.drawPainter
 import com.muedsa.snapshot.paint.text.SimpleTextPainter
-import org.jetbrains.skia.FontMgr
-import org.jetbrains.skia.Paint
-import org.jetbrains.skia.PathEffect
-import org.jetbrains.skia.Rect
+import org.jetbrains.skia.*
 import org.jetbrains.skia.paragraph.Alignment
 import org.jetbrains.skia.paragraph.Direction
 import org.jetbrains.skia.paragraph.HeightMode
@@ -171,9 +168,53 @@ class SimpleTextPainterTest {
         }
     }
 
+
+    @Test
+    fun en_font_size_test() {
+        println("\n\n\nSimpleTextPainterTest.cn_font_size_test()")
+        font_size_test(LONG_TEXT_EN, "Noto Sans SC", "paint/text/en_font_size")
+    }
+
+    @Test
+    fun cn_font_size_test() {
+        println("\n\n\nSimpleTextPainterTest.cn_font_size_test()")
+        font_size_test(LONG_TEXT_CN, "Noto Sans SC", "paint/text/cn_font_size")
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun font_size_test(text: String, fontFamilyName: String, imgPath: String) {
+        val padding = 20f
+        var y = padding
+        val painterList = mutableListOf<SimpleTextPainter>()
+        var width = 0f
+        var height = padding
+        for (fontSize in 5..40) {
+            val textPainter = SimpleTextPainter(
+                text = "[$fontSize] $text",
+                color = Color.WHITE,
+                fontSize = fontSize.toFloat(),
+                fontFamilyName = arrayOf(fontFamilyName),
+            ).apply {
+                layout(0f, Float.POSITIVE_INFINITY)
+            }
+            width = max(textPainter.maxIntrinsicWidth + padding * 2, width)
+            height += textPainter.height + padding
+            painterList.add(textPainter)
+        }
+        drawPainter(imgPath, width, height, background = 0xFF_E5_98_65.toInt()) { canvas ->
+            painterList.forEach {
+                it.paint(canvas, offset = Offset(padding, y))
+                y += it.height + padding
+            }
+        }
+    }
+
     companion object {
         const val SAMPLE_TEXT_EN = "Hello Word!"
         const val SAMPLE_TEXT_CN = "你好，世界！"
+        const val LONG_TEXT_EN = "Whereas disregard and contempt for human rights have resulted"
+        const val LONG_TEXT_CN =
+            "鉴于对人类家庭所有成员的固有尊严及其平等的和不移的权利的承认,乃是世界自由、正义与和平的基础"
         const val SAMPLE_TEXT = "$SAMPLE_TEXT_EN $SAMPLE_TEXT_CN"
         const val SAMPLE_EMOJI =
             "\uD83E\uDD70\uD83D\uDC80✌\uFE0F\uD83C\uDF34\uD83D\uDC22\uD83D\uDC10\uD83C\uDF44⚽\uD83C\uDF7B\uD83D\uDC51\uD83D\uDCF8\uD83D\uDE2C\uD83D\uDC40\uD83D\uDEA8\uD83C\uDFE1\uD83D\uDD4A\uFE0F\uD83C\uDFC6\uD83D\uDE3B\uD83C\uDF1F\uD83E\uDDFF\uD83C\uDF40\uD83C\uDFA8\uD83C\uDF5C"

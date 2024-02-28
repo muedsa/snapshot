@@ -1,12 +1,15 @@
 package com.muedsa.snapshot.parser.widget
 
+import com.muedsa.geometry.EdgeInsets
+import com.muedsa.snapshot.SnapshotPNG
 import com.muedsa.snapshot.getTestPngFile
 import com.muedsa.snapshot.paint.SimpleTextPainterTest
 import com.muedsa.snapshot.parser.ParserTest
 import com.muedsa.snapshot.parser.attr.CommonAttrDefine
 import com.muedsa.snapshot.parser.token.RawAttr
-import com.muedsa.snapshot.widget.SimpleText
+import com.muedsa.snapshot.widget.*
 import org.jetbrains.skia.FontStyle
+import org.jetbrains.skia.Image
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 
@@ -61,5 +64,56 @@ class TextParserTest {
             """).trimIndent()
         val snapshotElement = ParserTest.parse(text)
         getTestPngFile("parser/text_diff_font").writeBytes(snapshotElement.snapshot())
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    @Test
+    fun text_diff_test() {
+        val text = ("""
+            <Snapshot background="#FFE59865" type="png">
+                <Container padding="20">
+                    <Column>
+                        <Text color="#FFFFFFFF" 
+                              fontSize="14" 
+                              fontFamily="Noto Sans SC"
+                        >${SimpleTextPainterTest.LONG_TEXT_CN}</Text>
+                        <Text color="#FFFFFFFF" 
+                              fontSize="14"
+                              fontFamily="Noto Sans SC"
+                        >This is parsed from dom</Text>
+                    </Column>
+                </Container>
+            </Snapshot>
+            """).trimIndent()
+        val snapshotElement = ParserTest.parse(text)
+        getTestPngFile("parser/text_diff").writeBytes(
+            SnapshotPNG {
+                Column {
+                    Container(
+                        color = 0xFF_E5_98_65.toInt(),
+                        padding = EdgeInsets.all(20f),
+                    ) {
+                        Column {
+                            SimpleText(
+                                color = 0xFF_FF_FF_FF.toInt(),
+                                fontSize = 14f,
+                                fontFamilyName = arrayOf("Noto Sans SC"),
+                                text = SimpleTextPainterTest.LONG_TEXT_CN,
+                            )
+                            SimpleText(
+                                color = 0xFF_FF_FF_FF.toInt(),
+                                fontSize = 14f,
+                                fontFamilyName = arrayOf("Noto Sans SC"),
+                                text = "This generated from code",
+                            )
+                        }
+                    }
+                    Padding(
+                        padding = EdgeInsets.only(top = 20f),
+                    )
+                    RawImage(image = Image.makeFromEncoded(snapshotElement.snapshot()))
+                }
+            }
+        )
     }
 }
