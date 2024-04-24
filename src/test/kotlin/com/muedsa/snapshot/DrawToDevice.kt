@@ -3,9 +3,9 @@ package com.muedsa.snapshot
 import com.muedsa.snapshot.LogoCreator.Companion.logoContent
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Color
-import org.jetbrains.skiko.GenericSkikoView
 import org.jetbrains.skiko.SkiaLayer
-import org.jetbrains.skiko.SkikoView
+import org.jetbrains.skiko.SkiaLayerRenderDelegate
+import org.jetbrains.skiko.SkikoRenderDelegate
 import java.awt.Dimension
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
@@ -19,7 +19,7 @@ fun main() {
     val size = renderBox.definiteSize
     // 尝试使用CPU渲染
     val skiaLayer = SkiaLayer()
-    skiaLayer.skikoView = GenericSkikoView(skiaLayer, object : SkikoView {
+    skiaLayer.renderDelegate = SkiaLayerRenderDelegate(skiaLayer, object : SkikoRenderDelegate {
         override fun onRender(canvas: Canvas, width: Int, height: Int, nanoTime: Long) {
             canvas.drawRenderBox(renderBox = renderBox, background = Color.WHITE, debug = false)
         }
