@@ -35,14 +35,14 @@ inline fun Widget.Flex(
 }
 
 open class Flex(
-    val direction: Axis,
-    val mainAxisAlignment: MainAxisAlignment = MainAxisAlignment.START,
-    val mainAxisSize: MainAxisSize = MainAxisSize.MAX,
-    val crossAxisAlignment: CrossAxisAlignment = CrossAxisAlignment.CENTER,
-    val textDirection: Direction? = null,
-    val verticalDirection: VerticalDirection = VerticalDirection.DOWN,
-    val textBaseline: BaselineMode? = null,
-    val clipBehavior: ClipBehavior = ClipBehavior.NONE,
+    var direction: Axis,
+    var mainAxisAlignment: MainAxisAlignment = MainAxisAlignment.START,
+    var mainAxisSize: MainAxisSize = MainAxisSize.MAX,
+    var crossAxisAlignment: CrossAxisAlignment = CrossAxisAlignment.CENTER,
+    var textDirection: Direction? = null,
+    var verticalDirection: VerticalDirection = VerticalDirection.DOWN,
+    var textBaseline: BaselineMode? = null,
+    var clipBehavior: ClipBehavior = ClipBehavior.NONE,
     parent: Widget? = null,
 ) : MultiChildWidget(parent = parent) {
 

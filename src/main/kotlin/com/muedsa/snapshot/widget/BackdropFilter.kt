@@ -21,8 +21,8 @@ inline fun Widget.BackdropFilter(
 }
 
 class BackdropFilter(
-    val imageFilter: ImageFilter,
-    val blendMode: BlendMode = BlendMode.SRC_OVER,
+    var imageFilter: ImageFilter,
+    var blendMode: BlendMode = BlendMode.SRC_OVER,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
 

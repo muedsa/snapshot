@@ -47,18 +47,18 @@ inline fun Widget.Container(
 
 
 class Container(
-    val alignment: BoxAlignment? = null,
-    val padding: EdgeInsets? = null,
-    val color: Int? = null,
-    val decoration: Decoration? = null,
-    val foregroundDecoration: Decoration? = null,
-    val width: Float? = null,
-    val height: Float? = null,
+    var alignment: BoxAlignment? = null,
+    var padding: EdgeInsets? = null,
+    var color: Int? = null,
+    var decoration: Decoration? = null,
+    var foregroundDecoration: Decoration? = null,
+    var width: Float? = null,
+    var height: Float? = null,
     var constraints: BoxConstraints? = null,
-    val margin: EdgeInsets? = null,
-    val transform: Matrix44CMO? = null,
-    val transformAlignment: BoxAlignment? = null,
-    val clipBehavior: ClipBehavior = ClipBehavior.NONE,
+    var margin: EdgeInsets? = null,
+    var transform: Matrix44CMO? = null,
+    var transformAlignment: BoxAlignment? = null,
+    var clipBehavior: ClipBehavior = ClipBehavior.NONE,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
 
@@ -73,65 +73,76 @@ class Container(
 
     private fun composeWidget(): Widget {
         var current: Widget? = child
+        val snapshotAlignment = alignment
+        val snapshotPadding = padding
+        val snapshotColor = color
+        val snapshotClipBehavior = clipBehavior
+        val snapshotDecoration = decoration
+        val snapshotForegroundDecoration = foregroundDecoration
+        val snapshotConstraints = constraints
+        val snapshotTransform = transform
+        val snapshotTransformAlignment = transformAlignment
 
-        if (child == null && (constraints == null || constraints!!.isTight)) {
+        if (current == null && (constraints == null || constraints!!.isTight)) {
             current = LimitedBox(
                 maxWidth = 0f,
                 maxHeight = 0f,
                 parent = null
             ).bind(ConstrainedBox(constraints = BoxConstraints.expand(), parent = null))
-        } else if (alignment != null) {
-            current = Align(alignment = alignment, parent = null)
+        } else if (snapshotAlignment != null) {
+            current = Align(alignment = snapshotAlignment, parent = null)
                 .bind(current)
         }
 
-        if (padding != null) {
-            current = Padding(padding = padding, parent = null)
+        if (snapshotPadding != null) {
+            current = Padding(padding = snapshotPadding, parent = null)
                 .bind(current)
         }
 
-        if (color != null) {
-            current = ColoredBox(color = color, parent = null).bind(current)
+        if (snapshotColor != null) {
+            current = ColoredBox(color = snapshotColor, parent = null).bind(current)
         }
 
-        if (clipBehavior != ClipBehavior.NONE) {
-            assert(decoration != null)
+
+        if (snapshotClipBehavior != ClipBehavior.NONE) {
+            checkNotNull(snapshotDecoration)
             current = ClipPath(
-                clipper = { decoration!!.getClipPath(Offset.ZERO combine it) },
-                clipBehavior = clipBehavior,
+                clipper = { snapshotDecoration.getClipPath(Offset.ZERO combine it) },
+                clipBehavior = snapshotClipBehavior,
                 parent = null
             ).bind(current)
         }
 
-        if (decoration != null) {
+        if (snapshotDecoration != null) {
             current = DecoratedBox(
-                decoration = decoration,
+                decoration = snapshotDecoration,
                 position = DecorationPosition.BACKGROUND,
                 parent = null
             ).bind(current)
         }
 
-        if (foregroundDecoration != null) {
+        if (snapshotForegroundDecoration != null) {
             current = DecoratedBox(
-                decoration = foregroundDecoration,
+                decoration = snapshotForegroundDecoration,
                 position = DecorationPosition.FOREGROUND,
                 parent = null
             ).bind(current)
         }
 
-        if (constraints != null) {
-            current = ConstrainedBox(constraints = constraints!!, parent = null)
+        if (snapshotConstraints != null) {
+            current = ConstrainedBox(constraints = snapshotConstraints, parent = null)
                 .bind(current)
         }
 
-        if (margin != null) {
-            current = Padding(padding = margin, parent = null).bind(current)
+        val snapshotMargin = margin
+        if (snapshotMargin != null) {
+            current = Padding(padding = snapshotMargin, parent = null).bind(current)
         }
 
-        if (transform != null) {
+        if (snapshotTransform != null) {
             current = Transform(
-                transform = transform,
-                alignment = transformAlignment,
+                transform = snapshotTransform,
+                alignment = snapshotTransformAlignment,
                 parent = null
             ).bind(current)
         }

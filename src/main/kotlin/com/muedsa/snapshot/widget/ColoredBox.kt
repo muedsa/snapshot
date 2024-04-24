@@ -17,7 +17,7 @@ inline fun Widget.ColoredBox(
 }
 
 class ColoredBox(
-    val color: Int,
+    var color: Int,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
 

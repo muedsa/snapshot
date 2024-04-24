@@ -25,9 +25,9 @@ inline fun Widget.ClipRRect(
 }
 
 class ClipRRect(
-    val borderRadius: BorderRadius = BorderRadius.ZERO,
-    val clipper: ((Size) -> RRect)? = null,
-    val clipBehavior: ClipBehavior = ClipBehavior.ANTI_ALIAS,
+    var borderRadius: BorderRadius = BorderRadius.ZERO,
+    var clipper: ((Size) -> RRect)? = null,
+    var clipBehavior: ClipBehavior = ClipBehavior.ANTI_ALIAS,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
 

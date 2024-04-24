@@ -38,7 +38,7 @@ fun Widget.ProviderImage(
 
 
 open class ProviderImage(
-    val provider: () -> Image,
+    var provider: () -> Image,
     width: Float? = null,
     height: Float? = null,
     fit: BoxFit? = null,

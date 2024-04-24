@@ -22,9 +22,9 @@ inline fun Widget.Align(
 }
 
 open class Align(
-    val alignment: BoxAlignment = BoxAlignment.CENTER,
-    val widthFactor: Float? = null,
-    val heightFactor: Float? = null,
+    var alignment: BoxAlignment = BoxAlignment.CENTER,
+    var widthFactor: Float? = null,
+    var heightFactor: Float? = null,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
 

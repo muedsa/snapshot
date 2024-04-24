@@ -39,7 +39,7 @@ fun Widget.RawImage(
 }
 
 open class RawImage(
-    val image: Image,
+    var image: Image,
     val width: Float? = null,
     val height: Float? = null,
     val fit: BoxFit? = null,

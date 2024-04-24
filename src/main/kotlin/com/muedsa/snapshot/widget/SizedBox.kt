@@ -22,8 +22,8 @@ inline fun Widget.SizedBox(
 
 
 class SizedBox(
-    val width: Float? = null,
-    val height: Float? = null,
+    var width: Float? = null,
+    var height: Float? = null,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
 

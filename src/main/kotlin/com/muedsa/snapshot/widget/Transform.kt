@@ -26,9 +26,9 @@ inline fun Widget.Transform(
 
 
 class Transform(
-    val transform: Matrix44CMO,
-    val origin: Offset? = null,
-    val alignment: BoxAlignment?,
+    var transform: Matrix44CMO,
+    var origin: Offset? = null,
+    var alignment: BoxAlignment?,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
 

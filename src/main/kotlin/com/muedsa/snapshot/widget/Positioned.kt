@@ -30,12 +30,12 @@ inline fun Stack.Positioned(
 }
 
 class Positioned(
-    val left: Float? = null,
-    val top: Float? = null,
-    val right: Float? = null,
-    val bottom: Float? = null,
-    val width: Float? = null,
-    val height: Float? = null,
+    var left: Float? = null,
+    var top: Float? = null,
+    var right: Float? = null,
+    var bottom: Float? = null,
+    var width: Float? = null,
+    var height: Float? = null,
     parent: Widget? = null,
 ) : ParentDataWidget(parent = parent) {
 

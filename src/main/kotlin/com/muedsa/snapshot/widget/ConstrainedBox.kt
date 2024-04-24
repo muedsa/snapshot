@@ -18,7 +18,7 @@ inline fun Widget.ConstrainedBox(
 }
 
 class ConstrainedBox(
-    val constraints: BoxConstraints,
+    var constraints: BoxConstraints,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
     override fun createRenderBox(child: Widget?): RenderBox = RenderConstrainedBox(

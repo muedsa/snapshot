@@ -28,11 +28,11 @@ fun Widget.SimpleText(
 
 @ExperimentalStdlibApi
 class SimpleText(
-    val text: String,
-    val color: Int = Color.BLACK,
-    val fontSize: Float = 14f,
-    val fontFamilyName: Array<String>? = null,
-    val fontStyle: FontStyle = FontStyle.NORMAL,
+    var text: String,
+    var color: Int = Color.BLACK,
+    var fontSize: Float = 14f,
+    var fontFamilyName: Array<String>? = null,
+    var fontStyle: FontStyle = FontStyle.NORMAL,
     parent: Widget? = null,
 ) : Widget(parent = parent) {
 

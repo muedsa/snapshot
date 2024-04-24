@@ -20,8 +20,8 @@ inline fun Flex.Flexible(
 }
 
 open class Flexible(
-    val flex: Int = 1,
-    val fit: FlexFit = FlexFit.LOOSE,
+    var flex: Int = 1,
+    var fit: FlexFit = FlexFit.LOOSE,
     parent: Widget? = null,
 ) : ParentDataWidget(
     parent = parent

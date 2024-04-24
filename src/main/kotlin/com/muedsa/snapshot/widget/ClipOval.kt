@@ -22,8 +22,8 @@ inline fun Widget.ClipOval(
 }
 
 class ClipOval(
-    val clipper: ((Size) -> Rect)? = null,
-    val clipBehavior: ClipBehavior = ClipBehavior.ANTI_ALIAS,
+    var clipper: ((Size) -> Rect)? = null,
+    var clipBehavior: ClipBehavior = ClipBehavior.ANTI_ALIAS,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
 

@@ -18,7 +18,7 @@ fun Widget.Padding(
 }
 
 class Padding(
-    val padding: EdgeInsets,
+    var padding: EdgeInsets,
     parent: Widget?,
 ) : SingleChildWidget(parent = parent) {
 

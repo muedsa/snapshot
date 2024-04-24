@@ -21,8 +21,8 @@ inline fun Widget.DecoratedBox(
 }
 
 class DecoratedBox(
-    val decoration: Decoration,
-    val position: DecorationPosition = DecorationPosition.BACKGROUND,
+    var decoration: Decoration,
+    var position: DecorationPosition = DecorationPosition.BACKGROUND,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
     override fun createRenderBox(child: Widget?): RenderBox = RenderDecoratedBox(

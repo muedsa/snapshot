@@ -28,10 +28,10 @@ inline fun Widget.Stack(
 }
 
 class Stack(
-    val alignment: AlignmentGeometry = AlignmentDirectional.TOP_START,
-    val textDirection: Direction = Direction.LTR,
-    val fit: StackFit = StackFit.LOOSE,
-    val clipBehavior: ClipBehavior = ClipBehavior.HARD_EDGE,
+    var alignment: AlignmentGeometry = AlignmentDirectional.TOP_START,
+    var textDirection: Direction = Direction.LTR,
+    var fit: StackFit = StackFit.LOOSE,
+    var clipBehavior: ClipBehavior = ClipBehavior.HARD_EDGE,
     parent: Widget? = null,
 ) : MultiChildWidget(parent = parent) {
 

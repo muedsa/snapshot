@@ -26,11 +26,11 @@ inline fun Widget.OverflowBox(
 }
 
 class OverflowBox(
-    val alignment: BoxAlignment = BoxAlignment.CENTER,
-    val minWidth: Float? = null,
-    val maxWidth: Float? = null,
-    val minHeight: Float? = null,
-    val maxHeight: Float? = null,
+    var alignment: BoxAlignment = BoxAlignment.CENTER,
+    var minWidth: Float? = null,
+    var maxWidth: Float? = null,
+    var minHeight: Float? = null,
+    var maxHeight: Float? = null,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
 

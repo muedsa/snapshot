@@ -39,7 +39,7 @@ fun Widget.CachedNetworkImage(
 }
 
 open class CachedNetworkImage(
-    val url: String,
+    url: String,
     width: Float? = null,
     height: Float? = null,
     fit: BoxFit? = null,

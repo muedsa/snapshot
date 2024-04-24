@@ -22,8 +22,8 @@ inline fun Widget.ClipRect(
 }
 
 class ClipRect(
-    val clipper: ((Size) -> Rect)? = null,
-    val clipBehavior: ClipBehavior = ClipBehavior.HARD_EDGE,
+    var clipper: ((Size) -> Rect)? = null,
+    var clipBehavior: ClipBehavior = ClipBehavior.HARD_EDGE,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
 

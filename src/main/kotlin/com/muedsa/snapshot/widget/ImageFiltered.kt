@@ -18,7 +18,7 @@ inline fun Widget.ImageFiltered(
 }
 
 class ImageFiltered(
-    val imageFilter: ImageFilter,
+    var imageFilter: ImageFilter,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
     override fun createRenderBox(child: Widget?): RenderBox = ImageFilterRenderObject(

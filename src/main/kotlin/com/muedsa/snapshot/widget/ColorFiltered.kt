@@ -18,7 +18,7 @@ inline fun Widget.ColorFiltered(
 }
 
 class ColorFiltered(
-    val colorFilter: ColorFilter,
+    var colorFilter: ColorFilter,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
 

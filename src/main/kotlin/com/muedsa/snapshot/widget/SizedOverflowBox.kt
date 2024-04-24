@@ -21,8 +21,8 @@ inline fun Widget.SizedOverflowBox(
 }
 
 class SizedOverflowBox(
-    val size: Size,
-    val alignment: BoxAlignment = BoxAlignment.CENTER,
+    var size: Size,
+    var alignment: BoxAlignment = BoxAlignment.CENTER,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
 

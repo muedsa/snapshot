@@ -22,8 +22,8 @@ inline fun Widget.ClipPath(
 }
 
 class ClipPath(
-    val clipper: ((Size) -> Path)? = null,
-    val clipBehavior: ClipBehavior = ClipBehavior.ANTI_ALIAS,
+    var clipper: ((Size) -> Path)? = null,
+    var clipBehavior: ClipBehavior = ClipBehavior.ANTI_ALIAS,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
 

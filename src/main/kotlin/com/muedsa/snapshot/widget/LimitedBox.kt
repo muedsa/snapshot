@@ -19,8 +19,8 @@ inline fun Widget.LimitedBox(
 }
 
 class LimitedBox(
-    val maxWidth: Float = Float.POSITIVE_INFINITY,
-    val maxHeight: Float = Float.POSITIVE_INFINITY,
+    var maxWidth: Float = Float.POSITIVE_INFINITY,
+    var maxHeight: Float = Float.POSITIVE_INFINITY,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
 

@@ -17,7 +17,7 @@ inline fun Widget.Opacity(
 }
 
 class Opacity(
-    val opacity: Float = 1f,
+    var opacity: Float = 1f,
     parent: Widget? = null,
 ) : SingleChildWidget(parent = parent) {
 
