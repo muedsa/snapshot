@@ -17,6 +17,7 @@ skiko-linux-x64 = { module = "org.jetbrains.skiko:skiko-awt-runtime-linux-x64", 
 skiko-linux-arm64 = { module = "org.jetbrains.skiko:skiko-awt-runtime-linux-arm64", version.ref = "skiko" }
 skiko-macos-x64 = { module = "org.jetbrains.skiko:skiko-awt-runtime-macos-x64", version.ref = "skiko" }
 skiko-macos-arm64 = { module = "org.jetbrains.skiko:skiko-awt-runtime-macos-arm64", version.ref = "skiko" }
+ksp-symbol-processing = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp"}
 
 [plugins]
 jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

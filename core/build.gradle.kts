@@ -30,6 +30,9 @@ dependencies {
 
     api(libs.skiko.awt)
     testImplementation(versionCatalog.findLibrary("skiko-$targetOs-$targetArch").get())
+
+    implementation(project(":processor"))
+    ksp(project(":processor"))
 }
 
 tasks.test {

@@ -1,7 +1,6 @@
-package com.muedsa.snapshot.annotation
-
+package com.muedsa.annotations
 
 @MustBeDocumented
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class MustCallSuper
+annotation class CallSuper
