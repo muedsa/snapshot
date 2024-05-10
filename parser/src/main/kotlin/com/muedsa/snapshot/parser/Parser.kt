@@ -33,7 +33,8 @@ open class Parser(
             } catch (t: Throwable) {
                 throw ParseException(
                     token.startPos,
-                    t.message ?: "Unexpected token [$token]"
+                    t.message ?: "Unexpected token [$token]",
+                    t
                 )
             }
             token.reset()

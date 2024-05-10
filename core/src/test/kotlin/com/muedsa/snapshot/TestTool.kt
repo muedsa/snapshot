@@ -22,11 +22,13 @@ fun noLimitedLayout(renderBox: RenderBox) {
     renderBox.layout(BoxConstraints())
 }
 
-val testImagesDirection: Path = Path.of("testOutputs").apply {
+val testImagesDirection: Path = Path.of("build/test-results/test-image-outputs").apply {
     if (!exists()) {
         createDirectory()
     }
 }
+
+val rootDirection: Path = Path.of("..")
 
 fun getTestPngFile(imagePathWithoutSuffix: String): File {
     var suffix = imagePathWithoutSuffix

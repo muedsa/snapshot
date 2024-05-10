@@ -11,7 +11,7 @@ class LogoCreator {
 
     @Test
     fun logo() {
-        drawWidget("../logo") {
+        drawWidget("../../../../logo") {
             logoContent()
         }
     }

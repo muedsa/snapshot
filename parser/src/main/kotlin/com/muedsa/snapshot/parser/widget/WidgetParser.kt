@@ -26,7 +26,8 @@ interface WidgetParser {
             } catch (t: Throwable) {
                 if (rawAttr != null) throw ParseException(
                     rawAttr.nameStartPos,
-                    t.message ?: "Parse attr [${attrDefine.name}] error"
+                    t.message ?: "Parse attr [${attrDefine.name}] error",
+                    t
                 )
                 else throw t
             }

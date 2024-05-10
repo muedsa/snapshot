@@ -3,7 +3,6 @@ package com.muedsa.snapshot.parser.widget
 import com.muedsa.geometry.EdgeInsets
 import com.muedsa.snapshot.SnapshotPNG
 import com.muedsa.snapshot.getTestPngFile
-import com.muedsa.snapshot.paint.SimpleTextPainterTest
 import com.muedsa.snapshot.parser.ParserTest
 import com.muedsa.snapshot.parser.attr.CommonAttrDefine
 import com.muedsa.snapshot.parser.token.RawAttr
@@ -29,7 +28,7 @@ class TextParserTest {
                     fontSize="12" 
                     fontFamily="Noto Sans SC,WenQuanYi Micro Hei Mono" 
                     fontStyle="BOLD"
-                >${SimpleTextPainterTest.SAMPLE_TEXT}</Text>
+                >Hello Word! 你好，世界！</Text>
             </Snapshot>
         """.trimIndent()
         println(text)
@@ -38,7 +37,7 @@ class TextParserTest {
         val widget = snapshotElement.createWidget()
         assert(widget is SimpleText)
         val simpleText: SimpleText = widget as SimpleText
-        assert(simpleText.text == SimpleTextPainterTest.SAMPLE_TEXT)
+        assert(simpleText.text == "Hello Word! 你好，世界！")
         assert(simpleText.color == 0xFF_FF_00_00.toInt())
         assert(simpleText.fontSize == 12f)
         assertContentEquals(simpleText.fontFamilyName, arrayOf("Noto Sans SC", "WenQuanYi Micro Hei Mono"))
@@ -55,10 +54,10 @@ class TextParserTest {
                         <Text color="#FFFF0000" 
                               fontSize="32" 
                               fontFamily="Noto Sans SC"
-                        >${SimpleTextPainterTest.SAMPLE_TEXT}</Text>
+                        >Hello Word! 你好，世界！</Text>
                         <Text color="#FFFF0000" 
                               fontSize="32"
-                        >${SimpleTextPainterTest.SAMPLE_TEXT}</Text>
+                        >Hello Word! 你好，世界！</Text>
                     </Column>
                 </Snapshot>
             """).trimIndent()
@@ -76,7 +75,7 @@ class TextParserTest {
                         <Text color="#FFFFFFFF" 
                               fontSize="14" 
                               fontFamily="Noto Sans SC"
-                        >${SimpleTextPainterTest.LONG_TEXT_CN}</Text>
+                        >鉴于对人类家庭所有成员的固有尊严及其平等的和不移的权利的承认,乃是世界自由、正义与和平的基础</Text>
                         <Text color="#FFFFFFFF" 
                               fontSize="14"
                               fontFamily="Noto Sans SC"
@@ -98,7 +97,7 @@ class TextParserTest {
                                 color = 0xFF_FF_FF_FF.toInt(),
                                 fontSize = 14f,
                                 fontFamilyName = arrayOf("Noto Sans SC"),
-                                text = SimpleTextPainterTest.LONG_TEXT_CN,
+                                text = "鉴于对人类家庭所有成员的固有尊严及其平等的和不移的权利的承认,乃是世界自由、正义与和平的基础",
                             )
                             SimpleText(
                                 color = 0xFF_FF_FF_FF.toInt(),
