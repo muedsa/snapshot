@@ -4,7 +4,7 @@
 [versions]
 kotlin = "1.9.21"
 ksp = "1.9.21-1.0.15"
-skiko = "0.0.0-SNAPSHOT"
+skiko = "0.8.4"
 junit-jupiter-engine = "5.10.0"
 
 
