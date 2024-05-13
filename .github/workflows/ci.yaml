@@ -21,11 +21,12 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Test with Gradle
-        run: ./gradlew test
+        run: ./gradlew test jar
       - name: Upload a Build Artifact
         if: always()
         uses: actions/upload-artifact@v4.3.3
         with:
           name: test-results
           path: |
+            **/build/libs
             **/build/test-results
