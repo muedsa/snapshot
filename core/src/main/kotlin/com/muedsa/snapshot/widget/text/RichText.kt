@@ -1,5 +1,6 @@
 package com.muedsa.snapshot.widget.text
 
+import com.muedsa.snapshot.paint.text.InlineSpan
 import com.muedsa.snapshot.paint.text.TextOverflow
 import com.muedsa.snapshot.paint.text.TextSpan
 import com.muedsa.snapshot.paint.text.TextWidthBasis
@@ -15,7 +16,7 @@ import org.jetbrains.skia.paragraph.HeightMode
 import org.jetbrains.skia.paragraph.StrutStyle
 
 fun Widget.RichText(
-    text: TextSpan,
+    text: InlineSpan,
     textAlign: Alignment = Alignment.START,
     textDirection: Direction = Direction.LTR,
     softWrap: Boolean = true,
@@ -44,7 +45,7 @@ fun Widget.RichText(
 }
 
 class RichText(
-    val text: TextSpan,
+    val text: InlineSpan,
     val textAlign: Alignment = Alignment.START,
     val textDirection: Direction = Direction.LTR,
     val softWrap: Boolean = true,

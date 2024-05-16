@@ -7,7 +7,7 @@ import org.jetbrains.skia.*
 import org.jetbrains.skia.paragraph.*
 
 class TextPainter(
-    val text: TextSpan,
+    val text: InlineSpan,
     val textAlign: Alignment = Alignment.START,
     val textDirection: Direction = Direction.LTR,
     val maxLines: Int? = null,
@@ -63,7 +63,7 @@ class TextPainter(
 
     var placeholderDimensions: List<PlaceholderStyle>? = null
 
-    private fun createParagraph(text: TextSpan): Paragraph =
+    private fun createParagraph(text: InlineSpan): Paragraph =
         ParagraphBuilder(
             style = ParagraphStyle().apply {
                 strutStyle = this@TextPainter.strutStyle ?: StrutStyle()

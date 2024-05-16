@@ -12,7 +12,7 @@ import com.muedsa.snapshot.widget.text.TextParentData
 import org.jetbrains.skia.paragraph.*
 
 class RenderParagraph(
-    val text: TextSpan,
+    val text: InlineSpan,
     val textAlign: Alignment = Alignment.START,
     val textDirection: Direction = Direction.LTR,
     val softWrap: Boolean = true,

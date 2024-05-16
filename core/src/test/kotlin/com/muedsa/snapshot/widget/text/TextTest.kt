@@ -88,6 +88,12 @@ class TextTest {
                         TextSpan("20")
                         ImageEmojiSpan("http://i0.hdslb.com/bfs/garb/69c5565c2971bcc2298d0c6347ceed9012c32300.png@65w.webp")
                     }
+                    TextSpan {
+                        TextSpan {
+                            TextSpan("P-P")
+                            ImageEmojiSpan("http://i0.hdslb.com/bfs/garb/69c5565c2971bcc2298d0c6347ceed9012c32300.png@65w.webp")
+                        }
+                    }
                 }
             }
         }
