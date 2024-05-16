@@ -40,15 +40,15 @@ fun Widget.RawImage(
 
 open class RawImage(
     var image: Image,
-    val width: Float? = null,
-    val height: Float? = null,
-    val fit: BoxFit? = null,
-    val alignment: BoxAlignment = BoxAlignment.CENTER,
-    val repeat: ImageRepeat = ImageRepeat.NO_REPEAT,
-    val scale: Float = 1f,
-    val opacity: Float = 1f,
-    val color: Int? = null,
-    val colorBlendMode: BlendMode? = null,
+    var width: Float? = null,
+    var height: Float? = null,
+    var fit: BoxFit? = null,
+    var alignment: BoxAlignment = BoxAlignment.CENTER,
+    var repeat: ImageRepeat = ImageRepeat.NO_REPEAT,
+    var scale: Float = 1f,
+    var opacity: Float = 1f,
+    var color: Int? = null,
+    var colorBlendMode: BlendMode? = null,
     parent: Widget? = null,
 ) : Widget(parent = parent) {
 

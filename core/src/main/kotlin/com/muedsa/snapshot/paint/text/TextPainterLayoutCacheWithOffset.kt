@@ -4,6 +4,7 @@ import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.precisionErrorTolerance
 import org.jetbrains.skia.paragraph.LineMetrics
 import org.jetbrains.skia.paragraph.Paragraph
+import org.jetbrains.skia.paragraph.TextBox
 
 class TextPainterLayoutCacheWithOffset(
     val layout: TextLayout,
@@ -35,8 +36,12 @@ class TextPainterLayoutCacheWithOffset(
 
     val paragraph: Paragraph = layout.paragraph
 
-    val lineMetrics: Array<LineMetrics> by lazy {
-        return@lazy paragraph.lineMetrics
+    val inlinePlaceholderBoxes: List<TextBox> by lazy {
+        paragraph.rectsForPlaceholders.toList()
+    }
+
+    val lineMetrics: List<LineMetrics> by lazy {
+        paragraph.lineMetrics.toList()
     }
 
     fun resizeToFit(minWidth: Float, maxWidth: Float, widthBasis: TextWidthBasis): Boolean {
