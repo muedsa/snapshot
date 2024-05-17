@@ -82,10 +82,7 @@ class TextPainter(
             },
             fc = FONT_COLLECTION
         ).also {
-            text.updateMergedStyle(TextStyle(
-                color = kDefaultTextColor,
-                fontSize = kDefaultFontSize
-            ))
+            text.updateMergedStyle(DEFAULT_TEXT_STYLE)
             text.build(it, dimensions = placeholderDimensions)
         }.build()
 
@@ -292,6 +289,11 @@ class TextPainter(
             edging = FontEdging.SUBPIXEL_ANTI_ALIAS,
             hinting = FontHinting.NORMAL,
             subpixel = true
+        )
+
+        var DEFAULT_TEXT_STYLE: TextStyle = TextStyle(
+            color = kDefaultTextColor,
+            fontSize = kDefaultFontSize
         )
     }
 }
