@@ -4,7 +4,6 @@ import com.muedsa.geometry.BoxAlignment
 import com.muedsa.geometry.EdgeInsets
 import com.muedsa.snapshot.getTestPngFile
 import com.muedsa.snapshot.widget.Container
-import com.muedsa.snapshot.widget.SimpleText
 import com.muedsa.snapshot.widget.text.RichText
 import org.junit.jupiter.api.assertThrows
 import java.io.StringReader
@@ -88,7 +87,6 @@ class ParserTest {
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun char_token_test() {
         val text = """

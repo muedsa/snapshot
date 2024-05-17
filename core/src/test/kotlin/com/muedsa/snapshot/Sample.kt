@@ -1,6 +1,10 @@
 package com.muedsa.snapshot
 
+import com.muedsa.snapshot.paint.text.TextSpan
+import com.muedsa.snapshot.paint.text.TextStyle
 import com.muedsa.snapshot.widget.*
+import com.muedsa.snapshot.widget.text.RichText
+import com.muedsa.snapshot.widget.text.Text
 import org.jetbrains.skia.Color
 import kotlin.test.Test
 
@@ -53,7 +57,6 @@ class Sample {
         )
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun sample_image_and_text() {
         rootDirection.resolve("sample_image_and_text.png").toFile().writeBytes(
@@ -64,7 +67,22 @@ class Sample {
                         width = 400f,
                         height = 400f,
                     )
-                    SimpleText("Hello World!", color = Color.RED, fontSize = 40f)
+                    RichText {
+                        TextSpan(
+                            text = "Hello",
+                            style = TextStyle(
+                                color = Color.RED,
+                                fontSize = 40f
+                            )
+                        )
+                        TextSpan(
+                            text = " World",
+                            style = TextStyle(
+                                color = Color.GREEN,
+                                fontSize = 30f
+                            )
+                        )
+                    }
                 }
             }
         )

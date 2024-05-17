@@ -4,6 +4,7 @@ import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
 import com.muedsa.geometry.shift
 import com.muedsa.geometry.tlRadiusX
+import com.muedsa.snapshot.kDefaultFontSize
 import com.muedsa.snapshot.paint.decoration.BorderRadius
 import com.muedsa.snapshot.paint.decoration.BorderRadiusGeometry
 import com.muedsa.snapshot.rendering.ClipBehavior
@@ -41,13 +42,18 @@ class RenderClipRRect(
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     override fun debugPaint(context: PaintingContext, offset: Offset) {
         if (child != null) {
             super.debugPaint(context, offset)
             if (clipBehavior != ClipBehavior.NONE) {
                 context.canvas.drawRRect(getClip().shift(offset), debugPaint!!)
-                debugText!!.paint(context.canvas, offset + Offset(getClip().tlRadiusX, -debugText!!.fontSize * 1.1f))
+                debugText!!.paint(
+                    context.canvas,
+                    offset + Offset(
+                        getClip().tlRadiusX,
+                        -(debugText!!.text.style?.fontSize ?: kDefaultFontSize) * 1.1f
+                    )
+                )
             }
         }
     }

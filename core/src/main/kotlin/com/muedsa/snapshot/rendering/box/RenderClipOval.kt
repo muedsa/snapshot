@@ -2,6 +2,7 @@ package com.muedsa.snapshot.rendering.box
 
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
+import com.muedsa.snapshot.kDefaultFontSize
 import com.muedsa.snapshot.rendering.ClipBehavior
 import com.muedsa.snapshot.rendering.PaintingContext
 import org.jetbrains.skia.Path
@@ -45,7 +46,6 @@ class RenderClipOval(
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     override fun debugPaint(context: PaintingContext, offset: Offset) {
         if (child != null) {
             super.debugPaint(context, offset)
@@ -55,8 +55,11 @@ class RenderClipOval(
                     debugPaint!!
                 )
                 debugText!!.paint(
-                    context.canvas,
-                    offset + Offset((getClip().width - debugText!!.width) / 2f, -debugText!!.fontSize * 1.1f)
+                    canvas = context.canvas,
+                    offset = offset + Offset(
+                        x = (getClip().width - debugText!!.width) / 2f,
+                        y = -(debugText!!.text.style?.fontSize ?: kDefaultFontSize) * 1.1f
+                    )
                 )
             }
         }

@@ -11,6 +11,7 @@ import com.muedsa.snapshot.rendering.PaintingContext
 import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.widget.*
+import com.muedsa.snapshot.widget.text.Text
 import org.jetbrains.skia.*
 import java.io.File
 import java.nio.file.Path
@@ -41,7 +42,6 @@ fun getTestPngFile(imagePathWithoutSuffix: String): File {
     return path.toFile()
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 fun drawWidget(
     imagePathWithoutSuffix: String,
     debugInfo: String? = null,
@@ -66,7 +66,7 @@ fun drawWidget(
                         maxWidth = snapshotImage.width.toFloat()
                     )
                 ) {
-                    SimpleText(debugInfo)
+                    Text(debugInfo)
                 }
             }
         }

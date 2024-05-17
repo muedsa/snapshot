@@ -5,14 +5,15 @@ import com.muedsa.geometry.EdgeInsets
 import com.muedsa.snapshot.drawWidget
 import com.muedsa.snapshot.paint.decoration.BoxDecoration
 import com.muedsa.snapshot.paint.decoration.DecorationImage
+import com.muedsa.snapshot.paint.text.TextStyle
 import com.muedsa.snapshot.tools.NetworkImageCacheManager
 import com.muedsa.snapshot.tools.SimpleNoLimitedNetworkImageCacheTest
+import com.muedsa.snapshot.widget.text.Text
 import org.jetbrains.skia.*
 import kotlin.test.Test
 
 class BackdropFilterTest {
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun blur_test() {
         println("\n\n\nBackdropFilterTest.blur_test()")
@@ -79,9 +80,9 @@ class BackdropFilterTest {
                                     padding = EdgeInsets.all(10f),
                                     alignment = BoxAlignment.CENTER
                                 ) {
-                                    SimpleText(
+                                    Text(
                                         text = "233".repeat(100),
-                                        color = Color.WHITE
+                                        style = TextStyle(color = Color.WHITE),
                                     )
                                 }
                             }
@@ -92,8 +93,6 @@ class BackdropFilterTest {
         }
     }
 
-
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun blur_2_test() {
         println("\n\n\nBackdropFilterTest.blur_2_test()")
@@ -159,9 +158,11 @@ class BackdropFilterTest {
                                 padding = EdgeInsets.all(10f),
                                 alignment = BoxAlignment.CENTER
                             ) {
-                                SimpleText(
+                                Text(
                                     text = "233".repeat(100),
-                                    color = Color.WHITE
+                                    style = TextStyle(
+                                        color = Color.WHITE
+                                    )
                                 )
                             }
                         }
@@ -171,7 +172,6 @@ class BackdropFilterTest {
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun blur_3_test() {
         println("\n\n\nBackdropFilterTest.blur_3_test()")
@@ -215,9 +215,11 @@ class BackdropFilterTest {
                                     padding = EdgeInsets.all(10f),
                                     alignment = BoxAlignment.CENTER
                                 ) {
-                                    SimpleText(
+                                    Text(
                                         text = "233".repeat(1000),
-                                        color = Color.WHITE
+                                        style = TextStyle(
+                                            color = Color.WHITE
+                                        )
                                     )
                                 }
                             }

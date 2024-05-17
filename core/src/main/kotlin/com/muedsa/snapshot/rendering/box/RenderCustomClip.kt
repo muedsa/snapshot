@@ -2,7 +2,9 @@ package com.muedsa.snapshot.rendering.box
 
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
-import com.muedsa.snapshot.paint.text.SimpleTextPainter
+import com.muedsa.snapshot.paint.text.TextPainter
+import com.muedsa.snapshot.paint.text.TextSpan
+import com.muedsa.snapshot.paint.text.TextStyle
 import com.muedsa.snapshot.rendering.ClipBehavior
 import com.muedsa.snapshot.rendering.PaintingContext
 import org.jetbrains.skia.*
@@ -26,10 +28,8 @@ abstract class RenderCustomClip<T>(
 
     protected var debugPaint: Paint? = null
 
-    @OptIn(ExperimentalStdlibApi::class)
-    protected var debugText: SimpleTextPainter? = null
+    protected var debugText: TextPainter? = null
 
-    @OptIn(ExperimentalStdlibApi::class)
     override fun debugPaint(context: PaintingContext, offset: Offset) {
         super.debugPaint(context, offset)
         if (debugPaint == null) {
@@ -48,10 +48,13 @@ abstract class RenderCustomClip<T>(
             }
         }
         if (debugText == null) {
-            debugText = SimpleTextPainter(
-                text = "✂",
-                color = 0xFFFF00FF.toInt(),
-                fontSize = 14f,
+            debugText = TextPainter(
+                text = TextSpan(
+                    text = "✂", style = TextStyle(
+                        color = 0xFFFF00FF.toInt(),
+                        fontSize = 14f,
+                    )
+                ),
                 textDirection = Direction.RTL
             ).apply {
                 layout()
