@@ -10,11 +10,10 @@ import com.muedsa.snapshot.parser.token.RawAttr
 import com.muedsa.snapshot.widget.*
 import com.muedsa.snapshot.widget.text.RichText
 import com.muedsa.snapshot.widget.text.Text
-import com.muedsa.snapshot.widget.text.TextStyle
+import com.muedsa.snapshot.paint.text.TextStyle
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.Image
-import kotlin.test.Test
-import kotlin.test.assertContentEquals
+import kotlin.test.*
 
 class TextParserTest {
 
@@ -44,7 +43,10 @@ class TextParserTest {
         val textSpan: TextSpan = widget.text as TextSpan
         assert(textSpan.style?.color == 0xFF_FF_00_00.toInt())
         assert(textSpan.style?.fontSize == 12f)
-        assertContentEquals(textSpan.style?.fontFamilies, arrayOf("Noto Sans SC", "WenQuanYi Micro Hei Mono"))
+        assertNotNull(textSpan.style?.fontFamilies)
+        assert(textSpan.style?.fontFamilies?.size == 2)
+        assert(textSpan.style?.fontFamilies!!.contains("Noto Sans SC"))
+        assert(textSpan.style?.fontFamilies!!.contains("WenQuanYi Micro Hei Mono"))
         assert(textSpan.style?.fontStyle?.weight == FontStyle.BOLD.weight)
         assert(textSpan.style?.fontStyle?.width == FontStyle.BOLD.width)
         assert(textSpan.style?.fontStyle?.slant == FontStyle.BOLD.slant)
@@ -102,19 +104,19 @@ class TextParserTest {
                         Column {
                             Text(
                                 text = "鉴于对人类家庭所有成员的固有尊严及其平等的和不移的权利的承认,乃是世界自由、正义与和平的基础",
-                                style = TextStyle {
-                                    color = 0xFF_FF_FF_FF.toInt()
-                                    fontSize = 14f
-                                    fontFamilies = arrayOf("Noto Sans SC")
-                                }
+                                style = TextStyle(
+                                    color = 0xFF_FF_FF_FF.toInt(),
+                                    fontSize = 14f,
+                                    fontFamilies = listOf("Noto Sans SC")
+                                )
                             )
                             Text(
                                 text = "This generated from code",
-                                style = TextStyle {
-                                    color = 0xFF_FF_FF_FF.toInt()
-                                    fontSize = 14f
-                                    fontFamilies = arrayOf("Noto Sans SC")
-                                }
+                                style = TextStyle(
+                                    color = 0xFF_FF_FF_FF.toInt(),
+                                    fontSize = 14f,
+                                    fontFamilies = listOf("Noto Sans SC")
+                                )
                             )
                         }
                     }

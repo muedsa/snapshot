@@ -11,13 +11,12 @@ import com.muedsa.snapshot.parser.attr.CommonAttrDefine
 import com.muedsa.snapshot.widget.Widget
 import com.muedsa.snapshot.widget.text.ImageEmoji
 import com.muedsa.snapshot.widget.text.RichText
-import com.muedsa.snapshot.widget.text.TextStyle
+import com.muedsa.snapshot.paint.text.TextStyle
 import com.muedsa.snapshot.widget.text.WidgetSpan
 import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.PlaceholderAlignment
-import org.jetbrains.skia.paragraph.TextStyle
 
 open class TextParser : WidgetParser {
 
@@ -42,24 +41,15 @@ private fun Element.parseTextSpan(raw: Boolean = false): TextSpan {
     }
     val color: Int? = WidgetParser.parseAttrValue(CommonAttrDefine.COLOR_N, attrs)
     val fontSize: Float? = WidgetParser.parseAttrValue(CommonAttrDefine.FONT_SIZE_N, attrs)
-    val fontFamilyNames: Array<String>? = WidgetParser.parseAttrValue(CommonAttrDefine.FONT_FAMILY_N, attrs)?.split(",")
-        ?.toTypedArray()
+    val fontFamilyNames: List<String>? = WidgetParser.parseAttrValue(CommonAttrDefine.FONT_FAMILY_N, attrs)?.split(",")
     val fontStyle: FontStyle? = WidgetParser.parseAttrValue(CommonAttrDefine.FONT_STYLE_N, attrs)
     val style: TextStyle? = if (color != null || fontSize != null || !fontFamilyNames.isNullOrEmpty() || fontStyle != null)
-        TextStyle {
-            color?.let {
-                this.color = it
-            }
-            fontSize?.let {
-                this.fontSize = it
-            }
-            fontFamilyNames?.let {
-                this.fontFamilies = it
-            }
-            fontStyle?.let {
-                this.fontStyle = it
-            }
-        } else null
+        TextStyle(
+            color = color,
+            fontSize = fontSize,
+            fontFamilies = fontFamilyNames,
+            fontStyle = fontStyle
+        ) else null
     return TextSpan(
         text = text,
         style = style,

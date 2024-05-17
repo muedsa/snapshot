@@ -4,6 +4,7 @@ import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
 import org.jetbrains.skia.*
 import org.jetbrains.skia.paragraph.*
+import java.util.*
 
 @ExperimentalStdlibApi
 class SimpleTextPainter(
@@ -74,7 +75,7 @@ class SimpleTextPainter(
                 this.color = color
                 this.fontSize = fontSize
                 (fontFamilyName ?: DEFAULT_FONT_FAMILY_NAME)?.let {
-                    this.fontFamilies = it
+                    this.fontFamilies = it.toList()
                 }
                 this.fontStyle = fontStyle
             })

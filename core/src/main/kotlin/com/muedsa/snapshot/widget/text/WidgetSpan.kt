@@ -1,17 +1,13 @@
 package com.muedsa.snapshot.widget.text
 
 import com.muedsa.snapshot.kDefaultFontSize
-import com.muedsa.snapshot.paint.text.InlineSpan
-import com.muedsa.snapshot.paint.text.ParagraphBuilder
-import com.muedsa.snapshot.paint.text.PlaceholderSpan
-import com.muedsa.snapshot.paint.text.TextSpan
+import com.muedsa.snapshot.paint.text.*
 import com.muedsa.snapshot.widget.ProxyWidget
 import com.muedsa.snapshot.widget.Widget
 import com.muedsa.snapshot.widget.bind
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.PlaceholderAlignment
 import org.jetbrains.skia.paragraph.PlaceholderStyle
-import org.jetbrains.skia.paragraph.TextStyle
 
 inline fun TextSpan.WidgetSpan(
     alignment: PlaceholderAlignment = PlaceholderAlignment.BOTTOM,
@@ -44,9 +40,9 @@ class WidgetSpan(
 
     override fun build(builder: ParagraphBuilder, dimensions: List<PlaceholderStyle>?) {
         assert(dimensions != null)
-        val hasStyle = style != null
+        val hasStyle = mergedStyle != null
         if (hasStyle) {
-            builder.pushStyle(style)
+            builder.pushStyle(mergedStyle)
         }
         assert(builder.placeholderCount < dimensions!!.size)
         val currentDimensions = dimensions[builder.placeholderCount]

@@ -1,7 +1,6 @@
 package com.muedsa.snapshot.paint.text
 
 import org.jetbrains.skia.paragraph.PlaceholderStyle
-import org.jetbrains.skia.paragraph.TextStyle
 
 class TextSpan(
     val text: String? = null,
@@ -12,14 +11,16 @@ class TextSpan(
     val children: MutableList<InlineSpan> = mutableListOf()
 
     override fun build(builder: ParagraphBuilder, dimensions: List<PlaceholderStyle>?) {
-        val hasStyle = style != null
+        val hasStyle = mergedStyle != null
         if (hasStyle) {
-            builder.pushStyle(style)
+            builder.pushStyle(mergedStyle)
         }
         text?.let {
             builder.addText(text)
         }
-        children.forEach { it.build(builder, dimensions) }
+        children.forEach {
+            it.updateMergedStyle(mergedStyle)
+            it.build(builder, dimensions) }
         if (hasStyle) {
             builder.popStyle()
         }

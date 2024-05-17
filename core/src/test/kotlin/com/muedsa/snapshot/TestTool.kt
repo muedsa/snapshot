@@ -3,7 +3,8 @@ package com.muedsa.snapshot
 import com.muedsa.geometry.EdgeInsets
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
-import com.muedsa.snapshot.paint.text.SimpleTextPainter
+import com.muedsa.snapshot.paint.text.TextPainter
+import com.muedsa.snapshot.paint.text.TextSpan
 import com.muedsa.snapshot.rendering.Layer
 import com.muedsa.snapshot.rendering.LayerPaintContext
 import com.muedsa.snapshot.rendering.PaintingContext
@@ -73,7 +74,6 @@ fun drawWidget(
     getTestPngFile(imagePathWithoutSuffix).writeBytes(snapshotImage.encodeToData(EncodedImageFormat.PNG)!!.bytes)
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 fun drawPainter(
     imagePathWithoutSuffix: String,
     width: Float,
@@ -83,8 +83,12 @@ fun drawPainter(
     painter: (Canvas) -> Unit = {},
 ) {
     var h = height
-    val debugInfoPainter: SimpleTextPainter? = debugInfo?.let {
-        SimpleTextPainter(debugInfo).apply {
+    val debugInfoPainter: TextPainter? = debugInfo?.let {
+        TextPainter(
+            text = TextSpan(
+                text = debugInfo
+            ),
+        ).apply {
             layout(0f, width - 20f)
             h += this@apply.height + 20f
         }

@@ -2,6 +2,7 @@ package com.muedsa.snapshot.widget.text
 
 import com.muedsa.snapshot.paint.text.TextOverflow
 import com.muedsa.snapshot.paint.text.TextSpan
+import com.muedsa.snapshot.paint.text.TextStyle
 import com.muedsa.snapshot.paint.text.TextWidthBasis
 import com.muedsa.snapshot.widget.Widget
 import org.jetbrains.skia.paragraph.*

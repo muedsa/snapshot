@@ -2,6 +2,7 @@ package com.muedsa.snapshot.widget.text
 
 import com.muedsa.snapshot.drawWidget
 import com.muedsa.snapshot.paint.text.TextSpan
+import com.muedsa.snapshot.paint.text.TextStyle
 import com.muedsa.snapshot.widget.Container
 import org.jetbrains.skia.Color
 import kotlin.test.Test
@@ -15,10 +16,13 @@ class TextTest {
         val description = "Simple Text"
         println("\n\ndraw: $name\n$description")
         drawWidget(imagePathWithoutSuffix = name, debugInfo = description, drawDebug = false) {
-            Text("Hello, world!", style = TextStyle {
-                fontSize = 20f
-                color = Color.RED
-            })
+            Text(
+                text = "Hello, world!",
+                style = TextStyle(
+                    fontSize = 20f,
+                    color = Color.RED
+                )
+            )
         }
     }
 
@@ -30,8 +34,14 @@ class TextTest {
         println("\n\ndraw: $name\n$description")
         drawWidget(imagePathWithoutSuffix = name, debugInfo = description, drawDebug = false) {
             RichText {
-                TextSpan("Hello, one!", style = TextStyle { fontSize = 20f })
-                TextSpan("Hello, two!", style = TextStyle { color = Color.RED })
+                TextSpan(
+                    text = "Hello, one!",
+                    style = TextStyle(fontSize = 20f)
+                )
+                TextSpan(
+                    text = "Hello, two!",
+                    style = TextStyle(color = Color.RED)
+                )
                 TextSpan("Hello, three!")
             }
         }
@@ -45,7 +55,7 @@ class TextTest {
         println("\n\ndraw: $name\n$description")
         drawWidget(imagePathWithoutSuffix = name, debugInfo = description, drawDebug = false) {
             RichText {
-                TextSpan("Hello, one!", style = TextStyle { fontSize = 20f })
+                TextSpan("Hello, one!", style = TextStyle(fontSize = 20f))
                 WidgetSpan {
                     Container(
                         width = 20f,
@@ -62,10 +72,13 @@ class TextTest {
                             color = Color.BLUE
                         )
                     }
-                    TextSpan("Hello, three!", style = TextStyle {
-                        fontSize = 20f
-                        color = Color.RED
-                    })
+                    TextSpan(
+                        text = "Hello, three!",
+                        style = TextStyle(
+                            fontSize = 20f,
+                            color = Color.RED
+                        )
+                    )
                 }
             }
         }
@@ -81,10 +94,10 @@ class TextTest {
             RichText {
                 TextSpan("DEFAULT")
                 ImageEmojiSpan("http://i0.hdslb.com/bfs/garb/69c5565c2971bcc2298d0c6347ceed9012c32300.png@65w.webp")
-                TextSpan(style = TextStyle { fontSize = 30f }) {
+                TextSpan(style = TextStyle(fontSize = 30f)) {
                     TextSpan("30")
                     ImageEmojiSpan("http://i0.hdslb.com/bfs/garb/69c5565c2971bcc2298d0c6347ceed9012c32300.png@65w.webp")
-                    TextSpan(style = TextStyle { fontSize = 20f }) {
+                    TextSpan(style = TextStyle(fontSize = 20f)) {
                         TextSpan("20")
                         ImageEmojiSpan("http://i0.hdslb.com/bfs/garb/69c5565c2971bcc2298d0c6347ceed9012c32300.png@65w.webp")
                     }
@@ -94,6 +107,35 @@ class TextTest {
                             ImageEmojiSpan("http://i0.hdslb.com/bfs/garb/69c5565c2971bcc2298d0c6347ceed9012c32300.png@65w.webp")
                         }
                     }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun style_merge_test() {
+        println("\n\n\nTextTest.style_merge_test()")
+        val name = "widget/text/style_merge"
+        val description = "Style Merge"
+        println("\n\ndraw: $name\n$description")
+        drawWidget(imagePathWithoutSuffix = name, debugInfo = description, drawDebug = false) {
+            RichText {
+                TextSpan(
+                    style = TextStyle(
+                        fontSize = 15f,
+                        color = Color.WHITE
+                    )
+                ) {
+                    TextSpan("15white")
+                    TextSpan(
+                        style = TextStyle(
+                            fontSize = 30f
+                        )
+                    ) {
+                        TextSpan("30white")
+                        TextSpan("30red", style = TextStyle(color = Color.RED))
+                    }
+                    TextSpan("15white")
                 }
             }
         }

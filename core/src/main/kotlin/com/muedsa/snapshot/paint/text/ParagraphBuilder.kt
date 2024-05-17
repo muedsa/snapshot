@@ -20,7 +20,7 @@ class ParagraphBuilder(
     }
 
     fun pushStyle(style: TextStyle?) {
-        _builder.pushStyle(style)
+        _builder.pushStyle(style?.toSkikoTextStyle())
     }
 
     fun popStyle() {

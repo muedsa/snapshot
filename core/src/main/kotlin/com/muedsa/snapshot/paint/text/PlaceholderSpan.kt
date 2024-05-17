@@ -2,7 +2,6 @@ package com.muedsa.snapshot.paint.text
 
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.PlaceholderAlignment
-import org.jetbrains.skia.paragraph.TextStyle
 
 abstract class PlaceholderSpan(
     val alignment: PlaceholderAlignment = PlaceholderAlignment.BOTTOM,
