@@ -9,7 +9,7 @@ abstract class InlineSpan(
     var mergedStyle: TextStyle? = null
         private set
 
-    fun updateMergedStyle(parentStyle: TextStyle?) {
+    fun updateMergedStyle(parentStyle: TextStyle? = null) {
         mergedStyle = style ?: parentStyle
         if (parentStyle != null) {
             mergedStyle = mergedStyle?.mergeFrom(parentStyle)

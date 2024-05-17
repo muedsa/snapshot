@@ -3,6 +3,8 @@ package com.muedsa.snapshot.paint.text
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
 import com.muedsa.geometry.shift
+import com.muedsa.snapshot.kDefaultFontSize
+import com.muedsa.snapshot.kDefaultTextColor
 import org.jetbrains.skia.*
 import org.jetbrains.skia.paragraph.*
 
@@ -80,6 +82,10 @@ class TextPainter(
             },
             fc = FONT_COLLECTION
         ).also {
+            text.updateMergedStyle(TextStyle(
+                color = kDefaultTextColor,
+                fontSize = kDefaultFontSize
+            ))
             text.build(it, dimensions = placeholderDimensions)
         }.build()
 
