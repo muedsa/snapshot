@@ -37,6 +37,8 @@ open class ContainerParser : WidgetParser {
             constraints = constraints,
             margin = WidgetParser.parseAttrValue(CommonAttrDefine.MARGIN_N, element.attrs),
             decoration = if (BorderParser.isNullBorder(borderDecoration)) null else borderDecoration
-        )
+        ).also {
+            WidgetParser.createWidgetForChildElement(it, element.children)
+        }
     }
 }

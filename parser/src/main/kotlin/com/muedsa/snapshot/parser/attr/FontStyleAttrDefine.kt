@@ -8,15 +8,21 @@ class FontStyleAttrDefine(name: String, defaultValue: FontStyle = FontStyle.NORM
 
     override fun parseValue(valueStr: String?): FontStyle {
         requireNotNull(valueStr)
-        return when (valueStr) {
-            "BOLD" -> FontStyle.BOLD
-            "BOLD_ITALIC" -> FontStyle.BOLD_ITALIC
-            "ITALIC" -> FontStyle.ITALIC
-            "NORMAL" -> FontStyle.NORMAL
-            else -> throw IllegalArgumentException("Unexpected font style $valueStr")
-        }
+        return parseFormStr(valueStr)
     }
 
     override fun copyWith(name: String, defaultValue: FontStyle): FontStyleAttrDefine =
         FontStyleAttrDefine(name, defaultValue)
+
+    companion object {
+
+        fun parseFormStr(valueStr: String): FontStyle =
+            when (valueStr) {
+                "BOLD" -> FontStyle.BOLD
+                "BOLD_ITALIC" -> FontStyle.BOLD_ITALIC
+                "ITALIC" -> FontStyle.ITALIC
+                "NORMAL" -> FontStyle.NORMAL
+                else -> throw IllegalArgumentException("Unexpected font style $valueStr")
+            }
+    }
 }

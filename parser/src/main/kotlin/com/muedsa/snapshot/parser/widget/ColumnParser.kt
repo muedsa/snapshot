@@ -22,5 +22,7 @@ open class ColumnParser : WidgetParser {
         textDirection = WidgetParser.parseAttrValue(textDirection, element.attrs),
         verticalDirection = WidgetParser.parseAttrValue(CommonAttrDefine.VERTICAL_DIRECTION, element.attrs),
         textBaseline = WidgetParser.parseAttrValue(textBaseline, element.attrs)
-    )
+    ).also {
+        WidgetParser.createWidgetForChildElement(it, element.children)
+    }
 }

@@ -3,10 +3,14 @@ package com.muedsa.snapshot.parser.widget
 import com.muedsa.geometry.EdgeInsets
 import com.muedsa.snapshot.SnapshotPNG
 import com.muedsa.snapshot.getTestPngFile
+import com.muedsa.snapshot.paint.text.TextSpan
 import com.muedsa.snapshot.parser.ParserTest
 import com.muedsa.snapshot.parser.attr.CommonAttrDefine
 import com.muedsa.snapshot.parser.token.RawAttr
 import com.muedsa.snapshot.widget.*
+import com.muedsa.snapshot.widget.text.RichText
+import com.muedsa.snapshot.widget.text.Text
+import com.muedsa.snapshot.widget.text.TextStyle
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.Image
 import kotlin.test.Test
@@ -19,7 +23,6 @@ class TextParserTest {
         CommonAttrDefine.TEXT.parseValue(RawAttr(CommonAttrDefine.TEXT.name, "123 123132✅1ada asda 🤣"))
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun buildWidget_test() {
         val text = """
@@ -35,15 +38,20 @@ class TextParserTest {
         val snapshotElement = ParserTest.parse(text)
         println(snapshotElement.toTreeString(0))
         val widget = snapshotElement.createWidget()
-        assert(widget is SimpleText)
-        val simpleText: SimpleText = widget as SimpleText
-        assert(simpleText.text == "Hello Word! 你好，世界！")
-        assert(simpleText.color == 0xFF_FF_00_00.toInt())
-        assert(simpleText.fontSize == 12f)
-        assertContentEquals(simpleText.fontFamilyName, arrayOf("Noto Sans SC", "WenQuanYi Micro Hei Mono"))
-        assert(simpleText.fontStyle.weight == FontStyle.BOLD.weight)
-        assert(simpleText.fontStyle.width == FontStyle.BOLD.width)
-        assert(simpleText.fontStyle.slant == FontStyle.BOLD.slant)
+        assert(widget is RichText)
+        val richText: RichText = widget as RichText
+        assert(richText.text is TextSpan)
+        val textSpan: TextSpan = widget.text as TextSpan
+        assert(textSpan.style?.color == 0xFF_FF_00_00.toInt())
+        assert(textSpan.style?.fontSize == 12f)
+        assertContentEquals(textSpan.style?.fontFamilies, arrayOf("Noto Sans SC", "WenQuanYi Micro Hei Mono"))
+        assert(textSpan.style?.fontStyle?.weight == FontStyle.BOLD.weight)
+        assert(textSpan.style?.fontStyle?.width == FontStyle.BOLD.width)
+        assert(textSpan.style?.fontStyle?.slant == FontStyle.BOLD.slant)
+        assert(textSpan.children.size == 1)
+        assert(textSpan.children[0] is TextSpan)
+        val childTextSpan = textSpan.children[0] as TextSpan
+        assert(childTextSpan.text == "Hello Word! 你好，世界！")
     }
 
     @Test
@@ -65,7 +73,6 @@ class TextParserTest {
         getTestPngFile("parser/text_diff_font").writeBytes(snapshotElement.snapshot())
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun text_diff_test() {
         val text = ("""
@@ -93,17 +100,21 @@ class TextParserTest {
                         padding = EdgeInsets.all(20f),
                     ) {
                         Column {
-                            SimpleText(
-                                color = 0xFF_FF_FF_FF.toInt(),
-                                fontSize = 14f,
-                                fontFamilyName = arrayOf("Noto Sans SC"),
+                            Text(
                                 text = "鉴于对人类家庭所有成员的固有尊严及其平等的和不移的权利的承认,乃是世界自由、正义与和平的基础",
+                                style = TextStyle {
+                                    color = 0xFF_FF_FF_FF.toInt()
+                                    fontSize = 14f
+                                    fontFamilies = arrayOf("Noto Sans SC")
+                                }
                             )
-                            SimpleText(
-                                color = 0xFF_FF_FF_FF.toInt(),
-                                fontSize = 14f,
-                                fontFamilyName = arrayOf("Noto Sans SC"),
+                            Text(
                                 text = "This generated from code",
+                                style = TextStyle {
+                                    color = 0xFF_FF_FF_FF.toInt()
+                                    fontSize = 14f
+                                    fontFamilies = arrayOf("Noto Sans SC")
+                                }
                             )
                         }
                     }
@@ -114,5 +125,45 @@ class TextParserTest {
                 }
             }
         )
+    }
+
+
+    @Test
+    fun rich_text_test() {
+        val text = """
+            <Snapshot>
+                <Text color="#FFFF0000" 
+                    fontSize="12" 
+                    fontFamily="Noto Sans SC,WenQuanYi Micro Hei Mono" 
+                    fontStyle="BOLD">
+                    Hello Word! 
+                    <Emoji url="http://i0.hdslb.com/bfs/garb/69c5565c2971bcc2298d0c6347ceed9012c32300.png@65w.webp"></Emoji>
+                    <Text color="#FFFF0000" 
+                        fontSize="20" 
+                        fontFamily="Noto Sans SC,WenQuanYi Micro Hei Mono" 
+                        fontStyle="BOLD">
+                        Hello Word! 
+                        <Emoji url="http://i0.hdslb.com/bfs/garb/69c5565c2971bcc2298d0c6347ceed9012c32300.png@65w.webp"></Emoji>
+                        <Text color="#FFFF0000" 
+                            fontSize="30" 
+                            fontFamily="Noto Sans SC,WenQuanYi Micro Hei Mono" 
+                            fontStyle="BOLD">
+                            Hello Word! 
+                            <Emoji url="http://i0.hdslb.com/bfs/garb/69c5565c2971bcc2298d0c6347ceed9012c32300.png@65w.webp"></Emoji>
+                            你好，世界！
+                        </Text>
+                        你好，世界！
+                    </Text>
+                    你好，世界！
+                    <Raw> 
+                        渲染原始文本
+                    </Raw>
+                </Text>
+            </Snapshot>
+        """.trimIndent()
+        println(text)
+        val snapshotElement = ParserTest.parse(text)
+        println(snapshotElement.toTreeString(0))
+        getTestPngFile("parser/rich_text").writeBytes(snapshotElement.snapshot())
     }
 }

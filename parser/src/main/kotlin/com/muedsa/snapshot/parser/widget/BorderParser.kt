@@ -19,6 +19,9 @@ open class BorderParser : WidgetParser {
 
     override fun buildWidget(element: Element): Widget =
         DecoratedBox(decoration = parseBorderDecoration(element))
+            .also {
+                WidgetParser.createWidgetForChildElement(it, element.children)
+            }
 
     companion object {
 

@@ -5,6 +5,7 @@ import com.muedsa.geometry.EdgeInsets
 import com.muedsa.snapshot.getTestPngFile
 import com.muedsa.snapshot.widget.Container
 import com.muedsa.snapshot.widget.SimpleText
+import com.muedsa.snapshot.widget.text.RichText
 import org.junit.jupiter.api.assertThrows
 import java.io.StringReader
 import kotlin.test.Test
@@ -105,8 +106,10 @@ class ParserTest {
         val container: Container = widget as Container
         assert(container.width == 400f)
         assert(container.height == 300f)
-        val textWidget: SimpleText = container.child as SimpleText
-        assert(textWidget.text == "char_token_test <a></a> 233 哈哈✅🤣哈")
+        val richText: RichText = container.child as RichText
+        val stringBuffer: StringBuffer = StringBuffer()
+        richText.text.computeToPlainText(stringBuffer, false)
+        assert(stringBuffer.toString() == "char_token_test <a></a> 233 哈哈✅🤣哈")
         getTestPngFile("parser/text").writeBytes(snapshotElement.snapshot())
     }
 
