@@ -6,6 +6,7 @@ import com.muedsa.snapshot.parser.ParseException
 import com.muedsa.snapshot.parser.attr.required.AttrDefine
 import com.muedsa.snapshot.parser.token.RawAttr
 import com.muedsa.snapshot.widget.Widget
+import com.muedsa.snapshot.widget.bind
 
 interface WidgetParser {
 
@@ -30,6 +31,12 @@ interface WidgetParser {
                     t
                 )
                 else throw t
+            }
+        }
+
+        fun createWidgetForChildElement(widget: Widget, children: List<Element>) {
+            children.forEach {
+                widget.bind(it.createWidget())
             }
         }
     }

@@ -30,6 +30,8 @@ class WidgetParserManager {
             it.register(PositionedParser())
             it.register(ImageParser())
             it.register(TextParser())
+            it.register(RawTextParser())
+            it.register(EmojiParser())
         }
     }
 }

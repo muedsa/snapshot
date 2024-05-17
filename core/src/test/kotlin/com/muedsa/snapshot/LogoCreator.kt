@@ -1,7 +1,9 @@
 package com.muedsa.snapshot
 
 import com.muedsa.geometry.EdgeInsets
+import com.muedsa.snapshot.paint.text.TextStyle
 import com.muedsa.snapshot.widget.*
+import com.muedsa.snapshot.widget.text.Text
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.Path
 import org.jetbrains.skia.Rect
@@ -17,7 +19,7 @@ class LogoCreator {
     }
 
     companion object {
-        @OptIn(ExperimentalStdlibApi::class)
+
         fun Widget.logoContent() {
             val radius = 200f
             val size = radius * 2
@@ -80,11 +82,13 @@ class LogoCreator {
                             }
                         }
                     }
-                    SimpleText(
+                    Text(
                         text = "Snapshot",
-                        color = 0xFF_A6_A6_A6.toInt(),
-                        fontSize = size * 0.8f,
-                        fontStyle = FontStyle.BOLD
+                        style = TextStyle(
+                            color = 0xFF_A6_A6_A6.toInt(),
+                            fontSize = size * 0.8f,
+                            fontStyle = FontStyle.BOLD
+                        )
                     )
                 }
             }

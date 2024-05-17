@@ -12,7 +12,7 @@ import org.jetbrains.skia.ColorFilter
 import org.jetbrains.skia.Image
 import org.jetbrains.skia.Rect
 
-class RenderImage(
+open class RenderImage(
     val image: Image?,
     val width: Float? = null,
     val height: Float? = null,

@@ -12,6 +12,7 @@ import org.jetbrains.skia.Color
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.Direction
+import org.jetbrains.skia.paragraph.PlaceholderAlignment
 import java.net.URL
 
 object CommonAttrDefine {
@@ -52,7 +53,8 @@ object CommonAttrDefine {
     val COLOR: ColorAttrDefine = ColorAttrDefine(name = "color", defaultValue = Color.BLACK)
     val FONT_SIZE = FloatAttrDefine(name = "fontSize", defaultValue = 14f)
     val FONT_STYLE = FontStyleAttrDefine("fontStyle", defaultValue = FontStyle.NORMAL)
-
+    val PLACEHOLDER_ALIGNMENT: PlaceholderAlignmentAttrDefine = PlaceholderAlignmentAttrDefine(name = "alignment", defaultValue = PlaceholderAlignment.BASELINE)
+    val RAW = BooleanAttrDefine(name = "raw", defaultValue = false)
     // _N 后缀表示可以为空的
 
     val ALIGNMENT_N: NullableAlignmentAttrDefine = NullableAlignmentAttrDefine(name = "alignment")
@@ -80,6 +82,9 @@ object CommonAttrDefine {
     val BORDER_RADIUS_BOTTOM_LEFT_N: NullableRadiusAttrDefine = NullableRadiusAttrDefine("borderRadiusBottomLeft")
     val BORDER_RADIUS_BOTTOM_RIGHT_N: NullableRadiusAttrDefine = NullableRadiusAttrDefine("borderRadiusBottomRight")
     val BOX_SHADOW_N: NullableBoxShadowAttrDefine = NullableBoxShadowAttrDefine("boxShadow")
+    val TEXT_N: NullableStringAttrDefine = NullableStringAttrDefine("text")
+    val FONT_SIZE_N = NullableFloatAttrDefine(name = "fontSize")
+    val FONT_STYLE_N = NullableFontStyleAttrDefine("fontStyle")
 
     // 必须的
     val URL = RequiredStringAttrDefine("url") { _, valueStr ->

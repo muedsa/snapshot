@@ -2,31 +2,22 @@ package com.muedsa.snapshot.paint.text
 
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
+import com.muedsa.geometry.shift
+import com.muedsa.snapshot.kDefaultFontSize
+import com.muedsa.snapshot.kDefaultTextColor
 import org.jetbrains.skia.*
 import org.jetbrains.skia.paragraph.*
 
-@ExperimentalStdlibApi
-class SimpleTextPainter(
-    val text: String,
-    val color: Int = Color.BLACK,
-    val fontSize: Float = 14f,
-    val fontFamilyName: Array<String>? = null,
-    val fontStyle: FontStyle = FontStyle.NORMAL,
+class TextPainter(
+    val text: InlineSpan,
     val textAlign: Alignment = Alignment.START,
     val textDirection: Direction = Direction.LTR,
     val maxLines: Int? = null,
     val ellipsis: String? = null,
+    val strutStyle: StrutStyle? = null,
     val textWidthBasis: TextWidthBasis = TextWidthBasis.PARENT,
     val textHeightMode: HeightMode? = null,
 ) {
-
-    init {
-        fontFamilyName?.let {
-            assert(FONT_COLLECTION.findTypefaces(fontFamilyName, fontStyle).isNotEmpty()) {
-                "not find Typefaces for fontFamily: ${fontFamilyName.contentToString()}"
-            }
-        }
-    }
 
     private var layoutCache: TextPainterLayoutCacheWithOffset? = null
 
@@ -53,13 +44,34 @@ class SimpleTextPainter(
     val didExceedMaxLines: Boolean
         get() = layoutCache!!.paragraph.didExceedMaxLines()
 
-    private fun createParagraph(text: String, color: Int, fontSize: Float): Paragraph =
+    fun inlinePlaceholderBoxes(): List<TextBox>? {
+        val layout: TextPainterLayoutCacheWithOffset? = layoutCache
+        if (layout == null) {
+            return null
+        }
+        val offset: Offset = layout.paintOffset
+        if (!offset.x.isFinite() || !offset.y.isFinite()) {
+            return emptyList()
+        }
+        val rawBoxes = layout.inlinePlaceholderBoxes
+        if (offset == Offset.ZERO) {
+            return rawBoxes
+        }
+
+        return rawBoxes.map {
+            shiftTextBox(it, offset)
+        }
+    }
+
+    var placeholderDimensions: List<PlaceholderStyle>? = null
+
+    private fun createParagraph(text: InlineSpan): Paragraph =
         ParagraphBuilder(
             style = ParagraphStyle().apply {
-                strutStyle = StrutStyle()
+                strutStyle = this@TextPainter.strutStyle ?: StrutStyle()
                 this.direction = textDirection
                 this.alignment = textAlign
-                this.ellipsis = this@SimpleTextPainter.ellipsis
+                this.ellipsis = this@TextPainter.ellipsis
                 maxLines?.let {
                     this.maxLinesCount = it
                 }
@@ -69,16 +81,12 @@ class SimpleTextPainter(
                 fontRastrSettings = DEFAULT_FONT_RASTR_SETTINGS
             },
             fc = FONT_COLLECTION
-        ).apply {
-            pushStyle(TextStyle().apply {
-                this.color = color
-                this.fontSize = fontSize
-                (fontFamilyName ?: DEFAULT_FONT_FAMILY_NAME)?.let {
-                    this.fontFamilies = it
-                }
-                this.fontStyle = fontStyle
-            })
-            addText(text)
+        ).also {
+            text.updateMergedStyle(TextStyle(
+                color = kDefaultTextColor,
+                fontSize = kDefaultFontSize
+            ))
+            text.build(it, dimensions = placeholderDimensions)
         }.build()
 
     fun layout(minWidth: Float = 0f, maxWidth: Float = Float.POSITIVE_INFINITY) {
@@ -106,7 +114,7 @@ class SimpleTextPainter(
         // 2. the user could be measuring the text layout so `paint` will never be
         //    called.
 
-        val paragraph: Paragraph = cachedLayout?.paragraph ?: createParagraph(text, color, fontSize)
+        val paragraph: Paragraph = cachedLayout?.paragraph ?: createParagraph(text)
         paragraph.layout(inputWidth)
 
         val newLayoutCache: TextPainterLayoutCacheWithOffset = TextPainterLayoutCacheWithOffset(
@@ -203,19 +211,11 @@ class SimpleTextPainter(
         }
     }
 
-    override fun toString(): String {
-        return "SimpleTextPainter(text='$text', color=$color, fontSize=$fontSize, fontFamilyName=${fontFamilyName?.contentToString()}, fontStyle=$fontStyle, textAlign=$textAlign, textDirection=$textDirection, maxLines=$maxLines, ellipsis=$ellipsis, textWidthBasis=$textWidthBasis, textHeightMode=$textHeightMode)"
-    }
-
     companion object {
 
         @JvmStatic
         fun computeWidth(
-            text: String,
-            color: Int,
-            fontSize: Float,
-            fontFamilyName: Array<String>? = null,
-            fontStyle: FontStyle = FontStyle.NORMAL,
+            text: TextSpan,
             textAlign: Alignment = Alignment.START,
             textDirection: Direction = Direction.LTR,
             maxLines: Int? = null,
@@ -225,12 +225,8 @@ class SimpleTextPainter(
             minWidth: Float = 0f,
             maxWidth: Float = Float.POSITIVE_INFINITY,
         ): Float {
-            val painter = SimpleTextPainter(
+            val painter = TextPainter(
                 text = text,
-                color = color,
-                fontSize = fontSize,
-                fontFamilyName = fontFamilyName,
-                fontStyle = fontStyle,
                 textAlign = textAlign,
                 textDirection = textDirection,
                 maxLines = maxLines,
@@ -245,30 +241,24 @@ class SimpleTextPainter(
 
         @JvmStatic
         fun computeMaxIntrinsicWidth(
-            text: String,
-            color: Int,
-            fontSize: Float,
-            fontFamilyName: Array<String>? = null,
-            fontStyle: FontStyle = FontStyle.NORMAL,
+            text: TextSpan,
             textAlign: Alignment = Alignment.START,
             textDirection: Direction = Direction.LTR,
             maxLines: Int? = null,
             ellipsis: String? = null,
+            strutStyle: StrutStyle? = null,
             textWidthBasis: TextWidthBasis = TextWidthBasis.PARENT,
             textHeightMode: HeightMode? = null,
             minWidth: Float = 0f,
             maxWidth: Float = Float.POSITIVE_INFINITY,
         ): Float {
-            val painter = SimpleTextPainter(
+            val painter = TextPainter(
                 text = text,
-                color = color,
-                fontSize = fontSize,
-                fontFamilyName = fontFamilyName,
-                fontStyle = fontStyle,
                 textAlign = textAlign,
                 textDirection = textDirection,
                 maxLines = maxLines,
                 ellipsis = ellipsis,
+                strutStyle = strutStyle,
                 textWidthBasis = textWidthBasis,
                 textHeightMode = textHeightMode
             ).apply {
@@ -287,12 +277,16 @@ class SimpleTextPainter(
                 Alignment.END -> if (textDirection == Direction.LTR) 1f else 0f
             }
 
+        private fun shiftTextBox(box: TextBox, offset: Offset): TextBox =
+            TextBox(
+                rect = box.rect.shift(offset),
+                direction = box.direction,
+            )
+
         val FONT_COLLECTION = FontCollection().apply {
             setDefaultFontManager(FontMgr.default)
             setEnableFallback(true)
         }
-
-        var DEFAULT_FONT_FAMILY_NAME: Array<String>? = null
 
         val DEFAULT_FONT_RASTR_SETTINGS: FontRastrSettings = FontRastrSettings(
             edging = FontEdging.SUBPIXEL_ANTI_ALIAS,

@@ -19,5 +19,7 @@ open class StackParser : WidgetParser {
     override fun buildWidget(element: Element): Widget = Stack(
         alignment = WidgetParser.parseAttrValue(alignment, element.attrs),
         textDirection = WidgetParser.parseAttrValue(textDirection, element.attrs)
-    )
+    ).also {
+        WidgetParser.createWidgetForChildElement(it, element.children)
+    }
 }

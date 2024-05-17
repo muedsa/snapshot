@@ -1,7 +1,10 @@
 package com.muedsa.snapshot.widget
 
 import com.muedsa.snapshot.drawWidget
+import com.muedsa.snapshot.paint.text.TextSpan
+import com.muedsa.snapshot.paint.text.TextStyle
 import com.muedsa.snapshot.rendering.flex.CrossAxisAlignment
+import com.muedsa.snapshot.widget.text.RichText
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.paragraph.BaselineMode
 import kotlin.test.Test
@@ -45,7 +48,6 @@ class RowParserTest {
     }
 
     @Test
-    @OptIn(ExperimentalStdlibApi::class)
     fun baseline_test() {
         println("\n\n\nRowTest.baseline_test()")
         drawWidget(imagePathWithoutSuffix = "widget/row/baseline", debugInfo = "Row(${CrossAxisAlignment.BASELINE})") {
@@ -57,17 +59,19 @@ class RowParserTest {
                     crossAxisAlignment = CrossAxisAlignment.BASELINE,
                     textBaseline = BaselineMode.ALPHABETIC
                 ) {
-                    SimpleText("test", fontSize = 30f, color = Color.RED)
-                    SimpleText("foo", fontSize = 20f, color = Color.GREEN)
-                    SimpleText("bar", fontSize = 40f, color = Color.BLUE)
+                    RichText {
+                        TextSpan("test", style = TextStyle(fontSize = 30f, color = Color.RED))
+                        TextSpan("foo", style = TextStyle(fontSize = 20f, color = Color.GREEN))
+                        TextSpan("bar", style = TextStyle(fontSize = 40f, color = Color.BLUE))
+                    }
                 }
                 Row(
                     crossAxisAlignment = CrossAxisAlignment.BASELINE,
                     textBaseline = BaselineMode.ALPHABETIC
                 ) {
-                    SimpleText("test", fontSize = 100f, color = Color.RED)
-                    SimpleText("foo", fontSize = 300f, color = Color.GREEN)
-                    SimpleText("bar", fontSize = 200f, color = Color.BLUE)
+                    TextSpan("test", style = TextStyle(fontSize = 100f, color = Color.RED))
+                    TextSpan("foo", style = TextStyle(fontSize = 300f, color = Color.GREEN))
+                    TextSpan("bar", style = TextStyle(fontSize = 200f, color = Color.BLUE))
                 }
             }
         }

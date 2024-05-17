@@ -4,10 +4,7 @@ import com.muedsa.snapshot.parser.attr.CommonAttrDefine
 import com.muedsa.snapshot.parser.token.RawAttr
 import com.muedsa.snapshot.parser.token.Token
 import com.muedsa.snapshot.parser.token.Tokenizer
-import com.muedsa.snapshot.parser.widget.SnapshotParser
-import com.muedsa.snapshot.parser.widget.TextParser
-import com.muedsa.snapshot.parser.widget.WidgetParser
-import com.muedsa.snapshot.parser.widget.WidgetParserManager
+import com.muedsa.snapshot.parser.widget.*
 import java.io.Reader
 
 open class Parser(
@@ -120,19 +117,28 @@ open class Parser(
     protected fun insertCharacterFor(token: Token.Character) {
         // println("insert character:${token.data}")
         val currentElement = getCurrentElement()
-        if (currentElement?.widgetParser is TextParser) {
-            if (token.data != null) {
-                val rawAttr = currentElement.attrs[CommonAttrDefine.TEXT.name]
-                currentElement.attrs[CommonAttrDefine.TEXT.name] = rawAttr?.copy(
-                    value = (rawAttr.value ?: "") + token.data
-                ) ?: RawAttr(
-                    name = CommonAttrDefine.TEXT.name,
-                    value = token.data,
-                    nameStartPos = token.startPos,
-                    nameEndPos = token.startPos,
-                    valueStartPos = token.startPos,
-                    valueEndPos = token.endPos
+        val widgetParser = currentElement?.widgetParser
+        if (widgetParser is TextParser || widgetParser is RawTextParser) {
+            if (!token.data.isNullOrEmpty()) {
+                val startPos = token.startPos.copy()
+                val endPos = token.endPos.copy()
+                val element = Element(
+                    widgetParser = currentElement.widgetParser,
+                    attrs = mutableMapOf(
+                        CommonAttrDefine.TEXT.name to RawAttr(
+                            name = CommonAttrDefine.TEXT.name,
+                            value = token.data,
+                            nameStartPos = startPos,
+                            nameEndPos = endPos,
+                            valueStartPos = startPos,
+                            valueEndPos = endPos
+                        ),
+                    ),
+                    pos = startPos
                 )
+                getCurrentElement()?.appendChild(element)
+                push(element)
+                pop()
             }
         } else {
             if (!token.data.isNullOrBlank()) {

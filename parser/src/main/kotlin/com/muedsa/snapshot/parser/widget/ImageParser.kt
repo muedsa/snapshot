@@ -12,8 +12,6 @@ open class ImageParser : WidgetParser {
 
     override val containerMode: ContainerMode = ContainerMode.NONE
 
-    val colorBlendMode = CommonAttrDefine.BLEND_MODE_N.copyWith("colorBlendMode")
-
     override fun buildWidget(element: Element): Widget = CachedNetworkImage(
         url = WidgetParser.parseAttrValue(CommonAttrDefine.URL, element.attrs),
         width = WidgetParser.parseAttrValue(CommonAttrDefine.WIDTH_N, element.attrs),
@@ -24,7 +22,11 @@ open class ImageParser : WidgetParser {
         scale = WidgetParser.parseAttrValue(CommonAttrDefine.SCALE, element.attrs),
         opacity = WidgetParser.parseAttrValue(CommonAttrDefine.OPACITY, element.attrs),
         color = WidgetParser.parseAttrValue(CommonAttrDefine.COLOR_N, element.attrs),
-        colorBlendMode = WidgetParser.parseAttrValue(colorBlendMode, element.attrs),
+        colorBlendMode = WidgetParser.parseAttrValue(ATTR_COLOR_BLEND_MODE, element.attrs),
         cache = element.owner!!.getNetworkImageCache()
     )
+
+    companion object {
+        val ATTR_COLOR_BLEND_MODE = CommonAttrDefine.BLEND_MODE_N.copyWith("colorBlendMode")
+    }
 }

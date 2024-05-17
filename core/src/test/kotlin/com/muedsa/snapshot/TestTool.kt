@@ -3,13 +3,15 @@ package com.muedsa.snapshot
 import com.muedsa.geometry.EdgeInsets
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
-import com.muedsa.snapshot.paint.text.SimpleTextPainter
+import com.muedsa.snapshot.paint.text.TextPainter
+import com.muedsa.snapshot.paint.text.TextSpan
 import com.muedsa.snapshot.rendering.Layer
 import com.muedsa.snapshot.rendering.LayerPaintContext
 import com.muedsa.snapshot.rendering.PaintingContext
 import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.widget.*
+import com.muedsa.snapshot.widget.text.Text
 import org.jetbrains.skia.*
 import java.io.File
 import java.nio.file.Path
@@ -40,7 +42,6 @@ fun getTestPngFile(imagePathWithoutSuffix: String): File {
     return path.toFile()
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 fun drawWidget(
     imagePathWithoutSuffix: String,
     debugInfo: String? = null,
@@ -65,7 +66,7 @@ fun drawWidget(
                         maxWidth = snapshotImage.width.toFloat()
                     )
                 ) {
-                    SimpleText(debugInfo)
+                    Text(debugInfo)
                 }
             }
         }
@@ -73,7 +74,6 @@ fun drawWidget(
     getTestPngFile(imagePathWithoutSuffix).writeBytes(snapshotImage.encodeToData(EncodedImageFormat.PNG)!!.bytes)
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 fun drawPainter(
     imagePathWithoutSuffix: String,
     width: Float,
@@ -83,8 +83,12 @@ fun drawPainter(
     painter: (Canvas) -> Unit = {},
 ) {
     var h = height
-    val debugInfoPainter: SimpleTextPainter? = debugInfo?.let {
-        SimpleTextPainter(debugInfo).apply {
+    val debugInfoPainter: TextPainter? = debugInfo?.let {
+        TextPainter(
+            text = TextSpan(
+                text = debugInfo
+            ),
+        ).apply {
             layout(0f, width - 20f)
             h += this@apply.height + 20f
         }

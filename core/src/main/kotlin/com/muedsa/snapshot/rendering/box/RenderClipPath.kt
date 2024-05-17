@@ -35,7 +35,6 @@ class RenderClipPath(
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     override fun debugPaint(context: PaintingContext, offset: Offset) {
         if (child != null) {
             super.debugPaint(context, offset)

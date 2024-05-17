@@ -3,6 +3,8 @@ package com.muedsa.snapshot.widget
 import com.muedsa.geometry.BoxAlignment
 import com.muedsa.geometry.EdgeInsets
 import com.muedsa.snapshot.drawWidget
+import com.muedsa.snapshot.paint.text.TextStyle
+import com.muedsa.snapshot.widget.text.Text
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.ImageFilter
@@ -10,7 +12,6 @@ import kotlin.test.Test
 
 class ImageFilteredTest {
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun blur_test() {
         println("\n\n\nImageFilteredTest.blur_test()")
@@ -77,10 +78,13 @@ class ImageFilteredTest {
                                 alignment = BoxAlignment.CENTER,
                                 // color = Color.GREEN
                             ) {
-                                SimpleText(
+                                Text(
                                     text = "233".repeat(5),
-                                    color = Color.WHITE,
-                                    fontSize = 30f
+                                    style = TextStyle(
+                                        color = Color.WHITE,
+                                        fontSize = 30f
+
+                                    )
                                 )
                             }
                         }
@@ -90,7 +94,6 @@ class ImageFilteredTest {
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun blur_clip_test() {
         println("\n\n\nImageFilteredTest.blur_clip()")
@@ -157,10 +160,12 @@ class ImageFilteredTest {
                                 alignment = BoxAlignment.CENTER,
                                 // color = Color.GREEN
                             ) {
-                                SimpleText(
+                                Text(
                                     text = "233".repeat(100), // text will clip
-                                    color = Color.WHITE,
-                                    fontSize = 30f
+                                    style = TextStyle(
+                                        color = Color.WHITE,
+                                        fontSize = 30f
+                                    )
                                 )
                             }
                         }

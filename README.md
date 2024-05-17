@@ -106,7 +106,22 @@ File("sample_image_and_text.png").writeBytes(
                 width = 400f,
                 height = 400f,
             )
-            SimpleText("Hello World!", color = Color.RED, fontSize = 40f)
+            RichText {
+                TextSpan(
+                    text = "Hello",
+                    style = TextStyle(
+                        color = Color.RED,
+                        fontSize = 40f
+                    )
+                )
+                TextSpan(
+                    text = " World",
+                    style = TextStyle(
+                        color = Color.GREEN,
+                        fontSize = 30f
+                    )
+                )
+            }
         }
     }
 )

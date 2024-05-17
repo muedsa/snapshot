@@ -41,9 +41,6 @@ open class Element(
         } catch (t: Throwable) {
             throw ParseException(pos, t.message ?: "Parse Tag ${widgetParser.id} error", t)
         }
-        children.forEach {
-            widget.bind(it.createWidget())
-        }
         return widget
     }
 

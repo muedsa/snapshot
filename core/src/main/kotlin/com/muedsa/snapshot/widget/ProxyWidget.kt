@@ -12,4 +12,13 @@ open class ProxyWidget(parent: Widget? = null) : Widget(parent = parent) {
         return widget!!.createRenderBox()
     }
 
+    companion object {
+        fun buildWidget(
+            content: Widget.() -> Unit
+        ): Widget {
+            val widget = ProxyWidget().apply(content).widget
+            checkNotNull(widget)
+            return widget
+        }
+    }
 }

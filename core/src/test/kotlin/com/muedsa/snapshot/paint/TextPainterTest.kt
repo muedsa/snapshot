@@ -2,7 +2,9 @@ package com.muedsa.snapshot.paint
 
 import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.drawPainter
-import com.muedsa.snapshot.paint.text.SimpleTextPainter
+import com.muedsa.snapshot.paint.text.TextPainter
+import com.muedsa.snapshot.paint.text.TextSpan
+import com.muedsa.snapshot.paint.text.TextStyle
 import org.jetbrains.skia.*
 import org.jetbrains.skia.paragraph.Alignment
 import org.jetbrains.skia.paragraph.Direction
@@ -10,9 +12,8 @@ import org.jetbrains.skia.paragraph.HeightMode
 import kotlin.math.max
 import kotlin.test.Test
 
-class SimpleTextPainterTest {
+class TextPainterTest {
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun drawLocalFontListSample() {
         val padding = 10f
@@ -22,11 +23,16 @@ class SimpleTextPainterTest {
         val offsetArr = Array(FontMgr.default.familiesCount) {
             Offset.ZERO
         }
-        val painterArr: Array<SimpleTextPainter> = Array(FontMgr.default.familiesCount) {
+        val painterArr: Array<TextPainter> = Array(FontMgr.default.familiesCount) {
             val familyName = FontMgr.default.getFamilyName(it)
-            SimpleTextPainter(
-                text = "$SAMPLE_TEXT ($familyName)",
-                fontFamilyName = arrayOf(familyName)
+            TextPainter(
+                text = TextSpan(
+                    text = "$SAMPLE_TEXT ($familyName)",
+                    style = TextStyle(
+                        color = Color.BLACK,
+                        fontFamilies = listOf(familyName)
+                    )
+                )
             ).apply {
                 offsetArr[it] = Offset(padding, height)
                 layout(0f, Float.POSITIVE_INFINITY)
@@ -42,10 +48,9 @@ class SimpleTextPainterTest {
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun textAlign_ltr_test() {
-        println("\n\n\nSimpleTextPainterTest.textAlign_ltr_test()")
+        println("\n\n\nTextPainterTest.textAlign_ltr_test()")
         val boxWidth = 300f
         val boxHeight = 60f
 
@@ -53,10 +58,12 @@ class SimpleTextPainterTest {
             Offset(0f, boxHeight * it)
         }
 
-        val painterArr: Array<SimpleTextPainter> = Array(Alignment.entries.size) {
+        val painterArr: Array<TextPainter> = Array(Alignment.entries.size) {
             val textAlign: Alignment = Alignment.entries[it]
-            SimpleTextPainter(
-                text = "$SAMPLE_TEXT\n$SAMPLE_TEXT($textAlign)\n$SAMPLE_TEXT",
+            TextPainter(
+                text = TextSpan(
+                    text = "$SAMPLE_TEXT\n$SAMPLE_TEXT($textAlign)\n$SAMPLE_TEXT"
+                ),
                 textAlign = textAlign
             ).apply {
                 layout(0f, boxWidth)
@@ -66,7 +73,8 @@ class SimpleTextPainterTest {
         drawPainter("paint/text/text_align_ltr", boxWidth, boxHeight * Alignment.entries.size) { canvas ->
             painterArr.forEachIndexed { index, painter ->
                 val offset = offsetArr[index]
-                canvas.drawRect(Rect.makeXYWH(offset.x, offset.y, boxWidth, boxHeight),
+                canvas.drawRect(
+                    Rect.makeXYWH(offset.x, offset.y, boxWidth, boxHeight),
                     Paint().apply {
                         setStroke(true)
                         setARGB(144, 255, 0, 0)
@@ -79,10 +87,9 @@ class SimpleTextPainterTest {
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun textAlign_rtl_test() {
-        println("\n\n\nSimpleTextPainterTest.textAlign_rtl_test()")
+        println("\n\n\nTextPainterTest.textAlign_rtl_test()")
         val boxWidth = 300f
         val boxHeight = 60f
 
@@ -90,11 +97,13 @@ class SimpleTextPainterTest {
             Offset(0f, boxHeight * it)
         }
 
-        val painterArr: Array<SimpleTextPainter> = Array(Alignment.entries.size) {
+        val painterArr: Array<TextPainter> = Array(Alignment.entries.size) {
             val textAlign: Alignment = Alignment.entries[it]
 
-            SimpleTextPainter(
-                text = "$SAMPLE_TEXT_EN\n$SAMPLE_TEXT_EN($textAlign)\n$SAMPLE_TEXT_EN",
+            TextPainter(
+                text = TextSpan(
+                    text = "$SAMPLE_TEXT_EN\n$SAMPLE_TEXT_EN($textAlign)\n$SAMPLE_TEXT_EN"
+                ),
                 textAlign = textAlign,
                 textDirection = Direction.RTL
             ).apply {
@@ -105,7 +114,8 @@ class SimpleTextPainterTest {
         drawPainter("paint/text/text_align_rtl", boxWidth, boxHeight * Alignment.entries.size) { canvas ->
             painterArr.forEachIndexed { index, painter ->
                 val offset = offsetArr[index]
-                canvas.drawRect(Rect.makeXYWH(offset.x, offset.y, boxWidth, boxHeight),
+                canvas.drawRect(
+                    Rect.makeXYWH(offset.x, offset.y, boxWidth, boxHeight),
                     Paint().apply {
                         setStroke(true)
                         setARGB(144, 255, 0, 0)
@@ -118,10 +128,9 @@ class SimpleTextPainterTest {
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun heightModel_test() {
-        println("\n\n\nSimpleTextPainterTest.heightModel_test()")
+        println("\n\n\nTextPainterTest.heightModel_test()")
         val padding = 100f
         var width = 0f
         var height = 0f
@@ -129,11 +138,15 @@ class SimpleTextPainterTest {
         val offsetArr = Array(HeightMode.entries.size) {
             Offset.ZERO
         }
-        val painterArr: Array<SimpleTextPainter> = Array(HeightMode.entries.size) {
+        val painterArr: Array<TextPainter> = Array(HeightMode.entries.size) {
             val heightMode = HeightMode.entries[it]
-            SimpleTextPainter(
-                text = "$SAMPLE_TEXT($heightMode)",
-                fontSize = 200f,
+            TextPainter(
+                text = TextSpan(
+                    text = "$SAMPLE_TEXT($heightMode)",
+                    style = TextStyle(
+                        fontSize = 200f
+                    )
+                ),
                 textHeightMode = heightMode
             ).apply {
                 offsetArr[it] = Offset(padding, height)
@@ -151,14 +164,16 @@ class SimpleTextPainterTest {
         }
     }
 
-
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun emoji_test() {
-        println("\n\n\nSimpleTextPainterTest.emoji_test()")
-        val textPainter = SimpleTextPainter(
-            text = SAMPLE_EMOJI,
-            fontSize = 30f
+        println("\n\n\nPainterTest.emoji_test()")
+        val textPainter = TextPainter(
+            text = TextSpan(
+                text = SAMPLE_EMOJI,
+                style = TextStyle(
+                    fontSize = 30f
+                )
+            )
         ).apply {
             layout(0f, 600f)
         }
@@ -168,32 +183,34 @@ class SimpleTextPainterTest {
         }
     }
 
-
     @Test
     fun en_font_size_test() {
-        println("\n\n\nSimpleTextPainterTest.cn_font_size_test()")
+        println("\n\n\nTextPainterTest.cn_font_size_test()")
         font_size_test(LONG_TEXT_EN, "Noto Sans SC", "paint/text/en_font_size")
     }
 
     @Test
     fun cn_font_size_test() {
-        println("\n\n\nSimpleTextPainterTest.cn_font_size_test()")
+        println("\n\n\nTextPainterTest.cn_font_size_test()")
         font_size_test(LONG_TEXT_CN, "Noto Sans SC", "paint/text/cn_font_size")
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun font_size_test(text: String, fontFamilyName: String, imgPath: String) {
         val padding = 20f
         var y = padding
-        val painterList = mutableListOf<SimpleTextPainter>()
+        val painterList = mutableListOf<TextPainter>()
         var width = 0f
         var height = padding
         for (fontSize in 5..40) {
-            val textPainter = SimpleTextPainter(
-                text = "[$fontSize] $text",
-                color = Color.WHITE,
-                fontSize = fontSize.toFloat(),
-                fontFamilyName = arrayOf(fontFamilyName),
+            val textPainter = TextPainter(
+                text = TextSpan(
+                    text = "[$fontSize] $text",
+                    style = TextStyle(
+                        color = Color.WHITE,
+                        fontSize = fontSize.toFloat(),
+                        fontFamilies = listOf(fontFamilyName)
+                    )
+                )
             ).apply {
                 layout(0f, Float.POSITIVE_INFINITY)
             }

@@ -19,5 +19,7 @@ open class PositionedParser : WidgetParser {
             top = WidgetParser.parseAttrValue(CommonAttrDefine.TOP_N, element.attrs),
             right = WidgetParser.parseAttrValue(CommonAttrDefine.RIGHT_N, element.attrs),
             bottom = WidgetParser.parseAttrValue(CommonAttrDefine.BOTTOM_N, element.attrs),
-        )
+        ).also {
+            WidgetParser.createWidgetForChildElement(it, element.children)
+        }
 }
