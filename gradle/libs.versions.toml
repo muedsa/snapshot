@@ -2,7 +2,7 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
-kotlin = "1.9.24"
+kotlin = "2.0.0"
 ksp = "1.9.24-1.0.20"
 skiko = "0.0.0-SNAPSHOT"
 junit-jupiter-engine = "5.10.2"
