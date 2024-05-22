@@ -3,7 +3,7 @@
 
 [versions]
 kotlin = "1.9.24"
-ksp = "1.9.24-1.0.20"
+ksp = "2.0.0-1.0.21"
 skiko = "0.0.0-SNAPSHOT"
 junit-jupiter-engine = "5.10.2"
 
