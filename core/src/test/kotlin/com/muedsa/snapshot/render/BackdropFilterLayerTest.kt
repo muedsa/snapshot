@@ -13,12 +13,22 @@ class BackdropFilterLayerTest {
 
     @Test
     fun paint_test() {
-        val size = 200f
-
         val pictureLayer = PictureLayer().apply {
-            this.picture = painterToPicture(width = size, height = size) {
-                it.drawRect(Rect.makeXYWH(0f, 0f, size, size), paint = Paint().apply {
+            this.picture = painterToPicture(width = 200f, height = 200f) {
+                it.drawRect(Rect.makeXYWH(0f, 0f, 100f, 100f), paint = Paint().apply {
                     color = Color.RED
+                    mode = PaintMode.FILL
+                })
+                it.drawRect(Rect.makeXYWH(100f, 0f, 100f, 100f), paint = Paint().apply {
+                    color = Color.GREEN
+                    mode = PaintMode.FILL
+                })
+                it.drawRect(Rect.makeXYWH(0f, 100f, 100f, 100f), paint = Paint().apply {
+                    color = Color.BLUE
+                    mode = PaintMode.FILL
+                })
+                it.drawRect(Rect.makeXYWH(100f, 100f, 100f, 100f), paint = Paint().apply {
+                    color = Color.YELLOW
                     mode = PaintMode.FILL
                 })
             }
@@ -28,17 +38,17 @@ class BackdropFilterLayerTest {
             append(pictureLayer)
             append(
                 BackdropFilterLayer(
-                    bounds = Rect.makeXYWH(0f, 0f, size, size),
+                    bounds = Rect.makeXYWH(50f, 50f, 100f, 100f),
                     filter = ImageFilter.makeBlur(15f, 15f, mode = FilterTileMode.CLAMP),
                     blendMode = BlendMode.SRC
                 )
             )
         }
 
-        val picturePixels = layerToPixels(size, size, pictureLayer)
+        val picturePixels = layerToPixels(200f, 200f, pictureLayer)
         val pictureByteArray = picturePixels.buffer.bytes
 
-        val layerPixels = layerToPixels(size, size, layer)
+        val layerPixels = layerToPixels(200f, 200f, layer)
         val layerByteArray = layerPixels.buffer.bytes
 
         assertFalse(pictureByteArray.contentEquals(layerByteArray))
