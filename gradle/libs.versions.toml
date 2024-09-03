@@ -5,7 +5,7 @@
 ksp = "2.0.0-1.0.24"
 kotlin = "2.0.0"
 skiko = "0.0.0-SNAPSHOT"
-junit-jupiter-engine = "5.10.3"
+junit-jupiter-engine = "5.11.0"
 
 
 [libraries]
