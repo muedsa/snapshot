@@ -74,6 +74,13 @@ class SimpleNoLimitedNetworkImageCacheTest {
         }
     }
 
+    @Test
+    fun no_cache_test() {
+        SimpleNoLimitedNetworkImageCache.getImage(TEST_IMAGE_URL_1, true)
+        SimpleNoLimitedNetworkImageCache.getImage(TEST_IMAGE_URL_2, true)
+        SimpleNoLimitedNetworkImageCache.getImage(TEST_IMAGE_URL_3, true)
+    }
+
     companion object {
         const val TEST_IMAGE_URL_1 = "https://samples-files.com/samples/Images/jpg/480-360-sample.jpg"
         const val TEST_IMAGE_URL_2 = "https://samples-files.com/samples/Images/jpg/640-480-sample.jpg"

@@ -35,10 +35,11 @@ fun TextSpan.ImageEmojiSpan(
     opacity: Float = 1f,
     color: Int? = null,
     colorBlendMode: BlendMode? = null,
+    noCache: Boolean = false,
     cache: NetworkImageCache = NetworkImageCacheManager.defaultCache,
 ) {
     ImageEmojiSpan(
-        provider = { cache.getImage(url) },
+        provider = { cache.getImage(url, noCache) },
         alignment = alignment,
         baseline = baseline,
         width = width,

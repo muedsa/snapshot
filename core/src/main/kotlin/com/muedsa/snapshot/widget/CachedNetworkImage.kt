@@ -18,6 +18,7 @@ fun Widget.CachedNetworkImage(
     opacity: Float = 1f,
     color: Int? = null,
     colorBlendMode: BlendMode? = null,
+    noCache: Boolean = false,
     cache: NetworkImageCache = NetworkImageCacheManager.defaultCache,
 ) {
     buildChild(
@@ -32,6 +33,7 @@ fun Widget.CachedNetworkImage(
             opacity = opacity,
             color = color,
             colorBlendMode = colorBlendMode,
+            noCache = noCache,
             cache = cache
         ),
         content = { }
@@ -49,9 +51,10 @@ open class CachedNetworkImage(
     opacity: Float = 1f,
     color: Int? = null,
     colorBlendMode: BlendMode? = null,
+    noCache: Boolean = false,
     val cache: NetworkImageCache = NetworkImageCacheManager.defaultCache,
 ) : ProviderImage(
-    provider = { cache.getImage(url) },
+    provider = { cache.getImage(url, noCache) },
     width = width,
     height = height,
     fit = fit,

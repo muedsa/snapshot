@@ -6,7 +6,7 @@ interface NetworkImageCache {
 
     val name: String
 
-    fun getImage(url: String): Image
+    fun getImage(url: String, noCache: Boolean = false): Image
 
     fun clearAll()
 
@@ -16,5 +16,5 @@ interface NetworkImageCache {
 
     fun size(): Int
 
-    operator fun get(url: String): Image = getImage(url)
+    operator fun get(url: String): Image = getImage(url, false)
 }

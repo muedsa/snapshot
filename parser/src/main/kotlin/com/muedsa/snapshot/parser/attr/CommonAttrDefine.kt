@@ -55,6 +55,7 @@ object CommonAttrDefine {
     val FONT_STYLE = FontStyleAttrDefine("fontStyle", defaultValue = FontStyle.NORMAL)
     val PLACEHOLDER_ALIGNMENT: PlaceholderAlignmentAttrDefine = PlaceholderAlignmentAttrDefine(name = "alignment", defaultValue = PlaceholderAlignment.BASELINE)
     val RAW = BooleanAttrDefine(name = "raw", defaultValue = false)
+    val NO_CACHE = BooleanAttrDefine(name = "noCache", defaultValue = false)
     // _N 后缀表示可以为空的
 
     val ALIGNMENT_N: NullableAlignmentAttrDefine = NullableAlignmentAttrDefine(name = "alignment")

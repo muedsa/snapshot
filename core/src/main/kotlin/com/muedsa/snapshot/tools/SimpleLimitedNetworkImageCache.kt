@@ -15,7 +15,11 @@ class SimpleLimitedNetworkImageCache(
     private val cache: MutableMap<String, Image> = mutableMapOf()
 
     @Synchronized
-    override fun getImage(url: String): Image {
+    override fun getImage(url: String, noCache: Boolean): Image {
+        if (noCache) {
+            if (debug) println("Thread[${Thread.currentThread().name}] get image without cache: $url")
+            return Image.makeFromEncoded(getImageOverHttp(url))
+        }
         if (debug) println("Thread[${Thread.currentThread().name}] try get image from cache: $url")
         return cache.computeIfAbsent(url) {
             if (debug) println("Thread[${Thread.currentThread().name}] not found in cache: $url")
@@ -23,12 +27,10 @@ class SimpleLimitedNetworkImageCache(
         }
     }
 
-    @Synchronized
     override fun clearAll() {
         cache.clear()
     }
 
-    @Synchronized
     override fun clearImage(url: String) {
         cache.remove(url)
     }

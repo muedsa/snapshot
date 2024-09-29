@@ -23,6 +23,7 @@ open class ImageParser : WidgetParser {
         opacity = WidgetParser.parseAttrValue(CommonAttrDefine.OPACITY, element.attrs),
         color = WidgetParser.parseAttrValue(CommonAttrDefine.COLOR_N, element.attrs),
         colorBlendMode = WidgetParser.parseAttrValue(ATTR_COLOR_BLEND_MODE, element.attrs),
+        noCache = WidgetParser.parseAttrValue(CommonAttrDefine.NO_CACHE, element.attrs),
         cache = element.owner!!.getNetworkImageCache()
     )
 
