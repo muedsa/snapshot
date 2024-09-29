@@ -2,6 +2,7 @@ package com.muedsa.snapshot.tools
 
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class SimpleLimitedNetworkImageCacheTest {
 
@@ -36,10 +37,11 @@ class SimpleLimitedNetworkImageCacheTest {
 
     @Test
     fun no_cache_test() {
-        val cache = SimpleLimitedNetworkImageCache(maxSingleImageSize = 1, maxImageNum = 1, debug = true)
+        val cache = SimpleLimitedNetworkImageCache(maxSingleImageSize = 1024 * 1024 * 5, maxImageNum = 2, debug = true)
         cache.getImage(SimpleNoLimitedNetworkImageCacheTest.TEST_IMAGE_URL_1, true)
         cache.getImage(SimpleNoLimitedNetworkImageCacheTest.TEST_IMAGE_URL_2, true)
         cache.getImage(SimpleNoLimitedNetworkImageCacheTest.TEST_IMAGE_URL_3, true)
         cache.getImage(SimpleNoLimitedNetworkImageCacheTest.TEST_IMAGE_URL_4, true)
+        assertEquals(cache.count(), 0)
     }
 }
