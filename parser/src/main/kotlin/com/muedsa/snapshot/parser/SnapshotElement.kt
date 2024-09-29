@@ -80,7 +80,8 @@ class SnapshotElement(
         var NETWORK_IMAGE_CACHE_BUILDER: (SnapshotElement) -> NetworkImageCache = {
             SimpleLimitedNetworkImageCache(
                 maxImageNum = MAX_IMAGE_NUM,
-                maxSingleImageSize = MAX_SINGLE_IMAGE_SIZE
+                maxSingleImageSize = MAX_SINGLE_IMAGE_SIZE,
+                debug = it.debug
             )
         }
     }
