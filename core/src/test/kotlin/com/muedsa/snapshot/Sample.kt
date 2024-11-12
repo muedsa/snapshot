@@ -63,7 +63,7 @@ class Sample {
             SnapshotPNG {
                 Stack {
                     CachedNetworkImage(
-                        url = "https://samples-files.com/samples/Images/jpg/1280-720-sample.jpg",
+                        url = "https://samples-files.com/samples/images/jpg/1280-720-sample.jpg",
                         width = 400f,
                         height = 400f,
                     )

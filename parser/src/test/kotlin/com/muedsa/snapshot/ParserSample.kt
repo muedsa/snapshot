@@ -18,7 +18,7 @@ class ParserSample {
                         </Container>
                     </Row>
                     <Row>
-                        <Image width="200" height="200" url="https://samples-files.com/samples/Images/jpg/480-360-sample.jpg"/>
+                        <Image width="200" height="200" url="https://samples-files.com/samples/images/jpg/480-360-sample.jpg"/>
                         <Container color="#FFFF00" width="200" height="200"/>
                     </Row>
                 </Column>

@@ -14,21 +14,21 @@ class CachedNetworkImageTest {
         drawWidget(imagePathWithoutSuffix = name, debugInfo = description, drawDebug = false) {
             Row {
                 Column {
-                    CachedNetworkImage(url = "https://samples-files.com/samples/Images/jpg/1280-720-sample.jpg",
+                    CachedNetworkImage(url = "https://samples-files.com/samples/images/jpg/1280-720-sample.jpg",
                         width = 400f,
                         height = 400f
                     )
-                    CachedNetworkImage(url = "https://samples-files.com/samples/Images/jpg/1280-720-sample.jpg",
+                    CachedNetworkImage(url = "https://samples-files.com/samples/images/jpg/1280-720-sample.jpg",
                         width = 400f,
                         height = 400f
                     )
                 }
                 Column {
-                    CachedNetworkImage(url = "https://samples-files.com/samples/Images/jpg/1280-720-sample.jpg",
+                    CachedNetworkImage(url = "https://samples-files.com/samples/images/jpg/1280-720-sample.jpg",
                         width = 400f,
                         height = 400f
                     )
-                    CachedNetworkImage(url = "https://samples-files.com/samples/Images/jpg/1280-720-sample.jpg",
+                    CachedNetworkImage(url = "https://samples-files.com/samples/images/jpg/1280-720-sample.jpg",
                         width = 400f,
                         height = 400f
                     )
@@ -46,24 +46,24 @@ class CachedNetworkImageTest {
         drawWidget(imagePathWithoutSuffix = name, debugInfo = description, drawDebug = false) {
             Row {
                 Column {
-                    CachedNetworkImage(url = "https://samples-files.com/samples/Images/jpg/1280-720-sample.jpg",
+                    CachedNetworkImage(url = "https://samples-files.com/samples/images/jpg/1280-720-sample.jpg",
                         width = 400f,
                         height = 400f,
                         noCache = true
                     )
-                    CachedNetworkImage(url = "https://samples-files.com/samples/Images/jpg/1280-720-sample.jpg",
+                    CachedNetworkImage(url = "https://samples-files.com/samples/images/jpg/1280-720-sample.jpg",
                         width = 400f,
                         height = 400f,
                         noCache = true
                     )
                 }
                 Column {
-                    CachedNetworkImage(url = "https://samples-files.com/samples/Images/jpg/1280-720-sample.jpg",
+                    CachedNetworkImage(url = "https://samples-files.com/samples/images/jpg/1280-720-sample.jpg",
                         width = 400f,
                         height = 400f,
                         noCache = true
                     )
-                    CachedNetworkImage(url = "https://samples-files.com/samples/Images/jpg/1280-720-sample.jpg",
+                    CachedNetworkImage(url = "https://samples-files.com/samples/images/jpg/1280-720-sample.jpg",
                         width = 400f,
                         height = 400f,
                         noCache = true

@@ -24,7 +24,7 @@ dom like text as row request body, example:
             </Container>
         </Row>
         <Row>
-            <Image width="200" height="200" url="https://samples-files.com/samples/Images/png/480-360-sample.png"
+            <Image width="200" height="200" url="https://samples-files.com/samples/images/png/480-360-sample.png"
                 fit="COVER" />
             <Container color="#FFFF00" width="200" height="200" />
         </Row>
@@ -102,7 +102,7 @@ File("sample_image_and_text.png").writeBytes(
     SnapshotPNG {
         Stack {
             CachedNetworkImage(
-                url = "https://samples-files.com/samples/Images/jpg/1280-720-sample.jpg",
+                url = "https://samples-files.com/samples/images/jpg/1280-720-sample.jpg",
                 width = 400f,
                 height = 400f,
             )
@@ -142,7 +142,7 @@ val text = """
             </Container>
         </Row>
         <Row>
-            <Image width="200" height="200" url="https://samples-files.com/samples/Images/jpg/480-360-sample.jpg"/>
+            <Image width="200" height="200" url="https://samples-files.com/samples/images/jpg/480-360-sample.jpg"/>
             <Container color="#FFFF00" width="200" height="200"/>
         </Row>
     </Column>

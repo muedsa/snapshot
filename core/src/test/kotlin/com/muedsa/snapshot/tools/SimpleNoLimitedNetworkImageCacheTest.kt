@@ -87,10 +87,10 @@ class SimpleNoLimitedNetworkImageCacheTest {
     }
 
     companion object {
-        const val TEST_IMAGE_URL_1 = "https://samples-files.com/samples/Images/jpg/480-360-sample.jpg"
-        const val TEST_IMAGE_URL_2 = "https://samples-files.com/samples/Images/jpg/640-480-sample.jpg"
-        const val TEST_IMAGE_URL_3 = "https://samples-files.com/samples/Images/jpg/1280-720-sample.jpg"
-        const val TEST_IMAGE_URL_4 = "https://samples-files.com/samples/Images/jpg/1920-1080-sample.jpg"
-        const val TEST_IMAGE_URL_5 = "https://samples-files.com/samples/Images/jpg/3840-2160-sample.jpg"
+        const val TEST_IMAGE_URL_1 = "https://samples-files.com/samples/images/jpg/480-360-sample.jpg"
+        const val TEST_IMAGE_URL_2 = "https://samples-files.com/samples/images/jpg/640-480-sample.jpg"
+        const val TEST_IMAGE_URL_3 = "https://samples-files.com/samples/images/jpg/1280-720-sample.jpg"
+        const val TEST_IMAGE_URL_4 = "https://samples-files.com/samples/images/jpg/1920-1080-sample.jpg"
+        const val TEST_IMAGE_URL_5 = "https://samples-files.com/samples/images/jpg/3840-2160-sample.jpg"
     }
 }

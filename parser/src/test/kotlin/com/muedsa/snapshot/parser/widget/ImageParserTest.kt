@@ -9,7 +9,7 @@ class ImageParserTest {
     fun build_widget_test() {
         val text = """
             <Snapshot>
-                <Image url="https://samples-files.com/samples/Images/jpg/480-360-sample.jpg"/>
+                <Image url="https://samples-files.com/samples/images/jpg/480-360-sample.jpg"/>
             </Snapshot>
         """.trimIndent()
         println(text)
