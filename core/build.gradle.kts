@@ -10,7 +10,6 @@ var targetArch = when (val osArch: String = System.getProperty("os.arch")) {
     "aarch64" -> "arm64"
     else -> error("Unsupported arch: $osArch")
 }
-val target = "${targetOs}-${targetArch}"
 
 group = "com.muedsa.snapshot"
 version = "0.0.0-SNAPSHOT"
