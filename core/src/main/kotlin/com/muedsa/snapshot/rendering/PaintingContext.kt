@@ -1,6 +1,5 @@
 package com.muedsa.snapshot.rendering
 
-import com.muedsa.annotations.CallSuper
 import com.muedsa.geometry.Matrix44CMO
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.shift
@@ -64,7 +63,7 @@ class PaintingContext private constructor(
         containerLayer.append(currentLayer!!)
     }
 
-    @CallSuper
+    // note: call super
     protected fun stopRecordingIfNeeded() {
         if (!isRecording) {
             return

@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.jvm) apply false
-    alias(libs.plugins.ksp) apply false
     `java-library`
 }
 
