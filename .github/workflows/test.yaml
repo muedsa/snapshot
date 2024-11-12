@@ -17,11 +17,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: gradle
-
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Test with Gradle
-        run: ./gradlew test jar
+        run: ./gradlew test
       - name: Upload a Build Artifact
         if: always()
         uses: actions/upload-artifact@v4.4.3
@@ -29,4 +28,3 @@ jobs:
           name: test-results
           path: |
             **/build/libs
-            **/build/test-results
