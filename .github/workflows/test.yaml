@@ -27,4 +27,4 @@ jobs:
         with:
           name: test-results
           path: |
-            **/build/libs
+            **/build/test-results
