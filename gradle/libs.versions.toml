@@ -4,7 +4,7 @@
 [versions]
 kotlin = "2.1.0"
 skiko = "0.0.0-SNAPSHOT"
-junit-jupiter-engine = "5.11.3"
+junit-jupiter-engine = "5.11.4"
 
 
 [libraries]
