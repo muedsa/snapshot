@@ -26,6 +26,7 @@ open class BorderParser : WidgetParser {
     companion object {
 
         fun parseBorderDecoration(element: Element): BoxDecoration {
+            val color = WidgetParser.parseAttrValue(CommonAttrDefine.COLOR_N, element.attrs)
             val defaultBorder = WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_N, element.attrs) ?: BorderSide.NONE
             val borderLeft = WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_LEFT_N, element.attrs) ?: defaultBorder
             val borderTop = WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_TOP_N, element.attrs) ?: defaultBorder
@@ -49,6 +50,7 @@ open class BorderParser : WidgetParser {
                 WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_RADIUS_BOTTOM_RIGHT_N, element.attrs)
                     ?: defaultBorderRadius
             return BoxDecoration(
+                color = color,
                 border = Border(
                     left = borderLeft,
                     top = borderTop,

@@ -28,15 +28,16 @@ open class ContainerParser : WidgetParser {
             )
         } else null
         val borderDecoration = BorderParser.parseBorderDecoration(element)
+        val hasBorder: Boolean = !BorderParser.isNullBorder(borderDecoration)
         return Container(
             alignment = WidgetParser.parseAttrValue(CommonAttrDefine.ALIGNMENT_N, element.attrs),
             padding = WidgetParser.parseAttrValue(CommonAttrDefine.PADDING_N, element.attrs),
-            color = WidgetParser.parseAttrValue(CommonAttrDefine.COLOR_N, element.attrs),
+            color = if(hasBorder) null else WidgetParser.parseAttrValue(CommonAttrDefine.COLOR_N, element.attrs),
             width = WidgetParser.parseAttrValue(CommonAttrDefine.WIDTH_N, element.attrs),
             height = WidgetParser.parseAttrValue(CommonAttrDefine.HEIGHT_N, element.attrs),
             constraints = constraints,
             margin = WidgetParser.parseAttrValue(CommonAttrDefine.MARGIN_N, element.attrs),
-            decoration = if (BorderParser.isNullBorder(borderDecoration)) null else borderDecoration
+            decoration = if(hasBorder) borderDecoration else null,
         ).also {
             WidgetParser.createWidgetForChildElement(it, element.children)
         }

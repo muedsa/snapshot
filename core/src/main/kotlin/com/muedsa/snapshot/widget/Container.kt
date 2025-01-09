@@ -63,6 +63,13 @@ class Container(
 ) : SingleChildWidget(parent = parent) {
 
     init {
+        check(decoration != null || clipBehavior == ClipBehavior.NONE)
+        check(color == null || decoration == null) {
+            """
+                Cannot provide both a color and a decoration
+                To provide both, use `decoration = BoxDecoration(color = color)`.
+            """.trimIndent()
+        }
         constraints = if (width != null || height != null)
             constraints?.tighten(width = width, height = height) ?: BoxConstraints.tightFor(
                 width = width,
