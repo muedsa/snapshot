@@ -22,7 +22,7 @@ jobs:
       - name: Test with Gradle
         run: ./gradlew jar
       - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v4.6.1
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: jars
           path: |
