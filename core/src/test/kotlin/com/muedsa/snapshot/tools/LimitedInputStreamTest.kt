@@ -21,7 +21,7 @@ class LimitedInputStreamTest {
 
         val inputStream2 = LimitedInputStream(ByteArrayInputStream(testBytes), limit)
         inputStream2.use {
-            assertThrows<IOException> { it.readAllBytes() }
+            assertThrows<IOException> { it.readBytes() }
         }
     }
 }

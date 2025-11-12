@@ -51,7 +51,7 @@ class LimitedImageInputStreamTest {
 
     private fun readAll(url: String) {
         LimitedImageInputStream(URL(url).openStream(), Int.MAX_VALUE).use {
-            it.readAllBytes()
+            it.readBytes()
         }
     }
 }

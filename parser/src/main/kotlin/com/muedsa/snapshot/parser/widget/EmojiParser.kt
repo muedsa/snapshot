@@ -11,7 +11,7 @@ class EmojiParser : WidgetParser {
     override val containerMode: ContainerMode = ContainerMode.NONE
 
     override fun buildWidget(element: Element): Widget {
-        throw IllegalCallerException("Element [$id] $this cant not buildWidget, it can only be used in the Text")
+        throw IllegalStateException("Element [$id] $this cant not buildWidget, it can only be used in the Text")
     }
 
 }

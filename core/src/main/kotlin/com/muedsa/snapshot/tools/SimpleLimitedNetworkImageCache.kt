@@ -45,7 +45,7 @@ class SimpleLimitedNetworkImageCache(
         if (SimpleNoLimitedNetworkImageCache.debug) println("Thread[${Thread.currentThread().name}] request http image: $url")
         check(count() + 1 <= maxImageNum) { "Exceeded maximum number [$maxImageNum] of image http requests" }
         try {
-            return URL(url).openStream().use { LimitedImageInputStream(it, maxSingleImageSize).readAllBytes() }
+            return URL(url).openStream().use { LimitedImageInputStream(it, maxSingleImageSize).readBytes() }
         } catch (e: FileNotFoundException) {
             throw IllegalStateException("Get http 404 from $url")
         }

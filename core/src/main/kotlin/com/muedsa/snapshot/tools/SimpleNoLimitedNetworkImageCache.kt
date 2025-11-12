@@ -55,18 +55,18 @@ object SimpleNoLimitedNetworkImageCache : NetworkImageCache {
         if (debug) println("Thread[${Thread.currentThread().name}] request http image: $url")
         try {
             return URL(url).openStream().use {
-                val readAllBytes = it.readAllBytes()
-                check(ImageFormatValidator.valid(readAllBytes)) {
+                val bytes = it.readBytes()
+                check(ImageFormatValidator.valid(bytes)) {
                     "Data stream is not available image format, header hex: ${
-                        readAllBytes.copyOfRange(
+                        bytes.copyOfRange(
                             0,
                             ImageFormatValidator.NECESSARY_MAGIC_LENGTH
                         ).toHexString()
                     }"
                 }
-                readAllBytes
+                bytes
             }
-        } catch (e: FileNotFoundException) {
+        } catch (_: FileNotFoundException) {
             throw IllegalStateException("Get http 404 from $url")
         }
     }

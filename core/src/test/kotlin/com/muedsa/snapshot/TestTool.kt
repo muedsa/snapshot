@@ -14,6 +14,7 @@ import com.muedsa.snapshot.widget.*
 import com.muedsa.snapshot.widget.text.Text
 import org.jetbrains.skia.*
 import java.io.File
+import java.nio.file.FileSystems
 import java.nio.file.Path
 import kotlin.io.path.createDirectory
 import kotlin.io.path.createParentDirectories
@@ -24,13 +25,13 @@ fun noLimitedLayout(renderBox: RenderBox) {
     renderBox.layout(BoxConstraints())
 }
 
-val testImagesDirection: Path = Path.of("build/test-results/test-image-outputs").apply {
+val testImagesDirection: Path = FileSystems.getDefault().getPath("build/test-results/test-image-outputs").apply {
     if (!exists()) {
         createDirectory()
     }
 }
 
-val rootDirection: Path = Path.of("..")
+val rootDirection: Path = FileSystems.getDefault().getPath("..")
 
 fun getTestPngFile(imagePathWithoutSuffix: String): File {
     var suffix = imagePathWithoutSuffix

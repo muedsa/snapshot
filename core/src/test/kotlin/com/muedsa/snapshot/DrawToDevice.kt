@@ -30,7 +30,7 @@ fun main() {
             preferredSize = Dimension(ceil(size.width).toInt(), ceil(size.height).toInt())
         }
         skiaLayer.attachTo(window.contentPane)
-        skiaLayer.needRedraw()
+        skiaLayer.needRender()
         window.pack()
         window.isVisible = true
     }
