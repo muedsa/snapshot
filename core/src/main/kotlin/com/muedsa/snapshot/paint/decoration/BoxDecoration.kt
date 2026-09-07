@@ -7,6 +7,7 @@ import com.muedsa.geometry.shortestSide
 import com.muedsa.snapshot.paint.gradient.Gradient
 import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.Path
+import org.jetbrains.skia.PathBuilder
 import org.jetbrains.skia.Rect
 
 class BoxDecoration(
@@ -35,14 +36,14 @@ class BoxDecoration(
                 val center: Offset = rect.center
                 val radius: Float = rect.shortestSide / 2f
                 val square: Rect = makeRectFromCircle(center, radius)
-                Path().addOval(square)
+                PathBuilder().addOval(square).detach()
             }
 
             BoxShape.RECTANGLE -> {
                 if (borderRadius != null) {
-                    Path().addRRect(borderRadius.toRRect(rect))
+                    PathBuilder().addRRect(borderRadius.toRRect(rect)).detach()
                 } else {
-                    Path().addRect(rect)
+                    PathBuilder().addRect(rect).detach()
                 }
             }
         }

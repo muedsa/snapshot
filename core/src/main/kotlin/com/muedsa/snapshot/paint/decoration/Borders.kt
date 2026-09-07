@@ -17,21 +17,21 @@ fun paintBorder(
         strokeWidth = 1f
     }
 
-    val path: Path = Path()
     when (top.style) {
         BorderStyle.SOLID -> {
             paint.color = top.color
-            path.reset()
-            path.moveTo(rect.left, rect.top)
-            path.lineTo(rect.right, rect.top)
-            if (top.width == 0f) {
-                paint.mode = PaintMode.STROKE
-            } else {
-                paint.mode = PaintMode.FILL
-                path.lineTo(rect.right - right.width, rect.top + top.width)
-                path.lineTo(rect.left + left.width, rect.top + top.width)
+            val builder = PathBuilder().apply {
+                moveTo(rect.left, rect.top)
+                lineTo(rect.right, rect.top)
+                if (top.width == 0f) {
+                    paint.mode = PaintMode.STROKE
+                } else {
+                    paint.mode = PaintMode.FILL
+                    lineTo(rect.right - right.width, rect.top + top.width)
+                    lineTo(rect.left + left.width, rect.top + top.width)
+                }
             }
-            canvas.drawPath(path, paint)
+            canvas.drawPath(builder.detach(), paint)
         }
 
         BorderStyle.NONE -> Unit
@@ -40,17 +40,18 @@ fun paintBorder(
     when (right.style) {
         BorderStyle.SOLID -> {
             paint.color = right.color
-            path.reset()
-            path.moveTo(rect.right, rect.top)
-            path.lineTo(rect.right, rect.bottom)
-            if (right.width == 0f) {
-                paint.mode = PaintMode.STROKE
-            } else {
-                paint.mode = PaintMode.FILL
-                path.lineTo(rect.right - right.width, rect.bottom - bottom.width)
-                path.lineTo(rect.right - right.width, rect.top + top.width)
+            val builder = PathBuilder().apply {
+                moveTo(rect.right, rect.top)
+                lineTo(rect.right, rect.bottom)
+                if (right.width == 0f) {
+                    paint.mode = PaintMode.STROKE
+                } else {
+                    paint.mode = PaintMode.FILL
+                    lineTo(rect.right - right.width, rect.bottom - bottom.width)
+                    lineTo(rect.right - right.width, rect.top + top.width)
+                }
             }
-            canvas.drawPath(path, paint)
+            canvas.drawPath(builder.detach(), paint)
         }
 
         BorderStyle.NONE -> Unit
@@ -59,17 +60,18 @@ fun paintBorder(
     when (bottom.style) {
         BorderStyle.SOLID -> {
             paint.color = bottom.color
-            path.reset()
-            path.moveTo(rect.right, rect.bottom)
-            path.lineTo(rect.left, rect.bottom)
-            if (bottom.width == 0f) {
-                paint.mode = PaintMode.STROKE
-            } else {
-                paint.mode = PaintMode.FILL
-                path.lineTo(rect.left + left.width, rect.bottom - bottom.width)
-                path.lineTo(rect.right - right.width, rect.bottom - bottom.width)
+            val builder = PathBuilder().apply {
+                moveTo(rect.right, rect.bottom)
+                lineTo(rect.left, rect.bottom)
+                if (bottom.width == 0f) {
+                    paint.mode = PaintMode.STROKE
+                } else {
+                    paint.mode = PaintMode.FILL
+                    lineTo(rect.left + left.width, rect.bottom - bottom.width)
+                    lineTo(rect.right - right.width, rect.bottom - bottom.width)
+                }
             }
-            canvas.drawPath(path, paint)
+            canvas.drawPath(builder.detach(), paint)
         }
 
         BorderStyle.NONE -> Unit
@@ -78,17 +80,18 @@ fun paintBorder(
     when (left.style) {
         BorderStyle.SOLID -> {
             paint.color = left.color
-            path.reset()
-            path.moveTo(rect.left, rect.bottom)
-            path.lineTo(rect.left, rect.top)
-            if (left.width == 0f) {
-                paint.mode = PaintMode.STROKE
-            } else {
-                paint.mode = PaintMode.FILL
-                path.lineTo(rect.left + left.width, rect.top + top.width)
-                path.lineTo(rect.left + left.width, rect.bottom - bottom.width)
+            val builder = PathBuilder().apply {
+                moveTo(rect.left, rect.bottom)
+                lineTo(rect.left, rect.top)
+                if (left.width == 0f) {
+                    paint.mode = PaintMode.STROKE
+                } else {
+                    paint.mode = PaintMode.FILL
+                    lineTo(rect.left + left.width, rect.top + top.width)
+                    lineTo(rect.left + left.width, rect.bottom - bottom.width)
+                }
             }
-            canvas.drawPath(path, paint)
+            canvas.drawPath(builder.detach(), paint)
         }
 
         BorderStyle.NONE -> Unit

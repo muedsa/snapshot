@@ -31,10 +31,11 @@ class ClipPathLayerTest {
 
         val clipLayer = ClipPathLayer(
             clipBehavior = ClipBehavior.ANTI_ALIAS,
-            clipPath = Path()
+            clipPath = PathBuilder()
                 .lineTo(size, 0f)
                 .lineTo(size, size)
                 .lineTo(0f, 0f) // clip ◥
+                .detach()
         ).apply {
             append(pictureLayer)
         }

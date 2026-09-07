@@ -119,9 +119,7 @@ class PaintingContext private constructor(
             return null
         }
         val offsetBounds: Rect = bounds.shift(offset)
-        val offsetClipPath: Path = Path().also {
-            clipPath.offset(offset.x, offset.y, it)
-        }
+        val offsetClipPath: Path = PathBuilder(clipPath).offset(offset.x, offset.y).detach()
         val layer = ClipPathLayer(
             clipPath = offsetClipPath,
             clipBehavior = clipBehavior

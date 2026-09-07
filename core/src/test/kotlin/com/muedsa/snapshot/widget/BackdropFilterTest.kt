@@ -185,14 +185,14 @@ class BackdropFilterTest {
             ) {
                 ClipPath(
                     clipper = {
-                        Path().apply {
+                        PathBuilder().apply {
                             arcTo(
                                 oval = Rect.Companion.makeWH(it.width, it.height),
                                 startAngle = 45f,
                                 sweepAngle = 180f,
                                 forceMoveTo = true
                             )
-                        }
+                        }.detach()
                     }
                 ) {
                     Container(

@@ -5,7 +5,6 @@ import com.muedsa.geometry.BoxAlignment
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.shortestSide
 import org.jetbrains.skia.FilterTileMode
-import org.jetbrains.skia.GradientStyle
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.Shader
 import org.jetbrains.skia.paragraph.Direction
@@ -31,31 +30,21 @@ class RadialGradient(
             Shader.makeRadialGradient(
                 x = centerOffset.x,
                 y = centerOffset.y,
-                r = radius * rect.shortestSide,
-                colors = colors,
-                positions = impliedStops(),
-                style = GradientStyle(
-                    tileMode = tileMode,
-                    isPremul = true,
-                    localMatrix = transform?.transform(rect)?.toRMO()?.asMatrix33()
-                )
+                radius = radius * rect.shortestSide,
+                gradient = buildSkiaGradient(tileMode = tileMode, inPremul = true),
+                localMatrix = transform?.transform(rect)?.toRMO()?.asMatrix33(),
             )
         } else {
             val focalOffset: Offset = focal.resolve(textDirection).withinRect(rect)
             Shader.makeTwoPointConicalGradient(
                 x0 = centerOffset.x,
                 y0 = centerOffset.y,
-                r0 = radius * rect.shortestSide,
+                startRadius = radius * rect.shortestSide,
                 x1 = focalOffset.x,
                 y1 = focalOffset.y,
-                r1 = focalRadius * rect.shortestSide,
-                colors = colors,
-                positions = impliedStops(),
-                style = GradientStyle(
-                    tileMode = tileMode,
-                    isPremul = true,
-                    localMatrix = transform?.transform(rect)?.toRMO()?.asMatrix33()
-                )
+                endRadius = focalRadius * rect.shortestSide,
+                gradient = buildSkiaGradient(tileMode = tileMode, inPremul = true),
+                localMatrix = transform?.transform(rect)?.toRMO()?.asMatrix33(),
             )
         }
     }

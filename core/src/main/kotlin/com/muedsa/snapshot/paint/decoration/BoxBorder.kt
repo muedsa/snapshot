@@ -13,9 +13,9 @@ abstract class BoxBorder : ShapeBorder() {
 
     override fun add(other: ShapeBorder, reversed: Boolean): ShapeBorder? = null
 
-    override fun getInnerPath(rect: Rect): Path = Path().addRect(dimensions.deflateRect(rect))
+    override fun getInnerPath(rect: Rect): Path = PathBuilder().addRect(dimensions.deflateRect(rect)).detach()
 
-    override fun getOuterPath(rect: Rect): Path = Path().addRect(rect)
+    override fun getOuterPath(rect: Rect): Path = PathBuilder().addRect(rect).detach()
 
     override fun paintInterior(canvas: Canvas, rect: Rect, paint: Paint) {
         // For `ShapeDecoration(shape: Border.all())`, a rectangle with sharp edges

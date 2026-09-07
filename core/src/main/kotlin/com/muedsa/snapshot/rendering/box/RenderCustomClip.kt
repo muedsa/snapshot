@@ -39,9 +39,23 @@ abstract class RenderCustomClip<T>(
                     y0 = 0f,
                     x1 = 10f,
                     y1 = 10f,
-                    colors = intArrayOf(0x00000000, 0xFFFF00FF.toInt(), 0xFFFF00FF.toInt(), 0x00000000),
-                    positions = floatArrayOf(0.25f, 0.25f, 0.75f, 0.75f),
-                    style = GradientStyle.DEFAULT.withTileMode(FilterTileMode.REPEAT)
+                    gradient = Gradient(
+                        colors = Gradient.Colors(
+                            colors = arrayOf(
+                                Color4f(0x00000000),
+                                Color4f(0xFFFF00FF.toInt()),
+                                Color4f(0xFFFF00FF.toInt()),
+                                Color4f(0x00000000)
+                            ),
+                            positions = floatArrayOf(0.25f, 0.25f, 0.75f, 0.75f),
+                            tileMode = FilterTileMode.REPEAT,
+                            colorSpace = null,
+                        ),
+                        interpolation = Gradient.Interpolation(
+                            inPremul = Gradient.Interpolation.InPremul.NO
+                        )
+                    ),
+                    localMatrix = null,
                 )
                 strokeWidth = 2f
                 mode = PaintMode.STROKE

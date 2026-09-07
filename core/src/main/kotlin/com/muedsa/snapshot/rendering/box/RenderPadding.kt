@@ -39,19 +39,17 @@ class RenderPadding(
         if (child != null) {
             val innerRect: Rect = padding.deflateRect(outerRect)
             context.canvas.drawPath(
-                Path().apply {
-                    fillMode = PathFillMode.EVEN_ODD
-                    addRect(outerRect)
-                    addRect(innerRect)
-                },
+                PathBuilder(PathFillMode.EVEN_ODD)
+                    .addRect(outerRect)
+                    .addRect(innerRect)
+                    .detach(),
                 Paint().apply { color = Color.makeARGB(144, 0, 144, 255) }
             )
             context.canvas.drawPath(
-                Path().apply {
-                    fillMode = PathFillMode.EVEN_ODD
-                    addRect(innerRect.inflate(2f).intersect(outerRect)!!)
-                    addRect(innerRect)
-                },
+                PathBuilder(PathFillMode.EVEN_ODD)
+                    .addRect(innerRect.inflate(2f).intersect(outerRect)!!)
+                    .addRect(innerRect)
+                    .detach(),
                 Paint().apply { color = Color.makeARGB(255, 0, 144, 255) })
         } else {
             context.canvas.drawRect(outerRect, Paint().apply { color = Color.makeARGB(144, 144, 144, 144) })

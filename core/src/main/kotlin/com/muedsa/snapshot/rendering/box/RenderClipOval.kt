@@ -6,6 +6,7 @@ import com.muedsa.snapshot.kDefaultFontSize
 import com.muedsa.snapshot.rendering.ClipBehavior
 import com.muedsa.snapshot.rendering.PaintingContext
 import org.jetbrains.skia.Path
+import org.jetbrains.skia.PathBuilder
 import org.jetbrains.skia.Rect
 
 class RenderClipOval(
@@ -24,7 +25,7 @@ class RenderClipOval(
     private fun getClipPath(rect: Rect): Path {
         if (rect != cachedRect) {
             cachedRect = rect
-            cachedPath = Path().addOval(cachedRect!!)
+            cachedPath = PathBuilder().addOval(cachedRect!!).detach()
         }
         return cachedPath
     }
@@ -51,7 +52,7 @@ class RenderClipOval(
             super.debugPaint(context, offset)
             if (clipBehavior != ClipBehavior.NONE) {
                 context.canvas.drawPath(
-                    Path().also { getClipPath(getClip()).offset(offset.x, offset.y, it) },
+                    PathBuilder(getClipPath(getClip())).offset(offset.x, offset.y).detach(),
                     debugPaint!!
                 )
                 debugText!!.paint(

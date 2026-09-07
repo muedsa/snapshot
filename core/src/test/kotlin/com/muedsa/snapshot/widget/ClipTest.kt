@@ -7,7 +7,7 @@ import com.muedsa.geometry.Size
 import com.muedsa.snapshot.drawWidget
 import com.muedsa.snapshot.paint.decoration.BorderRadius
 import org.jetbrains.skia.Color
-import org.jetbrains.skia.Path
+import org.jetbrains.skia.PathBuilder
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.test.Test
@@ -138,13 +138,13 @@ class ClipTest {
                     clipper = {
                         val r: Float = it.width / 2f
                         val c: Float = it.height / 2f
-                        Path().apply {
+                        PathBuilder().apply {
                             moveTo(x = c + r, y = c)
                             for (i in 1..7) {
                                 val a: Float = 2.6927936f * i
                                 lineTo(c + r * cos(a), c + r * sin(a))
                             }
-                        }
+                        }.detach()
                     }
                 ) {
                     Container(

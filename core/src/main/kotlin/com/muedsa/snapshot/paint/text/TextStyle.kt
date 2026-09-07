@@ -1,6 +1,8 @@
 package com.muedsa.snapshot.paint.text
 
+import org.jetbrains.skia.FontEdging
 import org.jetbrains.skia.FontFeature
+import org.jetbrains.skia.FontHinting
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.Paint
 import org.jetbrains.skia.Typeface
@@ -24,7 +26,10 @@ data class TextStyle (
     var wordSpacing: Float? = null,
     var typeface: Typeface? = null,
     var locale: String? = null,
-    var baselineMode: BaselineMode? = null
+    var baselineMode: BaselineMode? = null,
+    var fontEdging: FontEdging? = null,
+    var fontHinting: FontHinting? = null,
+    var subpixel: Boolean? = null,
 ) {
 
     fun isEmpty(): Boolean =
@@ -32,6 +37,7 @@ data class TextStyle (
                 && fontStyle == null && shadows == null && fontFeatures == null && fontSize == null
                 && fontFamilies == null && height == null && topRatio == null && letterSpacing == null
                 && wordSpacing == null && typeface == null && locale == null && baselineMode == null
+                && fontEdging == null && fontHinting == null && subpixel == null
 
     fun mergeFrom(style: TextStyle): TextStyle {
         return copy(
@@ -50,7 +56,10 @@ data class TextStyle (
             wordSpacing = wordSpacing ?: style.wordSpacing,
             typeface = typeface ?: style.typeface,
             locale = locale ?: style.locale,
-            baselineMode = baselineMode ?: style.baselineMode
+            baselineMode = baselineMode ?: style.baselineMode,
+            fontEdging = fontEdging ?: style.fontEdging,
+            fontHinting = fontHinting ?: style.fontHinting,
+            subpixel = subpixel ?: style.subpixel
         )
     }
 
@@ -75,6 +84,9 @@ data class TextStyle (
         typeface?.let { textStyle.typeface = it }
         locale?.let { textStyle.locale = it }
         baselineMode?.let { textStyle.baselineMode = it }
+        fontEdging?.let { textStyle.fontEdging = it }
+        fontHinting?.let { textStyle.fontHinting = it }
+        subpixel?.let { textStyle.subpixel = it }
         return textStyle
     }
 }

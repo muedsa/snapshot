@@ -8,7 +8,7 @@ import com.muedsa.snapshot.rendering.box.RenderClipPath
 import com.muedsa.snapshot.rendering.box.RenderColoredBox
 import com.muedsa.snapshot.rendering.box.RenderConstrainedBox
 import org.jetbrains.skia.Color
-import org.jetbrains.skia.Path
+import org.jetbrains.skia.PathBuilder
 import kotlin.test.*
 
 class RenderClipPathTest {
@@ -30,10 +30,11 @@ class RenderClipPathTest {
         val renderClip = RenderClipPath(
             clipBehavior = ClipBehavior.ANTI_ALIAS,
             clipper = {
-                Path()
+                PathBuilder()
                     .lineTo(it.x, 0f)
                     .lineTo(it.x, it.y)
                     .lineTo(0f, 0f) // clip ◥
+                    .detach()
             },
         ).apply {
             appendChild(originRenderBox)
@@ -42,10 +43,11 @@ class RenderClipPathTest {
         val renderNoneClip = RenderClipPath(
             clipBehavior = ClipBehavior.NONE,
             clipper = {
-                Path()
+                PathBuilder()
                     .lineTo(it.x, 0f)
                     .lineTo(it.x, it.y)
                     .lineTo(0f, 0f) // clip ◥
+                    .detach()
             },
         ).apply {
             appendChild(originRenderBox)
