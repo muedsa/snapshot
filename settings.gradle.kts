@@ -17,3 +17,4 @@ dependencyResolutionManagement {
 rootProject.name = "snapshot"
 include(":core")
 include(":parser")
+include(":testkit")
