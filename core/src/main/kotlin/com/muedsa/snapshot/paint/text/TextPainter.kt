@@ -78,7 +78,6 @@ class TextPainter(
                 textHeightMode?.let {
                     this.heightMode = it
                 }
-                fontRastrSettings = DEFAULT_FONT_RASTR_SETTINGS
             },
             fc = FONT_COLLECTION
         ).also {
@@ -285,15 +284,13 @@ class TextPainter(
             setEnableFallback(true)
         }
 
-        val DEFAULT_FONT_RASTR_SETTINGS: FontRastrSettings = FontRastrSettings(
-            edging = FontEdging.SUBPIXEL_ANTI_ALIAS,
-            hinting = FontHinting.NORMAL,
-            subpixel = true
-        )
-
         var DEFAULT_TEXT_STYLE: TextStyle = TextStyle(
             color = kDefaultTextColor,
             fontSize = kDefaultFontSize
-        )
+        ).apply {
+            fontEdging = FontEdging.SUBPIXEL_ANTI_ALIAS
+            fontHinting = FontHinting.NORMAL
+            subpixel = true
+        }
     }
 }
