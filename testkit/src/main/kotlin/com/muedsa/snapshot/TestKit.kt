@@ -3,6 +3,7 @@ package com.muedsa.snapshot
 import com.muedsa.snapshot.rendering.LayoutNode
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.toLayoutNode
+import com.muedsa.snapshot.testkit.GoldenEngine
 import com.muedsa.snapshot.widget.Widget
 import org.jetbrains.skia.*
 import kotlin.math.abs
@@ -138,3 +139,49 @@ fun LayoutNode.firstMatching(predicate: (RenderBox) -> Boolean): LayoutNode? {
  */
 inline fun <reified T : RenderBox> LayoutNode.findType(noinline where: (T) -> Boolean = { true }): LayoutNode? =
     firstMatching { it is T && where(it) }
+
+/* ---------- golden 层 ---------- */
+
+/**
+ * 将 widget 内容渲染为像素快照并与 golden 基准比对(默认 verify 模式)。
+ *
+ * **确定性原则**:仅用于可确定复现的内容(纯几何/渐变/本地位图/纯 shader)。
+ * 文本依赖操作系统字体,以及任何外网/随机/时变内容在跨机器、跨平台上不可复现,一律禁止进入 golden。
+ *
+ * 模式由系统属性 `-PsnapshotTest.mode`(或环境变量 `SNAPSHOT_TEST_MODE`)控制:
+ *  - verify(默认):要求 `src/test/resources/golden/<id>.png` 存在并逐像素比对,失配抛 AssertionError;
+ *  - record:仅当基准不存在时写入,已存在则报错;
+ *  - update:无条件覆盖同名基准。
+ */
+fun golden(id: String, background: Int = Color.WHITE, content: Widget.() -> Unit) {
+    GoldenEngine.assertMatchesBaseline(snapshotImage(background = background, content = content), id)
+}
+
+/**
+ * 在指定画布尺寸上执行 painter 绘制并与 golden 基准比对(默认 verify 模式)。
+ *
+ * 确定性原则与模式说明同 [golden]:仅接受可确定性复现的纯绘制内容,文本/外网/随机/时变内容禁止进入 golden。
+ */
+fun goldenPixels(
+    id: String,
+    width: Float,
+    height: Float,
+    background: Int = Color.WHITE,
+    painter: (Canvas) -> Unit,
+) {
+    GoldenEngine.assertMatchesBaseline(painterImage(width, height, background, painter), id)
+}
+
+/**
+ * 直接比对一张已渲染 [Image] 与 golden 基准(默认 verify 模式),支持逐像素容差与失配比例上限。
+ *
+ * 确定性原则与模式说明同 [golden];供绕过 widget/尺寸 DSL、直接构造像素的场景使用。
+ */
+fun assertImageMatchesBaseline(
+    image: Image,
+    id: String,
+    perPixelTolerance: Int = 0,
+    allowMismatchRatio: Double = 0.0,
+) {
+    GoldenEngine.assertMatchesBaseline(image, id, perPixelTolerance, allowMismatchRatio)
+}
