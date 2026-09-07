@@ -1,5 +1,8 @@
 package com.muedsa.snapshot.paint.gradient
 
+import org.jetbrains.skia.Color4f
+import org.jetbrains.skia.FilterTileMode
+import org.jetbrains.skia.Gradient as SkiaGradient
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.Shader
 import org.jetbrains.skia.paragraph.Direction
@@ -21,6 +24,25 @@ abstract class Gradient(
         }
         return newStops
     }
+
+    protected fun buildSkiaGradient(
+        tileMode: FilterTileMode,
+        inPremul: Boolean,
+    ): SkiaGradient = SkiaGradient(
+        colors = SkiaGradient.Colors(
+            colors = Array(colors.size) { Color4f(colors[it]) },
+            positions = impliedStops(),
+            tileMode = tileMode,
+            colorSpace = null,
+        ),
+        interpolation = SkiaGradient.Interpolation(
+            inPremul = if (inPremul) {
+                SkiaGradient.Interpolation.InPremul.YES
+            } else {
+                SkiaGradient.Interpolation.InPremul.NO
+            }
+        )
+    )
 
     abstract fun createShader(rect: Rect, textDirection: Direction? = null): Shader
 

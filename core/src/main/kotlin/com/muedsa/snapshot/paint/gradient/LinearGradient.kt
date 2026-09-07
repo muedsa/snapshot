@@ -3,7 +3,6 @@ package com.muedsa.snapshot.paint.gradient
 import com.muedsa.geometry.AlignmentGeometry
 import com.muedsa.geometry.BoxAlignment
 import org.jetbrains.skia.FilterTileMode
-import org.jetbrains.skia.GradientStyle
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.Shader
 import org.jetbrains.skia.paragraph.Direction
@@ -30,13 +29,8 @@ class LinearGradient(
             y0 = beginOffset.y,
             x1 = endOffset.x,
             y1 = endOffset.y,
-            colors = colors,
-            positions = impliedStops(),
-            style = GradientStyle(
-                tileMode = tileMode,
-                isPremul = false,
-                localMatrix = transform?.transform(rect)?.toRMO()?.asMatrix33()
-            )
+            gradient = buildSkiaGradient(tileMode = tileMode, inPremul = false),
+            localMatrix = transform?.transform(rect)?.toRMO()?.asMatrix33(),
         )
     }
 }
