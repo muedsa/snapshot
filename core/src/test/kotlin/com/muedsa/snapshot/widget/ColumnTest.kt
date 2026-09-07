@@ -1,46 +1,49 @@
 package com.muedsa.snapshot.widget
 
-import com.muedsa.snapshot.drawWidget
-import com.muedsa.snapshot.rendering.flex.CrossAxisAlignment
-import org.jetbrains.skia.Color
-import org.jetbrains.skia.paragraph.BaselineMode
+import com.muedsa.snapshot.assertGlobalRect
+import com.muedsa.snapshot.assertSize
+import com.muedsa.snapshot.findType
+import com.muedsa.snapshot.rendering.LayoutNode
+import com.muedsa.snapshot.rendering.box.RenderConstrainedBox
+import com.muedsa.snapshot.rendering.flex.MainAxisAlignment
+import com.muedsa.snapshot.rootLayout
 import kotlin.test.Test
 
 class ColumnTest {
-    @Test
-    fun crossAxisAlignment_test() {
-        println("\n\n\nColumnTest.crossAxisAlignment_test()")
-        //val crossAxisAlignmentArr = CrossAxisAlignment.entries.toTypedArray()
-        val crossAxisAlignmentArr = arrayOf(CrossAxisAlignment.START)
-        crossAxisAlignmentArr.forEachIndexed { index, crossAxisAlignment ->
-            val name = "widget/column/crossAxis$index"
-            val description = "Column($crossAxisAlignment)"
-            println("\n\ndraw: $name\n$description")
-            drawWidget(imagePathWithoutSuffix = name, debugInfo = description) {
-                if (crossAxisAlignment == CrossAxisAlignment.STRETCH) {
-                    LimitedBox(
-                        maxWidth = 1000f,
-                        maxHeight = 1000f,
-                    ) {
-                        Column(
-                            crossAxisAlignment = crossAxisAlignment
-                        ) {
-                            Container(width = 100f, height = 100f, color = Color.RED)
-                            Container(width = 300f, height = 300f, color = Color.GREEN)
-                            Container(width = 200f, height = 200f, color = Color.BLUE)
-                        }
-                    }
-                } else {
-                    Column(
-                        crossAxisAlignment = crossAxisAlignment,
-                        textBaseline = if (crossAxisAlignment == CrossAxisAlignment.BASELINE) BaselineMode.ALPHABETIC else null
-                    ) {
-                        Container(width = 100f, height = 100f, color = Color.RED)
-                        Container(width = 300f, height = 300f, color = Color.GREEN)
-                        Container(width = 200f, height = 200f, color = Color.BLUE)
-                    }
-                }
+
+    private fun columnRoot(
+        mainAxisAlignment: MainAxisAlignment = MainAxisAlignment.START,
+    ): LayoutNode = rootLayout {
+        SizedBox(width = 200f, height = 200f) {
+            Column(mainAxisAlignment = mainAxisAlignment) {
+                SizedBox(width = 100f, height = 30f)
+                SizedBox(width = 50f, height = 40f)
             }
         }
+    }
+
+    private fun first(root: LayoutNode): LayoutNode =
+        checkNotNull(root.findType<RenderConstrainedBox> { it.definiteSize.width == 100f }) {
+            "找不到宽 100 的 SizedBox"
+        }
+
+    private fun second(root: LayoutNode): LayoutNode =
+        checkNotNull(root.findType<RenderConstrainedBox> { it.definiteSize.width == 50f }) {
+            "找不到宽 50 的 SizedBox"
+        }
+
+    @Test
+    fun column_start_places_children() {
+        val root = columnRoot()
+        root.assertSize(200f, 200f)
+        first(root).assertGlobalRect(50f, 0f, 100f, 30f)
+        second(root).assertGlobalRect(75f, 30f, 50f, 40f)
+    }
+
+    @Test
+    fun column_center_main_axis_places_children() {
+        val root = columnRoot(MainAxisAlignment.CENTER)
+        first(root).assertGlobalRect(50f, 65f, 100f, 30f)
+        second(root).assertGlobalRect(75f, 95f, 50f, 40f)
     }
 }
