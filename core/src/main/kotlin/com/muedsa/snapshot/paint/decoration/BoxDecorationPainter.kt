@@ -4,6 +4,7 @@ import com.muedsa.geometry.*
 import org.jetbrains.skia.Canvas
 import org.jetbrains.skia.Paint
 import org.jetbrains.skia.Path
+import org.jetbrains.skia.PathBuilder
 import org.jetbrains.skia.Rect
 
 internal class BoxDecorationPainter(
@@ -89,12 +90,12 @@ internal class BoxDecorationPainter(
                 val center: Offset = rect.center
                 val radius: Float = rect.shortestSide / 2f
                 val square: Rect = makeRectFromCircle(center = center, radius = radius)
-                clipPath = Path().addOval(square)
+                clipPath = PathBuilder().addOval(square).detach()
             }
 
             BoxShape.RECTANGLE -> {
                 if (decoration.borderRadius != null) {
-                    clipPath = Path().addRRect(decoration.borderRadius.toRRect(rect))
+                    clipPath = PathBuilder().addRRect(decoration.borderRadius.toRRect(rect)).detach()
                 }
             }
         }
