@@ -1,4 +1,3 @@
-val versionCatalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
 plugins {
     alias(libs.plugins.jvm)
 }
