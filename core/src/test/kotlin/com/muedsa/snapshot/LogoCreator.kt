@@ -5,7 +5,7 @@ import com.muedsa.snapshot.paint.text.TextStyle
 import com.muedsa.snapshot.widget.*
 import com.muedsa.snapshot.widget.text.Text
 import org.jetbrains.skia.FontStyle
-import org.jetbrains.skia.Path
+import org.jetbrains.skia.PathBuilder
 import org.jetbrains.skia.Rect
 import kotlin.test.Test
 
@@ -40,14 +40,14 @@ class LogoCreator {
                             ) {
                                 ClipPath(
                                     clipper = {
-                                        Path().apply {
+                                        PathBuilder().apply {
                                             arcTo(
                                                 oval = Rect.Companion.makeWH(it.width, it.height),
                                                 startAngle = 45f,
                                                 sweepAngle = 180f,
                                                 forceMoveTo = true
                                             )
-                                        }
+                                        }.detach()
                                     }
                                 ) {
                                     Container(
@@ -63,14 +63,14 @@ class LogoCreator {
                             ) {
                                 ClipPath(
                                     clipper = {
-                                        Path().apply {
+                                        PathBuilder().apply {
                                             arcTo(
                                                 oval = Rect.Companion.makeWH(it.width, it.height),
                                                 startAngle = 45f + 180f,
                                                 sweepAngle = 180f,
                                                 forceMoveTo = true
                                             )
-                                        }
+                                        }.detach()
                                     }
                                 ) {
                                     Container(
