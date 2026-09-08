@@ -148,4 +148,14 @@ class BoxConstraintsTest {
         expect(2f) { h.minHeight }
         expect(20f) { h.maxHeight }
     }
+
+    @Test
+    fun flipped_swaps_width_and_height() {
+        val c = BoxConstraints(minWidth = 1f, maxWidth = 10f, minHeight = 2f, maxHeight = 20f)
+        val f = c.flipped()
+        expect(2f) { f.minWidth }
+        expect(20f) { f.maxWidth }
+        expect(1f) { f.minHeight }
+        expect(10f) { f.maxHeight }
+    }
 }
