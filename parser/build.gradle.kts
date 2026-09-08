@@ -34,8 +34,8 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    val includeSamples = providers.gradleProperty("includeSamples").orNull
-    if (includeSamples != null) {
+    val includeSamples = providers.gradleProperty("includeSamples").isPresent
+    if (includeSamples) {
         useJUnitPlatform { includeTags("sample") }
     } else {
         useJUnitPlatform { excludeTags("sample") }

@@ -154,3 +154,4 @@ File("sample_parse_dom_like.png").writeBytes(Parser().parse(StringReader(text)).
 ![Sample: Parse DOM-LIKE TEXT](sample_parse_dom_like.png)
 
 > 上述样例图由 `Sample` / `ParserSample` 测试生成。它们是样例再生成器,已加 `@Tag("sample")` 并从默认测试排除(避免默认 `./gradlew test` 联网下载图片或改写仓库文件)。手动再生成:`./gradlew :core:test -PincludeSamples` 与 `./gradlew :parser:test -PincludeSamples`。
+> 注:`-PincludeSamples` 只运行 `Sample`/`ParserSample` 样例类,不执行完整测试套件。
