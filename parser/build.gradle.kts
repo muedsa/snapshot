@@ -34,6 +34,12 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    val includeSamples = providers.gradleProperty("includeSamples").orNull
+    if (includeSamples != null) {
+        useJUnitPlatform { includeTags("sample") }
+    } else {
+        useJUnitPlatform { excludeTags("sample") }
+    }
     systemProperty("snapshotTest.mode", providers.gradleProperty("snapshotTest.mode").getOrElse("verify"))
     providers.gradleProperty("snapshotTest.goldenRoot").orNull?.let {
         systemProperty("snapshotTest.goldenRoot", it)

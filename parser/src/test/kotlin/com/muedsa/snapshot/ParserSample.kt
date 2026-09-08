@@ -3,7 +3,9 @@ package com.muedsa.snapshot
 import com.muedsa.snapshot.parser.Parser
 import java.io.StringReader
 import kotlin.test.Test
+import org.junit.jupiter.api.Tag
 
+@Tag("sample")
 class ParserSample {
 
     @Test
