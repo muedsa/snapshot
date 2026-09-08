@@ -20,6 +20,5 @@ class RenderDecoratedBox(
         if (position == DecorationPosition.FOREGROUND) {
             painter.paint(context.canvas, offset, definiteSize)
         }
-        super.paint(context, offset)
     }
 }
