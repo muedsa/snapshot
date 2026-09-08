@@ -153,8 +153,8 @@ class BorderRadius(
         @JvmStatic
         fun horizontal(left: Radius = Radius.ZERO, right: Radius = Radius.ZERO): BorderRadius = only(
             topLeft = left,
-            topRight = left,
-            bottomLeft = right,
+            topRight = right,
+            bottomLeft = left,
             bottomRight = right
         )
     }

@@ -20,7 +20,8 @@ class BoxShadowTest {
     @Test
     fun blurSigma_derived() {
         val s = BoxShadow(color = 0xFF000000.toInt(), offset = Offset.ZERO, blurRadius = 4f)
-        assertEquals(BoxShadow.convertRadiusToSigma(4f), s.blurSigma)
+        // 直接对 sigma = radius * 0.57735 + 0.5 独立公式断言,避免与实现纯复述
+        assertTrue(approx(s.blurSigma, 4f * 0.57735f + 0.5f))
     }
 
     @Test

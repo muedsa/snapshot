@@ -36,10 +36,11 @@ class BorderRadiusTest {
         assertEquals(r(2f), vertical.bottomLeft)
         assertEquals(r(2f), vertical.bottomRight)
 
+        // horizontal: left 作用于两左角,right 作用于两右角(Flutter 语义)
         val horizontal = BorderRadius.horizontal(left = r(4f), right = r(8f))
         assertEquals(r(4f), horizontal.topLeft)
-        assertEquals(r(4f), horizontal.topRight)
-        assertEquals(r(8f), horizontal.bottomLeft)
+        assertEquals(r(4f), horizontal.bottomLeft)
+        assertEquals(r(8f), horizontal.topRight)
         assertEquals(r(8f), horizontal.bottomRight)
 
         // BorderRadius 经 BorderRadiusGeometry.equals 比较各角,默认角均为 ZERO 时与 ZERO 相等
