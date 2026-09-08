@@ -76,7 +76,8 @@ class ImageFilteredTest {
         val without = snapshotPixels { blurScene(false) }
 
         // 1) 滤镜生效:第一条色带 GREEN 上边缘在 y=74,(100,72) 位于其上方 2px 的背景 RED 中,
-        //    模糊半径(σ≈1.65)覆盖此处。实测:有滤镜 0xffbf4000(红绿混),无滤镜 0xffff0000(纯 RED)。
+        //    模糊(σ=2,即 makeBlur 的两个参数)覆盖此处。
+        //    实测:有滤镜 0xffbf4000(红绿混),无滤镜 0xffff0000(纯 RED)。
         val blended = with.getColor(100, 72)
         val sharp = without.getColor(100, 72)
         assertNotEquals(
@@ -163,10 +164,10 @@ class ImageFilteredTest {
             "(100,190) 应为内容/背景混合色,实际 ${hex(blended)}"
         )
 
-        // 裁剪生效:y=200 已在容器下边界(192)之外,两版都应露出背景 BLUE
-        //(若内容未被裁剪,第 5 条色带会一直画到 y=209,此处应为 GREEN)。
-        expectColorAt(with, 100, 200, Color.BLUE)
-        expectColorAt(without, 100, 200, Color.BLUE)
+        // 裁剪生效:y=205 在容器下边界(192)之外 13px(σ=2 的核支撑约 6px,留足余量),
+        // 两版都应露出背景 BLUE(若内容未被裁剪,第 5 条色带会一直画到 y=209,此处应为 GREEN)。
+        expectColorAt(with, 100, 205, Color.BLUE)
+        expectColorAt(without, 100, 205, Color.BLUE)
 
         // 未越界:远离滤镜区域处两版一致。
         assertSamePixel(with, without, 10, 10, "远角")

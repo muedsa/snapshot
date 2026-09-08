@@ -42,11 +42,11 @@
 
 - [ ] `blur_test`/`blur_2_test`:文字→几何;`withFilter`/`withoutFilter` 孪生;断言区域内点不同、区域外点相同。
 - [ ] `blur_3_test`:外网 `DecorationImage` → 本地几何(色带网格),保留 ClipPath(45°弧)+BackdropFilter;孪生比对。
-- [ ] 确认文件不再 import 网络缓存类、默认 suite 不联网。
+- [ ] 确认文件不再 import 网络缓存类、本文件不再依赖网络(其它网络用例仍在,留待后续批)。
 - [ ] 全绿后提交:`test(core): BackdropFilterTest 重写(剔除外网,孪生采样断言)`。
 
 ### Task N4:全量验证
 
-- [ ] `./gradlew test --no-build-cache` 与 `./gradlew jar --no-build-cache` BUILD SUCCESSFUL;`git status` 干净(默认 suite 不联网、不改写仓库根);
+- [ ] `./gradlew test --no-build-cache` 与 `./gradlew jar --no-build-cache` BUILD SUCCESSFUL;`git status` 干净(本批三文件不联网、不改写仓库根);
 - [ ] grep 确认三文件无 println/drawWidget/org.junit、无网络 import;`git log main..HEAD` 全 G;
 - [ ] 汇报修复/待议(如有)与提交清单。

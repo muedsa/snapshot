@@ -13,7 +13,7 @@
 
 - [ ] 三文件重写替换:去 `println`/`drawWidget`/debug 文本;文字→确定性几何;外网→本地几何;
 - [ ] blur/阴影用采样/结构断言(见下),锐边几何(圆角装饰)仍可用 golden;
-- [ ] 无外网依赖(默认 suite 不联网);
+- [ ] 本批三个文件不再依赖网络(默认 suite 仍有其它网络用例,留待后续批);
 - [ ] `./gradlew test` + `jar` 通过;默认 suite 后工作树干净;无 org.junit/println 残留。
 
 ## 已确认做法决策
@@ -49,7 +49,7 @@
 - `blur_test`/`blur_2_test`:文字→几何;结构保留(四角方块 + 中央 `BackdropFilter(blur 25,25)`)。
   - 断言:滤镜区域内一点与**无 BackdropFilter 孪生**同点不同;滤镜区域外一点与孪生相同。
 - `blur_3_test`:外网 `DecorationImage(NetworkImageCacheManager…TEST_IMAGE_URL_2)` 换为**本地确定性几何**(如色带网格),保留 `ClipPath`(45° 弧)+ `BackdropFilter` 结构;同样做孪生比对。
-- 该文件因此不再依赖网络,默认 suite 不再拉取远程图。
+- 该文件因此不再依赖网络(仅本文件;默认 suite 其它网络用例留待后续批)。
 
 ## 规则(与 1a 一致)
 
