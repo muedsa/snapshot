@@ -1,8 +1,15 @@
 package com.muedsa.snapshot.widget
 
-import com.muedsa.snapshot.drawWidget
+import com.muedsa.snapshot.assertGlobalRect
+import com.muedsa.snapshot.assertSize
+import com.muedsa.snapshot.expectColorAt
+import com.muedsa.snapshot.findType
+import com.muedsa.snapshot.golden
+import com.muedsa.snapshot.rootLayout
+import com.muedsa.snapshot.rendering.box.RenderColoredBox
 import com.muedsa.snapshot.rendering.stack.RenderStack
 import com.muedsa.snapshot.rendering.stack.StackParentData
+import com.muedsa.snapshot.snapshotPixels
 import org.jetbrains.skia.Color
 import kotlin.test.Test
 import kotlin.test.expect
@@ -11,7 +18,6 @@ class PositionedTest {
 
     @Test
     fun applyParentData_test() {
-        println("\n\n\nPositionedTest.applyParentData_test()")
         val stack = Stack().apply {
             Positioned(
                 left = 8f,
@@ -43,22 +49,41 @@ class PositionedTest {
         expect(16f) { stackParentData2.bottom }
     }
 
+    // SizedBox 200x200(白底)内 Stack;Positioned(left=10,top=10) 定位 100x100 红色盒,
+    // 期望其全局矩形 (10,10,100,100);采样 (60,60) 为红、角与远点为白底。
     @Test
-    fun left_top_test() {
-        println("\n\n\nPositionedTest.applyParentData_test()")
-        val name = "widget/positioned/left_top"
-        val description = "Positioned(left=10,top=10)"
-        println("\n\ndraw: $name\n$description")
-        drawWidget(imagePathWithoutSuffix = name, debugInfo = description, drawDebug = true) {
-            SizedBox(
-                width = 200f,
-                height = 200f
-            ) {
+    fun left_top_layout_and_golden() {
+        val root = rootLayout {
+            SizedBox(width = 200f, height = 200f) {
                 Stack {
-                    Positioned(
-                        left = 10f,
-                        top = 10f,
-                    ) {
+                    Positioned(left = 10f, top = 10f) {
+                        Container(width = 100f, height = 100f, color = Color.RED)
+                    }
+                }
+            }
+        }
+        root.assertSize(200f, 200f)
+        val red = checkNotNull(root.findType<RenderColoredBox> { it.color == Color.RED }) {
+            "找不到红色 RenderColoredBox"
+        }
+        red.assertGlobalRect(10f, 10f, 100f, 100f)
+
+        val pixmap = snapshotPixels {
+            SizedBox(width = 200f, height = 200f) {
+                Stack {
+                    Positioned(left = 10f, top = 10f) {
+                        Container(width = 100f, height = 100f, color = Color.RED)
+                    }
+                }
+            }
+        }
+        expectColorAt(pixmap, 60, 60, Color.RED)
+        expectColorAt(pixmap, 5, 5, Color.WHITE)
+        expectColorAt(pixmap, 150, 150, Color.WHITE)
+        golden("widget/positioned/left_top") {
+            SizedBox(width = 200f, height = 200f) {
+                Stack {
+                    Positioned(left = 10f, top = 10f) {
                         Container(width = 100f, height = 100f, color = Color.RED)
                     }
                 }
