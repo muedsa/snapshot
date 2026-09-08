@@ -29,10 +29,15 @@ dependencies {
     implementation(project(":core"))
 
     testImplementation(versionCatalog.findLibrary("skiko-$targetOs-$targetArch").get())
+    testImplementation(project(":testkit"))
 }
 
 tasks.test {
     useJUnitPlatform()
+    systemProperty("snapshotTest.mode", providers.gradleProperty("snapshotTest.mode").getOrElse("verify"))
+    providers.gradleProperty("snapshotTest.goldenRoot").orNull?.let {
+        systemProperty("snapshotTest.goldenRoot", it)
+    }
 }
 
 val jarBaseName = "${rootProject.name}-${project.name}"
