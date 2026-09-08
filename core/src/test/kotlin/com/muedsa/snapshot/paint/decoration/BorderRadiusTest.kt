@@ -69,6 +69,8 @@ class BorderRadiusTest {
         // 与标量的四则运算逐角生效
         assertEquals(r(11f), (a + 10f).topLeft)
         assertEquals(r(14f), (a + 10f).bottomRight)
+        assertEquals(r(-9f), (a - 10f).topLeft)
+        assertEquals(r(-6f), (a - 10f).bottomRight)
         assertEquals(r(0.5f), (a / 2f).topLeft)
         assertEquals(r(2f), (a / 2f).bottomRight)
         assertEquals(r(3f), (a * 3f).topLeft)

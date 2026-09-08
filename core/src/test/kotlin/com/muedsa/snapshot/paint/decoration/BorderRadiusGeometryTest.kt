@@ -22,6 +22,15 @@ class BorderRadiusGeometryTest {
     }
 
     @Test
+    fun borderRadius_subtract_borderRadius_stays_borderRadius() {
+        val a = BorderRadius.circular(4f)
+        val diff = a.subtract(BorderRadius.circular(1f))
+        assertTrue(diff is BorderRadius)
+        assertEquals(r(3f), diff.topLeft)
+        assertEquals(r(3f), diff.bottomRight)
+    }
+
+    @Test
     fun borderRadius_op_mixed_returns_mixed() {
         val a = BorderRadius.circular(4f)
         // MixedBorderRadius 构造: topLeft/topRight/bottomLeft/bottomRight + start/end 方向角
