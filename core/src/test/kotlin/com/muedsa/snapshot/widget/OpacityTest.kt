@@ -6,6 +6,7 @@ import com.muedsa.snapshot.golden
 import com.muedsa.snapshot.snapshotPixels
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.Pixmap
+import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -47,9 +48,15 @@ class OpacityTest {
         val pixmap = snapshotPixels { opacityScene(0.5f) }
         pixmap.assertCornersYellow()
         val center = pixmap.getColor(150, 150)
+        // 绿(0,255,0)与黄(255,255,0)在 0.5 叠加 → 各通道 ≈ (127,255,0),纯色确定场景可按通道容差断言
+        val tolerance = 2
+        val r = (center shr 16) and 0xFF
+        val g = (center shr 8) and 0xFF
+        val b = center and 0xFF
         assertTrue(
-            center != Color.GREEN && center != Color.YELLOW,
-            "opacity=0.5 中心应为绿黄之间的混合色,实际 0x${center.toUInt().toString(16).padStart(8, '0')}"
+            abs(r - 127) <= tolerance && abs(g - 255) <= tolerance && abs(b - 0) <= tolerance,
+            "opacity=0.5 中心应为绿黄半合成色 R≈127 G≈255 B≈0,实际 R=$r G=$g B=$b " +
+                "(0x${center.toUInt().toString(16).padStart(8, '0')})"
         )
         golden("widget/opacity/opacity_0_5") { opacityScene(0.5f) }
     }

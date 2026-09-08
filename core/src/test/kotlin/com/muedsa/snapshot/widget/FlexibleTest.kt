@@ -35,8 +35,9 @@ class FlexibleTest {
     }
 
     // SizedBox 300x100 定宽内 Row;两个 Flexible(fit=TIGHT,flex=1:2)的纯色盒。
-    // 推导:flex 合计 3,剩余空间 300 → 每 flex 100;红(flex=1)宽 100、绿(flex=2)宽 200,
-    // 两盒均撑满行高 100(crossAxisAlignment=CENTER 下交叉偏移为 0)。
+    // 推导:flex 合计 3,剩余空间 300 → 每 flex 100;红(flex=1)宽 100、绿(flex=2)宽 200。
+    // Container(color) 无子级,在 composeWidget 中走 LimitedBox+BoxConstraints.expand(),
+    // 在紧约束下撑满分配的交叉轴(高 100),故两盒交叉偏移均为 0。
     @Test
     fun row_flex_1_2_distributes_width() {
         val root = rootLayout {
