@@ -21,6 +21,13 @@ jobs:
         run: chmod +x gradlew
       - name: Test with Gradle
         run: ./gradlew test
+      - name: Check working tree is clean after test
+        run: |
+          if ! git diff --exit-code --quiet; then
+            echo "::error::Default 'test' modified tracked files (sample PNG regenerated?)."
+            git status --porcelain
+            exit 1
+          fi
       - name: Upload a Build Artifact
         if: always()
         uses: actions/upload-artifact@v7.0.1
