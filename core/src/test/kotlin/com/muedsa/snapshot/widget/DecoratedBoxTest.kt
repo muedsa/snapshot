@@ -6,9 +6,12 @@ import com.muedsa.snapshot.golden
 import com.muedsa.snapshot.material.ELEVATION_MAP
 import com.muedsa.snapshot.paint.decoration.BorderRadius
 import com.muedsa.snapshot.paint.decoration.BoxDecoration
+import com.muedsa.snapshot.regionStats
+import com.muedsa.snapshot.rendering.box.DecorationPosition
 import com.muedsa.snapshot.snapshotPixels
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.Pixmap
+import org.jetbrains.skia.Rect
 import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -54,10 +57,10 @@ class DecoratedBoxTest {
         }
     }
 
-    /** 亮度 = RGB 三通道算术均值(0..255),用于比较阴影深浅,不做整色断言。 */
-    private fun Pixmap.luminanceAt(x: Int, y: Int): Int {
-        val c = getColor(x, y)
-        return ((c shr 16 and 0xFF) + (c shr 8 and 0xFF) + (c and 0xFF)) / 3
+    /** 区域亮度 = 区域平均色的 RGB 三通道算术均值(0..255)。 */
+    private fun Pixmap.regionLuminance(rect: Rect): Int {
+        val avg = regionStats(rect).averageColor
+        return ((avg shr 16 and 0xFF) + (avg shr 8 and 0xFF) + (avg and 0xFF)) / 3
     }
 
     @Test
@@ -65,16 +68,18 @@ class DecoratedBoxTest {
         val elevations = listOf(1, 4, 12, 24)
         val pixmaps = elevations.map { snapshotPixels { elevationScene(it) } }
 
-        // 采样点 (250,210) 位于盒底(y=200)正下方 10px、水平居中处,实测亮度:
-        //   e=1 → 255, e=4 → 252, e=12 → 216, e=24 → 201(2026-09-08 Windows 本机栅格化)
+        // 采样矩形 (240,203)-(260,213):盒底 y=200 正下方 3..13px、水平居中 20px 宽。
+        // 用区域平均而非单像素,放大相邻档位差值并降低跨平台栅格化敏感度;实测区域平均亮度:
+        //   e=1 → 254, e=4 → 241, e=12 → 206, e=24 → 194(2026-09-08 Windows 本机栅格化)
         // 阴影随 elevation 变深是结构性的(偏移/模糊/扩散都增大),故按"非增"逐对比较;
-        // 不用具体数值,避免跨平台栅格化差异导致闪断。
-        val luminances = pixmaps.map { it.luminanceAt(250, 210) }
+        // 不用具体数值,避免跨平台差异导致闪断。
+        val shadowRect = Rect.makeLTRB(240f, 203f, 260f, 213f)
+        val luminances = pixmaps.map { it.regionLuminance(shadowRect) }
         for (i in 0 until elevations.size - 1) {
             assertTrue(
                 luminances[i] >= luminances[i + 1],
                 "阴影亮度应随 elevation 非增:e=${elevations[i]} 亮度 ${luminances[i]} " +
-                    "但 e=${elevations[i + 1]} 亮度 ${luminances[i + 1]}(采样点 (250,210))"
+                    "但 e=${elevations[i + 1]} 亮度 ${luminances[i + 1]}($shadowRect)"
             )
         }
         // 防止"阴影完全失效 → 全白"也能通过非增断言:最大档必须明显暗于最小档。
@@ -86,7 +91,8 @@ class DecoratedBoxTest {
         pixmaps.forEach { pixmap ->
             // (250,5) 距盒顶(y=100)95px,远在阴影外 → 恒为白底。
             expectColorAt(pixmap, 250, 5, Color.WHITE)
-            // 盒中心 (250,150) 为不透明白盒 → 恒为白。
+            // 盒中心 (250,150):白盒压白底,此处只断言"没被阴影污染",属有意的弱断言
+            //(子盒无 color,本来就画不出东西;阴影才是本用例的被测对象)。
             expectColorAt(pixmap, 250, 150, Color.WHITE)
         }
     }
@@ -112,10 +118,33 @@ class DecoratedBoxTest {
         )
     }
 
+    // 回归(同一 bug 的 FOREGROUND 分支):前景装饰必须画在子盒之上。
+    // 若顺序反了(子盒后画),不透明的子盒会盖住前景装饰。
+    @Test
+    fun foreground_decoration_paints_above_child() {
+        val pixmap = snapshotPixels {
+            DecoratedBox(
+                decoration = BoxDecoration(
+                    color = Color.RED,
+                    borderRadius = BorderRadius.circular(20f),
+                ),
+                position = DecorationPosition.FOREGROUND,
+            ) {
+                Container(width = 100f, height = 100f, color = Color.BLUE)
+            }
+        }
+        // 实测:中心 (50,50)=0xffff0000 前景 RED(盖住子盒);
+        // 圆角外 (2,2)/(98,98)=0xff0000ff 子盒 BLUE(前景圆角未覆盖处仍露出子盒)。
+        expectColorAt(pixmap, 50, 50, Color.RED)
+        expectColorAt(pixmap, 2, 2, Color.BLUE)
+        expectColorAt(pixmap, 98, 98, Color.BLUE)
+    }
+
     @Test
     fun elevation_zero_no_shadow() {
         val pixmap = snapshotPixels { elevationScene(0) }
         // elevation=0 是空阴影数组:(250,201) 紧贴盒底下方、(250,210) 阴影带内,都应保持白。
+        // 同样是白盒压白底下的弱断言,仅用于锁定"空阴影数组不产生任何阴影"。
         expectColorAt(pixmap, 250, 201, Color.WHITE)
         expectColorAt(pixmap, 250, 210, Color.WHITE)
     }

@@ -26,6 +26,7 @@
 - [ ] `elevation_shadow_sampling`:代表档位 `[1,4,12,24]`,同场景 builder;断言:盒下固定采样点亮度随 elevation **非增**、远处点==WHITE、盒内==WHITE。坐标先实测(可临时打印)再定。
 - [ ] `elevation_zero_no_shadow`:档位 0 → 盒下紧邻点==WHITE。
 - [ ] 全绿后提交:`test(core): DecoratedBoxTest 重写(圆角 golden + 阴影采样断言)`。
+- [ ] 实施期发现并修复 RenderDecoratedBox 子盒重复绘制(3154d5c),补 BACKGROUND/FOREGROUND 两条回归断言。
 
 ### Task N2:`ImageFilteredTest` 重写
 

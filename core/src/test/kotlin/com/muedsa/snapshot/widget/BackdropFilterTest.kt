@@ -42,48 +42,25 @@ class BackdropFilterTest {
     }
 
     private fun Widget.blurScene(withFilter: Boolean, clipRect: Boolean) = cornerStack {
-        val body: Widget.() -> Unit = { bands3() }
-        if (withFilter) {
-            if (clipRect) {
-                ClipRect {
-                    BackdropFilter(imageFilter = ImageFilter.makeBlur(25f, 25f, FilterTileMode.CLAMP)) {
-                        Container(
-                            width = 128f,
-                            height = 128f,
-                            padding = EdgeInsets.all(10f),
-                            alignment = BoxAlignment.CENTER,
-                        ) { body() }
-                    }
-                }
+        // 孪生两版只差"是否有 BackdropFilter 包裹",内容盒完全相同。
+        fun Widget.content() {
+            Container(
+                width = 128f,
+                height = 128f,
+                padding = EdgeInsets.all(10f),
+                alignment = BoxAlignment.CENTER,
+            ) { bands3() }
+        }
+
+        fun Widget.filtered() {
+            if (withFilter) {
+                BackdropFilter(imageFilter = ImageFilter.makeBlur(25f, 25f, FilterTileMode.CLAMP)) { content() }
             } else {
-                BackdropFilter(imageFilter = ImageFilter.makeBlur(25f, 25f, FilterTileMode.CLAMP)) {
-                    Container(
-                        width = 128f,
-                        height = 128f,
-                        padding = EdgeInsets.all(10f),
-                        alignment = BoxAlignment.CENTER,
-                    ) { body() }
-                }
-            }
-        } else {
-            if (clipRect) {
-                ClipRect {
-                    Container(
-                        width = 128f,
-                        height = 128f,
-                        padding = EdgeInsets.all(10f),
-                        alignment = BoxAlignment.CENTER,
-                    ) { body() }
-                }
-            } else {
-                Container(
-                    width = 128f,
-                    height = 128f,
-                    padding = EdgeInsets.all(10f),
-                    alignment = BoxAlignment.CENTER,
-                ) { body() }
+                content()
             }
         }
+
+        if (clipRect) ClipRect { filtered() } else filtered()
     }
 
     private fun hex(color: Int): String = "0x" + color.toUInt().toString(16).padStart(8, '0')

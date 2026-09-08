@@ -42,23 +42,20 @@ class ImageFilteredTest {
     }
 
     private fun Widget.blurScene(withFilter: Boolean) = cornerStack {
-        val body: Widget.() -> Unit = { bands4() }
-        if (withFilter) {
-            ImageFiltered(imageFilter = ImageFilter.makeBlur(2f, 2f, FilterTileMode.CLAMP)) {
-                Container(
-                    width = 128f,
-                    height = 128f,
-                    padding = EdgeInsets.all(10f),
-                    alignment = BoxAlignment.CENTER,
-                ) { body() }
-            }
-        } else {
+        // 孪生两版只差"是否有 ImageFiltered 包裹",内容盒完全相同。
+        fun Widget.content() {
             Container(
                 width = 128f,
                 height = 128f,
                 padding = EdgeInsets.all(10f),
                 alignment = BoxAlignment.CENTER,
-            ) { body() }
+            ) { bands4() }
+        }
+
+        if (withFilter) {
+            ImageFiltered(imageFilter = ImageFilter.makeBlur(2f, 2f, FilterTileMode.CLAMP)) { content() }
+        } else {
+            content()
         }
     }
 
@@ -125,19 +122,10 @@ class ImageFilteredTest {
     }
 
     private fun Widget.blurClipScene(withFilter: Boolean) = cornerStack {
-        val body: Widget.() -> Unit = { bandsOverflow() }
-        if (withFilter) {
-            ImageFiltered(imageFilter = ImageFilter.makeBlur(2f, 2f, FilterTileMode.CLAMP)) {
-                Container(
-                    width = 128f,
-                    height = 128f,
-                    padding = EdgeInsets.all(10f),
-                    alignment = BoxAlignment.CENTER,
-                    clipBehavior = ClipBehavior.HARD_EDGE,
-                    decoration = BoxDecoration(),
-                ) { body() }
-            }
-        } else {
+        // 孪生两版只差"是否有 ImageFiltered 包裹",内容盒完全相同。
+        // decoration = BoxDecoration() 是 Container 对 clipBehavior != NONE 的硬性要求
+        //(见 Container.init 的 check),空装饰本身不绘制任何内容,勿当作无用参数清理。
+        fun Widget.content() {
             Container(
                 width = 128f,
                 height = 128f,
@@ -145,7 +133,13 @@ class ImageFilteredTest {
                 alignment = BoxAlignment.CENTER,
                 clipBehavior = ClipBehavior.HARD_EDGE,
                 decoration = BoxDecoration(),
-            ) { body() }
+            ) { bandsOverflow() }
+        }
+
+        if (withFilter) {
+            ImageFiltered(imageFilter = ImageFilter.makeBlur(2f, 2f, FilterTileMode.CLAMP)) { content() }
+        } else {
+            content()
         }
     }
 
