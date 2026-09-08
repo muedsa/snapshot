@@ -125,6 +125,16 @@ class BoxConstraintsTest {
     }
 
     @Test
+    fun constrain_size_preserves_aspect_ratio_when_scaling_down() {
+        // 4:1(200x50)夹入 (0..100)x(0..100):先夹宽 200→100,高按比例 = 100/4 = 25
+        // (实现与 Flutter 同序:先夹宽再夹高)。
+        val c = BoxConstraints(minWidth = 0f, maxWidth = 100f, minHeight = 0f, maxHeight = 100f)
+        expect(Size(100f, 25f)) {
+            c.constrainSizeAndAttemptToPreserveAspectRatio(Size(200f, 50f))
+        }
+    }
+
+    @Test
     fun width_and_height_only_views() {
         val c = BoxConstraints(minWidth = 1f, maxWidth = 10f, minHeight = 2f, maxHeight = 20f)
         val w = c.widthConstraints()

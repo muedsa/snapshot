@@ -23,8 +23,10 @@ class FittedSizesTest {
     fun zero_when_any_dimension_non_positive() {
         listOf(BoxFit.FILL, BoxFit.CONTAIN, BoxFit.COVER, BoxFit.FIT_WIDTH, BoxFit.FIT_HEIGHT, BoxFit.NONE, BoxFit.SCALE_DOWN)
             .forEach { fit ->
-                assertEquals(FittedSizes.ZERO, FittedSizes.applyBoxFit(fit, Size(0f, 300f), output))
-                assertEquals(FittedSizes.ZERO, FittedSizes.applyBoxFit(fit, input, Size(1600f, 0f)))
+                assertEquals(FittedSizes.ZERO, FittedSizes.applyBoxFit(fit, Size(0f, 300f), output))   // input.width = 0
+                assertEquals(FittedSizes.ZERO, FittedSizes.applyBoxFit(fit, Size(1600f, 0f), output))  // input.height = 0
+                assertEquals(FittedSizes.ZERO, FittedSizes.applyBoxFit(fit, Size(-1f, 300f), output))  // 负宽
+                assertEquals(FittedSizes.ZERO, FittedSizes.applyBoxFit(fit, input, Size(1600f, 0f)))   // output.height = 0
             }
     }
 
@@ -49,6 +51,18 @@ class FittedSizesTest {
         val r = FittedSizes.applyBoxFit(BoxFit.COVER, input, output)
         assertEquals(output, r.destination)
         assertSizeApprox(r.source, 400f, 225f)
+    }
+
+    @Test
+    fun cover_reverse_aspect_crops_width() {
+        // 反向比例:输入 16:9(1600x900),输出 4:3(400x300)。
+        // output 比例 1.33 < input 比例 1.78 → COVER else 分支:source = (input.h*output.w/output.h, input.h)
+        // = (900*400/300, 900) = (1200,900):横向裁掉 1600→1200,dest 填满 400x300。
+        val wideInput = Size(1600f, 900f)
+        val narrowOutput = Size(400f, 300f)
+        val r = FittedSizes.applyBoxFit(BoxFit.COVER, wideInput, narrowOutput)
+        assertEquals(narrowOutput, r.destination)
+        assertSizeApprox(r.source, 1200f, 900f)
     }
 
     @Test
