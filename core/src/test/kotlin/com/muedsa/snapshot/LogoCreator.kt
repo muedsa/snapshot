@@ -7,8 +7,10 @@ import com.muedsa.snapshot.widget.text.Text
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.PathBuilder
 import org.jetbrains.skia.Rect
+import org.junit.jupiter.api.Tag
 import kotlin.test.Test
 
+@Tag("sample")
 class LogoCreator {
 
     @Test

@@ -6,8 +6,10 @@ import com.muedsa.snapshot.widget.*
 import com.muedsa.snapshot.widget.text.RichText
 import com.muedsa.snapshot.widget.text.Text
 import org.jetbrains.skia.Color
+import org.junit.jupiter.api.Tag
 import kotlin.test.Test
 
+@Tag("sample")
 class Sample {
 
     @Test
