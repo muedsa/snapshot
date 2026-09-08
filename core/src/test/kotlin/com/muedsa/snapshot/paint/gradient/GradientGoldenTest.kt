@@ -4,6 +4,7 @@ import com.muedsa.geometry.BoxAlignment
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
 import com.muedsa.snapshot.goldenPixels
+import org.jetbrains.skia.Color
 import org.jetbrains.skia.Paint
 import kotlin.test.Test
 
@@ -47,6 +48,20 @@ class GradientGoldenTest {
                     0xFFEA4335.toInt(),
                     0xFF4285F4.toInt(),
                 )
+            )
+            val rect = Offset.ZERO combine size
+            canvas.drawRect(rect, Paint().apply { shader = gradient.createShader(rect) })
+        }
+    }
+
+    @Test
+    fun linear_translucent_golden() {
+        val size = Size(600f, 200f)
+        goldenPixels("gradient/linear_translucent", size.width, size.height, background = Color.TRANSPARENT) { canvas ->
+            val gradient = LinearGradient(
+                begin = BoxAlignment.TOP_LEFT,
+                end = BoxAlignment.BOTTOM_RIGHT,
+                colors = intArrayOf(0xFF0000FF.toInt(), 0x8000FF00.toInt()),
             )
             val rect = Offset.ZERO combine size
             canvas.drawRect(rect, Paint().apply { shader = gradient.createShader(rect) })
