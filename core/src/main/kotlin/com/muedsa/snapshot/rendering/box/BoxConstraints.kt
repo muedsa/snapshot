@@ -60,10 +60,10 @@ data class BoxConstraints(
     )
 
     fun flipped(): BoxConstraints = BoxConstraints(
-        minWidth = minWidth,
-        maxWidth = maxWidth,
-        minHeight = minHeight,
-        maxHeight = maxHeight
+        minWidth = minHeight,
+        maxWidth = maxHeight,
+        minHeight = minWidth,
+        maxHeight = maxWidth
     )
 
     fun widthConstraints(): BoxConstraints = BoxConstraints(minWidth = minWidth, maxWidth = maxWidth)
