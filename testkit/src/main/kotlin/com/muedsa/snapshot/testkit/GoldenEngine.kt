@@ -96,6 +96,7 @@ internal object GoldenEngine {
     private fun Image.toRasterPixmap(): Pixmap {
         val surface = Surface.makeRasterN32Premul(width, height)
         val dst = Rect.makeXYWH(0f, 0f, width.toFloat(), height.toFloat())
+        surface.canvas.clear(Color.TRANSPARENT)
         surface.canvas.drawImageRect(image = this, src = dst, dst = dst, paint = Paint())
         surface.flushAndSubmit()
         return surface.makeImageSnapshot().peekPixels()!!
