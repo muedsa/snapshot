@@ -14,7 +14,8 @@ abstract class RenderSingleChildBox : RenderBox() {
     }
 
     override fun computeDistanceToActualBaseline(baseline: BaselineMode): Float? {
-        return child?.getDistanceToBaseline(baseline)
+        // 委托给"不带回退"的访问器:无基线子树向上报告 null,是否退化为盒高由最外层查询决定
+        return child?.getDistanceToActualBaseline(baseline)
     }
 
     override fun performLayout() {

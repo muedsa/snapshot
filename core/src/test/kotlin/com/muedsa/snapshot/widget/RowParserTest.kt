@@ -4,6 +4,7 @@ import com.muedsa.snapshot.assertApproxEq
 import com.muedsa.snapshot.assertSize
 import com.muedsa.snapshot.golden
 import com.muedsa.snapshot.rendering.LayoutNode
+import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.flex.CrossAxisAlignment
 import com.muedsa.snapshot.rootLayout
 import org.jetbrains.skia.Color
@@ -93,17 +94,36 @@ class RowParserTest {
     }
 
     @Test
-    fun cross_axis_baseline_without_real_baseline_matches_end() {
-        // 待议:实测 y = rowH - h(与 END 相同),而 CrossAxisAlignment.BASELINE 的 KDoc 写的是
-        // "Children who report no baseline will be top-aligned."。
-        // 根因:RenderSingleChildBox.computeDistanceToActualBaseline 委托子盒时用
-        // child?.getDistanceToBaseline(baseline)(onlyReal 默认 false),链底返回 definiteSize.height,
-        // 于是无基线子盒报告的是"底边基线"而非 null,RenderFlex 走了 distance != null 分支。
-        // 本批不改产品代码(修复需透传 onlyReal,牵涉 RenderBox/RenderSingleChildBox 签名),按实测断言。
+    fun cross_axis_baseline_without_real_baseline_top_aligned() {
+        // 无基线子树在 BASELINE 档按 KDoc "Children who report no baseline will be top-aligned."
+        // 做 top 对齐:委托层(RenderSingleChildBox / RenderContainerBox 的默认基线)不施加
+        // "无基线 → size.height" 回退,只有最外层 getDistanceToBaseline(onlyReal = false) 才回退。
         val row = rowNode(CrossAxisAlignment.BASELINE)
         row.assertSize(600f, 300f)
         row.assertMainAxisStarts()
-        row.assertCrossTops(200f, 0f, 100f)
+        row.assertCrossTops(0f, 0f, 0f)
+    }
+
+    @Test
+    fun cross_axis_baseline_is_depth_independent() {
+        // 回归:同一棵"无基线子树"不应因外面多包一层代理链(Container 的
+        // ConstrainedBox → ColoredBox → LimitedBox → ConstrainedBox)而改变 BASELINE 结果。
+        // 修复前:Container 版 y = rowH - h(200/0/100),裸 ConstrainedBox 版 y = 0,两者不一致。
+        val wrapped = rowNode(CrossAxisAlignment.BASELINE)
+        val bare = rootLayout {
+            Row(
+                crossAxisAlignment = CrossAxisAlignment.BASELINE,
+                textDirection = Direction.LTR,
+                textBaseline = BaselineMode.ALPHABETIC
+            ) {
+                ConstrainedBox(constraints = BoxConstraints.tightFor(width = 100f, height = 100f))
+                ConstrainedBox(constraints = BoxConstraints.tightFor(width = 300f, height = 300f))
+                ConstrainedBox(constraints = BoxConstraints.tightFor(width = 200f, height = 200f))
+            }
+        }
+        bare.assertSize(600f, 300f)
+        wrapped.assertCrossTops(0f, 0f, 0f)
+        bare.assertCrossTops(0f, 0f, 0f)
     }
 
     @Test

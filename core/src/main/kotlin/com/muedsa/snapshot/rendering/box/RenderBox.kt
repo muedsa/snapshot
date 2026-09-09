@@ -56,6 +56,20 @@ abstract class RenderBox {
         return result
     }
 
+    /**
+     * 返回真实基线距离,不施加 [getDistanceToBaseline] 的"无基线 → [definiteSize].height"回退。
+     *
+     * 回退只应在**最外层**对子盒的那一次查询上生效;内部委托([RenderSingleChildBox] 的代理委托、
+     * [RenderContainerBox.defaultComputeDistanceToFirstActualBaseline] 等容器默认基线)一律走本方法。
+     * 否则"无基线"会在第一层委托处就被替换成盒高,使 `CrossAxisAlignment.BASELINE` 退化为底边对齐,
+     * 且行为随代理层数变化。与 Flutter 的 `RenderBox.getDistanceToActualBaseline` 对应。
+     *
+     * 用 internal 而非 protected:Kotlin 的 protected 不允许在声明类([RenderBox])类型的接收者上调用,
+     * 而委托方持有的 `child` 正是 [RenderBox] 类型。
+     */
+    internal fun getDistanceToActualBaseline(baseline: BaselineMode): Float? =
+        computeDistanceToActualBaseline(baseline)
+
     protected open fun computeDistanceToActualBaseline(baseline: BaselineMode): Float? = null
 
 
