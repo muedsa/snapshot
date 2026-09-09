@@ -34,11 +34,15 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-    val includeSamples = providers.gradleProperty("includeSamples").isPresent
-    if (includeSamples) {
-        useJUnitPlatform { includeTags("sample") }
+    // 默认排除需外部环境/人工触发的用例;显式 -PincludeSamples / -PincludeNetwork 时只跑对应标签
+    val onlyTags = buildList {
+        if (providers.gradleProperty("includeSamples").isPresent) add("sample")
+        if (providers.gradleProperty("includeNetwork").isPresent) add("network")
+    }
+    if (onlyTags.isEmpty()) {
+        useJUnitPlatform { excludeTags("sample", "network") }
     } else {
-        useJUnitPlatform { excludeTags("sample") }
+        useJUnitPlatform { includeTags(*onlyTags.toTypedArray()) }
     }
     systemProperty("snapshotTest.mode", providers.gradleProperty("snapshotTest.mode").getOrElse("verify"))
     providers.gradleProperty("snapshotTest.goldenRoot").orNull?.let {

@@ -1,9 +1,9 @@
 package com.muedsa.snapshot.tools
 
-import org.junit.jupiter.api.assertThrows
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
 class LimitedInputStreamTest {
 
@@ -16,12 +16,12 @@ class LimitedInputStreamTest {
         inputStream.use {
             it.read()
             it.read(ByteArray(limit - 1))
-            assertThrows<IOException> { it.read() }
+            assertFailsWith<IOException> { it.read() }
         }
 
         val inputStream2 = LimitedInputStream(ByteArrayInputStream(testBytes), limit)
         inputStream2.use {
-            assertThrows<IOException> { it.readBytes() }
+            assertFailsWith<IOException> { it.readBytes() }
         }
     }
 }

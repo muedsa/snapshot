@@ -154,3 +154,5 @@ File("sample_parse_dom_like.png").writeBytes(Parser().parse(StringReader(text)).
 ![Sample: Parse DOM-LIKE TEXT](sample_parse_dom_like.png)
 
 > 上述样例图由被 `@Tag("sample")` 标注的样例/配图再生成测试(Sample、LogoCreator、ParserSample)生成,已从默认测试排除(避免默认 `./gradlew test` 改写仓库根文件;样例图的外网下载只在显式再生成时发生)。手动再生成:`./gradlew :core:test -PincludeSamples` 与 `./gradlew :parser:test -PincludeSamples`。注:`-PincludeSamples` 只运行这些被标注的类,不执行完整测试套件。
+>
+> 依赖外网的测试(网络图片缓存、`CachedNetworkImage`、含 `ImageEmojiSpan`/`<Emoji>` 的用例)统一标注 `@Tag("network")`,同样从默认 `./gradlew test` 排除;手动运行:`./gradlew :core:test -PincludeNetwork` 与 `./gradlew :parser:test -PincludeNetwork`(语义与 `-PincludeSamples` 相同:只跑该标签)。

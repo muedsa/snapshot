@@ -1,11 +1,13 @@
 package com.muedsa.snapshot.tools
 
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.Tag
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.expect
 
+@Tag("network")
 class SimpleNoLimitedNetworkImageCacheTest {
 
     @BeforeTest
@@ -70,7 +72,7 @@ class SimpleNoLimitedNetworkImageCacheTest {
 
     @Test
     fun http_404_test() {
-        assertThrows<IllegalStateException> {
+        assertFailsWith<IllegalStateException> {
             SimpleNoLimitedNetworkImageCache.getImage("https://pic3.zhimg.com/v2-875bc0f51908e99b6e88a2b53552")
         }
     }

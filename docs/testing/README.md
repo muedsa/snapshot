@@ -400,6 +400,7 @@ drawPainter("paint/text/text_metrics", width = 300f, height = 60f) { canvas -> .
 - **测试文件**:`core/src/test/kotlin/com/muedsa/snapshot/<area>/…Test.kt`,类名以 `Test` 结尾,包名匹配 `<area>` 目录。
 - **golden 基准**:`core/src/test/resources/golden/<id>.png`,`<id>` 与测试包/文件层级呼应(`widget/clip_oval_green`、`paint/gradient/linear_two_stop`),测试与基准图**同一提交**原子入库。
 - **断言风格**:新/迁移测试统一 `kotlin.test`(`@Test`/`assertTrue`/`assertFailsWith`);不引入 `org.junit.jupiter`。
+- **标签例外**:`@Tag` 来自 `org.junit.jupiter.api`(kotlin.test 无标签注解)。现有两类:`sample`(样例再生成)与 `network`(依赖外网的用例,如网络图片缓存、`CachedNetworkImage`、含 `ImageEmojiSpan`/`<Emoji>` 的测试)。默认 `./gradlew test` **排除**这两类;显式运行用 `-PincludeSamples` / `-PincludeNetwork`(可同时给出,取并集)。
 - **无 `println`**:失败信息靠断言消息表达。
 - **确定性原则**(代码与文档一致):golden 只装"纯几何/渐变/本地位图/纯 shader"等可确定复现内容。
 
