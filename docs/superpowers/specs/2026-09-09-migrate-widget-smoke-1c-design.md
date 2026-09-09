@@ -44,30 +44,35 @@
 
 场景抽 `stackScene(alignment, direction)` builder:三个半透明色块(RED / YELLOW / GREEN,`Color.withA(..., 128)`,尺寸 200×80 / 50×150 / 100×100)。保留原 17×3 遍历。
 
-- 每场景 `rootLayout` 取根,断言 Stack 尺寸(预期 200×150,**实测校准**后写死并注释),按 `children` 顺序取三个子盒。
+- 每场景 `rootLayout` 取根,断言 Stack 尺寸恒为 **200×150**(探针实测),按 `children` 顺序取三个子盒。
 - **不变量断言(全 51 档,17 档按性质分两组,合计 17)**:
   - **方向无关组(11 档)**:`AlignmentDirectional.{TOP,CENTER,BOTTOM}_CENTER`(3)+ `AlignmentDirectional.CENTER`(1)+ `BoxAlignment.*`(8),在 LTR/RTL 下矩形**逐点相同**;
   - **镜像组(6 档)**:`AlignmentDirectional.{TOP,CENTER,BOTTOM}_{START,END}` 的 RTL 矩形 == 同档 LTR 的**水平镜像**(`x' = W - x - w`,y 不变);
   - 三个子盒均落在 Stack 内(`0 <= x`、`x + w <= W`,y 同理)。
-- **代表档硬编(3 档,实测校准)**:`AlignmentDirectional.TOP_START`(LTR) 贴左上、`AlignmentDirectional.CENTER` 居中、`AlignmentDirectional.BOTTOM_END`(LTR) 贴右下。
+- **代表档硬编(3 档,探针实测值)**:`AlignmentDirectional.TOP_START`(LTR) → (0,0)/(0,0)/(0,0);`AlignmentDirectional.CENTER` → (0,35)/(75,0)/(50,25);`AlignmentDirectional.BOTTOM_END`(LTR) → (0,70)/(150,0)/(100,50)。(格式为 (left, top),顺序同三个子盒。)
 - golden:代表档 3 张,`widget/stack/alignment_{top_start,center,bottom_end}`。半透明纯色叠加是确定的(`OpacityTest` 先例),可以上 golden。
 
 ### 3. `widget/RowParserTest.kt`(重写,删除字体用例)
 
 - **删除 `baseline_test`**(含 `RichText`,字体基线归字体批次)。
 - `crossAxisAlignment_test` 重写为 5 档(`CrossAxisAlignment.entries`),场景 builder 复用:Row 内三个纯色盒 100×100 / 300×300 / 200×200;`STRETCH` 档外套 `LimitedBox(1000f, 1000f)`(沿用原结构)。
-- 断言:
+- 断言(**以下均为探针实测值**,探针已删除):
   - main 轴位置恒为 0 / 100 / 400;
-  - cross 轴按档位:`START` → y=0;`END` → `y = rowH - h`;`CENTER` → `(rowH - h) / 2`;`STRETCH` → 三者等高(== rowH);`BASELINE` → **全部 y=0**。
-  - `BASELINE` 的依据:`RenderFlex.kt:264` 对 `getDistanceToBaseline(...) == null` 的子盒取偏移 0,与 `CrossAxisAlignment.BASELINE` 文档"Children who report no baseline will be top-aligned."一致;纯色 `Container` 无基线,故该档是确定性可断言的。
-  - **`rowH` 逐档实测校准**:非 `STRETCH` 档 Row 高度 = 最高子盒 300;`STRETCH` 档被 `LimitedBox` 撑到 maxHeight 1000,故各档 `rowH` 不同,期望值按档计算而非全局常量。
+  - `START` → y = 0 / 0 / 0;
+  - `END` → y = 200 / 0 / 100(`rowH - h`);
+  - `CENTER` → y = 100 / 0 / 50(`(rowH - h) / 2`);
+  - `STRETCH` → Row 与三个子盒均为 **1000×1000**(子盒 y 全 0);
+  - `BASELINE` → y = **200 / 0 / 100**(与 `END` 相同,见下)。
+  - **`rowH` 逐档不同**:START/END/CENTER/BASELINE 为 300(最高子盒);STRETCH 档被 `LimitedBox(1000×1000)` 撑到 1000,且因 `mainAxisSize = MAX` 与有限 `maxWidth`,Row **宽也是 1000**(非 600)。
+
+- **BASELINE 档:实测行为与文档不符,按实测断言并注释"待议"**。实测 y = `rowH - h`(等同 `END`),而非 `CrossAxisAlignment.BASELINE` KDoc 所述 "Children who report no baseline will be top-aligned."。根因:`RenderSingleChildBox.computeDistanceToActualBaseline` 委托子盒时调 `child?.getDistanceToBaseline(baseline)`(`onlyReal` 默认 **false**),链底返回 `definiteSize.height`,于是无基线子盒报告的是**底边基线**而非 null,`RenderFlex.kt:264` 的 `distance != null` 分支被走到。**本批不改产品代码**(修复需让 `onlyReal` 语义透传,牵涉 `RenderBox`/`RenderSingleChildBox` 签名,超出最小修复),测试断言实测值并在注释中标注"待议"。
 - golden:`widget/row/cross_axis_center` 1 张。
 
 ### 4. `widget/ColorFilteredTest.kt`(重写)
 
 - 内容由外网 owl 图 → 本地 **6 色块网格**(红/绿/蓝/青/品红/黄),`colorFilteredScene(filter)` builder 供孪生复用。
 - `red_modulate`: `ColorFilter.makeBlend(Color.RED, BlendMode.MODULATE)` 语义为逐通道相乘 → 期望每块中心 `(R, 0, 0)`;逐块采样断言。
-- `gray_saturation`: `ColorFilter.makeBlend(0xFF9E9E9E.toInt(), BlendMode.SATURATION)` → 饱和度置 0;期望"三通道相等"的灰度,**具体数值先实测校准**再定容差;若公式不稳定则退化为弱不变量并注释。
+- `gray_saturation`: `ColorFilter.makeBlend(0xFF9E9E9E.toInt(), BlendMode.SATURATION)` → 饱和度置 0。探针实测各块灰度精确等于 **`0.30R + 0.59G + 0.11B`**(Rec.601 系数,取整):红→76、绿→150、蓝→28、青→178、品红→105、黄→227。断言该公式值(容差 ±2)并同时断言三通道相等;注释注明系数取自 skiko 当前 SATURATION 矩阵实测,若 skiko 升级改系数需同步。
 - 孪生互比:同 builder 有/无滤镜各渲染一次,断言至少一个采样点像素不同。
 - **不上 golden**。
 
@@ -84,10 +89,11 @@
 
 ## 风险与处理
 
-1. **坐标/尺寸需实测校准**:Stack 尺寸(预期 200×150)、`rowH`、代表档偏移,先临时打印实测再写死。
+1. **坐标/尺寸/色值均已探针实测**(Stack 200×150 与三档偏移、Row 逐档 `rowH`、ColorFiltered 六个灰度值),计划中直接写死,不再需要"先打印再定"。
 2. **不变量断言失败**:先判定是实现 bug 还是语义理解偏差——清晰 bug → 最小修复 + 回归断言并记录;模糊 → 不改、注释"待议"。
-3. **SATURATION 期望公式**:先实测;不稳则退化为"三通道相等"。
-4. **golden 基准**:代表档先 `-PsnapshotTest.mode=record` 生成一次,再 verify 跑绿,基准与测试同提交。
+3. **BASELINE 文档与实现不符**(见 Row 小节):本批按实测断言 + 注释"待议",不改产品代码。
+4. **SATURATION 系数依赖 skiko 实现**:断言用实测得到的 Rec.601 系数,注释注明升级 skiko 需同步。
+5. **golden 基准**:代表档先 `-PsnapshotTest.mode=record` 生成一次,再 verify 跑绿,基准与测试同提交。
 
 ## 验证标准
 
