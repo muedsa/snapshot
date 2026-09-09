@@ -2,8 +2,10 @@ package com.muedsa.snapshot.parser.widget
 
 import com.muedsa.snapshot.parser.ParserTest
 import com.muedsa.snapshot.widget.RawImage
+import org.junit.jupiter.api.Tag
 import kotlin.test.Test
 
+@Tag("network")
 class ImageParserTest {
     @Test
     fun build_widget_test() {

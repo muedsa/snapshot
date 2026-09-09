@@ -13,6 +13,7 @@ import com.muedsa.snapshot.widget.text.Text
 import com.muedsa.snapshot.paint.text.TextStyle
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.Image
+import org.junit.jupiter.api.Tag
 import kotlin.test.*
 
 class TextParserTest {
@@ -130,6 +131,7 @@ class TextParserTest {
     }
 
 
+    @Tag("network")
     @Test
     fun rich_text_test() {
         val text = """
