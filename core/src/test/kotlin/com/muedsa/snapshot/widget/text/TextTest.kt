@@ -7,6 +7,7 @@ import com.muedsa.snapshot.paint.text.TextSpan
 import com.muedsa.snapshot.paint.text.TextStyle
 import com.muedsa.snapshot.rootLayout
 import com.muedsa.snapshot.snapshotPixels
+import com.muedsa.snapshot.testTypeface
 import com.muedsa.snapshot.widget.Container
 import com.muedsa.snapshot.widget.Widget
 import org.jetbrains.skia.Color
@@ -66,7 +67,7 @@ class TextTest {
     @Test
     fun simple_text_test() {
         fun Widget.scene() {
-            Text("Hello, world!", style = TextStyle(fontSize = 20f, color = Color.RED))
+            Text("Hello, world!", style = TextStyle(fontSize = 20f, color = Color.RED, typeface = testTypeface))
         }
 
         val node = rootLayout { scene() }
@@ -84,9 +85,9 @@ class TextTest {
     fun text_span_test() {
         fun Widget.scene() {
             RichText {
-                TextSpan(text = "Hello, one!", style = TextStyle(fontSize = 20f))
-                TextSpan(text = "Hello, two!", style = TextStyle(color = Color.RED))
-                TextSpan("Hello, three!")
+                TextSpan(text = "Hello, one!", style = TextStyle(fontSize = 20f, typeface = testTypeface))
+                TextSpan(text = "Hello, two!", style = TextStyle(color = Color.RED, typeface = testTypeface))
+                TextSpan("Hello, three!", style = TextStyle(typeface = testTypeface))
             }
         }
 
@@ -104,12 +105,15 @@ class TextTest {
     fun widget_span_test() {
         fun Widget.scene() {
             RichText {
-                TextSpan("Hello, one!", style = TextStyle(fontSize = 20f))
+                TextSpan("Hello, one!", style = TextStyle(fontSize = 20f, typeface = testTypeface))
                 WidgetSpan { Container(width = 20f, height = 20f, color = Color.BLUE) }
                 TextSpan {
                     TextSpan("Hello, two!")
                     WidgetSpan { Container(width = 30f, height = 30f, color = Color.BLUE) }
-                    TextSpan(text = "Hello, three!", style = TextStyle(fontSize = 20f, color = Color.RED))
+                    TextSpan(
+                        text = "Hello, three!",
+                        style = TextStyle(fontSize = 20f, color = Color.RED, typeface = testTypeface)
+                    )
                 }
             }
         }
@@ -131,7 +135,7 @@ class TextTest {
     fun style_merge_test() {
         fun Widget.scene() {
             RichText {
-                TextSpan(style = TextStyle(fontSize = 15f, color = Color.WHITE)) {
+                TextSpan(style = TextStyle(fontSize = 15f, color = Color.WHITE, typeface = testTypeface)) {
                     TextSpan("15white")
                     TextSpan(style = TextStyle(fontSize = 30f)) {
                         TextSpan("30white")
@@ -159,7 +163,7 @@ class TextTest {
     fun text_samples_artifact() {
         // 仅人眼检视:文本渲染不进 golden,量级断言无法反映字形/排版观感
         val painter = TextPainter(
-            text = TextSpan("Hello, world! 你好,世界!", style = TextStyle(fontSize = 30f))
+            text = TextSpan("Hello, world! 你好,世界!", style = TextStyle(fontSize = 30f, typeface = testTypeface))
         ).apply { layout(0f, Float.POSITIVE_INFINITY) }
         drawPainter("widget/text/text_samples", width = painter.width, height = painter.height) { canvas ->
             painter.paint(canvas, offset = Offset.ZERO)

@@ -6,6 +6,7 @@ import com.muedsa.snapshot.painterPixels
 import com.muedsa.snapshot.paint.text.TextPainter
 import com.muedsa.snapshot.paint.text.TextSpan
 import com.muedsa.snapshot.paint.text.TextStyle
+import com.muedsa.snapshot.testTypeface
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.FontMgr
 import org.jetbrains.skia.Pixmap
@@ -40,13 +41,11 @@ class TextPainterTest {
         return if (maxX < 0) null else minX..maxX
     }
 
-    private fun Pixmap.hasInk(): Boolean = inkBoundsX() != null
-
     // 对齐可见的前提:minWidth 与 maxWidth 都给,段落才被撑到 BOX_WIDTH
     // (实测:只给 maxWidth 时段落宽等于内容宽,六种对齐的墨迹完全相同)
     private fun alignedPainter(textAlign: Alignment, direction: Direction = Direction.LTR): TextPainter =
         TextPainter(
-            text = TextSpan(text = "Hello Word!"),
+            text = TextSpan(text = "Hello Word!", style = TextStyle(typeface = testTypeface)),
             textAlign = textAlign,
             textDirection = direction
         ).apply { layout(BOX_WIDTH, BOX_WIDTH) }
@@ -61,9 +60,10 @@ class TextPainterTest {
         val center = alignedPainter(Alignment.CENTER).inkX()
         val right = alignedPainter(Alignment.RIGHT).inkX()
 
-        // 左对齐贴左边;右对齐贴右边;居中的墨迹中心落在画布中点(均为关系断言,与字形宽度无关)
-        assertTrue(left.first <= 2, "LEFT 的左边界应贴近 0,实际 ${left.first}")
-        assertTrue(right.last >= BOX_WIDTH.toInt() - 2, "RIGHT 的右边界应贴近 $BOX_WIDTH,实际 ${right.last}")
+        // 左对齐贴左边;右对齐贴右边;居中的墨迹中心落在画布中点
+        // 容差 4px:内置字体实测 LEFT=1、RIGHT=298(即左侧留白 1、右侧留白 2),留 2px 余量
+        assertTrue(left.first <= 4, "LEFT 的左边界应贴近 0,实际 ${left.first}")
+        assertTrue(right.last >= BOX_WIDTH.toInt() - 4, "RIGHT 的右边界应贴近 $BOX_WIDTH,实际 ${right.last}")
         val centerMid = (center.first + center.last) / 2f
         assertTrue(
             abs(centerMid - BOX_WIDTH / 2f) <= 2f,
@@ -75,9 +75,9 @@ class TextPainterTest {
             "左边界应随 LEFT<CENTER<RIGHT 递增,实际 ${left.first}/${center.first}/${right.first}"
         )
         // START/END 在 LTR 下分别等价于 LEFT/RIGHT
-        assertTrue(alignedPainter(Alignment.START).inkX().first <= 2, "LTR 下 START 应等价 LEFT")
+        assertTrue(alignedPainter(Alignment.START).inkX().first <= 4, "LTR 下 START 应等价 LEFT")
         assertTrue(
-            alignedPainter(Alignment.END).inkX().last >= BOX_WIDTH.toInt() - 2,
+            alignedPainter(Alignment.END).inkX().last >= BOX_WIDTH.toInt() - 4,
             "LTR 下 END 应等价 RIGHT"
         )
     }
@@ -87,15 +87,18 @@ class TextPainterTest {
         val start = alignedPainter(Alignment.START, Direction.RTL).inkX()
         val end = alignedPainter(Alignment.END, Direction.RTL).inkX()
         // RTL 下 START 贴右、END 贴左(与 LTR 相反)
-        assertTrue(start.last >= BOX_WIDTH.toInt() - 2, "RTL 下 START 应贴右,实际 ${start.last}")
-        assertTrue(end.first <= 2, "RTL 下 END 应贴左,实际 ${end.first}")
+        assertTrue(start.last >= BOX_WIDTH.toInt() - 4, "RTL 下 START 应贴右,实际 ${start.last}")
+        assertTrue(end.first <= 4, "RTL 下 END 应贴左,实际 ${end.first}")
     }
 
     @Test
     fun heightModel_test() {
         // 高度模式只有在带行高倍数时才可区分(实测:默认倍数下四档高度相同)
         fun heightOf(mode: HeightMode): Float = TextPainter(
-            text = TextSpan(text = "Line one\nLine two", style = TextStyle(fontSize = 50f, height = 1.5f)),
+            text = TextSpan(
+                text = "Line one\nLine two",
+                style = TextStyle(fontSize = 50f, height = 1.5f, typeface = testTypeface)
+            ),
             textHeightMode = mode
         ).apply { layout(0f, Float.POSITIVE_INFINITY) }.height
 
@@ -113,17 +116,14 @@ class TextPainterTest {
 
     @Test
     fun emoji_test() {
+        // emoji 字形不在内置字体(Noto Sans SC)覆盖范围内,渲染依赖 OS emoji 字体,
+        // 故只断言"可布局、尺寸为正";渲染效果见 artifact。此处刻意不断言墨迹存在——
+        // 无 emoji 字体的机器上会失败,而那不是本仓库的缺陷。
         val painter = TextPainter(
             text = TextSpan(text = "🥰💀✌️🌴", style = TextStyle(fontSize = 30f))
         ).apply { layout(0f, 600f) }
         assertTrue(painter.width > 0f, "emoji 文本宽应为正,实际 ${painter.width}")
         assertTrue(painter.height > 0f, "emoji 文本高应为正,实际 ${painter.height}")
-        val pixmap = painterPixels(
-            painter.width.coerceAtLeast(1f),
-            painter.height.coerceAtLeast(1f),
-            background = Color.TRANSPARENT
-        ) { painter.paint(it, Offset.ZERO) }
-        assertTrue(pixmap.hasInk(), "emoji 应渲染出墨迹(若本机缺 emoji 字体则此断言不成立,需按实测调整并注释)")
     }
 
     @Test
@@ -133,7 +133,10 @@ class TextPainterTest {
         var prevHeight = -1f
         for (fontSize in 5..40) {
             val painter = TextPainter(
-                text = TextSpan(text = "[$fontSize] Hello Word!", style = TextStyle(fontSize = fontSize.toFloat()))
+                text = TextSpan(
+                    text = "[$fontSize] Hello Word!",
+                    style = TextStyle(fontSize = fontSize.toFloat(), typeface = testTypeface)
+                )
             ).apply { layout(0f, Float.POSITIVE_INFINITY) }
             assertTrue(
                 painter.maxIntrinsicWidth > prevWidth,
@@ -156,7 +159,7 @@ class TextPainterTest {
             val painter = TextPainter(
                 text = TextSpan(
                     text = "[$fontSize] 你好，世界！",
-                    style = TextStyle(fontSize = fontSize.toFloat(), fontFamilies = listOf("Noto Sans SC"))
+                    style = TextStyle(fontSize = fontSize.toFloat(), typeface = testTypeface)
                 )
             ).apply { layout(0f, Float.POSITIVE_INFINITY) }
             assertTrue(
