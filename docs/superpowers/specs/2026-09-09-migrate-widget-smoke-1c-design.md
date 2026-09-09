@@ -65,7 +65,7 @@
   - `BASELINE` → y = **200 / 0 / 100**(与 `END` 相同,见下)。
   - **`rowH` 逐档不同**:START/END/CENTER/BASELINE 为 300(最高子盒);STRETCH 档被 `LimitedBox(1000×1000)` 撑到 1000,且因 `mainAxisSize = MAX` 与有限 `maxWidth`,Row **宽也是 1000**(非 600)。
 
-- **BASELINE 档:实测行为与文档不符,按实测断言并注释"待议"**。实测 y = `rowH - h`(等同 `END`),而非 `CrossAxisAlignment.BASELINE` KDoc 所述 "Children who report no baseline will be top-aligned."。根因:`RenderSingleChildBox.computeDistanceToActualBaseline` 委托子盒时调 `child?.getDistanceToBaseline(baseline)`(`onlyReal` 默认 **false**),链底返回 `definiteSize.height`,于是无基线子盒报告的是**底边基线**而非 null,`RenderFlex.kt:264` 的 `distance != null` 分支被走到。**本批不改产品代码**(修复需让 `onlyReal` 语义透传,牵涉 `RenderBox`/`RenderSingleChildBox` 签名,超出最小修复),测试断言实测值并在注释中标注"待议"。
+- **BASELINE 档:本批按实测行为断言并注释"待议";该行为已在后续分支 `fix/baseline-delegation-fallback` 修复**(见下)。实测 y = `rowH - h`(等同 `END`),而非 `CrossAxisAlignment.BASELINE` KDoc 所述 "Children who report no baseline will be top-aligned."。根因:委托层调的是**带回退**的 `getDistanceToBaseline`(`onlyReal` 默认 **false**),链底 `null` 在第一层委托处就被替换成 `definiteSize.height`,于是无基线子盒报告的是**底边基线**,`RenderFlex.kt:264` 的 `distance != null` 分支被走到。Flutter 侧把访问器拆成两个——带回退的 `getDistanceToBaseline({onlyReal})` 与**不带回退**的 `getDistanceToActualBaseline`——且委托层一律走后者;本仓库只有前者。修复即补齐该访问器并让两处委托改调它(不是"透传 `onlyReal`",该参数在 `computeDistanceToActualBaseline` 签名里不存在)。
 - golden:`widget/row/cross_axis_center` 1 张。
 
 ### 4. `widget/ColorFilteredTest.kt`(重写)
@@ -91,7 +91,7 @@
 
 1. **坐标/尺寸/色值均已探针实测**(Stack 200×150 与三档偏移、Row 逐档 `rowH`、ColorFiltered 六个灰度值),计划中直接写死,不再需要"先打印再定"。
 2. **不变量断言失败**:先判定是实现 bug 还是语义理解偏差——清晰 bug → 最小修复 + 回归断言并记录;模糊 → 不改、注释"待议"。
-3. **BASELINE 文档与实现不符**(见 Row 小节):本批按实测断言 + 注释"待议",不改产品代码。
+3. **BASELINE 委托回退**(见 Row 小节):本批按实测断言 + 注释"待议",不改产品代码;已由后续分支 `fix/baseline-delegation-fallback` 修复(补 `getDistanceToActualBaseline`,两处委托改调它)。
 4. **SATURATION 系数依赖 skiko 实现**:断言用实测得到的 Rec.601 系数,注释注明升级 skiko 需同步。
 5. **golden 基准**:代表档先 `-PsnapshotTest.mode=record` 生成一次,再 verify 跑绿,基准与测试同提交。
 
