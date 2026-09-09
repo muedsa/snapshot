@@ -262,6 +262,15 @@ class MyGradientTest {
 
 ## 7. 文本类怎么测(不进 golden)
 
+> **内置测试字体(2026-09-09 起)**:文本测试**一律显式指定 `testTypeface`**(来自 `:testkit`,底层是仓库内置的 Noto Sans SC,OFL-1.1)。原因:文本度量依赖 OS 字体,连"关系断言"也会闪断——实测同一条右对齐断言在 Windows 通过、Linux CI 失败(side bearing 不同)。显式指定后度量跨平台一致,容差可收紧且有据可依。
+>
+> ```kotlin
+> import com.muedsa.snapshot.testTypeface
+> TextSpan("Hello", style = TextStyle(fontSize = 20f, typeface = testTypeface))
+> ```
+>
+> 例外:**emoji** 字形不在该字体覆盖范围内,`emoji_test` 不指定 typeface,断言只做"尺寸 > 0",渲染效果看 artifact。
+
 文本测量受 OS 字体/排版引擎影响,无法跨机逐像素复现。正确姿势:**数值区间/单调断言 + artifact 人眼检视**。
 
 常用度量(先 `layout` 再读取,见 [`TextPainter`](../../core/src/main/kotlin/com/muedsa/snapshot/paint/text/TextPainter.kt)):

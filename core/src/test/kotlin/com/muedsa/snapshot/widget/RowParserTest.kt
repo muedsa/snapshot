@@ -3,14 +3,21 @@ package com.muedsa.snapshot.widget
 import com.muedsa.snapshot.assertApproxEq
 import com.muedsa.snapshot.assertSize
 import com.muedsa.snapshot.golden
+import com.muedsa.snapshot.paint.text.TextPainter
+import com.muedsa.snapshot.paint.text.TextSpan
+import com.muedsa.snapshot.paint.text.TextStyle
 import com.muedsa.snapshot.rendering.LayoutNode
 import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.flex.CrossAxisAlignment
 import com.muedsa.snapshot.rootLayout
+import com.muedsa.snapshot.testTypeface
+import com.muedsa.snapshot.widget.text.RichText
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.Direction
+import kotlin.math.abs
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class RowParserTest {
 
@@ -129,5 +136,40 @@ class RowParserTest {
     @Test
     fun cross_axis_center_golden() {
         golden("widget/row/cross_axis_center") { rowScene(CrossAxisAlignment.CENTER) }
+    }
+
+    // 用同一 API 独立测量基线距离,供基线对齐断言使用(两端同源实测,与字体无关)
+    private fun baselineOf(text: String, fontSize: Float): Float =
+        TextPainter(
+            text = TextSpan(text, style = TextStyle(fontSize = fontSize, typeface = testTypeface))
+        ).apply { layout(0f, Float.POSITIVE_INFINITY) }
+            .computeDistanceToActualBaseline(BaselineMode.ALPHABETIC)
+
+    @Test
+    fun cross_axis_baseline_text_aligns_by_baseline() {
+        // 两段不同字号的文本按 BASELINE 对齐:ascent 更大者顶边更高、高度更大,且基线真正对齐。
+        val root = rootLayout {
+            Row(
+                crossAxisAlignment = CrossAxisAlignment.BASELINE,
+                textDirection = Direction.LTR,
+                textBaseline = BaselineMode.ALPHABETIC
+            ) {
+                RichText { TextSpan("Hello", style = TextStyle(fontSize = 20f, typeface = testTypeface)) }
+                RichText { TextSpan("Hello", style = TextStyle(fontSize = 40f, typeface = testTypeface)) }
+            }
+        }
+        val small = root.children[0].rect
+        val large = root.children[1].rect
+
+        assertTrue(large.top < small.top, "大字号顶边应更高,实际 large=${large.top} small=${small.top}")
+        assertTrue(large.height > small.height, "大字号高度应更大,实际 large=${large.height} small=${small.height}")
+        // 排除退化为 START/END:两者 top 与 bottom 都不相等
+        assertTrue(abs(large.top - small.top) > EPS, "top 不应相等(否则退化为 START)")
+        assertTrue(abs(large.bottom - small.bottom) > EPS, "bottom 不应相等(否则退化为 END)")
+
+        // 基线真对齐:两端都实测
+        val b20 = baselineOf("Hello", 20f)
+        val b40 = baselineOf("Hello", 40f)
+        assertApproxEq(small.top + b20, large.top + b40, 0.5f)
     }
 }
