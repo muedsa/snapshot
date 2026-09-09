@@ -69,6 +69,18 @@ val testTypeface: Typeface by lazy {
 
 > 断言容差按上表实测值留 2px 余量(如 RIGHT 右边界 ≥ 296)。
 
+### 5. Linux 度量量化(第二轮 CI 失败与修订)
+
+内置字体修复了对齐断言,但 CI 仍在 `cn_font_size_monotonic_test` 失败:
+
+```
+fontSize=29 的中文 maxIntrinsicWidth(169.0) 应大于上一档(169.0)
+```
+
+两值**完全相等**,且为**整数**(本机为 37.08/44.50 等小数)——**Linux 上 skia 把字形推进量化到整数像素**,故 fontSize=28 与 29 宽度相同。结论:**"逐档严格递增"不是文本度量的真实不变量**。
+
+修订为**"随字号非降 + 端点严格递增"**:前者容忍逐档舍入,后者仍能抓住"宽度不随字号增长"这一原始缺陷(若度量不随字号变化,`widths.last() > widths.first()` 必失败)。英文单调用例同样脆弱,一并改写。
+
 ## 验证标准
 
 - `./gradlew test --offline` 全绿(本机);

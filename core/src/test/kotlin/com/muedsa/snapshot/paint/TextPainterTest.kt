@@ -126,48 +126,50 @@ class TextPainterTest {
         assertTrue(painter.height > 0f, "emoji 文本高应为正,实际 ${painter.height}")
     }
 
-    @Test
-    fun font_size_monotonic_test() {
-        // 字号 5..40 递增 → maxIntrinsicWidth 严格递增、height 非降(与字形无关的强单调)
-        var prevWidth = -1f
-        var prevHeight = -1f
-        for (fontSize in 5..40) {
-            val painter = TextPainter(
-                text = TextSpan(
-                    text = "[$fontSize] Hello Word!",
-                    style = TextStyle(fontSize = fontSize.toFloat(), typeface = testTypeface)
-                )
-            ).apply { layout(0f, Float.POSITIVE_INFINITY) }
+    private fun intrinsicWidthOf(text: String, fontSize: Float): Float =
+        TextPainter(text = TextSpan(text = text, style = TextStyle(fontSize = fontSize, typeface = testTypeface)))
+            .apply { layout(0f, Float.POSITIVE_INFINITY) }
+            .maxIntrinsicWidth
+
+    private fun textHeightOf(text: String, fontSize: Float): Float =
+        TextPainter(text = TextSpan(text = text, style = TextStyle(fontSize = fontSize, typeface = testTypeface)))
+            .apply { layout(0f, Float.POSITIVE_INFINITY) }
+            .height
+
+    // 逐档"严格递增"不是文本度量的真实不变量:实测 Linux 上 skia 把字形推进量化到整数像素,
+    // fontSize=28/29 的中文 maxIntrinsicWidth 同为 169.0(本机为小数且逐档递增)。
+    // 真实不变量是"随字号非降 + 端点严格递增"——它同样能抓住"宽度不随字号增长"的缺陷。
+    private fun assertNonDecreasing(values: List<Float>, label: String) {
+        values.zipWithNext().forEachIndexed { index, (prev, next) ->
             assertTrue(
-                painter.maxIntrinsicWidth > prevWidth,
-                "fontSize=$fontSize 的 maxIntrinsicWidth(${painter.maxIntrinsicWidth}) 应大于上一档($prevWidth)"
+                next >= prev,
+                "$label 应随字号非降,但 fontSize=${index + 6}($next) 小于 fontSize=${index + 5}($prev)"
             )
-            assertTrue(
-                painter.height >= prevHeight,
-                "fontSize=$fontSize 的 height(${painter.height}) 应不小于上一档($prevHeight)"
-            )
-            prevWidth = painter.maxIntrinsicWidth
-            prevHeight = painter.height
         }
     }
 
     @Test
+    fun font_size_monotonic_test() {
+        val sizes = 5..40
+        val widths = sizes.map { intrinsicWidthOf("[$it] Hello Word!", it.toFloat()) }
+        val heights = sizes.map { textHeightOf("[$it] Hello Word!", it.toFloat()) }
+        assertNonDecreasing(widths, "maxIntrinsicWidth")
+        assertNonDecreasing(heights, "height")
+        assertTrue(
+            widths.last() > widths.first(),
+            "最大字号的宽度(${widths.last()})应大于最小字号(${widths.first()})"
+        )
+    }
+
+    @Test
     fun cn_font_size_monotonic_test() {
-        // 中文同理;若本机缺中文字体渲染成 tofu,单调性仍成立
-        var prevWidth = -1f
-        for (fontSize in 5..40) {
-            val painter = TextPainter(
-                text = TextSpan(
-                    text = "[$fontSize] 你好，世界！",
-                    style = TextStyle(fontSize = fontSize.toFloat(), typeface = testTypeface)
-                )
-            ).apply { layout(0f, Float.POSITIVE_INFINITY) }
-            assertTrue(
-                painter.maxIntrinsicWidth > prevWidth,
-                "fontSize=$fontSize 的中文 maxIntrinsicWidth(${painter.maxIntrinsicWidth}) 应大于上一档($prevWidth)"
-            )
-            prevWidth = painter.maxIntrinsicWidth
-        }
+        val sizes = 5..40
+        val widths = sizes.map { intrinsicWidthOf("[$it] 你好，世界！", it.toFloat()) }
+        assertNonDecreasing(widths, "中文 maxIntrinsicWidth")
+        assertTrue(
+            widths.last() > widths.first(),
+            "最大字号的中文宽度(${widths.last()})应大于最小字号(${widths.first()})"
+        )
     }
 
     @Tag("sample")
