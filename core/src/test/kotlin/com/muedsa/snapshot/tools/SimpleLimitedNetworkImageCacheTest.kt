@@ -1,9 +1,11 @@
 package com.muedsa.snapshot.tools
 
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.Tag
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
+@Tag("network")
 class SimpleLimitedNetworkImageCacheTest {
 
     @Test
@@ -13,7 +15,7 @@ class SimpleLimitedNetworkImageCacheTest {
         cache.getImage(SimpleNoLimitedNetworkImageCacheTest.TEST_IMAGE_URL_2)
         cache.getImage(SimpleNoLimitedNetworkImageCacheTest.TEST_IMAGE_URL_3)
         cache.getImage(SimpleNoLimitedNetworkImageCacheTest.TEST_IMAGE_URL_3)
-        assertThrows<Throwable> {
+        assertFailsWith<Throwable> {
             cache.getImage(SimpleNoLimitedNetworkImageCacheTest.TEST_IMAGE_URL_4)
         }
     }
@@ -23,14 +25,14 @@ class SimpleLimitedNetworkImageCacheTest {
         val cache = SimpleLimitedNetworkImageCache(maxSingleImageSize = 1024 * 1024 * 5, debug = true)
         cache.getImage(SimpleNoLimitedNetworkImageCacheTest.TEST_IMAGE_URL_1)
         val cache1 = SimpleLimitedNetworkImageCache(maxSingleImageSize = 10, debug = true)
-        assertThrows<Throwable> {
+        assertFailsWith<Throwable> {
             cache1.getImage(SimpleNoLimitedNetworkImageCacheTest.TEST_IMAGE_URL_1)
         }
     }
 
     @Test
     fun http_404_test() {
-        assertThrows<IllegalStateException> {
+        assertFailsWith<IllegalStateException> {
             SimpleLimitedNetworkImageCache().getImage("https://pic3.zhimg.com/v2-875bc0f51908e99b6e88a2b53552")
         }
     }

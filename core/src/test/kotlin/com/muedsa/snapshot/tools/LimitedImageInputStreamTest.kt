@@ -1,9 +1,10 @@
 package com.muedsa.snapshot.tools
 
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.Tag
 import java.io.ByteArrayInputStream
 import java.net.URL
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
 import kotlin.test.expect
 
 class LimitedImageInputStreamTest {
@@ -35,6 +36,7 @@ class LimitedImageInputStreamTest {
         }
     }
 
+    @Tag("network")
     @Test
     fun image_format_test() {
         // jpg
@@ -44,7 +46,7 @@ class LimitedImageInputStreamTest {
         // webp
         readAll("https://samples-files.com/samples/images/webp/480-360-sample.webp")
 
-        assertThrows<Throwable> {
+        assertFailsWith<Throwable> {
             readAll("https://samples-files.com/samples/images/bmp/480-360-sample.bmp")
         }
     }
