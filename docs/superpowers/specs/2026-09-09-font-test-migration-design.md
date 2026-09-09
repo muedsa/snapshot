@@ -27,7 +27,8 @@
 
 ## 已确认做法决策
 
-1. **策略沿用手册 §7**:宽松区间 / 单调 / 关系断言 + artifact 目检;**不引入内置字体**、不上 golden、不锁字形像素。每条断言刻意做成字体无关——要么正负/量级,要么"随 X 单调",要么"两端都实测的等式"。
+1. **策略沿用手册 §7**:宽松区间 / 单调 / 关系断言 + artifact 目检;不上 golden、不锁字形像素。每条断言刻意做成字体无关——要么正负/量级,要么"随 X 单调",要么"两端都实测的等式"。
+   > **后续修订(2026-09-09)**:本批合并后 CI(Linux)在 `textAlign_ltr_test` 与 `cn_font_size_monotonic_test` 上失败——证明"关系断言"仍会因 OS 字体差异闪断(对齐的墨迹边界取决于 side bearing)。故**追加内置字体**(`docs/superpowers/specs/2026-09-09-test-font-bundling-design.md`),所有文本测试显式指定 `testTypeface`,度量跨平台一致。原"不引入内置字体"的决策已被该 spec 取代。
 2. **`drawLocalFontListSample` 改打 `@Tag("sample")`**:它遍历 `FontMgr.default` 全部字体族逐个排版,内容与耗时随本机字体数变化,断言只能退化为"字体数 > 0";归为人工触发的 artifact 生成器。
 3. **Row 基线覆盖重建为关系断言**(见下),不锁具体基线值。
 
