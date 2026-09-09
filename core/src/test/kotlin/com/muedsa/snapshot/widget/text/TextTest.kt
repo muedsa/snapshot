@@ -5,6 +5,7 @@ import com.muedsa.snapshot.paint.text.TextSpan
 import com.muedsa.snapshot.paint.text.TextStyle
 import com.muedsa.snapshot.widget.Container
 import org.jetbrains.skia.Color
+import org.junit.jupiter.api.Tag
 import kotlin.test.Test
 
 class TextTest {
@@ -84,6 +85,7 @@ class TextTest {
         }
     }
 
+    @Tag("network")
     @Test
     fun image_emoji_test() {
         println("\n\n\nTextTest.image_emoji_test()")
