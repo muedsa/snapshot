@@ -39,7 +39,8 @@ abstract class RenderContainerBox : RenderBox() {
 
     fun defaultComputeDistanceToFirstActualBaseline(baseline: BaselineMode): Float? {
         for (child in children) {
-            val result: Float? = child.getDistanceToBaseline(baseline)
+            // 不带回退:无基线子树应报告 null,而不是被替换成盒高(与 Flutter 的默认基线一致)
+            val result: Float? = child.getDistanceToActualBaseline(baseline)
             if (result != null) {
                 return result + child.parentData!!.offset.y
             }
@@ -51,7 +52,8 @@ abstract class RenderContainerBox : RenderBox() {
         var result: Float? = null
         if (children.isNotEmpty()) {
             for (child in children) {
-                var candidate: Float? = child.getDistanceToBaseline(baseline)
+                // 不带回退,同 defaultComputeDistanceToFirstActualBaseline
+                var candidate: Float? = child.getDistanceToActualBaseline(baseline)
                 if (candidate != null) {
                     candidate += child.parentData!!.offset.y
                     result = result?.let { min(it, candidate) } ?: candidate
