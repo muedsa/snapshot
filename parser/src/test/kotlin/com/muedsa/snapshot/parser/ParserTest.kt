@@ -8,6 +8,7 @@ import com.muedsa.snapshot.widget.text.RichText
 import kotlin.test.assertFailsWith
 import java.io.StringReader
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class ParserTest {
 
@@ -20,23 +21,21 @@ class ParserTest {
                 </Container>
             </Snapshot>
         """.trimIndent()
-        println(text)
         val snapshotElement = parse(text)
-        println(snapshotElement.toTreeString(0))
         val widget = snapshotElement.createWidget()
-        assert(widget is Container)
+        assertTrue(widget is Container, "widget is Container")
         val container: Container = widget as Container
-        assert(container.color == 0xFF00FF00.toInt())
-        assert(container.width == 400f)
-        assert(container.height == 300f)
-        assert(container.alignment == BoxAlignment.CENTER)
-        assert(container.padding == EdgeInsets.all(10f))
-        assert(container.margin == EdgeInsets(1f, 2f, 4f, 8f))
-        assert(container.child is Container)
+        assertTrue(container.color == 0xFF00FF00.toInt(), "container.color == 0xFF00FF00.toInt()")
+        assertTrue(container.width == 400f, "container.width == 400f")
+        assertTrue(container.height == 300f, "container.height == 300f")
+        assertTrue(container.alignment == BoxAlignment.CENTER, "container.alignment == BoxAlignment.CENTER")
+        assertTrue(container.padding == EdgeInsets.all(10f), "container.padding == EdgeInsets.all(10f)")
+        assertTrue(container.margin == EdgeInsets(1f, 2f, 4f, 8f), "container.margin == EdgeInsets(1f, 2f, 4f, 8f)")
+        assertTrue(container.child is Container, "container.child is Container")
         val childContainer: Container = container.child as Container
-        assert(childContainer.color == 0xFFFF0000.toInt())
-        assert(childContainer.width == 100f)
-        assert(childContainer.height == 50f)
+        assertTrue(childContainer.color == 0xFFFF0000.toInt(), "childContainer.color == 0xFFFF0000.toInt()")
+        assertTrue(childContainer.width == 100f, "childContainer.width == 100f")
+        assertTrue(childContainer.height == 50f, "childContainer.height == 50f")
         getTestPngFile("parser/container").writeBytes(snapshotElement.snapshot())
     }
 
@@ -53,7 +52,6 @@ class ParserTest {
                     </Container>
                 </Snapshot>
             """.trimIndent()
-            println(text)
             parse(text)
         }
     }
@@ -71,7 +69,6 @@ class ParserTest {
                         <Container color="#FFFF0000" width="100" height="50"/>
                     </Container>
             """.trimIndent()
-            println(text)
             parse(text)
         }
     }
@@ -82,7 +79,6 @@ class ParserTest {
             val text = """
                 <Snapshot background="#FFFFFFFF" type="png" debug></Snapshot>>
             """.trimIndent()
-            println(text)
             parse(text)
         }
     }
@@ -96,18 +92,16 @@ class ParserTest {
                 </Container>
             </Snapshot>
         """.trimIndent()
-        println(text)
         val snapshotElement = parse(text)
-        println(snapshotElement.toTreeString(0))
         val widget = snapshotElement.createWidget()
-        assert(widget is Container)
+        assertTrue(widget is Container, "widget is Container")
         val container: Container = widget as Container
-        assert(container.width == 400f)
-        assert(container.height == 300f)
+        assertTrue(container.width == 400f, "container.width == 400f")
+        assertTrue(container.height == 300f, "container.height == 300f")
         val richText: RichText = container.child as RichText
         val stringBuffer: StringBuffer = StringBuffer()
         richText.text.computeToPlainText(stringBuffer, false)
-        assert(stringBuffer.toString() == "char_token_test <a></a> 233 哈哈✅🤣哈")
+        assertTrue(stringBuffer.toString() == "char_token_test <a></a> 233 哈哈✅🤣哈", "stringBuffer.toString() == \"char_token_test <a></a> 233 哈哈✅🤣哈\"")
         getTestPngFile("parser/text").writeBytes(snapshotElement.snapshot())
     }
 

@@ -34,27 +34,25 @@ class TextParserTest {
                 >Hello Word! 你好，世界！</Text>
             </Snapshot>
         """.trimIndent()
-        println(text)
         val snapshotElement = ParserTest.parse(text)
-        println(snapshotElement.toTreeString(0))
         val widget = snapshotElement.createWidget()
-        assert(widget is RichText)
+        assertTrue(widget is RichText, "widget is RichText")
         val richText: RichText = widget as RichText
-        assert(richText.text is TextSpan)
+        assertTrue(richText.text is TextSpan, "richText.text is TextSpan")
         val textSpan: TextSpan = widget.text as TextSpan
-        assert(textSpan.style?.color == 0xFF_FF_00_00.toInt())
-        assert(textSpan.style?.fontSize == 12f)
+        assertTrue(textSpan.style?.color == 0xFF_FF_00_00.toInt(), "textSpan.style?.color == 0xFF_FF_00_00.toInt()")
+        assertTrue(textSpan.style?.fontSize == 12f, "textSpan.style?.fontSize == 12f")
         assertNotNull(textSpan.style?.fontFamilies)
-        assert(textSpan.style?.fontFamilies?.size == 2)
-        assert(textSpan.style?.fontFamilies!!.contains("Noto Sans SC"))
-        assert(textSpan.style?.fontFamilies!!.contains("WenQuanYi Micro Hei Mono"))
-        assert(textSpan.style?.fontStyle?.weight == FontStyle.BOLD.weight)
-        assert(textSpan.style?.fontStyle?.width == FontStyle.BOLD.width)
-        assert(textSpan.style?.fontStyle?.slant == FontStyle.BOLD.slant)
-        assert(textSpan.children.size == 1)
-        assert(textSpan.children[0] is TextSpan)
+        assertTrue(textSpan.style?.fontFamilies?.size == 2, "textSpan.style?.fontFamilies?.size == 2")
+        assertTrue(textSpan.style?.fontFamilies!!.contains("Noto Sans SC"), "textSpan.style?.fontFamilies!!.contains(\"Noto Sans SC\")")
+        assertTrue(textSpan.style?.fontFamilies!!.contains("WenQuanYi Micro Hei Mono"), "textSpan.style?.fontFamilies!!.contains(\"WenQuanYi Micro Hei Mono\")")
+        assertTrue(textSpan.style?.fontStyle?.weight == FontStyle.BOLD.weight, "textSpan.style?.fontStyle?.weight == FontStyle.BOLD.weight")
+        assertTrue(textSpan.style?.fontStyle?.width == FontStyle.BOLD.width, "textSpan.style?.fontStyle?.width == FontStyle.BOLD.width")
+        assertTrue(textSpan.style?.fontStyle?.slant == FontStyle.BOLD.slant, "textSpan.style?.fontStyle?.slant == FontStyle.BOLD.slant")
+        assertTrue(textSpan.children.size == 1, "textSpan.children.size == 1")
+        assertTrue(textSpan.children[0] is TextSpan, "textSpan.children[0] is TextSpan")
         val childTextSpan = textSpan.children[0] as TextSpan
-        assert(childTextSpan.text == "Hello Word! 你好，世界！")
+        assertTrue(childTextSpan.text == "Hello Word! 你好，世界！", "childTextSpan.text == \"Hello Word! 你好，世界！\"")
     }
 
     @Test
@@ -165,9 +163,7 @@ class TextParserTest {
                 </Text>
             </Snapshot>
         """.trimIndent()
-        println(text)
         val snapshotElement = ParserTest.parse(text)
-        println(snapshotElement.toTreeString(0))
         getTestPngFile("parser/rich_text").writeBytes(snapshotElement.snapshot())
     }
 }
