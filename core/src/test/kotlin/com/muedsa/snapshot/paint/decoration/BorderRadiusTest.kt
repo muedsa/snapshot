@@ -108,4 +108,21 @@ class BorderRadiusTest {
         assertTrue(approx(rr.brRadiusX, 10f) && approx(rr.brRadiusY, 10f))
         assertTrue(approx(rr.blRadiusX, 10f) && approx(rr.blRadiusY, 10f))
     }
+
+    @Test
+    fun toRRect_maps_each_corner_independently() {
+        val rect = Rect.makeXYWH(0f, 0f, 100f, 50f)
+        val br = BorderRadius(
+            topLeft = Radius(1f, 2f),
+            topRight = Radius(3f, 4f),
+            bottomLeft = Radius(7f, 8f),
+            bottomRight = Radius(5f, 6f),
+        )
+        val rr = br.toRRect(rect)
+        // 四角半径必须各归其位(角序写错会被抓出),x/y 也不同以免混淆椭圆圆角的两轴
+        assertTrue(approx(rr.tlRadiusX, 1f) && approx(rr.tlRadiusY, 2f), "左上角半径不符")
+        assertTrue(approx(rr.trRadiusX, 3f) && approx(rr.trRadiusY, 4f), "右上角半径不符")
+        assertTrue(approx(rr.brRadiusX, 5f) && approx(rr.brRadiusY, 6f), "右下角半径不符")
+        assertTrue(approx(rr.blRadiusX, 7f) && approx(rr.blRadiusY, 8f), "左下角半径不符")
+    }
 }

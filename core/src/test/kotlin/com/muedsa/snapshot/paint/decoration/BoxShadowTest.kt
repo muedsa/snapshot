@@ -1,9 +1,11 @@
 package com.muedsa.snapshot.paint.decoration
 
 import com.muedsa.geometry.Offset
+import org.jetbrains.skia.FilterBlurMode
 import kotlin.math.abs
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class BoxShadowTest {
@@ -33,5 +35,21 @@ class BoxShadowTest {
         assertEquals(3f, t.blurRadius)
         assertEquals(4f, t.spreadRadius)
         assertEquals(s.blurStyle, t.blurStyle)
+    }
+
+    @Test
+    fun omitted_parameters_use_documented_defaults() {
+        val s = BoxShadow(color = 0xFF010203.toInt(), offset = Offset(1f, 2f), blurRadius = 3f)
+        assertEquals(0f, s.spreadRadius, "spreadRadius 省略时应为 0")
+        assertEquals(FilterBlurMode.NORMAL, s.blurStyle, "blurStyle 省略时应为 NORMAL")
+    }
+
+    @Test
+    fun toPaint_carries_color_and_blur_mask_filter() {
+        val s = BoxShadow(color = 0x80FF0000.toInt(), offset = Offset(5f, 7f), blurRadius = 8f)
+        val paint = s.toPaint()
+        assertEquals(0x80FF0000.toInt(), paint.color, "画笔颜色应等于阴影颜色")
+        // 模糊半径 > 0 → 必须挂上遮罩滤镜;skiko 未暴露滤镜 sigma 的读回,故只断言"已设置"
+        assertNotNull(paint.maskFilter, "blurRadius > 0 时应设置模糊遮罩滤镜")
     }
 }
