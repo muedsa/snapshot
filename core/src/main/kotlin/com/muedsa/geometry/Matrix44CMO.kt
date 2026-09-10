@@ -409,7 +409,7 @@ class Matrix44CMO(vararg mat: Float) {
         val MATRIX44_RANGE: IntRange = IntRange(0, 15)
 
         @JvmStatic
-        fun zero() = IDENTITY.clone()
+        fun zero() = ZERO.clone()
 
         @JvmStatic
         fun identity() = IDENTITY.clone()
