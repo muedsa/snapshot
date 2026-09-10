@@ -3,7 +3,7 @@ package com.muedsa.snapshot.parser
 import com.muedsa.snapshot.parser.token.Token
 import com.muedsa.snapshot.parser.token.Tokenizer
 import com.muedsa.snapshot.parser.widget.SnapshotParser
-import org.junit.jupiter.api.assertThrows
+import kotlin.test.assertFailsWith
 import java.io.StringReader
 import kotlin.test.Test
 
@@ -11,7 +11,7 @@ class TokenizerTest {
 
     @Test
     fun null_char_test() {
-        assertThrows<Throwable> {
+        assertFailsWith<Throwable> {
             parseOnce(Char.MIN_VALUE.toString())
         }
     }
@@ -30,12 +30,12 @@ class TokenizerTest {
         parseUntilEOF("<${SnapshotParser.id} aaa=1 bbb=2>123</${SnapshotParser.id}>")
 
         println("### First not is ${SnapshotParser.id}")
-        assertThrows<Throwable> {
+        assertFailsWith<Throwable> {
             parseUntilEOF("<Container aaa=1 bbb=2>123</Container>")
         }
 
         println("### Second is ${SnapshotParser.id}")
-        assertThrows<Throwable> {
+        assertFailsWith<Throwable> {
             parseUntilEOF(
                 "<${SnapshotParser.id} aaa=1 bbb=2>" +
                         "<${SnapshotParser.id} aaa=1 bbb=2>123</${SnapshotParser.id}>" +

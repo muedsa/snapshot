@@ -2,8 +2,8 @@ package com.muedsa.snapshot.parser.attr
 
 import com.muedsa.snapshot.parser.attr.required.AttrDefine
 import com.muedsa.snapshot.parser.token.RawAttr
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
 import kotlin.enums.enumEntries
 
 class EnumAttrDefineTest {
@@ -58,7 +58,7 @@ class EnumAttrDefineTest {
                 attrDefine.parseValue(RawAttr(attrDefine.name, it.name))
             }
 
-            assertThrows<Throwable> {
+            assertFailsWith<Throwable> {
                 attrDefine.parseValue(RawAttr(attrDefine.name, "🤣🤣🤣"))
             }
         }
@@ -69,7 +69,7 @@ class EnumAttrDefineTest {
                 attrDefine.parseValue(RawAttr(attrDefine.name, it.name))
             }
 
-            assertThrows<Throwable> {
+            assertFailsWith<Throwable> {
                 attrDefine.parseValue(RawAttr(attrDefine.name, "🤣🤣🤣"))
             }
         }
