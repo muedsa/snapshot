@@ -13,8 +13,8 @@ import org.jetbrains.skia.Paint
 import org.jetbrains.skia.PathEffect
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.Direction
-import kotlin.random.Random
 import kotlin.test.Test
+import kotlin.test.assertTrue
 import kotlin.test.expect
 
 class RenderFlexTest {
@@ -36,7 +36,7 @@ class RenderFlexTest {
             appendChild(child3)
         }
         renderFlex.children.forEach { child ->
-            assert(child.parentData is FlexParentData)
+            assertTrue(child.parentData is FlexParentData, "子盒的 parentData 应为 FlexParentData")
         }
     }
 
@@ -75,7 +75,7 @@ class RenderFlexTest {
                         appendChildren(children)
                     }
                     renderFlex.layout(BoxConstraints.expand(size.width, size.height))
-                    valid_direction_mainAxisAlign_crossAxisAlign_test(renderFlex, size, children, childSizeArr, space)
+                    valid_direction_mainAxisAlign_crossAxisAlign_test(renderFlex, size)
                     drawPainter(
                         "render/flex/d${directionIndex}_m${mainAxisAlignmentIndex}_c${crossAxisAlignmentIndex}",
                         size = size,
@@ -105,31 +105,14 @@ class RenderFlexTest {
     private fun valid_direction_mainAxisAlign_crossAxisAlign_test(
         renderFlex: RenderFlex,
         size: Size,
-        children: List<RenderBox>,
-        childSizeArr: Array<Size>,
-        space: Float,
     ) {
-        assert(renderFlex.definiteSize == size) {
+        assertTrue(
+            renderFlex.definiteSize == size,
             "$renderFlex \n${renderFlex.definiteSize} != $size"
-        }
-        println(renderFlex)
-        children.forEachIndexed { childIndex: Int, child: RenderBox ->
-            val childOffset = child.parentData?.offset!!
-            val mainAxisOffset = getMainAxisOffset(offset = childOffset, direction = renderFlex.direction)
-            val crossAxisOffset = getCrossAxisOffset(offset = childOffset, direction = renderFlex.direction)
-
-            println("child$childIndex, mainAxisOffset=$mainAxisOffset, crossAxisOffset=$crossAxisOffset")
-
-//            when(renderFlex.mainAxisAlignment) {
-//                MainAxisAlignment.START -> TODO()
-//                MainAxisAlignment.END -> TODO()
-//                MainAxisAlignment.CENTER -> TODO()
-//                MainAxisAlignment.SPACE_BETWEEN -> TODO()
-//                MainAxisAlignment.SPACE_AROUND -> TODO()
-//                MainAxisAlignment.SPACE_EVENLY -> TODO()
-//            }
-
-        }
+        )
+        // 各子盒的 main/cross 轴偏移目前**未断言**(原先的 TODO 打算按 MainAxisAlignment 各档校验)。
+        // 本用例当前只校验 flex 尺寸,并产出一张覆盖 方向×主轴对齐×交叉轴对齐 全矩阵的 artifact;
+        // 补断言需按各档语义推导期望偏移,留待后续批次。
     }
 
     @Test
@@ -165,11 +148,6 @@ class RenderFlexTest {
             )
         )
 
-        println("renderFlex ${renderFlex.definiteSize}")
-        children.forEachIndexed { index, child ->
-            println("child$index, size=${child.definiteSize}, offset=${child.parentData!!.offset}")
-        }
-
         var mainAxisOffset = 0f
         children.forEachIndexed { index, child ->
             val childParentData: FlexParentData = child.parentData as FlexParentData
@@ -195,10 +173,17 @@ class RenderFlexTest {
 
 
     private fun direction_parent_data_fit_test(direction: Axis) {
-        val childrenCount = 5
-        val defaultSize = 100f
+        // 遍历全部"可伸缩子盒下标":原先用 Random(System.currentTimeMillis()) 只随机覆盖其中一种,
+        // 且每次运行的输入都不同(非确定)。全遍历既确定又覆盖更全。
+        for (expandIndex in 0 until CHILDREN_COUNT) {
+            direction_parent_data_fit_case(direction, expandIndex)
+        }
+    }
+
+    private fun direction_parent_data_fit_case(direction: Axis, expandIndex: Int) {
+        val childrenCount = CHILDREN_COUNT
+        val defaultSize = DEFAULT_SIZE
         var mainAxisSize = 0f
-        val expandIndex = Random(System.currentTimeMillis()).nextInt(childrenCount)
         val expandedSpace = defaultSize * (expandIndex + 1)
         val children: List<RenderBox> = buildList(childrenCount) {
             for (index in 0 until childrenCount) {
@@ -226,10 +211,6 @@ class RenderFlexTest {
             )
         )
 
-        println("renderFlex ${renderFlex.definiteSize}, expandIndex=$expandIndex, expandedSpace=$expandedSpace")
-        children.forEachIndexed { index, child ->
-            println("child$index, size=${child.definiteSize}, offset=${child.parentData!!.offset}")
-        }
         var mainAxisOffset = 0f
         children.forEachIndexed { index, child ->
             val childParentData: FlexParentData = child.parentData as FlexParentData
@@ -253,6 +234,9 @@ class RenderFlexTest {
     }
 
     companion object {
+        private const val CHILDREN_COUNT = 5
+        private const val DEFAULT_SIZE = 100f
+
         private fun getMainAxisOffset(offset: Offset, direction: Axis): Float =
             when (direction) {
                 Axis.HORIZONTAL -> offset.x
