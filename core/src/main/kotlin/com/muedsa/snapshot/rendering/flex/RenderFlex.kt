@@ -234,8 +234,9 @@ open class RenderFlex(
             }
 
             MainAxisAlignment.SPACE_AROUND -> {
-                leadingSpace = if (childCount > 0) remainingSpace / childCount else 0f
-                betweenSpace = leadingSpace / 2
+                // free space 均分给子盒之间,首尾各取其中的"一半"(即 间距 = 2 × 首尾留白)
+                betweenSpace = if (childCount > 0) remainingSpace / childCount else 0f
+                leadingSpace = betweenSpace / 2
             }
 
             MainAxisAlignment.SPACE_EVENLY -> {
