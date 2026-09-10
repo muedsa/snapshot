@@ -6,6 +6,7 @@ import com.muedsa.snapshot.widget.Container
 import com.muedsa.snapshot.widget.Stack
 import org.jetbrains.skia.paragraph.Direction
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class StackParserTest {
     @Test
@@ -19,18 +20,16 @@ class StackParserTest {
                 </Column>
             </Snapshot>
         """.trimIndent()
-        println(text)
         val snapshotElement = ParserTest.parse(text)
-        println(snapshotElement.toTreeString(0))
         val widget = snapshotElement.createWidget()
-        assert(widget is Stack)
+        assertTrue(widget is Stack, "widget is Stack")
         val stack: Stack = widget as Stack
-        assert(stack.alignment == BoxAlignment.CENTER)
-        assert(stack.textDirection == Direction.LTR)
+        assertTrue(stack.alignment == BoxAlignment.CENTER, "stack.alignment == BoxAlignment.CENTER")
+        assertTrue(stack.textDirection == Direction.LTR, "stack.textDirection == Direction.LTR")
         val children = stack.children
-        assert(children.size == 3)
-        assert(children[0] is Container)
-        assert(children[1] is Container)
-        assert(children[2] is Container)
+        assertTrue(children.size == 3, "children.size == 3")
+        assertTrue(children[0] is Container, "children[0] is Container")
+        assertTrue(children[1] is Container, "children[1] is Container")
+        assertTrue(children[2] is Container, "children[2] is Container")
     }
 }

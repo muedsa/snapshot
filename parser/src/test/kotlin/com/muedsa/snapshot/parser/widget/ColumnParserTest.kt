@@ -9,6 +9,7 @@ import com.muedsa.snapshot.widget.Column
 import com.muedsa.snapshot.widget.Container
 import org.jetbrains.skia.paragraph.Direction
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class ColumnParserTest {
 
@@ -27,22 +28,20 @@ class ColumnParserTest {
                 </Column>
             </Snapshot>
         """.trimIndent()
-        println(text)
         val snapshotElement = ParserTest.parse(text)
-        println(snapshotElement.toTreeString(0))
         val widget = snapshotElement.createWidget()
-        assert(widget is Column)
+        assertTrue(widget is Column, "widget is Column")
         val column: Column = widget as Column
-        assert(column.mainAxisAlignment == MainAxisAlignment.START)
-        assert(column.mainAxisSize == MainAxisSize.MAX)
-        assert(column.crossAxisAlignment == CrossAxisAlignment.START)
-        assert(column.textDirection == Direction.RTL)
-        assert(column.verticalDirection == VerticalDirection.DOWN)
-        assert(column.textBaseline == null)
+        assertTrue(column.mainAxisAlignment == MainAxisAlignment.START, "column.mainAxisAlignment == MainAxisAlignment.START")
+        assertTrue(column.mainAxisSize == MainAxisSize.MAX, "column.mainAxisSize == MainAxisSize.MAX")
+        assertTrue(column.crossAxisAlignment == CrossAxisAlignment.START, "column.crossAxisAlignment == CrossAxisAlignment.START")
+        assertTrue(column.textDirection == Direction.RTL, "column.textDirection == Direction.RTL")
+        assertTrue(column.verticalDirection == VerticalDirection.DOWN, "column.verticalDirection == VerticalDirection.DOWN")
+        assertTrue(column.textBaseline == null, "column.textBaseline == null")
         val children = column.children
-        assert(children.size == 3)
-        assert(children[0] is Container)
-        assert(children[1] is Container)
-        assert(children[2] is Container)
+        assertTrue(children.size == 3, "children.size == 3")
+        assertTrue(children[0] is Container, "children[0] is Container")
+        assertTrue(children[1] is Container, "children[1] is Container")
+        assertTrue(children[2] is Container, "children[2] is Container")
     }
 }

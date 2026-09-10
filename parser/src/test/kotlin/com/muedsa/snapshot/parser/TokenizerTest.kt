@@ -6,6 +6,7 @@ import com.muedsa.snapshot.parser.widget.SnapshotParser
 import kotlin.test.assertFailsWith
 import java.io.StringReader
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class TokenizerTest {
 
@@ -20,21 +21,18 @@ class TokenizerTest {
     fun cdata_test() {
         val data = "a <= b"
         val token: Token = parseOnce("<![CDATA[$data]]>")
-        assert(token is Token.CDATA)
-        assert(data == (token as Token.CDATA).data)
+        assertTrue(token is Token.CDATA, "token is Token.CDATA")
+        assertTrue(data == (token as Token.CDATA).data, "data == (token as Token.CDATA).data")
     }
 
     @Test
     fun first_tag_test() {
-        println("### First is ${SnapshotParser.id}")
         parseUntilEOF("<${SnapshotParser.id} aaa=1 bbb=2>123</${SnapshotParser.id}>")
 
-        println("### First not is ${SnapshotParser.id}")
         assertFailsWith<Throwable> {
             parseUntilEOF("<Container aaa=1 bbb=2>123</Container>")
         }
 
-        println("### Second is ${SnapshotParser.id}")
         assertFailsWith<Throwable> {
             parseUntilEOF(
                 "<${SnapshotParser.id} aaa=1 bbb=2>" +
@@ -49,7 +47,6 @@ class TokenizerTest {
         val tokenizer = Tokenizer(reader)
         tokenizer.read()
         val token: Token = tokenizer.read()
-        println("${token.type}: ${token.toStringWithPos()}")
         return token
     }
 
@@ -58,7 +55,6 @@ class TokenizerTest {
         val tokenizer = Tokenizer(reader)
         do {
             val token: Token = tokenizer.read()
-            println("${token.type}: ${token.toStringWithPos()}")
         } while (token !is Token.EOF)
     }
 

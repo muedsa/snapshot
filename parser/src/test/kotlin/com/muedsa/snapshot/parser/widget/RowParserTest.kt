@@ -9,6 +9,7 @@ import com.muedsa.snapshot.widget.Container
 import com.muedsa.snapshot.widget.Row
 import org.jetbrains.skia.paragraph.Direction
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class RowParserTest {
 
@@ -27,22 +28,20 @@ class RowParserTest {
                 </Row>
             </Snapshot>
         """.trimIndent()
-        println(text)
         val snapshotElement = ParserTest.parse(text)
-        println(snapshotElement.toTreeString(0))
         val widget = snapshotElement.createWidget()
-        assert(widget is Row)
+        assertTrue(widget is Row, "widget is Row")
         val row: Row = widget as Row
-        assert(row.mainAxisAlignment == MainAxisAlignment.START)
-        assert(row.mainAxisSize == MainAxisSize.MAX)
-        assert(row.crossAxisAlignment == CrossAxisAlignment.START)
-        assert(row.textDirection == Direction.RTL)
-        assert(row.verticalDirection == VerticalDirection.DOWN)
-        assert(row.textBaseline == null)
+        assertTrue(row.mainAxisAlignment == MainAxisAlignment.START, "row.mainAxisAlignment == MainAxisAlignment.START")
+        assertTrue(row.mainAxisSize == MainAxisSize.MAX, "row.mainAxisSize == MainAxisSize.MAX")
+        assertTrue(row.crossAxisAlignment == CrossAxisAlignment.START, "row.crossAxisAlignment == CrossAxisAlignment.START")
+        assertTrue(row.textDirection == Direction.RTL, "row.textDirection == Direction.RTL")
+        assertTrue(row.verticalDirection == VerticalDirection.DOWN, "row.verticalDirection == VerticalDirection.DOWN")
+        assertTrue(row.textBaseline == null, "row.textBaseline == null")
         val children = row.children
-        assert(children.size == 3)
-        assert(children[0] is Container)
-        assert(children[1] is Container)
-        assert(children[2] is Container)
+        assertTrue(children.size == 3, "children.size == 3")
+        assertTrue(children[0] is Container, "children[0] is Container")
+        assertTrue(children[1] is Container, "children[1] is Container")
+        assertTrue(children[2] is Container, "children[2] is Container")
     }
 }

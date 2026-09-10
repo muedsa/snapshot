@@ -4,6 +4,7 @@ import com.muedsa.snapshot.parser.ParserTest
 import com.muedsa.snapshot.widget.RawImage
 import org.junit.jupiter.api.Tag
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 @Tag("network")
 class ImageParserTest {
@@ -14,14 +15,12 @@ class ImageParserTest {
                 <Image url="https://samples-files.com/samples/images/jpg/480-360-sample.jpg"/>
             </Snapshot>
         """.trimIndent()
-        println(text)
         val snapshotElement = ParserTest.parse(text)
-        println(snapshotElement.toTreeString(0))
         val widget = snapshotElement.createWidget()
-        assert(widget is RawImage)
+        assertTrue(widget is RawImage, "widget is RawImage")
         val rawImage: RawImage = widget as RawImage
-        assert(!rawImage.image.isEmpty)
-        assert(rawImage.image.imageInfo.width == 480)
-        assert(rawImage.image.imageInfo.height == 360)
+        assertTrue(!rawImage.image.isEmpty, "!rawImage.image.isEmpty")
+        assertTrue(rawImage.image.imageInfo.width == 480, "rawImage.image.imageInfo.width == 480")
+        assertTrue(rawImage.image.imageInfo.height == 360, "rawImage.image.imageInfo.height == 360")
     }
 }
