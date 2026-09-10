@@ -2,7 +2,7 @@ package com.muedsa.snapshot.parser.attr.nullable
 
 import com.muedsa.geometry.Radius
 import com.muedsa.snapshot.parser.token.RawAttr
-import org.junit.jupiter.api.assertThrows
+import kotlin.test.assertFailsWith
 import kotlin.test.Test
 import kotlin.test.expect
 
@@ -20,19 +20,19 @@ class NullableRadiusAttrDefineTest {
             attr.parseValue(RawAttr(attr.name, "(2.1,3.4)"))
         }
 
-        assertThrows<Throwable> {
+        assertFailsWith<Throwable> {
             attr.parseValue(RawAttr(attrName, "(8.9)"))
         }
 
-        assertThrows<Throwable> {
+        assertFailsWith<Throwable> {
             attr.parseValue(RawAttr(attrName, "(7,11.65,8.9)"))
         }
 
-        assertThrows<Throwable> {
+        assertFailsWith<Throwable> {
             attr.parseValue(RawAttr(attrName, "7,11.65"))
         }
 
-        assertThrows<Throwable> {
+        assertFailsWith<Throwable> {
             attr.parseValue(RawAttr(attrName, "asd"))
         }
     }

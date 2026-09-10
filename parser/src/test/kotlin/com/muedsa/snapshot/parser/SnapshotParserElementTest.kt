@@ -2,7 +2,7 @@ package com.muedsa.snapshot.parser
 
 import com.muedsa.snapshot.parser.token.RawAttr
 import org.jetbrains.skia.EncodedImageFormat
-import org.junit.jupiter.api.assertThrows
+import kotlin.test.assertFailsWith
 import kotlin.test.Test
 import kotlin.test.expect
 
@@ -19,7 +19,7 @@ class SnapshotParserElementTest {
         expect("webp") {
             SnapshotElement.ATTR_TYPE.parseValue(RawAttr(SnapshotElement.ATTR_TYPE.name, "webp"))
         }
-        assertThrows<Throwable> {
+        assertFailsWith<Throwable> {
             SnapshotElement.ATTR_TYPE.parseValue(RawAttr(SnapshotElement.ATTR_TYPE.name, "233"))
         }
     }

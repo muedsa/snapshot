@@ -5,7 +5,7 @@ import com.muedsa.geometry.EdgeInsets
 import com.muedsa.snapshot.getTestPngFile
 import com.muedsa.snapshot.widget.Container
 import com.muedsa.snapshot.widget.text.RichText
-import org.junit.jupiter.api.assertThrows
+import kotlin.test.assertFailsWith
 import java.io.StringReader
 import kotlin.test.Test
 
@@ -42,7 +42,7 @@ class ParserTest {
 
     @Test
     fun duplicate_snapshot_element_test() {
-        assertThrows<ParseException> {
+        assertFailsWith<ParseException> {
             val text = """
                 <Snapshot background="#FFFFFFFF" type="png" debug>
                     <Snapshot/>
@@ -60,7 +60,7 @@ class ParserTest {
 
     @Test
     fun duplicate_root_element_test() {
-        assertThrows<ParseException> {
+        assertFailsWith<ParseException> {
             val text = """
                 <Snapshot background="#FFFFFFFF" type="png" debug>
                     <Container color="#FF00FF00" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
@@ -78,7 +78,7 @@ class ParserTest {
 
     @Test
     fun snapshot_content_empty_test() {
-        assertThrows<ParseException> {
+        assertFailsWith<ParseException> {
             val text = """
                 <Snapshot background="#FFFFFFFF" type="png" debug></Snapshot>>
             """.trimIndent()

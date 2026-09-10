@@ -6,7 +6,7 @@ import com.muedsa.snapshot.paint.decoration.BoxShadow
 import com.muedsa.snapshot.parser.token.RawAttr
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.FilterBlurMode
-import org.junit.jupiter.api.assertThrows
+import kotlin.test.assertFailsWith
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 
@@ -19,7 +19,7 @@ class NullableBoxShadowAttrDefineTest {
 
         assertContentEquals(ELEVATION_MAP[1], attr.parseValue(RawAttr(attrName, "ELEVATION_1")))
 
-        assertThrows<Throwable> {
+        assertFailsWith<Throwable> {
             attr.parseValue(RawAttr(attrName, "ELEVATION_111"))
         }
 
