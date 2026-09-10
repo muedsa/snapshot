@@ -3,6 +3,20 @@
 日期:2026-09-07
 状态:设计(已逐节与用户确认)
 
+> **实现差异说明(2026-09-10 补记)**:本文是设计稿,最终落地时有以下命名与取舍差异,以代码与
+> `docs/testing/README.md` 为准:
+>
+> - `LayoutNode.findByType(): LayoutNode?` → 落地为 **`findType<T>(where: (T) -> Boolean = { true })`**,
+>   支持"按类型 + 谓词"精确定位;另补了 `firstMatching(predicate)` 与 `LayoutNode.rect`。
+> - `Pixmap.colorStats(rect)` → 落地为 **`Pixmap.regionStats(rect)`**(返回类型 `RegionColorStats` 不变)。
+> - `assertPixmapMatchesBaseline(pixmap, …)` **未实现(已裁)**:调用方均可走 `snapshotPixels`/`painterPixels`
+>   拿到 `Pixmap` 后再经 `snapshotImage`/`painterImage` 或 `assertImageMatchesBaseline(image, …)` 完成比对,
+>   补一个 `Pixmap` 重载没有实际使用场景。
+> - `assertImageMatchesBaseline(image, id, perPixelTolerance, allowMismatchRatio)` 按设计落地。
+>
+> 采样/区域断言的**边界语义**(矩形左含右开、分数坐标落到哪些像素、alpha 分类门槛、通道容差端点、
+> 空/越界区域行为)已由 `testkit/src/test/kotlin/com/muedsa/snapshot/SamplingAssertionsBoundaryTest.kt` 锁定。
+
 ## 背景与动机
 
 `snapshot` 是 Flutter 风格的声明式 UI + skia 渲染库(core 模块)+ XML 解析(parser 模块)。当前测试体系的问题:
