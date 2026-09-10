@@ -7,6 +7,10 @@
 
 **Demo**: https://snapshot.muedsa.com
 
+> 📖 **文档导航**
+> - [使用说明](docs/usage/README.md)：环境与构建、快速上手、Widget 参考、布局/绘制/文本、类 DOM 解析器全部标签与属性、错误处理、FAQ
+> - [测试手册](docs/testing/README.md)：testkit、四层断言、golden 三态
+
 <details>
  <summary><code>POST</code> <code>/snapshot</code> 生成图片</summary>
 
