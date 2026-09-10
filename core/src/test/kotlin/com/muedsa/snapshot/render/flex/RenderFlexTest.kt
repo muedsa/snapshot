@@ -2,6 +2,7 @@ package com.muedsa.snapshot.render.flex
 
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
+import com.muedsa.snapshot.assertApproxEq
 import com.muedsa.snapshot.drawPainter
 import com.muedsa.snapshot.paint.Axis
 import com.muedsa.snapshot.rendering.box.BoxConstraints
@@ -110,9 +111,100 @@ class RenderFlexTest {
             renderFlex.definiteSize == size,
             "$renderFlex \n${renderFlex.definiteSize} != $size"
         )
-        // 各子盒的 main/cross 轴偏移目前**未断言**(原先的 TODO 打算按 MainAxisAlignment 各档校验)。
-        // 本用例当前只校验 flex 尺寸,并产出一张覆盖 方向×主轴对齐×交叉轴对齐 全矩阵的 artifact;
-        // 补断言需按各档语义推导期望偏移,留待后续批次。
+        assertMainAxisAlignmentProperties(renderFlex, size)
+        assertCrossAxisAlignmentProperties(renderFlex, size)
+    }
+
+    /**
+     * 主轴对齐的**性质**断言。
+     *
+     * 刻意不复刻 [RenderFlex] 的 `leadingSpace`/`betweenSpace` 公式(那样会与实现同源同错),
+     * 只断言语义必然蕴含的关系:不重叠、贴边/居中、间距之间的关系。
+     */
+    private fun assertMainAxisAlignmentProperties(renderFlex: RenderFlex, size: Size) {
+        val direction = renderFlex.direction
+        val children = renderFlex.children
+        val actualSize = getMainAxisSize(size, direction)
+        val offsets = children.map { getMainAxisOffset(it.parentData!!.offset, direction) }
+        val sizes = children.map { getMainAxisSize(it.definiteSize, direction) }
+
+        // 通用:子盒按序不重叠,且都不越出容器
+        assertTrue(offsets.first() >= -ALIGN_TOL, "首子盒主轴偏移为负: ${offsets.first()}")
+        assertTrue(
+            offsets.last() + sizes.last() <= actualSize + ALIGN_TOL,
+            "末子盒越出容器: ${offsets.last() + sizes.last()} > $actualSize"
+        )
+        offsets.zipWithNext().forEachIndexed { index, (current, next) ->
+            assertTrue(
+                next >= current + sizes[index] - ALIGN_TOL,
+                "主轴子盒 $index($current+${sizes[index]}) 与 ${index + 1}($next) 重叠"
+            )
+        }
+
+        val leading = offsets.first()
+        val trailing = actualSize - (offsets.last() + sizes.last())
+        val gaps = (0 until children.size - 1).map { index ->
+            offsets[index + 1] - (offsets[index] + sizes[index])
+        }
+
+        when (renderFlex.mainAxisAlignment) {
+            MainAxisAlignment.START -> assertApproxEq(offsets.first(), 0f, ALIGN_TOL)
+
+            MainAxisAlignment.END -> assertApproxEq(offsets.last() + sizes.last(), actualSize, ALIGN_TOL)
+
+            MainAxisAlignment.CENTER -> assertApproxEq(leading, trailing, ALIGN_TOL)
+
+            MainAxisAlignment.SPACE_BETWEEN -> {
+                assertApproxEq(offsets.first(), 0f, ALIGN_TOL)
+                assertApproxEq(offsets.last() + sizes.last(), actualSize, ALIGN_TOL)
+                gaps.forEach { assertTrue(it > 0f, "SPACE_BETWEEN 的间距应为正,实际 $it") }
+                gaps.forEach { assertApproxEq(it, gaps.first(), ALIGN_TOL) }
+            }
+
+            MainAxisAlignment.SPACE_AROUND -> {
+                // Flutter 语义:free space 均分子盒之间,首尾各取其中的**一半**
+                // → 间距 = 2 × 首尾留白
+                assertApproxEq(leading, trailing, ALIGN_TOL)
+                gaps.forEach {
+                    assertTrue(it > 0f, "SPACE_AROUND 的间距应为正,实际 $it")
+                    assertApproxEq(it, leading * 2f, ALIGN_TOL)
+                }
+            }
+
+            MainAxisAlignment.SPACE_EVENLY -> {
+                // 首尾留白与各间距彼此相等
+                assertApproxEq(leading, trailing, ALIGN_TOL)
+                gaps.forEach { assertApproxEq(it, leading, ALIGN_TOL) }
+            }
+        }
+    }
+
+    /** 交叉轴对齐的**性质**断言(同[assertMainAxisAlignmentProperties],不复刻实现公式)。 */
+    private fun assertCrossAxisAlignmentProperties(renderFlex: RenderFlex, size: Size) {
+        val direction = renderFlex.direction
+        val children = renderFlex.children
+        val crossSize = getCrossAxisSize(size, direction)
+        val offsets = children.map { getCrossAxisOffset(it.parentData!!.offset, direction) }
+        val sizes = children.map { getCrossAxisSize(it.definiteSize, direction) }
+
+        when (renderFlex.crossAxisAlignment) {
+            CrossAxisAlignment.START -> offsets.forEach { assertApproxEq(it, 0f, ALIGN_TOL) }
+
+            CrossAxisAlignment.END -> offsets.zip(sizes).forEach { (offset, childSize) ->
+                assertApproxEq(offset + childSize, crossSize, ALIGN_TOL)
+            }
+
+            CrossAxisAlignment.CENTER -> offsets.zip(sizes).forEach { (offset, childSize) ->
+                assertApproxEq(offset + childSize / 2f, crossSize / 2f, ALIGN_TOL)
+            }
+
+            CrossAxisAlignment.STRETCH -> sizes.forEach {
+                assertApproxEq(it, crossSize, ALIGN_TOL)
+            }
+
+            // 子盒是无基线的 RenderConstrainedBox:按文档"无基线者 top 对齐",交叉轴偏移为 0
+            CrossAxisAlignment.BASELINE -> offsets.forEach { assertApproxEq(it, 0f, ALIGN_TOL) }
+        }
     }
 
     @Test
@@ -236,6 +328,21 @@ class RenderFlexTest {
     companion object {
         private const val CHILDREN_COUNT = 5
         private const val DEFAULT_SIZE = 100f
+
+        /** 对齐性质断言的容差:远小于一像素,又远大于浮点除法带来的噪声。 */
+        private const val ALIGN_TOL = 0.01f
+
+        private fun getMainAxisSize(size: Size, direction: Axis): Float =
+            when (direction) {
+                Axis.HORIZONTAL -> size.width
+                Axis.VERTICAL -> size.height
+            }
+
+        private fun getCrossAxisSize(size: Size, direction: Axis): Float =
+            when (direction) {
+                Axis.HORIZONTAL -> size.height
+                Axis.VERTICAL -> size.width
+            }
 
         private fun getMainAxisOffset(offset: Offset, direction: Axis): Float =
             when (direction) {
