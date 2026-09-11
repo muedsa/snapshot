@@ -11,7 +11,6 @@ abstract class RenderContainerBox : RenderBox() {
 
     val children: List<RenderBox> = _children
 
-    @Synchronized
     fun appendChild(child: RenderBox) {
         check(!_children.contains(child)) {
             "RenderContainerBox cant append duplicate child"
@@ -19,16 +18,19 @@ abstract class RenderContainerBox : RenderBox() {
         _children.add(child)
         val index = _children.size - 1
         child.parent = this
-        val childParentData: ContainerBoxParentData = child.parentData!! as ContainerBoxParentData
+        val parentData = child.parentData
+        check(parentData is ContainerBoxParentData) {
+            "${this::class.simpleName} requires a ContainerBoxParentData from setupParentData(), " +
+                "but got ${parentData?.let { it::class.simpleName } ?: "null"}"
+        }
         if (index > 0) {
-            childParentData.previousSibling = _children[index - 1]
+            parentData.previousSibling = _children[index - 1]
         }
         if (index < _children.size - 1) {
-            childParentData.nextSibling = _children[index + 1]
+            parentData.nextSibling = _children[index + 1]
         }
     }
 
-    @Synchronized
     fun appendChildren(list: List<RenderBox>) {
         if (list.isNotEmpty()) {
             list.forEach { appendChild(child = it) }

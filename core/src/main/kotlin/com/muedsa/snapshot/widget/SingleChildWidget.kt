@@ -21,7 +21,12 @@ abstract class SingleChildWidget : Widget(), ChildSlot {
         val child = this.child
         val renderBox = createRenderBox(child)
         if (child is ParentDataWidget && renderBox is RenderSingleChildBox) {
-            child.applyParentData(renderBox.child!!)
+            val target = renderBox.child
+            checkNotNull(target) {
+                "${this::class.simpleName} produced a ${renderBox::class.simpleName} without a child " +
+                    "render box, so parent data of ${child::class.simpleName} can not be applied"
+            }
+            child.applyParentData(target)
         }
         return renderBox
     }
