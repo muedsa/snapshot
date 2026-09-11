@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- 仓库根 `D:\mine\workspace\snapshot`;本计划**只**在分支 `refactor/widget-dsl-guard`(base = `main` @ `55fe451`)上执行。该分支开工前已含 2 个文档提交(spec 及其消息风格修订),本计划再追加 3 个代码提交,共 5 个。
+- 仓库根 `D:\mine\workspace\snapshot`;本计划**只**在分支 `refactor/widget-dsl-guard`(base = `main` @ `55fe451`)上执行。该分支开工前已含若干文档提交(spec、spec 的消息风格修订、本实现计划自身);本计划再追加 **3 个代码提交**。验收时以"这 3 个代码提交都在、且分支上所有提交均已签名"为准,不要断言提交总数。
 - **不要** `git push`、**不要**创建 PR——由用户手动创建与合并。
 - 所有命令在 PowerShell 下执行,用 `.\gradlew.bat`(**不要**用 `./gradlew`)。
 - 每个提交必须 GPG 签名:`git commit -S -m "…"`;提交后跑 `git log -1 --pretty='%h %G? %s'`,首字段必须是 `G`。若报 `No passphrase given`,原样重试一次。
@@ -663,7 +663,7 @@ git status --porcelain
 git log --oneline main..HEAD
 git log --pretty='%h %G? %s' main..HEAD
 ```
-Expected: 第一条命令**无输出**;后两条列出 **5** 个提交——分支上已有的 2 个文档提交(`docs: Widget DSL 子槽位类型化(ChildSlot)设计稿`、`docs: spec 异常消息统一为英文(对齐 core 既有消息风格)`)加上本计划的 3 个代码提交(倒序为 Task 3、Task 2、Task 1)。每个提交的 `%G?` 都必须是 `G`。
+Expected: 第一条命令**无输出**;`git log --oneline main..HEAD` 中能看到 Task 1/2/3 的 3 个代码提交(倒序为 Task 3、Task 2、Task 1)以及开工前已有的文档提交;`%G?` 一列**全部**为 `G`。不要断言提交总数(文档提交的数量会随计划修订变化)。
 
 - [ ] **Step 3: 汇总交付说明**
 
