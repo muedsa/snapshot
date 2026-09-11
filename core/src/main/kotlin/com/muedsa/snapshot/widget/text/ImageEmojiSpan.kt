@@ -14,7 +14,6 @@ import com.muedsa.snapshot.tools.NetworkImageCache
 import com.muedsa.snapshot.tools.NetworkImageCacheManager
 import com.muedsa.snapshot.widget.ProviderImage
 import com.muedsa.snapshot.widget.Widget
-import com.muedsa.snapshot.widget.buildChild
 import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.Image
 import org.jetbrains.skia.Rect
@@ -72,8 +71,8 @@ fun TextSpan.ImageEmojiSpan(
         alignment = alignment,
         baseline = baseline
     ) {
-        buildChild(
-            widget = ImageEmoji(
+        attach(
+            ImageEmoji(
                 provider = provider,
                 width = width,
                 height = height,
@@ -84,9 +83,7 @@ fun TextSpan.ImageEmojiSpan(
                 opacity = opacity,
                 color = color,
                 colorBlendMode = colorBlendMode,
-                parent = this
-            ),
-            content = { }
+            )
         )
     }
 }
@@ -102,7 +99,6 @@ class ImageEmoji(
     opacity: Float = 1f,
     color: Int? = null,
     colorBlendMode: BlendMode? = null,
-    parent: Widget? = null,
 ) : ProviderImage(
     provider = provider,
     width = width,
@@ -114,7 +110,6 @@ class ImageEmoji(
     opacity = opacity,
     color = color,
     colorBlendMode = colorBlendMode,
-    parent = parent
 ) {
     override fun createRenderBox(): RenderBox {
         val finalParent = parent

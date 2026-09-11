@@ -248,6 +248,13 @@ ProxyWidget(根)          →    (透传)
 | `MultiChildWidget` | 多个（`children`） | `Flex`/`Row`/`Column`/`Stack`/`RichText` |
 | （直接继承 `Widget`） | 0 个 | 叶子：`RawImage`、`ProviderImage`、`CachedNetworkImage` |
 
+前三类都实现了 **`ChildSlot`** 接口（唯一方法 `attach(child)`），而直接继承 `Widget` 的叶子**不是** `ChildSlot`。所有 Widget DSL 函数（`Padding` / `Row` / `Stack` …）的接收者都是 `ChildSlot`，这带来两条**编译期**保证：
+
+- 在没有子槽位的 Widget 上挂子节点 → **编译错误**（不再是运行时异常）；
+- 把节点挂到错误的父节点上（例如 `Stack { Row { Positioned(…) } }`——`Positioned` 的接收者是 `Stack`，而最近的接收者是 `Row`）→ **编译错误**。
+
+因此如果你写了自己的辅助函数，接收者要声明成 `fun ChildSlot.myCard() { … }`；写成 `fun Widget.myCard()` 会在里面调不到任何 Widget DSL 函数。`attach` 同时也是唯一设置子槽位与 `parent` 回指的入口，同一个子槽位重复挂载会抛 `IllegalStateException`。
+
 `ParentDataWidget` 是一类特殊 `ProxyWidget`：它**不新增 RenderBox 节点**（`createRenderBox()` 直接转发给子节点），而是把布局参数**写进子 RenderBox 的 parentData**。`Expanded`/`Flexible`（写给 `FlexParentData`）和 `Positioned`（写给 `StackParentData`）都是它——这也是为什么它们只能作为对应父节点的直接子节点。
 
 ### 4.2 约束模型

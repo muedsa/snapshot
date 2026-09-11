@@ -8,6 +8,7 @@ import com.muedsa.snapshot.widget.Widget
 import org.jetbrains.skia.*
 import kotlin.math.abs
 import kotlin.math.ceil
+import com.muedsa.snapshot.widget.ChildSlot
 
 /* ---------- 渲染桥 ---------- */
 
@@ -19,7 +20,7 @@ import kotlin.math.ceil
 private fun widgetSurface(
     background: Int = Color.WHITE,
     debug: Boolean = false,
-    content: Widget.() -> Unit,
+    content: ChildSlot.() -> Unit,
 ): Surface = Snapshot(background = background, debug = debug, content = content)
 
 /**
@@ -31,7 +32,7 @@ private fun widgetSurface(
 fun snapshotPixels(
     background: Int = Color.WHITE,
     debug: Boolean = false,
-    content: Widget.() -> Unit,
+    content: ChildSlot.() -> Unit,
 ): Pixmap = widgetSurface(background, debug, content).makeImageSnapshot().peekPixels()!!
 
 /**
@@ -40,7 +41,7 @@ fun snapshotPixels(
 fun snapshotImage(
     background: Int = Color.WHITE,
     debug: Boolean = false,
-    content: Widget.() -> Unit,
+    content: ChildSlot.() -> Unit,
 ): Image = widgetSurface(background, debug, content).makeImageSnapshot()
 
 /**
@@ -87,7 +88,7 @@ fun painterImage(
  * 对 widget 内容完成一次根布局,返回只读的布局自省树根 [LayoutNode]。
  * 前提:widget 树的尺寸不受外部约束(等价于 core 的 layoutWidget 于 BoxConstraints 无穷约束)。
  */
-fun rootLayout(content: Widget.() -> Unit): LayoutNode = layoutWidget(content).toLayoutNode()
+fun rootLayout(content: ChildSlot.() -> Unit): LayoutNode = layoutWidget(content).toLayoutNode()
 
 /**
  * 断言 actual 与 expected 之差的绝对值不超过 tolerance;失败抛 [AssertionError]。
@@ -153,7 +154,7 @@ inline fun <reified T : RenderBox> LayoutNode.findType(noinline where: (T) -> Bo
  *  - record:仅当基准不存在时写入,已存在则报错;
  *  - update:无条件覆盖同名基准。
  */
-fun golden(id: String, background: Int = Color.WHITE, content: Widget.() -> Unit) {
+fun golden(id: String, background: Int = Color.WHITE, content: ChildSlot.() -> Unit) {
     GoldenEngine.assertMatchesBaseline(snapshotImage(background = background, content = content), id)
 }
 

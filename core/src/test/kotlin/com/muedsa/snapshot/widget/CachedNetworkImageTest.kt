@@ -19,7 +19,7 @@ class CachedNetworkImageTest {
     }
 
     // 两个 Column 各含两张 400x400 图片,并排 → 800x800(实测校准)。
-    private fun Widget.networkImageScene(noCache: Boolean) {
+    private fun ChildSlot.networkImageScene(noCache: Boolean) {
         Row {
             Column {
                 CachedNetworkImage(url = IMAGE_URL, width = SIDE, height = SIDE, noCache = noCache)

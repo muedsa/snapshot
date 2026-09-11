@@ -3,23 +3,20 @@ package com.muedsa.snapshot.widget
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderColoredBox
 
-inline fun Widget.ColoredBox(
+inline fun ChildSlot.ColoredBox(
     color: Int,
     content: ColoredBox.() -> Unit = {},
 ) {
-    buildChild(
-        widget = ColoredBox(
+    attach(
+        com.muedsa.snapshot.widget.ColoredBox(
             color = color,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
 class ColoredBox(
     var color: Int,
-    parent: Widget? = null,
-) : SingleChildWidget(parent = parent) {
+) : SingleChildWidget() {
 
     override fun createRenderBox(child: Widget?): RenderBox = RenderColoredBox(
         color = color,

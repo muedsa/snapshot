@@ -4,23 +4,20 @@ import com.muedsa.snapshot.rendering.box.ColorFilterRenderObject
 import com.muedsa.snapshot.rendering.box.RenderBox
 import org.jetbrains.skia.ColorFilter
 
-inline fun Widget.ColorFiltered(
+inline fun ChildSlot.ColorFiltered(
     colorFilter: ColorFilter,
     content: ColorFiltered.() -> Unit = {},
 ) {
-    buildChild(
-        widget = ColorFiltered(
+    attach(
+        com.muedsa.snapshot.widget.ColorFiltered(
             colorFilter = colorFilter,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
 class ColorFiltered(
     var colorFilter: ColorFilter,
-    parent: Widget? = null,
-) : SingleChildWidget(parent = parent) {
+) : SingleChildWidget() {
 
     override fun createRenderBox(child: Widget?): RenderBox = ColorFilterRenderObject(
         colorFilter = colorFilter,

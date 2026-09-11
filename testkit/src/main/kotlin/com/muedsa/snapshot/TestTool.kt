@@ -20,6 +20,7 @@ import kotlin.io.path.createDirectory
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.exists
 import kotlin.math.ceil
+import com.muedsa.snapshot.widget.ChildSlot
 
 fun noLimitedLayout(renderBox: RenderBox) {
     renderBox.layout(BoxConstraints())
@@ -47,7 +48,7 @@ fun drawWidget(
     imagePathWithoutSuffix: String,
     debugInfo: String? = null,
     drawDebug: Boolean = false,
-    content: Widget.() -> Unit,
+    content: ChildSlot.() -> Unit,
 ) {
     var snapshotImage = SnapshotImage(
         background = Color.TRANSPARENT,

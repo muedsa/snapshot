@@ -6,16 +6,16 @@ import com.muedsa.snapshot.paint.text.TextSpan
 import com.muedsa.snapshot.paint.text.TextWidthBasis
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.text.RenderParagraph
+import com.muedsa.snapshot.widget.ChildSlot
 import com.muedsa.snapshot.widget.MultiChildWidget
 import com.muedsa.snapshot.widget.Widget
-import com.muedsa.snapshot.widget.buildChild
 import com.muedsa.snapshot.widget.createRenderBox
 import org.jetbrains.skia.paragraph.Alignment
 import org.jetbrains.skia.paragraph.Direction
 import org.jetbrains.skia.paragraph.HeightMode
 import org.jetbrains.skia.paragraph.StrutStyle
 
-fun Widget.RichText(
+fun ChildSlot.RichText(
     text: InlineSpan,
     textAlign: Alignment = Alignment.START,
     textDirection: Direction = Direction.LTR,
@@ -27,8 +27,8 @@ fun Widget.RichText(
     textHeightMode: HeightMode? = null,
 ) {
     check(this !is RichText) { "only TextSpan can be used in RichText widget" }
-    buildChild(
-        widget = RichText(
+    attach(
+        com.muedsa.snapshot.widget.text.RichText(
             text = text,
             textAlign = textAlign,
             textDirection = textDirection,
@@ -38,9 +38,7 @@ fun Widget.RichText(
             strutStyle = strutStyle,
             textWidthBasis = textWidthBasis,
             textHeightMode = textHeightMode,
-            parent = this
-        ),
-        content = { }
+        )
     )
 }
 
@@ -54,14 +52,10 @@ class RichText(
     val strutStyle: StrutStyle? = null,
     val textWidthBasis: TextWidthBasis = TextWidthBasis.PARENT,
     val textHeightMode: HeightMode? = null,
-    parent: Widget? = null,
-) : MultiChildWidget(parent = parent) {
+) : MultiChildWidget() {
 
     init {
-        WidgetSpan.extractFromInlineSpan(text).forEach {
-            it.parent = this
-            appendChild(it)
-        }
+        WidgetSpan.extractFromInlineSpan(text).forEach { attach(it) }
     }
 
     override fun createRenderBox(children: List<Widget>): RenderBox = RenderParagraph(

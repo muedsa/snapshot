@@ -14,7 +14,7 @@ class OpacityTest {
 
     // 300x300 黄底、居中 200x200 绿块:绿块占 (50,50)-(250,250)。
     // 中心 (150,150) 反映 Opacity 后的合成色;四角 (1,1)/(298,298) 在黄底内。
-    private fun Widget.opacityScene(opacity: Float) {
+    private fun ChildSlot.opacityScene(opacity: Float) {
         Container(width = 300f, height = 300f, alignment = BoxAlignment.CENTER, color = Color.YELLOW) {
             Opacity(opacity = opacity) {
                 Container(width = 200f, height = 200f, color = Color.GREEN)

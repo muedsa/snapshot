@@ -12,7 +12,7 @@ import kotlin.test.Test
 class ContainerParserTest {
 
     // 无 color/decoration 的 Container:只参与布局、不绘制任何像素(实测整幅透明)。
-    private fun Widget.sizedContainer() {
+    private fun ChildSlot.sizedContainer() {
         Container(width = 300f, height = 300f)
     }
 

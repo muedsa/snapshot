@@ -3,7 +3,6 @@ package com.muedsa.snapshot.parser
 import com.muedsa.snapshot.parser.token.RawAttr
 import com.muedsa.snapshot.parser.widget.WidgetParser
 import com.muedsa.snapshot.widget.Widget
-import com.muedsa.snapshot.widget.bind
 
 open class Element(
     val widgetParser: WidgetParser,

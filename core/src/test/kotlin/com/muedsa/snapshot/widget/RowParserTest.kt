@@ -26,7 +26,7 @@ class RowParserTest {
     }
 
     // 三个纯色盒 100x100 / 300x300 / 200x200;main 轴位置恒为 0 / 100 / 400(实测)。
-    private fun Widget.rowScene(crossAxisAlignment: CrossAxisAlignment) {
+    private fun ChildSlot.rowScene(crossAxisAlignment: CrossAxisAlignment) {
         if (crossAxisAlignment == CrossAxisAlignment.STRETCH) {
             // STRETCH 需要有限的 cross 轴约束才能观察到拉伸;
             // LimitedBox(1000x1000) 同时把 Row 撑成 1000x1000(mainAxisSize=MAX + 有限 maxWidth)。

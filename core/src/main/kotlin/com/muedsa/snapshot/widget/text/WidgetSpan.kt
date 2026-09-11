@@ -2,9 +2,9 @@ package com.muedsa.snapshot.widget.text
 
 import com.muedsa.snapshot.kDefaultFontSize
 import com.muedsa.snapshot.paint.text.*
+import com.muedsa.snapshot.widget.ChildSlot
 import com.muedsa.snapshot.widget.ProxyWidget
 import com.muedsa.snapshot.widget.Widget
-import com.muedsa.snapshot.widget.bind
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.PlaceholderAlignment
 import org.jetbrains.skia.paragraph.PlaceholderStyle
@@ -13,7 +13,7 @@ inline fun TextSpan.WidgetSpan(
     alignment: PlaceholderAlignment = PlaceholderAlignment.BOTTOM,
     baseline: BaselineMode? = null,
     style: TextStyle? = null,
-    crossinline content: Widget.() -> Unit,
+    crossinline content: ChildSlot.() -> Unit,
 ) {
     this.children.add(
         WidgetSpan(
@@ -86,7 +86,7 @@ class WidgetSpan(
                 widgets.add(
                     WidgetSpanParentDataWidget(
                         span = span
-                    ).bind(span.child)
+                    ).apply { attach(span.child) }
                 )
             }
 

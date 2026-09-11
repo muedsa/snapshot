@@ -24,7 +24,7 @@ class StackParserTest {
     }
 
     // 三个半透明色块;Stack(LOOSE)尺寸由最大子盒决定 = 200x150(实测)。
-    private fun Widget.stackScene(alignment: AlignmentGeometry, direction: Direction) {
+    private fun ChildSlot.stackScene(alignment: AlignmentGeometry, direction: Direction) {
         Stack(alignment = alignment, textDirection = direction) {
             Container(width = 200f, height = 80f, color = Color.withA(Color.RED, 128))
             Container(width = 50f, height = 150f, color = Color.withA(Color.YELLOW, 128))

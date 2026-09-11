@@ -14,7 +14,7 @@ class ChildSlotAttachTest {
 
     @Test
     fun single_child_widget_attaches_child_and_sets_parent() {
-        val parent = Padding(padding = EdgeInsets.all(1f), parent = null)
+        val parent = Padding(padding = EdgeInsets.all(1f))
         val child = SizedBox(width = 1f, height = 1f)
 
         parent.attach(child)
@@ -25,7 +25,7 @@ class ChildSlotAttachTest {
 
     @Test
     fun single_child_widget_rejects_second_attach() {
-        val parent = Padding(padding = EdgeInsets.all(1f), parent = null)
+        val parent = Padding(padding = EdgeInsets.all(1f))
         val first = SizedBox(width = 1f, height = 1f)
         val second = SizedBox(width = 2f, height = 2f)
 
@@ -98,8 +98,8 @@ class ChildSlotAttachTest {
     @Test
     fun attach_allows_re_attach_to_another_parent() {
         // Container.composeWidget() 依赖此行为:把已挂载的子节点重新挂到新建的包装节点上。
-        val first = Padding(padding = EdgeInsets.all(1f), parent = null)
-        val second = Padding(padding = EdgeInsets.all(2f), parent = null)
+        val first = Padding(padding = EdgeInsets.all(1f))
+        val second = Padding(padding = EdgeInsets.all(2f))
         val child = SizedBox(width = 1f, height = 1f)
 
         first.attach(child)
@@ -107,25 +107,5 @@ class ChildSlotAttachTest {
 
         assertSame(second, child.parent)
         assertSame(child, second.child)
-    }
-
-    @Test
-    fun build_child_on_widget_without_slot_reports_class_name() {
-        val leaf = LeafStub()
-
-        val error = assertFailsWith<IllegalStateException> {
-            leaf.buildChild(SizedBox(width = 1f, height = 1f)) { }
-        }
-
-        assertTrue(
-            error.message!!.contains("LeafStub"),
-            "message should contain the parent class name, but was: ${error.message}"
-        )
-    }
-
-    /** 没有子槽位的叶子 Widget,用于验证"父节点没有槽位"的报错路径。 */
-    private class LeafStub : Widget() {
-        override fun createRenderBox(): RenderBox =
-            RenderConstrainedBox(additionalConstraints = BoxConstraints())
     }
 }

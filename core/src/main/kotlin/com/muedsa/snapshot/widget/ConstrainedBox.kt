@@ -4,23 +4,20 @@ import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderConstrainedBox
 
-inline fun Widget.ConstrainedBox(
+inline fun ChildSlot.ConstrainedBox(
     constraints: BoxConstraints,
     content: ConstrainedBox.() -> Unit = {},
 ) {
-    buildChild(
-        widget = ConstrainedBox(
+    attach(
+        com.muedsa.snapshot.widget.ConstrainedBox(
             constraints = constraints,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
 class ConstrainedBox(
     var constraints: BoxConstraints,
-    parent: Widget? = null,
-) : SingleChildWidget(parent = parent) {
+) : SingleChildWidget() {
     override fun createRenderBox(child: Widget?): RenderBox = RenderConstrainedBox(
         additionalConstraints = constraints,
     ).also { p ->

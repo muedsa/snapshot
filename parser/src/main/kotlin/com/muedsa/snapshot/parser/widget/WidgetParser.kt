@@ -5,8 +5,8 @@ import com.muedsa.snapshot.parser.Element
 import com.muedsa.snapshot.parser.ParseException
 import com.muedsa.snapshot.parser.attr.required.AttrDefine
 import com.muedsa.snapshot.parser.token.RawAttr
+import com.muedsa.snapshot.widget.ChildSlot
 import com.muedsa.snapshot.widget.Widget
-import com.muedsa.snapshot.widget.bind
 
 interface WidgetParser {
 
@@ -35,9 +35,12 @@ interface WidgetParser {
         }
 
         fun createWidgetForChildElement(widget: Widget, children: List<Element>) {
-            children.forEach {
-                widget.bind(it.createWidget())
-            }
+            if (children.isEmpty()) return
+            val slot = widget as? ChildSlot
+                ?: error(
+                    "${widget::class.simpleName} has no child slot but got ${children.size} child element(s)"
+                )
+            children.forEach { slot.attach(it.createWidget()) }
         }
     }
 }

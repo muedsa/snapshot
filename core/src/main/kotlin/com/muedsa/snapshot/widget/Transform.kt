@@ -7,20 +7,18 @@ import com.muedsa.geometry.computeRotation
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderTransform
 
-inline fun Widget.Transform(
+inline fun ChildSlot.Transform(
     transform: Matrix44CMO,
     origin: Offset? = null,
     alignment: BoxAlignment?,
     content: Transform.() -> Unit = {},
 ) {
-    buildChild(
-        widget = Transform(
+    attach(
+        com.muedsa.snapshot.widget.Transform(
             transform = transform,
             origin = origin,
             alignment = alignment,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
@@ -29,8 +27,7 @@ class Transform(
     var transform: Matrix44CMO,
     var origin: Offset? = null,
     var alignment: BoxAlignment?,
-    parent: Widget? = null,
-) : SingleChildWidget(parent = parent) {
+) : SingleChildWidget() {
 
 
     override fun createRenderBox(child: Widget?): RenderBox = RenderTransform(
@@ -50,23 +47,19 @@ class Transform(
             angle: Float,
             origin: Offset? = null,
             alignment: BoxAlignment = BoxAlignment.CENTER,
-            parent: Widget? = null,
         ): Transform = Transform(
             transform = computeRotation(angle),
             origin = origin,
             alignment = alignment,
-            parent = parent
         )
 
         @JvmStatic
         fun translate(
             offset: Offset,
-            parent: Widget? = null,
         ): Transform = Transform(
             transform = Matrix44CMO.translationValues(x = offset.x, y = offset.y, z = 0f),
             origin = null,
             alignment = null,
-            parent = parent
         )
     }
 }

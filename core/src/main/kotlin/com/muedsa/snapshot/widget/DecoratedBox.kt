@@ -5,26 +5,23 @@ import com.muedsa.snapshot.rendering.box.DecorationPosition
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderDecoratedBox
 
-inline fun Widget.DecoratedBox(
+inline fun ChildSlot.DecoratedBox(
     decoration: Decoration,
     position: DecorationPosition = DecorationPosition.BACKGROUND,
     content: DecoratedBox.() -> Unit = {},
 ) {
-    buildChild(
-        widget = DecoratedBox(
+    attach(
+        com.muedsa.snapshot.widget.DecoratedBox(
             decoration = decoration,
             position = position,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
 class DecoratedBox(
     var decoration: Decoration,
     var position: DecorationPosition = DecorationPosition.BACKGROUND,
-    parent: Widget? = null,
-) : SingleChildWidget(parent = parent) {
+) : SingleChildWidget() {
     override fun createRenderBox(child: Widget?): RenderBox = RenderDecoratedBox(
         decoration = decoration,
         position = position,

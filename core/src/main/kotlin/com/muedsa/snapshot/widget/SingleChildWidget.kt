@@ -3,9 +3,7 @@ package com.muedsa.snapshot.widget
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderSingleChildBox
 
-abstract class SingleChildWidget(
-    parent: Widget?,
-) : Widget(parent = parent), ChildSlot {
+abstract class SingleChildWidget : Widget(), ChildSlot {
     var child: Widget? = null
         protected set
 

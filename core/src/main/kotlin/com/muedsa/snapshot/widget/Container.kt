@@ -10,7 +10,7 @@ import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.DecorationPosition
 import com.muedsa.snapshot.rendering.box.RenderBox
 
-inline fun Widget.Container(
+inline fun ChildSlot.Container(
     alignment: BoxAlignment? = null,
     padding: EdgeInsets? = null,
     color: Int? = null,
@@ -25,8 +25,8 @@ inline fun Widget.Container(
     clipBehavior: ClipBehavior = ClipBehavior.NONE,
     content: Container.() -> Unit = {},
 ) {
-    buildChild(
-        widget = Container(
+    attach(
+        com.muedsa.snapshot.widget.Container(
             alignment = alignment,
             padding = padding,
             color = color,
@@ -39,9 +39,7 @@ inline fun Widget.Container(
             transform = transform,
             transformAlignment = transformAlignment,
             clipBehavior = clipBehavior,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
@@ -59,8 +57,7 @@ class Container(
     var transform: Matrix44CMO? = null,
     var transformAlignment: BoxAlignment? = null,
     var clipBehavior: ClipBehavior = ClipBehavior.NONE,
-    parent: Widget? = null,
-) : SingleChildWidget(parent = parent) {
+) : SingleChildWidget() {
 
     init {
         check(decoration != null || clipBehavior == ClipBehavior.NONE)
@@ -91,67 +88,64 @@ class Container(
         val snapshotTransformAlignment = transformAlignment
 
         if (current == null && (constraints == null || constraints!!.isTight)) {
-            current = LimitedBox(
-                maxWidth = 0f,
-                maxHeight = 0f,
-                parent = null
-            ).bind(ConstrainedBox(constraints = BoxConstraints.expand(), parent = null))
+            current = com.muedsa.snapshot.widget.LimitedBox(maxWidth = 0f, maxHeight = 0f)
+                .apply {
+                    attach(com.muedsa.snapshot.widget.ConstrainedBox(constraints = BoxConstraints.expand()))
+                }
         } else if (snapshotAlignment != null) {
-            current = Align(alignment = snapshotAlignment, parent = null)
-                .bind(current)
+            current = com.muedsa.snapshot.widget.Align(alignment = snapshotAlignment)
+                .apply { current?.let { attach(it) } }
         }
 
         if (snapshotPadding != null) {
-            current = Padding(padding = snapshotPadding, parent = null)
-                .bind(current)
+            current = com.muedsa.snapshot.widget.Padding(padding = snapshotPadding)
+                .apply { current?.let { attach(it) } }
         }
 
         if (snapshotColor != null) {
-            current = ColoredBox(color = snapshotColor, parent = null).bind(current)
+            current = com.muedsa.snapshot.widget.ColoredBox(color = snapshotColor)
+                .apply { current?.let { attach(it) } }
         }
 
 
         if (snapshotClipBehavior != ClipBehavior.NONE) {
             checkNotNull(snapshotDecoration)
-            current = ClipPath(
+            current = com.muedsa.snapshot.widget.ClipPath(
                 clipper = { snapshotDecoration.getClipPath(Offset.ZERO combine it) },
                 clipBehavior = snapshotClipBehavior,
-                parent = null
-            ).bind(current)
+            ).apply { current?.let { attach(it) } }
         }
 
         if (snapshotDecoration != null) {
-            current = DecoratedBox(
+            current = com.muedsa.snapshot.widget.DecoratedBox(
                 decoration = snapshotDecoration,
                 position = DecorationPosition.BACKGROUND,
-                parent = null
-            ).bind(current)
+            ).apply { current?.let { attach(it) } }
         }
 
         if (snapshotForegroundDecoration != null) {
-            current = DecoratedBox(
+            current = com.muedsa.snapshot.widget.DecoratedBox(
                 decoration = snapshotForegroundDecoration,
                 position = DecorationPosition.FOREGROUND,
-                parent = null
-            ).bind(current)
+            ).apply { current?.let { attach(it) } }
         }
 
         if (snapshotConstraints != null) {
-            current = ConstrainedBox(constraints = snapshotConstraints, parent = null)
-                .bind(current)
+            current = com.muedsa.snapshot.widget.ConstrainedBox(constraints = snapshotConstraints)
+                .apply { current?.let { attach(it) } }
         }
 
         val snapshotMargin = margin
         if (snapshotMargin != null) {
-            current = Padding(padding = snapshotMargin, parent = null).bind(current)
+            current = com.muedsa.snapshot.widget.Padding(padding = snapshotMargin)
+                .apply { current?.let { attach(it) } }
         }
 
         if (snapshotTransform != null) {
-            current = Transform(
+            current = com.muedsa.snapshot.widget.Transform(
                 transform = snapshotTransform,
                 alignment = snapshotTransformAlignment,
-                parent = null
-            ).bind(current)
+            ).apply { current?.let { attach(it) } }
         }
 
         return current!!

@@ -12,41 +12,10 @@ import com.muedsa.snapshot.rendering.box.RenderBox
 @DslMarker
 annotation class SnapshotWidgetDsl
 
-inline fun <T : Widget> Widget.buildChild(
-    widget: T,
-    content: T.() -> Unit,
-) {
-    val slot = this as? ChildSlot
-        ?: throw IllegalStateException(
-            "${this::class.simpleName} has no child slot, can not attach ${widget::class.simpleName}"
-        )
-    slot.attach(widget)
-    widget.content()
-}
-
-fun Widget.bind(
-    child: Widget?,
-): Widget {
-    child?.let {
-        val slot = this as? ChildSlot
-            ?: throw IllegalStateException(
-                "${this::class.simpleName} has no child slot, can not attach ${it::class.simpleName}"
-            )
-        slot.attach(it)
-    }
-    return this
-}
-
 @SnapshotWidgetDsl
-abstract class Widget(
-    parent: Widget? = null,
-) {
+abstract class Widget {
     var parent: Widget? = null
         internal set
 
     abstract fun createRenderBox(): RenderBox
-
-    init {
-        this.parent = parent
-    }
 }

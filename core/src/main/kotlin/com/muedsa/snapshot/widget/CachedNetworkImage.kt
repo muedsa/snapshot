@@ -7,7 +7,7 @@ import com.muedsa.snapshot.tools.NetworkImageCache
 import com.muedsa.snapshot.tools.NetworkImageCacheManager
 import org.jetbrains.skia.BlendMode
 
-fun Widget.CachedNetworkImage(
+fun ChildSlot.CachedNetworkImage(
     url: String,
     width: Float? = null,
     height: Float? = null,
@@ -21,8 +21,8 @@ fun Widget.CachedNetworkImage(
     noCache: Boolean = false,
     cache: NetworkImageCache = NetworkImageCacheManager.defaultCache,
 ) {
-    buildChild(
-        widget = com.muedsa.snapshot.widget.CachedNetworkImage(
+    attach(
+        com.muedsa.snapshot.widget.CachedNetworkImage(
             url = url,
             width = width,
             height = height,
@@ -35,8 +35,7 @@ fun Widget.CachedNetworkImage(
             colorBlendMode = colorBlendMode,
             noCache = noCache,
             cache = cache
-        ),
-        content = { }
+        )
     )
 }
 

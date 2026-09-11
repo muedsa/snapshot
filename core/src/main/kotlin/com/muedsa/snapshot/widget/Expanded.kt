@@ -6,20 +6,16 @@ inline fun Flex.Expanded(
     flex: Int = 1,
     content: Expanded.() -> Unit = {},
 ) {
-    buildChild(
-        widget = Expanded(
+    attach(
+        com.muedsa.snapshot.widget.Expanded(
             flex = flex,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
 class Expanded(
     flex: Int = 1,
-    parent: Widget? = null,
 ) : Flexible(
     flex = flex,
     fit = FlexFit.TIGHT,
-    parent = parent
 )

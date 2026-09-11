@@ -4,23 +4,20 @@ import com.muedsa.geometry.EdgeInsets
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderPadding
 
-fun Widget.Padding(
+fun ChildSlot.Padding(
     padding: EdgeInsets,
     content: Padding.() -> Unit = {},
 ) {
-    buildChild(
-        widget = Padding(
+    attach(
+        com.muedsa.snapshot.widget.Padding(
             padding = padding,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
 class Padding(
     var padding: EdgeInsets,
-    parent: Widget?,
-) : SingleChildWidget(parent = parent) {
+) : SingleChildWidget() {
 
     override fun createRenderBox(child: Widget?): RenderBox {
         return RenderPadding(

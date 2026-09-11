@@ -6,26 +6,23 @@ import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderClipRect
 import org.jetbrains.skia.Rect
 
-inline fun Widget.ClipRect(
+inline fun ChildSlot.ClipRect(
     noinline clipper: ((Size) -> Rect)? = null,
     clipBehavior: ClipBehavior = ClipBehavior.HARD_EDGE,
     content: ClipRect.() -> Unit = {},
 ) {
-    buildChild(
-        widget = ClipRect(
+    attach(
+        com.muedsa.snapshot.widget.ClipRect(
             clipper = clipper,
             clipBehavior = clipBehavior,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
 class ClipRect(
     var clipper: ((Size) -> Rect)? = null,
     var clipBehavior: ClipBehavior = ClipBehavior.HARD_EDGE,
-    parent: Widget? = null,
-) : SingleChildWidget(parent = parent) {
+) : SingleChildWidget() {
 
     override fun createRenderBox(child: Widget?): RenderBox = RenderClipRect(
         clipper = clipper,

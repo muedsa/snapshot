@@ -18,13 +18,13 @@ class ColorFilteredTest {
         Color.RED, Color.GREEN, Color.BLUE, Color.CYAN, Color.MAGENTA, Color.YELLOW
     )
 
-    private fun Widget.colorGrid() {
+    private fun ChildSlot.colorGrid() {
         Row(textDirection = Direction.LTR) {
             blockColors.forEach { c -> Container(width = 50f, height = 100f, color = c) }
         }
     }
 
-    private fun Widget.colorFilteredScene(filter: ColorFilter) {
+    private fun ChildSlot.colorFilteredScene(filter: ColorFilter) {
         ColorFiltered(colorFilter = filter) { colorGrid() }
     }
 

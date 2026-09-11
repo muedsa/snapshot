@@ -51,7 +51,7 @@ class PositionedTest {
 
     // SizedBox 200x200(白底)内 Stack;Positioned(left=10,top=10) 定位 100x100 红色盒,
     // 期望其全局矩形 (10,10,100,100);采样 (60,60) 为红、角与远点为白底。
-    private fun Widget.leftTopScene() {
+    private fun ChildSlot.leftTopScene() {
         SizedBox(width = 200f, height = 200f) {
             Stack {
                 Positioned(left = 10f, top = 10f) {

@@ -19,7 +19,7 @@ class ImageFilteredTest {
 
     // 256x256 画布,四角各 128x128 色块(左上/右下 RED,右上/左下 BLUE);
     // 中央 128x128 区域(64,64)-(192,192)由 center 注入,供"有滤镜 / 无滤镜孪生"复用同一场景。
-    private fun Widget.cornerStack(center: Widget.() -> Unit) {
+    private fun ChildSlot.cornerStack(center: ChildSlot.() -> Unit) {
         SizedBox(width = 256f, height = 256f) {
             Stack {
                 Positioned(top = 0f, left = 0f) { Container(width = 128f, height = 128f, color = Color.RED) }
@@ -32,7 +32,7 @@ class ImageFilteredTest {
     }
 
     // 4 条横向色带,每条 108x27,合计 108x108,恰好填满内边距 10 后的内容区 (74,74)-(182,182)。
-    private fun Widget.bands4() {
+    private fun ChildSlot.bands4() {
         Column(mainAxisSize = MainAxisSize.MIN) {
             Container(width = 108f, height = 27f, color = Color.GREEN)
             Container(width = 108f, height = 27f, color = Color.YELLOW)
@@ -41,9 +41,9 @@ class ImageFilteredTest {
         }
     }
 
-    private fun Widget.blurScene(withFilter: Boolean) = cornerStack {
+    private fun ChildSlot.blurScene(withFilter: Boolean) = cornerStack {
         // 孪生两版只差"是否有 ImageFiltered 包裹",内容盒完全相同。
-        fun Widget.content() {
+        fun ChildSlot.content() {
             Container(
                 width = 128f,
                 height = 128f,
@@ -105,7 +105,7 @@ class ImageFilteredTest {
     // blur_clip 场景:10 条色带(总高 270)远超 108 的内容区,溢出部分由容器
     // clipBehavior=HARD_EDGE 裁掉(迁移前用 TextOverflow.CLIP 的文本裁剪表达同一意图)。
     // 容器尺寸 128x128 不变,故滤镜区域与 blur_test 相同 (64,64)-(192,192)。
-    private fun Widget.bandsOverflow() {
+    private fun ChildSlot.bandsOverflow() {
         Column(mainAxisSize = MainAxisSize.MIN) {
             repeat(10) { i ->
                 Container(
@@ -122,11 +122,11 @@ class ImageFilteredTest {
         }
     }
 
-    private fun Widget.blurClipScene(withFilter: Boolean) = cornerStack {
+    private fun ChildSlot.blurClipScene(withFilter: Boolean) = cornerStack {
         // 孪生两版只差"是否有 ImageFiltered 包裹",内容盒完全相同。
         // decoration = BoxDecoration() 是 Container 对 clipBehavior != NONE 的硬性要求
         //(见 Container.init 的 check),空装饰本身不绘制任何内容,勿当作无用参数清理。
-        fun Widget.content() {
+        fun ChildSlot.content() {
             Container(
                 width = 128f,
                 height = 128f,

@@ -4,23 +4,20 @@ import com.muedsa.snapshot.rendering.box.ImageFilterRenderObject
 import com.muedsa.snapshot.rendering.box.RenderBox
 import org.jetbrains.skia.ImageFilter
 
-inline fun Widget.ImageFiltered(
+inline fun ChildSlot.ImageFiltered(
     imageFilter: ImageFilter,
     content: ImageFiltered.() -> Unit = {},
 ) {
-    buildChild(
-        widget = ImageFiltered(
+    attach(
+        com.muedsa.snapshot.widget.ImageFiltered(
             imageFilter = imageFilter,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
 class ImageFiltered(
     var imageFilter: ImageFilter,
-    parent: Widget? = null,
-) : SingleChildWidget(parent = parent) {
+) : SingleChildWidget() {
     override fun createRenderBox(child: Widget?): RenderBox = ImageFilterRenderObject(
         imageFilter = imageFilter,
     ).also { p ->

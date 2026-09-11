@@ -3,23 +3,20 @@ package com.muedsa.snapshot.widget
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderOpacity
 
-inline fun Widget.Opacity(
+inline fun ChildSlot.Opacity(
     opacity: Float = 1f,
     content: Opacity.() -> Unit = {},
 ) {
-    buildChild(
-        widget = Opacity(
+    attach(
+        com.muedsa.snapshot.widget.Opacity(
             opacity = opacity,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
 class Opacity(
     var opacity: Float = 1f,
-    parent: Widget? = null,
-) : SingleChildWidget(parent = parent) {
+) : SingleChildWidget() {
 
     init {
         assert(opacity in 0f..1f)

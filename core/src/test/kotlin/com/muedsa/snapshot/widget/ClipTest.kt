@@ -21,7 +21,7 @@ class ClipTest {
     // 该点用于证明裁剪确实生效(无裁剪时 (60,60) 会是绿色)。
     private fun assertClipScene(
         id: String,
-        scene: Widget.() -> Unit,
+        scene: ChildSlot.() -> Unit,
     ) {
         val pixmap = snapshotPixels(content = scene)
         expectColorAt(pixmap, 150, 150, Color.GREEN)
@@ -29,7 +29,7 @@ class ClipTest {
         golden(id, content = scene)
     }
 
-    private fun Widget.clipRectScene() {
+    private fun ChildSlot.clipRectScene() {
         Container(width = 300f, height = 300f, alignment = BoxAlignment.CENTER) {
             ClipRect(
                 clipper = {
@@ -42,7 +42,7 @@ class ClipTest {
         }
     }
 
-    private fun Widget.clipRRectBorderRadiusScene() {
+    private fun ChildSlot.clipRRectBorderRadiusScene() {
         Container(width = 300f, height = 300f, alignment = BoxAlignment.CENTER) {
             ClipRRect(
                 borderRadius = BorderRadius.all(Radius.circular(50f))
@@ -52,7 +52,7 @@ class ClipTest {
         }
     }
 
-    private fun Widget.clipRRectClipperScene() {
+    private fun ChildSlot.clipRRectClipperScene() {
         Container(width = 300f, height = 300f, alignment = BoxAlignment.CENTER) {
             ClipRRect(
                 clipper = {
@@ -64,7 +64,7 @@ class ClipTest {
         }
     }
 
-    private fun Widget.clipOvalScene() {
+    private fun ChildSlot.clipOvalScene() {
         Container(width = 300f, height = 300f, alignment = BoxAlignment.CENTER) {
             ClipOval(
                 clipper = {
@@ -76,7 +76,7 @@ class ClipTest {
         }
     }
 
-    private fun Widget.clipPathScene() {
+    private fun ChildSlot.clipPathScene() {
         Container(width = 300f, height = 300f, alignment = BoxAlignment.CENTER) {
             ClipPath(
                 clipper = {
