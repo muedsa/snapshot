@@ -112,7 +112,9 @@ abstract class SingleChildWidget : Widget(), ChildSlot {
     var child: Widget? = null
         protected set                    // 唯一写入点是本类的 attach
     override fun attach(child: Widget) {
-        check(this.child == null) { "${this::class.simpleName} 已经有子节点, 不能重复挂载" }
+        check(this.child == null) {
+            "${this::class.simpleName} already has a child, can not attach ${child::class.simpleName}"
+        }
         this.child = child
         child.parent = this
     }
@@ -141,7 +143,7 @@ abstract class Widget {
 inline fun <T : Widget> Widget.buildChild(widget: T, content: T.() -> Unit) {
     val slot = this as? ChildSlot
         ?: throw IllegalStateException(
-            "${this::class.simpleName} 没有子节点槽位, 不能挂载 ${widget::class.simpleName}"
+            "${this::class.simpleName} has no child slot, can not attach ${widget::class.simpleName}"
         )
     slot.attach(widget)
     widget.content()
@@ -171,7 +173,7 @@ WidgetSpan.extractFromInlineSpan(text).forEach { attach(it) }
 WidgetSpanParentDataWidget(span = span).apply { attach(span.child) }
 
 // ④ WidgetParser.createWidgetForChildElement()
-val slot = widget as? ChildSlot ?: error("${widget::class.simpleName} 没有子槽位")
+val slot = widget as? ChildSlot ?: error("${widget::class.simpleName} has no child slot")
 children.forEach { slot.attach(it.createWidget()) }
 ```
 
@@ -181,7 +183,7 @@ children.forEach { slot.attach(it.createWidget()) }
 2. **根级写多个 Widget(`layoutWidget { A; B }`):静默丢弃 A → 报错。** 原本写错却能出图的代码会开始抛异常。
 3. **`bind(null)` 的静默 no-op 消失**,内部调用点改为显式 `?.let`。
 
-三条都属于"把静默错误变成显式失败",与目标一致。
+三条都属于"把静默错误变成显式失败",与目标一致。异常/断言消息一律用**英文**,与 `core/src/main` 既有 34 处消息风格一致(`"layout size is empty"`、`"only TextSpan can be used in RichText widget"` 等)。
 
 ## 分批落地
 
