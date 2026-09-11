@@ -282,12 +282,19 @@ ProxyWidget(根)          →    (透传)
 - `AlignmentDirectional(start, y)`：方向相关版本（`TOP_START`…`BOTTOM_END`），**必须**结合 `textDirection` 才能 resolve——`Stack` 的默认对齐就是 `AlignmentDirectional.TOP_START`。
 - `EdgeInsets`：`EdgeInsets.all(v)` / `symmetric(vertical, horizontal)` / `only(...)` / `fromLTRB(...)` / `ZERO`。
 - `Offset`、`Size`、`Rect`、`Radius`（`Radius.circular(r)` / `Radius.elliptical(x, y)`）、`BorderRadius`（`circular`/`all`/`only`/`vertical`/`horizontal`/`ZERO`）、`Matrix44CMO` 都在 `com.muedsa.geometry`。
+  > ⚠️ `Matrix44CMO.transform(x, y, z)` 的源码体是 `TODO("transform")`，调用会抛 `NotImplementedError`。需要做矩阵运算请用已验证的 `toRMO()` / `multiplied()` / `clone()` / `rotate()` / `translationValues()` 等。
 
 ---
 
 ## 5. Widget 参考
 
 所有 Widget 工厂都是 `Widget` 的扩展函数，包 `com.muedsa.snapshot.widget`（文本类在 `com.muedsa.snapshot.widget.text`）。下面 `content` 参数即"子节点 lambda"，标 `—` 表示该 Widget 没有子节点。
+
+> **关于"约束"这一列**：源码里有两类检查，强度完全不同——
+> - `check(...)` / `require(...)`：**始终生效**。违反即抛异常，例如 `Container` 的颜色/装饰互斥、`RichText` 不许嵌套、`MultiChildWidget` 不许重复子节点、`Matrix44CMO` 必须 16 个元素。
+> - `assert(...)`：**默认不生效**，只有 JVM 开了断言才会检查。本手册中标 `assert` 的位置——`Opacity` 的 `0f..1f`、`Positioned` 的位置组合、`Flex` 用 `BASELINE` 时必须给 `textBaseline`、`BoxDecoration.backgroundBlendMode` 需配 `color`/`gradient`、`BoxConstraints` 的 `min <= max`——在常规运行下**不会拦住你**，传错值只会静默产生奇怪布局。
+>
+> 注意 Gradle 的 `Test` 任务默认 `enableAssertions = true`，所以**跑测试时这些 assert 是会生效的**；IDE 直接跑需要自行勾选 "Enable assertions"，生产运行时需要 `-ea`。
 
 ### 5.1 总表
 
