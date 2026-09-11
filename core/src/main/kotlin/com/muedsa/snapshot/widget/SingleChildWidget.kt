@@ -7,6 +7,7 @@ abstract class SingleChildWidget(
     parent: Widget?,
 ) : Widget(parent = parent), ChildSlot {
     var child: Widget? = null
+        protected set
 
     override fun attach(child: Widget) {
         check(this.child == null) {

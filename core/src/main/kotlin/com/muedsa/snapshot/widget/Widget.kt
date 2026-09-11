@@ -16,12 +16,11 @@ inline fun <T : Widget> Widget.buildChild(
     widget: T,
     content: T.() -> Unit,
 ) {
-    when (this) {
-        is ProxyWidget -> this.widget = widget
-        is SingleChildWidget -> this.child = widget
-        is MultiChildWidget -> this.appendChild(widget)
-        else -> throw IllegalStateException()
-    }
+    val slot = this as? ChildSlot
+        ?: throw IllegalStateException(
+            "${this::class.simpleName} has no child slot, can not attach ${widget::class.simpleName}"
+        )
+    slot.attach(widget)
     widget.content()
 }
 
@@ -29,13 +28,11 @@ fun Widget.bind(
     child: Widget?,
 ): Widget {
     child?.let {
-        when (this) {
-            is ProxyWidget -> this.widget = it
-            is SingleChildWidget -> this.child = it
-            is MultiChildWidget -> this.appendChild(it)
-            else -> throw IllegalStateException()
-        }
-        it.parent = this
+        val slot = this as? ChildSlot
+            ?: throw IllegalStateException(
+                "${this::class.simpleName} has no child slot, can not attach ${it::class.simpleName}"
+            )
+        slot.attach(it)
     }
     return this
 }
@@ -45,14 +42,7 @@ abstract class Widget(
     parent: Widget? = null,
 ) {
     var parent: Widget? = null
-        set(value) {
-            var temp = value
-            while (temp != null) {
-                assert(temp != this) { "widget tree circulate" }
-                temp = temp.parent
-            }
-            field = value
-        }
+        internal set
 
     abstract fun createRenderBox(): RenderBox
 

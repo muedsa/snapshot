@@ -5,6 +5,7 @@ import com.muedsa.snapshot.rendering.box.RenderBox
 open class ProxyWidget(parent: Widget? = null) : Widget(parent = parent), ChildSlot {
 
     var widget: Widget? = null
+        protected set
 
     override fun attach(child: Widget) {
         check(widget == null) {

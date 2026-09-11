@@ -1,6 +1,9 @@
 package com.muedsa.snapshot.widget
 
 import com.muedsa.geometry.EdgeInsets
+import com.muedsa.snapshot.rendering.box.BoxConstraints
+import com.muedsa.snapshot.rendering.box.RenderBox
+import com.muedsa.snapshot.rendering.box.RenderConstrainedBox
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -104,5 +107,25 @@ class ChildSlotAttachTest {
 
         assertSame(second, child.parent)
         assertSame(child, second.child)
+    }
+
+    @Test
+    fun build_child_on_widget_without_slot_reports_class_name() {
+        val leaf = LeafStub()
+
+        val error = assertFailsWith<IllegalStateException> {
+            leaf.buildChild(SizedBox(width = 1f, height = 1f)) { }
+        }
+
+        assertTrue(
+            error.message!!.contains("LeafStub"),
+            "message should contain the parent class name, but was: ${error.message}"
+        )
+    }
+
+    /** 没有子槽位的叶子 Widget,用于验证"父节点没有槽位"的报错路径。 */
+    private class LeafStub : Widget() {
+        override fun createRenderBox(): RenderBox =
+            RenderConstrainedBox(additionalConstraints = BoxConstraints())
     }
 }
