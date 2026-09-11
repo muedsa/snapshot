@@ -12,7 +12,6 @@ open class ProxyWidget : Widget(), ChildSlot {
             "${this::class.simpleName} already has a widget, can not attach ${child::class.simpleName}"
         }
         this.widget = child
-        child.parent = this
     }
 
     final override fun createRenderBox(): RenderBox {

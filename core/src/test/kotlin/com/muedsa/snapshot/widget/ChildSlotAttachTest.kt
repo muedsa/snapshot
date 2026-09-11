@@ -1,9 +1,6 @@
 package com.muedsa.snapshot.widget
 
 import com.muedsa.geometry.EdgeInsets
-import com.muedsa.snapshot.rendering.box.BoxConstraints
-import com.muedsa.snapshot.rendering.box.RenderBox
-import com.muedsa.snapshot.rendering.box.RenderConstrainedBox
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -13,14 +10,13 @@ import kotlin.test.assertTrue
 class ChildSlotAttachTest {
 
     @Test
-    fun single_child_widget_attaches_child_and_sets_parent() {
+    fun single_child_widget_attaches_child() {
         val parent = Padding(padding = EdgeInsets.all(1f))
         val child = SizedBox(width = 1f, height = 1f)
 
         parent.attach(child)
 
         assertSame(child, parent.child)
-        assertSame(parent, child.parent)
     }
 
     @Test
@@ -44,14 +40,13 @@ class ChildSlotAttachTest {
     }
 
     @Test
-    fun proxy_widget_attaches_widget_and_sets_parent() {
+    fun proxy_widget_attaches_widget() {
         val parent = ProxyWidget()
         val child = SizedBox(width = 1f, height = 1f)
 
         parent.attach(child)
 
         assertSame(child, parent.widget)
-        assertSame(parent, child.parent)
     }
 
     @Test
@@ -80,8 +75,6 @@ class ChildSlotAttachTest {
         parent.attach(second)
 
         assertEquals(listOf(first, second), parent.children)
-        assertSame(parent, first.parent)
-        assertSame(parent, second.parent)
     }
 
     @Test
@@ -96,7 +89,7 @@ class ChildSlotAttachTest {
     }
 
     @Test
-    fun attach_allows_re_attach_to_another_parent() {
+    fun attach_allows_re_attach_to_another_slot() {
         // Container.composeWidget() 依赖此行为:把已挂载的子节点重新挂到新建的包装节点上。
         val first = Padding(padding = EdgeInsets.all(1f))
         val second = Padding(padding = EdgeInsets.all(2f))
@@ -105,7 +98,6 @@ class ChildSlotAttachTest {
         first.attach(child)
         second.attach(child)
 
-        assertSame(second, child.parent)
         assertSame(child, second.child)
     }
 }

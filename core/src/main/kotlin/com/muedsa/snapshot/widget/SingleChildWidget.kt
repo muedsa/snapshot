@@ -12,7 +12,6 @@ abstract class SingleChildWidget : Widget(), ChildSlot {
             "${this::class.simpleName} already has a child, can not attach ${child::class.simpleName}"
         }
         this.child = child
-        child.parent = this
     }
 
     protected abstract fun createRenderBox(child: Widget?): RenderBox
