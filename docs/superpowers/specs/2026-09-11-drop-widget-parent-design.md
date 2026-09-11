@@ -246,14 +246,16 @@ class EmojiFontSizeTest {
 }
 ```
 
-**反向验证(必做,本批最重要的验收动作)**:临时注释掉 `RichText.createRenderBox` 里的 `children.forEach { (it as? WidgetSpanParentDataWidget)?.rootSpan = text }`,`./gradlew :core:test --tests '*EmojiFontSizeTest*'` → **用例 1 必须失败且失败原因是尺寸为 14 而非 40**;恢复该行后必须通过。这一步证明该测试真的锁住了注入通道,而不是恰好通过。
+**反向验证(必做,本批最重要的验收动作)**:临时注释掉 `RichText.createRenderBox` 里的 `children.forEach { (it as? WidgetSpanParentDataWidget)?.rootSpan = text }`,`./gradlew :core:test --tests '*EmojiFontSizeTest*'` → **用例 1 必须失败,且实际尺寸为 `1`(图片自身大小)而非 `40`**;恢复该行后必须通过。这一步证明该测试真的锁住了注入通道,而不是恰好通过。
 
 随后:全量 `.\gradlew.bat test`;`git status --porcelain` 干净;全仓 `Widget.parent` 零残留核对。
 
 ## 风险
 
 1. **注入失效会静默退化成默认字号**——这正是要求"反向验证必做"的原因。且该路径**当前零测试覆盖**(见背景),没有既有用例能替你兜住。
-2. **用例 1 的量化关系已核实**:`sizeForConstraints` 走 `BoxConstraints.tightFor(width = width ?: fontSize, height = height ?: fontSize)`;省略 `width`/`height` 时即 `tightFor(40, 40)`,再对 1×1 图片做 `constrainSizeAndAttemptToPreserveAspectRatio`——紧约束下宽高比调整不改变结果,故 `definiteSize` 应为 `40×40`;若注入失效则为 `kDefaultFontSize = 14f`,`40` 与 `14` 差异远大于容差 `1f`,断言可靠。
+2. **用例 1 的量化关系已核实**:`layoutInlineChildren`(`RenderParagraph.kt:137`)给内联子节点的是 `BoxConstraints(maxWidth = …)` 这种**宽松**约束;`sizeForConstraints` 走 `BoxConstraints.tightFor(width = width ?: fontSize, height = height ?: fontSize)` 再 `.enforce(...)`。省略 `width`/`height` 且注入生效时即 `tightFor(40, 40)`,对 1×1 图片做 `constrainSizeAndAttemptToPreserveAspectRatio` 仍是 `40×40`。
+   **注入失效时**则 `findFontSize()` 返回 `null` → `tightFor(null, null)` 是**完全放开**的约束(`0..∞`)→ 尺寸退化为图片自身大小 `1×1`。`1` 与 `40` 的差异远大于容差 `1f`,断言可靠。
+   (注意别混淆:`kDefaultFontSize = 14f` 是**另一条**失败路径——`rootSpan` 存在、但 BFS 没在它的子树里找到目标 span 时的回退值,不是"注入失效"的表现。)
 3. `TextParentData` 由 `RenderParagraph.setupParentData` 创建、由 `WidgetSpanParentDataWidget.applyParentData` 填充;新增 `rootSpan` 字段不影响既有填充路径。
 4. 若 `findType<RenderImageEmoji>()` 因 emoji 不在 `LayoutNode` 树里而返回 null,退路是直接按坐标查找(与 `CachedNetworkImageTest` 的查找方式一致),以实际运行结果为准。
 
