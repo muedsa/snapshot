@@ -306,10 +306,11 @@ Expected: 首字段为 `G`。
 Run:
 ```powershell
 Get-ChildItem -Recurse -Path core\src,testkit\src,parser\src -Filter *.kt | Select-String -Pattern '\.parent\b' |
-  Where-Object { $_.Line -notmatch 'RenderBox|parentData|Layer|LayoutNode|Element|parentFile|absoluteOffset|offsetFromParent|val parent|_parent' } |
+  Where-Object { $_.Line -cnotmatch 'RenderBox|parentData|Layer|LayoutNode|Element|parentFile|absoluteOffset|offsetFromParent|val parent|_parent' } |
   ForEach-Object { "$($_.Filename):$($_.LineNumber):[$($_.Line.Trim())]" }
 ```
 Expected: 只剩 3 处 `child.parent = this`(在三个 `attach` 里)与 KDoc 引用。**若出现任何读取点,停下来报告**——说明 Task 1 漏了东西。
+> **注意(执行时实测踩到的坑):** 下面这条核对命令里的 `Where-Object` **必须用 `-cnotmatch`(大小写敏感)而不是 `-notmatch`**。PowerShell 的 `-notmatch` 默认大小写**不敏感**,如果排除列表里写了 `PARENT`(本意是排除 `TextWidthBasis.PARENT`),它会把**所有**含 "parent" 的行都排除掉,核对结果永远是空——看起来"零残留",实际漏掉了 `ChildSlotAttachTest` 里 5 处 `child.parent` 断言,导致提交了一个编译不过的版本。核对类命令一律用它的大小写敏感版本,并且要**对结果做门禁**(测试不通过就不提交)。
 
 - [ ] **Step 2: `Widget.kt` 删除字段**
 
@@ -392,7 +393,7 @@ Expected: `BUILD SUCCESSFUL`,**219 例、0 失败**。若报 `Unresolved referen
 Run:
 ```powershell
 Get-ChildItem -Recurse -Path core\src,testkit\src,parser\src -Filter *.kt | Select-String -Pattern '\bparent\b' |
-  Where-Object { $_.Line -match 'Widget' -and $_.Line -notmatch 'RenderBox|parentData|Layer|LayoutNode|Element' } |
+  Where-Object { $_.Line -match 'Widget' -and $_.Line -cnotmatch 'RenderBox|parentData|Layer|LayoutNode|Element' } |
   ForEach-Object { "$($_.Filename):$($_.LineNumber):[$($_.Line.Trim())]" }
 ```
 Expected: **无输出**(`Layer.parent` / `RenderBox.parent` / `LayoutNode.parent` / `Element.parent` 均不受影响,那些是各自层里长期存在且确有用途的指针)。
