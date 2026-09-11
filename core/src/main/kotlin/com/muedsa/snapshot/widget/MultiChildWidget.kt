@@ -5,7 +5,7 @@ import com.muedsa.snapshot.rendering.box.RenderContainerBox
 
 abstract class MultiChildWidget(
     parent: Widget?,
-) : Widget(parent = parent) {
+) : Widget(parent = parent), ChildSlot {
     protected val _children: MutableList<Widget> = mutableListOf()
 
     val children: List<Widget> = _children
@@ -23,6 +23,11 @@ abstract class MultiChildWidget(
         if (list.isNotEmpty()) {
             list.forEach { appendChild(child = it) }
         }
+    }
+
+    override fun attach(child: Widget) {
+        appendChild(child)
+        child.parent = this
     }
 
     protected abstract fun createRenderBox(children: List<Widget>): RenderBox
