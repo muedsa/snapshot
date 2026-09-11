@@ -17,8 +17,8 @@ open class ProxyWidget : Widget(), ChildSlot {
 
     final override fun createRenderBox(): RenderBox {
         val widget = this.widget
-        assert(widget != null) { "proxy null widget ??" }
-        return widget!!.createRenderBox()
+        checkNotNull(widget) { "ProxyWidget has no widget, can not create render box" }
+        return widget.createRenderBox()
     }
 
     companion object {
