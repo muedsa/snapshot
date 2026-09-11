@@ -5,8 +5,16 @@ import com.muedsa.snapshot.rendering.box.RenderSingleChildBox
 
 abstract class SingleChildWidget(
     parent: Widget?,
-) : Widget(parent = parent) {
+) : Widget(parent = parent), ChildSlot {
     var child: Widget? = null
+
+    override fun attach(child: Widget) {
+        check(this.child == null) {
+            "${this::class.simpleName} already has a child, can not attach ${child::class.simpleName}"
+        }
+        this.child = child
+        child.parent = this
+    }
 
     protected abstract fun createRenderBox(child: Widget?): RenderBox
 
