@@ -18,7 +18,7 @@ abstract class RenderBox {
             var temp = value
             while (temp != null) {
                 assert(temp != this) { "render tree circulate" }
-                temp = value?.parent
+                temp = temp.parent
             }
             if (field != value) {
                 value?.setupParentData(this)
