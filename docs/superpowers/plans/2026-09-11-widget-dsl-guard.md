@@ -193,6 +193,8 @@ Expected: 输出首字段为 `G`。
 
 - [ ] **Step 1: 写失败的测试**
 
+> **执行时踩到的坑(2026-09-11 修正):** `Padding` 的构造函数是 `class Padding(var padding: EdgeInsets, parent: Widget?)`——**`parent` 没有默认值**(`Align` / `SizedBox` / `Row` / `ProxyWidget` 都有 `= null`,只有 `Padding` 这类少数没有)。所以直接构造 `Padding` 时必须显式传 `parent = null`,否则报 `No value passed for parameter 'parent'`。本步骤下方的代码已修正。
+
 Create `core/src/test/kotlin/com/muedsa/snapshot/widget/ChildSlotAttachTest.kt`:
 
 ```kotlin
@@ -209,7 +211,7 @@ class ChildSlotAttachTest {
 
     @Test
     fun single_child_widget_attaches_child_and_sets_parent() {
-        val parent = Padding(padding = EdgeInsets.all(1f))
+        val parent = Padding(padding = EdgeInsets.all(1f), parent = null)
         val child = SizedBox(width = 1f, height = 1f)
 
         parent.attach(child)
@@ -220,7 +222,7 @@ class ChildSlotAttachTest {
 
     @Test
     fun single_child_widget_rejects_second_attach() {
-        val parent = Padding(padding = EdgeInsets.all(1f))
+        val parent = Padding(padding = EdgeInsets.all(1f), parent = null)
         val first = SizedBox(width = 1f, height = 1f)
         val second = SizedBox(width = 2f, height = 2f)
 
@@ -293,8 +295,8 @@ class ChildSlotAttachTest {
     @Test
     fun attach_allows_re_attach_to_another_parent() {
         // Container.composeWidget() 依赖此行为:把已挂载的子节点重新挂到新建的包装节点上。
-        val first = Padding(padding = EdgeInsets.all(1f))
-        val second = Padding(padding = EdgeInsets.all(2f))
+        val first = Padding(padding = EdgeInsets.all(1f), parent = null)
+        val second = Padding(padding = EdgeInsets.all(2f), parent = null)
         val child = SizedBox(width = 1f, height = 1f)
 
         first.attach(child)
