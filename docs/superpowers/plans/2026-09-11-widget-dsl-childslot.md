@@ -304,6 +304,7 @@ Expected: 首轮大概率**编译失败**(本批是一次性原子重构)。逐�
 
 | error | 原因 | 修法 |
 |---|---|---|
+| `Inline function 'fun ChildSlot.X(…): Unit' cannot be recursive` / `Argument type mismatch: actual type is 'Unit', but 'Widget' was expected` | **DSL 函数名与 Widget 类名同名**,去掉 `parent = this` 后 `X(…)` 同时匹配构造函数与函数自身,重载解析选中了后者(实测**显式类型局部变量也不能消歧**) | 给该处构造函数加**包限定**:`com.muedsa.snapshot.widget.X(…)`。这是本批最大的一处计划外发现,详见 spec 做法决策 15 |
 | `Unresolved reference: buildChild` | 还有函数体没用脚本 C 改写(含多行/异形写法) | 手工按 `attach(X(...).apply(content))` 改写 |
 | `Unresolved reference: bind` | `Container.composeWidget` 或 parser 漏改 | 按 Step 8/11 改 |
 | `No value passed for parameter 'parent'` | 某个类的 `parent` 参数没删干净,或调用点还在传 | 删净参数与实参 |

@@ -78,7 +78,21 @@ Row { SizedBox(width = 1f) {}; SizedBox(width = 2f) {} }                        
 11. **`Container.composeWidget()` 的包装顺序保持逐字不变**(已核对与 Flutter `Container.build` 一致):`Align → Padding → ColoredBox → ClipPath → DecoratedBox(BACKGROUND) → DecoratedBox(FOREGROUND) → ConstrainedBox → Padding(margin) → Transform`。9 处 `.bind(current)` 改为 `attach` 形式,`current` 可为 null 时用 `?.let` 显式化。
 12. **编译期防线用"负例清单 + 一次性验证"**,不新增依赖、不新增 Gradle 模块、不引入 kotlin-compile-testing。
 13. **叶子 Widget 不再写 `content = {}`**:`RawImage` / `ProviderImage` / `CachedNetworkImage` / `RichText` / `ImageEmoji` 的 DSL 函数体在批次 2 简化为"构造 + attach"。
-14. **挂载时序**:批次 2 的 DSL 函数体采用先配置后挂载(`attach(X(...).apply(content))`)。这与今天"先挂载后配置"的顺序不同,但不可观测:content 的接收者是新建的那个 Widget,改不到父节点的槽位状态;而 `parent` 只在 `createRenderBox()` 阶段被读取,那时整棵树已建好。以 228 例全量测试作为回归证据。
+14. **挂载时序**:批次 2 的 DSL 函数体采用先配置后挂载(`attach(X(...).apply(content))`)。这与今天"先挂载后配置"的顺序不同,但不可观测:content 的接收者是新建的那个 Widget,改不到父节点的槽位状态;而 `parent` 只在 `createRenderBox()` 阶段被读取,那时整棵树已建好。以全量测试作为回归证据。
+15. **DSL 函数体内构造同类 Widget 必须用全限定名**(批次 2 执行时实测得出的硬约束)。DSL 函数名与 Widget 类名相同,且接收者 `ChildSlot` 在函数体内就在作用域中;一旦去掉构造实参里的 `parent = this`,调用 `Align(alignment = …)` 就同时匹配**构造函数**与**同名的 DSL 函数本身**,而 Kotlin 的重载解析把扩展函数排在构造函数之前,结果是 `Inline function 'fun ChildSlot.Align(…): Unit' cannot be recursive`。已验证**显式类型局部变量也无法消歧**(`val widget: Align = Align(…)` 仍报 `Initializer type mismatch: expected 'Align', actual 'Unit'`)。可靠写法是加包限定:
+
+    ```kotlin
+    inline fun ChildSlot.Align(…, content: Align.() -> Unit = {}) {
+        attach(
+            com.muedsa.snapshot.widget.Align(
+                alignment = alignment,
+                …
+            ).apply(content)
+        )
+    }
+    ```
+
+    包限定之所以有效:限定符是**包**而不是接收者,扩展函数在该位置不适用,只剩构造函数。代价是约 30 个 DSL 函数体内共 64 处全限定名(`CachedNetworkImage` 原本就因同一原因这么写,属既有先例)。注意 `widget/text/Text.kt` 里的 `Text` 是**故意**委托给同名的 `RichText` **DSL 函数**(而非构造 `RichText` 类)的——那一处**不能**加限定名,否则会静默退化成"只构造、不挂载"(执行时踩到过,4 个 TextTest + 1 个 RowParserTest 因此失败)。
 
 ## 关键设计
 
