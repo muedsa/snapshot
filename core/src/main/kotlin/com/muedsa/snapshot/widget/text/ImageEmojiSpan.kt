@@ -111,27 +111,21 @@ class ImageEmoji(
     color = color,
     colorBlendMode = colorBlendMode,
 ) {
-    override fun createRenderBox(): RenderBox {
-        val finalParent = parent
-        val p = if (finalParent is WidgetSpanParentDataWidget) finalParent.parent else finalParent
-        return RenderImageEmoji(
-            rootSpan = if (p is RichText) p.text else null,
-            image = image,
-            width = width,
-            height = height,
-            fit = fit,
-            alignment = alignment,
-            repeat = repeat,
-            scale = scale,
-            opacity = opacity,
-            color = color,
-            colorBlendMode = colorBlendMode
-        )
-    }
+    override fun createRenderBox(): RenderBox = RenderImageEmoji(
+        image = image,
+        width = width,
+        height = height,
+        fit = fit,
+        alignment = alignment,
+        repeat = repeat,
+        scale = scale,
+        opacity = opacity,
+        color = color,
+        colorBlendMode = colorBlendMode
+    )
 }
 
 class RenderImageEmoji(
-    val rootSpan: InlineSpan? = null,
     image: Image?,
     width: Float? = null,
     height: Float? = null,
@@ -161,29 +155,32 @@ class RenderImageEmoji(
     private fun findFontSize(): Float? {
         var size: Float? = null
         val pd = parentData
-        if (rootSpan != null && pd is TextParentData) {
-            val targetSpan = pd.span!!
-            val queue: LinkedList<InlineSpan> = LinkedList()
-            val parentValueMap: MutableMap<InlineSpan, Float?> = mutableMapOf()
-            parentValueMap[rootSpan] = rootSpan.style?.fontSize
-            queue.offer(rootSpan)
-            while (!queue.isEmpty()) {
-                val currentSpan: InlineSpan = queue.poll()
-                if (currentSpan == targetSpan) {
-                    size = parentValueMap[currentSpan]
-                    break
-                }
+        if (pd is TextParentData) {
+            val rootSpan = pd.rootSpan
+            val targetSpan = pd.span
+            if (rootSpan != null && targetSpan != null) {
+                val queue: LinkedList<InlineSpan> = LinkedList()
+                val parentValueMap: MutableMap<InlineSpan, Float?> = mutableMapOf()
+                parentValueMap[rootSpan] = rootSpan.style?.fontSize
+                queue.offer(rootSpan)
+                while (!queue.isEmpty()) {
+                    val currentSpan: InlineSpan = queue.poll()
+                    if (currentSpan == targetSpan) {
+                        size = parentValueMap[currentSpan]
+                        break
+                    }
 
-                if (currentSpan is TextSpan) {
-                    for (child in currentSpan.children) {
-                        val childSize = child.style?.fontSize ?: parentValueMap[currentSpan]
-                        parentValueMap[child] = childSize
-                        queue.offer(child)
+                    if (currentSpan is TextSpan) {
+                        for (child in currentSpan.children) {
+                            val childSize = child.style?.fontSize ?: parentValueMap[currentSpan]
+                            parentValueMap[child] = childSize
+                            queue.offer(child)
+                        }
                     }
                 }
-            }
-            if (size == null) {
-                size = kDefaultFontSize
+                if (size == null) {
+                    size = kDefaultFontSize
+                }
             }
         }
         return size

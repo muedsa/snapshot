@@ -58,19 +58,24 @@ class RichText(
         WidgetSpan.extractFromInlineSpan(text).forEach { attach(it) }
     }
 
-    override fun createRenderBox(children: List<Widget>): RenderBox = RenderParagraph(
-        text = text,
-        textAlign = textAlign,
-        textDirection = textDirection,
-        softWrap = softWrap,
-        overflow = overflow,
-        maxLines = maxLines,
-        strutStyle = strutStyle,
-        textWidthBasis = textWidthBasis,
-        textHeightMode = textHeightMode,
-    ).also { p ->
-        children.createRenderBox()?.let {
-            p.appendChildren(it)
+    override fun createRenderBox(children: List<Widget>): RenderBox {
+        // emoji 需要根 span 才能回推继承字号。InlineSpan 没有上行指针,所以在这里显式向下注入,
+        // 而不是让子节点沿 Widget.parent 反查(本批起 Widget 不再持有 parent)。
+        children.forEach { (it as? WidgetSpanParentDataWidget)?.rootSpan = text }
+        return RenderParagraph(
+            text = text,
+            textAlign = textAlign,
+            textDirection = textDirection,
+            softWrap = softWrap,
+            overflow = overflow,
+            maxLines = maxLines,
+            strutStyle = strutStyle,
+            textWidthBasis = textWidthBasis,
+            textHeightMode = textHeightMode,
+        ).also { p ->
+            children.createRenderBox()?.let {
+                p.appendChildren(it)
+            }
         }
     }
 }

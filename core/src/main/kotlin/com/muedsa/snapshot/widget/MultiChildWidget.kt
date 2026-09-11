@@ -24,7 +24,6 @@ abstract class MultiChildWidget : Widget(), ChildSlot {
 
     override fun attach(child: Widget) {
         appendChild(child)
-        child.parent = this
     }
 
     protected abstract fun createRenderBox(children: List<Widget>): RenderBox

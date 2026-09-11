@@ -14,8 +14,5 @@ annotation class SnapshotWidgetDsl
 
 @SnapshotWidgetDsl
 abstract class Widget {
-    var parent: Widget? = null
-        internal set
-
     abstract fun createRenderBox(): RenderBox
 }
