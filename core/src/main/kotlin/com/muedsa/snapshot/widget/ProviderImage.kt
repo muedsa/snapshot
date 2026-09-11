@@ -6,7 +6,7 @@ import com.muedsa.snapshot.paint.ImageRepeat
 import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.Image
 
-fun Widget.ProviderImage(
+fun ChildSlot.ProviderImage(
     width: Float? = null,
     height: Float? = null,
     fit: BoxFit? = null,
@@ -18,8 +18,8 @@ fun Widget.ProviderImage(
     colorBlendMode: BlendMode? = null,
     provider: () -> Image,
 ) {
-    buildChild(
-        widget = ProviderImage(
+    attach(
+        com.muedsa.snapshot.widget.ProviderImage(
             provider = provider,
             width = width,
             height = height,
@@ -30,9 +30,7 @@ fun Widget.ProviderImage(
             opacity = opacity,
             color = color,
             colorBlendMode = colorBlendMode,
-            parent = this
-        ),
-        content = {}
+        )
     )
 }
 
@@ -48,7 +46,6 @@ open class ProviderImage(
     opacity: Float = 1f,
     color: Int? = null,
     colorBlendMode: BlendMode? = null,
-    parent: Widget? = null,
 ) : RawImage(
     image = provider.invoke(),
     width = width,
@@ -60,5 +57,4 @@ open class ProviderImage(
     opacity = opacity,
     color = color,
     colorBlendMode = colorBlendMode,
-    parent = parent
 )

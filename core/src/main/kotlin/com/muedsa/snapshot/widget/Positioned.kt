@@ -15,17 +15,15 @@ inline fun Stack.Positioned(
     height: Float? = null,
     content: Positioned.() -> Unit = {},
 ) {
-    buildChild(
-        widget = Positioned(
+    attach(
+        com.muedsa.snapshot.widget.Positioned(
             left = left,
             top = top,
             right = right,
             bottom = bottom,
             width = width,
             height = height,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
@@ -36,8 +34,7 @@ class Positioned(
     var bottom: Float? = null,
     var width: Float? = null,
     var height: Float? = null,
-    parent: Widget? = null,
-) : ParentDataWidget(parent = parent) {
+) : ParentDataWidget() {
 
     init {
         assert(left == null || right == null || width == null)
@@ -70,25 +67,23 @@ class Positioned(
     companion object {
 
         @JvmStatic
-        fun fromRect(rect: Rect, parent: Widget? = null): Positioned = Positioned(
+        fun fromRect(rect: Rect): Positioned = Positioned(
             left = rect.left,
             top = rect.top,
             right = null,
             bottom = null,
             width = rect.width,
             height = rect.height,
-            parent = parent
         )
 
         @JvmStatic
-        fun fromRelativeRect(rect: RelativeRect, parent: Widget? = null): Positioned = Positioned(
+        fun fromRelativeRect(rect: RelativeRect): Positioned = Positioned(
             left = rect.left,
             top = rect.top,
             right = rect.right,
             bottom = rect.bottom,
             width = null,
             height = null,
-            parent = parent
         )
 
         @JvmStatic
@@ -97,7 +92,6 @@ class Positioned(
             top: Float = 0f,
             right: Float = 0f,
             bottom: Float = 0f,
-            parent: Widget? = null,
         ): Positioned = Positioned(
             left = left,
             top = top,
@@ -105,7 +99,6 @@ class Positioned(
             bottom = bottom,
             width = null,
             height = null,
-            parent = parent
         )
 
         @JvmStatic
@@ -117,7 +110,6 @@ class Positioned(
             bottom: Float? = null,
             width: Float? = null,
             height: Float? = null,
-            parent: Widget? = null,
         ): Positioned {
             val left: Float?
             val right: Float?
@@ -139,7 +131,6 @@ class Positioned(
                 bottom = bottom,
                 width = width,
                 height = height,
-                parent = parent
             )
         }
     }

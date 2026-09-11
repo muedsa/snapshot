@@ -8,22 +8,20 @@ import com.muedsa.snapshot.rendering.stack.RenderStack
 import com.muedsa.snapshot.rendering.stack.StackFit
 import org.jetbrains.skia.paragraph.Direction
 
-inline fun Widget.Stack(
+inline fun ChildSlot.Stack(
     alignment: AlignmentGeometry = AlignmentDirectional.TOP_START,
     textDirection: Direction = Direction.LTR,
     fit: StackFit = StackFit.LOOSE,
     clipBehavior: ClipBehavior = ClipBehavior.HARD_EDGE,
     content: Stack.() -> Unit = {},
 ) {
-    buildChild(
-        widget = Stack(
+    attach(
+        com.muedsa.snapshot.widget.Stack(
             alignment = alignment,
             textDirection = textDirection,
             fit = fit,
             clipBehavior = clipBehavior,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
@@ -32,8 +30,7 @@ class Stack(
     var textDirection: Direction = Direction.LTR,
     var fit: StackFit = StackFit.LOOSE,
     var clipBehavior: ClipBehavior = ClipBehavior.HARD_EDGE,
-    parent: Widget? = null,
-) : MultiChildWidget(parent = parent) {
+) : MultiChildWidget() {
 
     override fun createRenderBox(children: List<Widget>): RenderBox = RenderStack(
         alignment = alignment,

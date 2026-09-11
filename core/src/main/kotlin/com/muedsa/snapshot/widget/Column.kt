@@ -9,7 +9,7 @@ import com.muedsa.snapshot.rendering.flex.VerticalDirection
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.Direction
 
-inline fun Widget.Column(
+inline fun ChildSlot.Column(
     mainAxisAlignment: MainAxisAlignment = MainAxisAlignment.START,
     mainAxisSize: MainAxisSize = MainAxisSize.MAX,
     crossAxisAlignment: CrossAxisAlignment = CrossAxisAlignment.CENTER,
@@ -19,8 +19,8 @@ inline fun Widget.Column(
     clipBehavior: ClipBehavior = ClipBehavior.NONE,
     content: Column.() -> Unit = {},
 ) {
-    buildChild(
-        widget = Column(
+    attach(
+        com.muedsa.snapshot.widget.Column(
             mainAxisSize = mainAxisSize,
             mainAxisAlignment = mainAxisAlignment,
             crossAxisAlignment = crossAxisAlignment,
@@ -28,9 +28,7 @@ inline fun Widget.Column(
             verticalDirection = verticalDirection,
             textBaseline = textBaseline,
             clipBehavior = clipBehavior,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
@@ -42,7 +40,6 @@ class Column(
     verticalDirection: VerticalDirection = VerticalDirection.DOWN,
     textBaseline: BaselineMode? = null,
     clipBehavior: ClipBehavior = ClipBehavior.NONE,
-    parent: Widget? = null,
 ) : Flex(
     direction = Axis.VERTICAL,
     mainAxisSize = mainAxisSize,
@@ -52,5 +49,4 @@ class Column(
     verticalDirection = verticalDirection,
     textBaseline = textBaseline,
     clipBehavior = clipBehavior,
-    parent = parent
 )

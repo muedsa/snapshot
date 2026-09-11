@@ -8,7 +8,7 @@ import com.muedsa.snapshot.rendering.box.RenderImage
 import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.Image
 
-fun Widget.RawImage(
+fun ChildSlot.RawImage(
     image: Image,
     width: Float? = null,
     height: Float? = null,
@@ -20,8 +20,8 @@ fun Widget.RawImage(
     color: Int? = null,
     colorBlendMode: BlendMode? = null,
 ) {
-    buildChild(
-        widget = RawImage(
+    attach(
+        com.muedsa.snapshot.widget.RawImage(
             image = image,
             width = width,
             height = height,
@@ -32,9 +32,7 @@ fun Widget.RawImage(
             opacity = opacity,
             color = color,
             colorBlendMode = colorBlendMode,
-            parent = this
-        ),
-        content = {}
+        )
     )
 }
 
@@ -49,8 +47,7 @@ open class RawImage(
     var opacity: Float = 1f,
     var color: Int? = null,
     var colorBlendMode: BlendMode? = null,
-    parent: Widget? = null,
-) : Widget(parent = parent) {
+) : Widget() {
 
     override fun createRenderBox(): RenderBox {
         return RenderImage(

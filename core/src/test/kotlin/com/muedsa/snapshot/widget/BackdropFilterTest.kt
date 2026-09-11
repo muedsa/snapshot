@@ -20,7 +20,7 @@ class BackdropFilterTest {
 
     // 256x256 画布,四角各 128x128 色块(左上/右下 RED,右上/左下 BLUE);
     // 中央 128x128 区域(64,64)-(192,192)由 center 注入,供"有/无 BackdropFilter 孪生"复用。
-    private fun Widget.cornerStack(center: Widget.() -> Unit) {
+    private fun ChildSlot.cornerStack(center: ChildSlot.() -> Unit) {
         SizedBox(width = 256f, height = 256f) {
             Stack {
                 Positioned(top = 0f, left = 0f) { Container(width = 128f, height = 128f, color = Color.RED) }
@@ -33,7 +33,7 @@ class BackdropFilterTest {
     }
 
     // 3 条横向色带,每条 108x20(合计 108x60),在内边距 10 后的内容区里居中 → 占 (74,98)-(182,158)。
-    private fun Widget.bands3() {
+    private fun ChildSlot.bands3() {
         Column(mainAxisSize = MainAxisSize.MIN) {
             Container(width = 108f, height = 20f, color = Color.GREEN)
             Container(width = 108f, height = 20f, color = Color.YELLOW)
@@ -41,9 +41,9 @@ class BackdropFilterTest {
         }
     }
 
-    private fun Widget.blurScene(withFilter: Boolean, clipRect: Boolean) = cornerStack {
+    private fun ChildSlot.blurScene(withFilter: Boolean, clipRect: Boolean) = cornerStack {
         // 孪生两版只差"是否有 BackdropFilter 包裹",内容盒完全相同。
-        fun Widget.content() {
+        fun ChildSlot.content() {
             Container(
                 width = 128f,
                 height = 128f,
@@ -52,7 +52,7 @@ class BackdropFilterTest {
             ) { bands3() }
         }
 
-        fun Widget.filtered() {
+        fun ChildSlot.filtered() {
             if (withFilter) {
                 BackdropFilter(imageFilter = ImageFilter.makeBlur(25f, 25f, FilterTileMode.CLAMP)) { content() }
             } else {
@@ -123,7 +123,7 @@ class BackdropFilterTest {
     // ---------------- blur_3:本地色带网格替代外网 DecorationImage ----------------
 
     // 500x500 背景:10 条横向色带(每条 500x50),按 6 色循环。
-    private fun Widget.outerGrid() {
+    private fun ChildSlot.outerGrid() {
         Column(mainAxisSize = MainAxisSize.MIN) {
             repeat(10) { i ->
                 Container(
@@ -143,7 +143,7 @@ class BackdropFilterTest {
     }
 
     // 中央 250x250 滤镜区内容:4 条色带,每条 230x40,居中占 (135,170)-(365,330)。
-    private fun Widget.innerBands() {
+    private fun ChildSlot.innerBands() {
         Column(mainAxisSize = MainAxisSize.MIN) {
             Container(width = 230f, height = 40f, color = Color.BLUE)
             Container(width = 230f, height = 40f, color = Color.YELLOW)
@@ -154,7 +154,7 @@ class BackdropFilterTest {
 
     // 保留原结构:45° 起、180° 扫掠的弧线 ClipPath(取 y>=x 的下半区)+ 内层 ClipPath(裁到子盒边界)
     // + BackdropFilter(blur 25);仅把外网 DecorationImage 换成上面的本地色带网格。
-    private fun Widget.blur3Scene(withFilter: Boolean) = SizedBox(width = 500f, height = 500f) {
+    private fun ChildSlot.blur3Scene(withFilter: Boolean) = SizedBox(width = 500f, height = 500f) {
         ClipPath(
             clipper = {
                 PathBuilder().apply {

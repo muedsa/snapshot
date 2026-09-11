@@ -5,26 +5,23 @@ import com.muedsa.geometry.Size
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderSizedOverflowBox
 
-inline fun Widget.SizedOverflowBox(
+inline fun ChildSlot.SizedOverflowBox(
     size: Size,
     alignment: BoxAlignment = BoxAlignment.CENTER,
     content: SizedOverflowBox.() -> Unit = {},
 ) {
-    buildChild(
-        widget = SizedOverflowBox(
+    attach(
+        com.muedsa.snapshot.widget.SizedOverflowBox(
             size = size,
             alignment = alignment,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
 class SizedOverflowBox(
     var size: Size,
     var alignment: BoxAlignment = BoxAlignment.CENTER,
-    parent: Widget? = null,
-) : SingleChildWidget(parent = parent) {
+) : SingleChildWidget() {
 
     override fun createRenderBox(child: Widget?): RenderBox =
         RenderSizedOverflowBox(

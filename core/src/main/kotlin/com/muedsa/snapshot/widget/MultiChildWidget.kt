@@ -3,9 +3,7 @@ package com.muedsa.snapshot.widget
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderContainerBox
 
-abstract class MultiChildWidget(
-    parent: Widget?,
-) : Widget(parent = parent), ChildSlot {
+abstract class MultiChildWidget : Widget(), ChildSlot {
     protected val _children: MutableList<Widget> = mutableListOf()
 
     val children: List<Widget> = _children

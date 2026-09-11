@@ -4,7 +4,7 @@ import com.muedsa.geometry.BoxAlignment
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderConstrainedOverflowBox
 
-inline fun Widget.OverflowBox(
+inline fun ChildSlot.OverflowBox(
     alignment: BoxAlignment = BoxAlignment.CENTER,
     minWidth: Float? = null,
     maxWidth: Float? = null,
@@ -12,16 +12,14 @@ inline fun Widget.OverflowBox(
     maxHeight: Float? = null,
     content: OverflowBox.() -> Unit = {},
 ) {
-    buildChild(
-        widget = OverflowBox(
+    attach(
+        com.muedsa.snapshot.widget.OverflowBox(
             minWidth = minWidth,
             maxWidth = maxWidth,
             minHeight = minHeight,
             maxHeight = maxHeight,
             alignment = alignment,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
@@ -31,8 +29,7 @@ class OverflowBox(
     var maxWidth: Float? = null,
     var minHeight: Float? = null,
     var maxHeight: Float? = null,
-    parent: Widget? = null,
-) : SingleChildWidget(parent = parent) {
+) : SingleChildWidget() {
 
     override fun createRenderBox(child: Widget?): RenderBox = RenderConstrainedOverflowBox(
         minWidth = minWidth,

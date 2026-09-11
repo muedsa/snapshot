@@ -2,7 +2,7 @@ package com.muedsa.snapshot.widget
 
 import com.muedsa.snapshot.rendering.box.RenderBox
 
-open class ProxyWidget(parent: Widget? = null) : Widget(parent = parent), ChildSlot {
+open class ProxyWidget : Widget(), ChildSlot {
 
     var widget: Widget? = null
         protected set
@@ -22,11 +22,14 @@ open class ProxyWidget(parent: Widget? = null) : Widget(parent = parent), ChildS
     }
 
     companion object {
-        fun buildWidget(
-            content: Widget.() -> Unit
-        ): Widget {
-            val widget = ProxyWidget().apply(content).widget
-            checkNotNull(widget)
+
+        /** 用一段 DSL 构造一棵游离的 Widget 树,返回其根节点。 */
+        @PublishedApi
+        internal inline fun buildWidget(content: ChildSlot.() -> Unit): Widget {
+            val proxy = ProxyWidget()
+            proxy.content()
+            val widget = proxy.widget
+            checkNotNull(widget) { "buildWidget produced an empty widget tree" }
             return widget
         }
     }

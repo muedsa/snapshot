@@ -7,7 +7,7 @@ import com.muedsa.snapshot.rendering.flex.*
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.Direction
 
-inline fun Widget.Flex(
+inline fun ChildSlot.Flex(
     direction: Axis,
     mainAxisAlignment: MainAxisAlignment = MainAxisAlignment.START,
     mainAxisSize: MainAxisSize = MainAxisSize.MAX,
@@ -18,8 +18,8 @@ inline fun Widget.Flex(
     clipBehavior: ClipBehavior = ClipBehavior.NONE,
     content: Flex.() -> Unit = {},
 ) {
-    buildChild(
-        widget = Flex(
+    attach(
+        com.muedsa.snapshot.widget.Flex(
             direction = direction,
             mainAxisSize = mainAxisSize,
             mainAxisAlignment = mainAxisAlignment,
@@ -28,9 +28,7 @@ inline fun Widget.Flex(
             verticalDirection = verticalDirection,
             textBaseline = textBaseline,
             clipBehavior = clipBehavior,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
@@ -43,8 +41,7 @@ open class Flex(
     var verticalDirection: VerticalDirection = VerticalDirection.DOWN,
     var textBaseline: BaselineMode? = null,
     var clipBehavior: ClipBehavior = ClipBehavior.NONE,
-    parent: Widget? = null,
-) : MultiChildWidget(parent = parent) {
+) : MultiChildWidget() {
 
     override fun createRenderBox(children: List<Widget>): RenderBox = RenderFlex(
         direction = direction,

@@ -9,6 +9,7 @@ import org.jetbrains.skia.PathBuilder
 import org.jetbrains.skia.Rect
 import org.junit.jupiter.api.Tag
 import kotlin.test.Test
+import com.muedsa.snapshot.widget.ChildSlot
 
 @Tag("sample")
 class LogoCreator {
@@ -22,7 +23,7 @@ class LogoCreator {
 
     companion object {
 
-        fun Widget.logoContent() {
+        fun ChildSlot.logoContent() {
             val radius = 200f
             val size = radius * 2
             val delta = radius / 5f

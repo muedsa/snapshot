@@ -9,6 +9,7 @@ import com.muedsa.snapshot.widget.ProxyWidget
 import com.muedsa.snapshot.widget.Widget
 import org.jetbrains.skia.*
 import kotlin.math.ceil
+import com.muedsa.snapshot.widget.ChildSlot
 
 /**
  * @param background 背景
@@ -25,7 +26,7 @@ inline fun Snapshot(
             height = height
         )
     },
-    content: Widget.() -> Unit,
+    content: ChildSlot.() -> Unit,
 ): Surface {
     val rootRenderBox = layoutWidget(content = content)
     val rootSize = rootRenderBox.definiteSize
@@ -50,7 +51,7 @@ inline fun SnapshotImage(
             height = height
         )
     },
-    content: Widget.() -> Unit,
+    content: ChildSlot.() -> Unit,
 ): Image =
     Snapshot(background = background, debug = debug, initSurface = initSurface, content = content).makeImageSnapshot()
 
@@ -63,7 +64,7 @@ inline fun SnapshotJPEG(
             height = height
         )
     },
-    content: Widget.() -> Unit,
+    content: ChildSlot.() -> Unit,
 ): ByteArray = SnapshotImage(background = background, debug = debug, initSurface = initSurface, content = content)
     .encodeToData(format = EncodedImageFormat.JPEG)!!.bytes
 
@@ -76,7 +77,7 @@ inline fun SnapshotPNG(
             height = height
         )
     },
-    content: Widget.() -> Unit,
+    content: ChildSlot.() -> Unit,
 ): ByteArray = SnapshotImage(background = background, debug = debug, initSurface = initSurface, content = content)
     .encodeToData(format = EncodedImageFormat.PNG)!!.bytes
 
@@ -89,16 +90,14 @@ inline fun SnapshotWEBP(
             height = height
         )
     },
-    content: Widget.() -> Unit,
+    content: ChildSlot.() -> Unit,
 ): ByteArray = SnapshotImage(background = background, debug = debug, initSurface = initSurface, content = content)
     .encodeToData(format = EncodedImageFormat.WEBP)!!.bytes
 
 inline fun layoutWidget(
-    content: Widget.() -> Unit,
+    content: ChildSlot.() -> Unit,
 ): RenderBox {
-    val rootWidget = ProxyWidget().apply(content)
-    assert(rootWidget.widget != null)
-    val rootRenderBox = rootWidget.createRenderBox()
+    val rootRenderBox = ProxyWidget.buildWidget(content).createRenderBox()
     rootRenderBox.layout(constraints = BoxConstraints())
     return rootRenderBox
 }

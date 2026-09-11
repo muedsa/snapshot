@@ -9,22 +9,18 @@ inline fun Flex.Flexible(
     fit: FlexFit = FlexFit.LOOSE,
     content: Flexible.() -> Unit = {},
 ) {
-    buildChild(
-        widget = Flexible(
+    attach(
+        com.muedsa.snapshot.widget.Flexible(
             flex = flex,
             fit = fit,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
 open class Flexible(
     var flex: Int = 1,
     var fit: FlexFit = FlexFit.LOOSE,
-    parent: Widget? = null,
 ) : ParentDataWidget(
-    parent = parent
 ) {
     override fun applyParentData(renderBox: RenderBox) {
         assert(renderBox.parentData is FlexParentData)

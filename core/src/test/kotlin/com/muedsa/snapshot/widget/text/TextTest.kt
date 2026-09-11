@@ -14,6 +14,7 @@ import org.jetbrains.skia.Color
 import org.jetbrains.skia.Pixmap
 import kotlin.test.Test
 import kotlin.test.assertTrue
+import com.muedsa.snapshot.widget.ChildSlot
 
 /**
  * 文本渲染的区间/存在性断言。
@@ -66,7 +67,7 @@ class TextTest {
 
     @Test
     fun simple_text_test() {
-        fun Widget.scene() {
+        fun ChildSlot.scene() {
             Text("Hello, world!", style = TextStyle(fontSize = 20f, color = Color.RED, typeface = testTypeface))
         }
 
@@ -83,7 +84,7 @@ class TextTest {
 
     @Test
     fun text_span_test() {
-        fun Widget.scene() {
+        fun ChildSlot.scene() {
             RichText {
                 TextSpan(text = "Hello, one!", style = TextStyle(fontSize = 20f, typeface = testTypeface))
                 TextSpan(text = "Hello, two!", style = TextStyle(color = Color.RED, typeface = testTypeface))
@@ -103,7 +104,7 @@ class TextTest {
 
     @Test
     fun widget_span_test() {
-        fun Widget.scene() {
+        fun ChildSlot.scene() {
             RichText {
                 TextSpan("Hello, one!", style = TextStyle(fontSize = 20f, typeface = testTypeface))
                 WidgetSpan { Container(width = 20f, height = 20f, color = Color.BLUE) }
@@ -133,7 +134,7 @@ class TextTest {
 
     @Test
     fun style_merge_test() {
-        fun Widget.scene() {
+        fun ChildSlot.scene() {
             RichText {
                 TextSpan(style = TextStyle(fontSize = 15f, color = Color.WHITE, typeface = testTypeface)) {
                     TextSpan("15white")

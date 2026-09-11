@@ -6,26 +6,23 @@ import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderClipPath
 import org.jetbrains.skia.Path
 
-inline fun Widget.ClipPath(
+inline fun ChildSlot.ClipPath(
     noinline clipper: ((Size) -> Path)? = null,
     clipBehavior: ClipBehavior = ClipBehavior.ANTI_ALIAS,
     content: ClipPath.() -> Unit = {},
 ) {
-    buildChild(
-        widget = ClipPath(
+    attach(
+        com.muedsa.snapshot.widget.ClipPath(
             clipper = clipper,
             clipBehavior = clipBehavior,
-            parent = this
-        ),
-        content = content
+        ).apply(content)
     )
 }
 
 class ClipPath(
     var clipper: ((Size) -> Path)? = null,
     var clipBehavior: ClipBehavior = ClipBehavior.ANTI_ALIAS,
-    parent: Widget? = null,
-) : SingleChildWidget(parent = parent) {
+) : SingleChildWidget() {
 
     override fun createRenderBox(child: Widget?): RenderBox = RenderClipPath(
         clipper = clipper,

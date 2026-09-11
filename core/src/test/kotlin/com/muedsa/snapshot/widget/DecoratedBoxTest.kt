@@ -20,7 +20,7 @@ class DecoratedBoxTest {
 
     // 200x200 白色圆角盒(半径 100 → 圆形):锐边几何,可用整图 golden。
     // 背景取 TRANSPARENT(与迁移前的透明底快照一致),否则白盒压白底会得到全白基准,失去回归意义。
-    private fun Widget.borderRadiusScene() {
+    private fun ChildSlot.borderRadiusScene() {
         DecoratedBox(
             decoration = BoxDecoration(
                 color = Color.WHITE,
@@ -44,7 +44,7 @@ class DecoratedBoxTest {
 
     // 阴影场景:500x300 白底画布,居中 200x100 白盒(全局占 x150..350, y100..200)。
     // 阴影来自 BoxDecoration.boxShadow = ELEVATION_MAP[elevation],白盒与白底只让阴影外露。
-    private fun Widget.elevationScene(elevation: Int) {
+    private fun ChildSlot.elevationScene(elevation: Int) {
         Container(width = 500f, height = 300f, color = Color.WHITE, alignment = BoxAlignment.CENTER) {
             DecoratedBox(
                 decoration = BoxDecoration(
