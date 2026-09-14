@@ -1227,18 +1227,17 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
   <Text color="#0000FF" fontSize="20">哈哈 233<![CDATA[ken_test <a></a> 233 哈哈]]>哈🤣🤣🤣</Text>
   ```
 
-- 🚨 **文本内容里不要出现裸 `&`**。tokenizer 没有实现字符引用解码，而 DATA 状态遇到 `&` 时既不消费字符也不产生 token，会让 `Tokenizer.read()` 的循环**永远空转（挂死）**，而不是抛异常。这是从源码推导出的结论（本机无法运行 JVM 实测），但风险足够高，含 `&` 的文本请一律用 CDATA 包裹：
+- **`&` 会作为普通文本原样保留**。tokenizer 不实现字符引用解码，因此可以直接写裸 `&`，而 `&amp;` 不会转换成 `&`：
 
   ```html
-  <!-- 想表达 A & B -->
-  <!-- ✗ 不要这样:&amp; 不会被解码成 &,而且裸 & 会让 tokenizer 挂死 -->
+  <Text>A & B</Text>
   <Text>A &amp; B</Text>
-  <!-- ✓ 这样写 -->
-  <Text><![CDATA[A & B]]></Text>
   ```
 
+  前者输出 `A & B`，后者输出字面量 `A &amp; B`。
+
   属性值里的 `&` 是安全的（会被当作普通字符保留，同样不解码）。
-- **不支持 HTML 实体**：`&lt;` 会**原样**保留成四个字符 `&lt;`（前提是它没有触发上面的挂死问题）。
+- **不支持 HTML 实体**：`&lt;` 会**原样**保留成四个字符 `&lt;`。需要在文本中包含 `<` 时请使用 CDATA。
 - **不支持注释与 DOCTYPE**：`<!-- ... -->`、`<!DOCTYPE ...>` 都会报 `Unexpected character '<' in input state [MARKUP_DECLARATION_OPEN]`。只有 `<![CDATA[` 这一种标记声明。
 - **`<Text>` 内的文本会被 trim**，首尾空白丢失；`<Raw>` 不 trim、原样保留（内部换行也保留）。
 - **非文本标签内不允许出现非空白字符**：`<Container>hello</Container>` 会抛 `ParseException: Not Support RAWTEXT: hello`。标签之间的缩进/换行属于纯空白，会被忽略。
@@ -1432,7 +1431,7 @@ EdgeInsets 必须写成 `"(1,2,3,4)"` 或 `"10"` 或 `"(1,2)"`，圆括号和逗
 不能——解析器只注册了 11 个标签（见 [10.2](#102-标签总表)）。需要 `Expanded`/`Opacity`/`Transform`/`Clip*` 等请在 Kotlin DSL 侧构建，或按 [10.8](#108-扩展自定义标签) 注册自定义标签。
 
 **Q：文本里怎么写 `<` `>`？**
-用 `<![CDATA[ ... ]]>`。库**不做** HTML 实体解码，`&lt;` 会原样输出；而且文本里出现**裸 `&` 会让解析器挂死**（不是报错），含 `&` 的文本一律用 CDATA 包起来（见 [10.5](#105-文本空白与-cdata)）。注释 `<!-- -->` 也不支持。
+用 `<![CDATA[ ... ]]>`。库**不做** HTML 实体解码，`&lt;` 会原样输出；裸 `&` 可以直接书写并会原样保留（见 [10.5](#105-文本空白与-cdata)）。注释 `<!-- -->` 也不支持。
 
 **Q：第二次调用 `Parser().parse(...)` 报 `Duplicate root element`？**
 是同一个 `Parser` 实例被复用了——`parse()` 不重置内部的 `snapshotElement`。每次解析都 `Parser()` 新建一个。

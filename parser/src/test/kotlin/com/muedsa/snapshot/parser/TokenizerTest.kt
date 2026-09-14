@@ -6,6 +6,9 @@ import com.muedsa.snapshot.parser.widget.SnapshotParser
 import kotlin.test.assertFailsWith
 import java.io.StringReader
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class TokenizerTest {
@@ -23,6 +26,28 @@ class TokenizerTest {
         val token: Token = parseOnce("<![CDATA[$data]]>")
         assertTrue(token is Token.CDATA, "token is Token.CDATA")
         assertTrue(data == token.data, "data == (token as Token.CDATA).data")
+    }
+
+    @Test
+    fun raw_ampersand_is_emitted_as_character_data_without_hanging() {
+        var token: Token? = null
+        var failure: Throwable? = null
+        val worker = Thread {
+            try {
+                token = parseOnce("a & b")
+            } catch (t: Throwable) {
+                failure = t
+            }
+        }
+        worker.isDaemon = true
+        worker.start()
+        worker.join(5_000)
+
+        assertFalse(worker.isAlive, "tokenizer did not terminate for a raw ampersand")
+        assertNull(failure)
+        val emitted = token
+        assertTrue(emitted is Token.Character, "token is Token.Character")
+        assertEquals("a & b", emitted.data)
     }
 
     @Test

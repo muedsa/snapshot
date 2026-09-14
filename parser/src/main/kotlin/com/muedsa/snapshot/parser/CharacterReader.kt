@@ -287,7 +287,7 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
     }
 
     fun consumeData(): String {
-        // &, <, null
+        // <, null. Character references are not decoded, so '&' is ordinary text.
         //bufferUp(); // no need to bufferUp, just called consume()
         var pos = bufPos
         val start = pos
@@ -296,7 +296,7 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
 
         OUTER@ while (pos < remaining) {
             when (tempBuf[pos]) {
-                '&', '<', Char.MIN_VALUE -> break@OUTER
+                '<', Char.MIN_VALUE -> break@OUTER
                 else -> pos++
             }
         }
