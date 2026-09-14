@@ -31,7 +31,7 @@ class RowParserTest {
         val snapshotElement = ParserTest.parse(text)
         val widget = snapshotElement.createWidget()
         assertTrue(widget is Row, "widget is Row")
-        val row: Row = widget as Row
+        val row: Row = widget
         assertTrue(row.mainAxisAlignment == MainAxisAlignment.START, "row.mainAxisAlignment == MainAxisAlignment.START")
         assertTrue(row.mainAxisSize == MainAxisSize.MAX, "row.mainAxisSize == MainAxisSize.MAX")
         assertTrue(row.crossAxisAlignment == CrossAxisAlignment.START, "row.crossAxisAlignment == CrossAxisAlignment.START")

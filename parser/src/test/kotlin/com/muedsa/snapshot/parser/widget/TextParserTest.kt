@@ -37,7 +37,7 @@ class TextParserTest {
         val snapshotElement = ParserTest.parse(text)
         val widget = snapshotElement.createWidget()
         assertTrue(widget is RichText, "widget is RichText")
-        val richText: RichText = widget as RichText
+        val richText: RichText = widget
         assertTrue(richText.text is TextSpan, "richText.text is TextSpan")
         val textSpan: TextSpan = widget.text as TextSpan
         assertTrue(textSpan.style?.color == 0xFF_FF_00_00.toInt(), "textSpan.style?.color == 0xFF_FF_00_00.toInt()")

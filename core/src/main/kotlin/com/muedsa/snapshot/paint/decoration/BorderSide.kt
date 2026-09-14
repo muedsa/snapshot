@@ -97,13 +97,9 @@ class BorderSide(
 
         @JvmStatic
         fun canMerge(a: BorderSide, b: BorderSide): Boolean {
-            if ((a.style == BorderStyle.NONE && a.width == 0f) ||
-                (b.style == BorderStyle.NONE && b.width == 0f)
-            ) {
-                return true
-            }
-            return a.style == b.style
-                    && a.color == b.color
+            return (a.style == BorderStyle.NONE && a.width == 0f) ||
+                    (b.style == BorderStyle.NONE && b.width == 0f) || (a.style == b.style
+                    && a.color == b.color)
         }
     }
 }

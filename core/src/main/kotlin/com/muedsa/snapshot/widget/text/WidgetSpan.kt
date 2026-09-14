@@ -80,7 +80,7 @@ class WidgetSpan(
                 else -> null
             }
             if (fontSizeToPush != null) {
-                fontSizeStack.add(fontSizeToPush);
+                fontSizeStack.add(fontSizeToPush)
             }
             if (span is WidgetSpan) {
                 widgets.add(
