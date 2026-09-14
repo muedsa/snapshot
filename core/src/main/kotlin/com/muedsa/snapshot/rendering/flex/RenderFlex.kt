@@ -175,8 +175,8 @@ open class RenderFlex(
             var maxSizeAboveBaseline: Float = 0f
             var maxSizeBelowBaseline: Float = 0f
             children.forEach { child ->
-                assert(textBaseline != null) { "To use CrossAxisAlignment.baseline, you must also specify which baseline to use using the \"BaselineMode\" argument." }
-                val distance: Float? = child.getDistanceToBaseline(textBaseline!!, onlyReal = true)
+                requireNotNull(textBaseline) { "To use CrossAxisAlignment.baseline, you must also specify which baseline to use using the \"BaselineMode\" argument." }
+                val distance: Float? = child.getDistanceToBaseline(textBaseline, onlyReal = true)
                 if (distance != null) {
                     maxBaselineDistance = max(maxBaselineDistance, distance)
                     maxSizeAboveBaseline = max(distance, maxSizeAboveBaseline)

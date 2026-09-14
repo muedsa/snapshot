@@ -22,7 +22,7 @@ fun paintImage(
     isAntiAlias: Boolean = false,
     blendMode: BlendMode = BlendMode.SRC_OVER,
 ) {
-    assert(!image.isClosed) { "Cannot paint an image that is disposed." }
+    require(!image.isClosed) { "Cannot paint an image that is disposed." }
     if (image.isEmpty) {
         return
     }
@@ -39,7 +39,9 @@ fun paintImage(
     } else {
         BoxFit.FILL
     }
-    assert(centerSlice == null || (imageFit != BoxFit.NONE && imageFit != BoxFit.COVER))
+    require(centerSlice == null || (imageFit != BoxFit.NONE && imageFit != BoxFit.COVER)) {
+        "centerSlice cannot be used with BoxFit.NONE or BoxFit.COVER"
+    }
     val fittedSizes: FittedSizes =
         FittedSizes.applyBoxFit(fit = imageFit, inputSize = inputSize, outputSize = outputSize)
     val sourceSize: Size = fittedSizes.source * scale

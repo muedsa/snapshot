@@ -37,12 +37,16 @@ class Positioned(
 ) : ParentDataWidget() {
 
     init {
-        assert(left == null || right == null || width == null)
-        assert(top == null || bottom == null || height == null)
+        require(left == null || right == null || width == null) {
+            "At most two of left, right, and width may be non-null"
+        }
+        require(top == null || bottom == null || height == null) {
+            "At most two of top, bottom, and height may be non-null"
+        }
     }
 
     override fun applyParentData(renderBox: RenderBox) {
-        assert(renderBox.parentData is StackParentData)
+        require(renderBox.parentData is StackParentData) { "renderBox.parentData must be StackParentData" }
         val parentData: StackParentData = renderBox.parentData as StackParentData
         if (parentData.left != left) {
             parentData.left = left

@@ -26,7 +26,7 @@ fun getAsTranslation(transform: Matrix44CMO): Offset? {
 
 
 fun computeRotation(radians: Float): Matrix44CMO {
-    assert(radians.isFinite()) {
+    require(radians.isFinite()) {
         "Cannot compute the rotation matrix for a non-finite angle: $radians"
     }
     if (radians == 0f) {

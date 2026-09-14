@@ -7,6 +7,7 @@ import org.jetbrains.skia.Shader
 import org.jetbrains.skia.paragraph.Direction
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 /** 仅暴露 protected impliedStops(),不改产品面。 */
@@ -47,6 +48,13 @@ class GradientImpliedStopsTest {
         val actual = probe(4, stops).exposedStops()
         assertStopsClose(stops, actual)
         assertTrue(actual === stops, "显式 stops 应原样返回同一引用")
+    }
+
+    @Test
+    fun implied_stops_require_at_least_two_colors() {
+        assertFailsWith<IllegalArgumentException> {
+            probe(1).exposedStops()
+        }
     }
 
     @Test

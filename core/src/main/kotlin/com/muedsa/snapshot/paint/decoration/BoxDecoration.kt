@@ -22,7 +22,7 @@ class BoxDecoration(
 ) : Decoration() {
 
     init {
-        assert(
+        require(
             backgroundBlendMode == null || color != null || gradient != null
         ) {
             "backgroundBlendMode applies to BoxDecoration's background color or " +

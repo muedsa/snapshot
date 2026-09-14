@@ -15,8 +15,8 @@ open class RenderPositionedBox(
     textDirection = textDirection,
 ) {
     init {
-        assert(widthFactor == null || widthFactor >= 0f)
-        assert(heightFactor == null || heightFactor >= 0f)
+        require(widthFactor == null || widthFactor >= 0f) { "widthFactor must be non-negative" }
+        require(heightFactor == null || heightFactor >= 0f) { "heightFactor must be non-negative" }
     }
 
     override fun performLayout() {

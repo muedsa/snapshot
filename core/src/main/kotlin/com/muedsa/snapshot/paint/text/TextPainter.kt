@@ -86,8 +86,8 @@ class TextPainter(
         }.build()
 
     fun layout(minWidth: Float = 0f, maxWidth: Float = Float.POSITIVE_INFINITY) {
-        assert(!maxWidth.isNaN())
-        assert(!minWidth.isNaN())
+        require(!maxWidth.isNaN()) { "maxWidth must not be NaN" }
+        require(!minWidth.isNaN()) { "minWidth must not be NaN" }
 
         val cachedLayout = layoutCache
         if (cachedLayout != null && cachedLayout.resizeToFit(minWidth, maxWidth, textWidthBasis)) {

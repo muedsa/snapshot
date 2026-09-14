@@ -41,7 +41,7 @@ abstract class BoxBorder : ShapeBorder() {
             side: BorderSide,
             borderRadius: BorderRadius,
         ) {
-            assert(side.style != BorderStyle.NONE)
+            require(side.style != BorderStyle.NONE) { "side.style must not be BorderStyle.NONE" }
             val paint: Paint = Paint().apply {
                 color = side.color
             }
@@ -75,7 +75,7 @@ abstract class BoxBorder : ShapeBorder() {
                 }
 
                 BoxShape.CIRCLE -> {
-                    assert(borderRadius == null) { "A borderRadius cannot be given when shape is a BoxShape.CIRCLE." }
+                    require(borderRadius == null) { "A borderRadius cannot be given when shape is a BoxShape.CIRCLE." }
                     makeRRectFromRectAndRadius(
                         rect = makeRectFromCircle(center = rect.center, radius = rect.shortestSide / 2f),
                         radius = Radius.circular(radius = rect.width)
@@ -130,14 +130,14 @@ abstract class BoxBorder : ShapeBorder() {
         )
 
         fun paintUniformBorderWithCircle(canvas: Canvas, rect: Rect, side: BorderSide) {
-            assert(side.style != BorderStyle.NONE)
+            require(side.style != BorderStyle.NONE) { "side.style must not be BorderStyle.NONE" }
             val radius: Float = (rect.shortestSide + side.strokeOffset) / 2
             val offset = rect.center
             canvas.drawCircle(x = offset.x, y = offset.y, radius = radius, paint = side.toPaint())
         }
 
         fun paintUniformBorderWithRectangle(canvas: Canvas, rect: Rect, side: BorderSide) {
-            assert(side.style != BorderStyle.NONE)
+            require(side.style != BorderStyle.NONE) { "side.style must not be BorderStyle.NONE" }
             canvas.drawRect(rect.inflate(side.strokeOffset / 2), side.toPaint())
         }
     }

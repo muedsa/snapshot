@@ -16,7 +16,7 @@ abstract class Gradient(
         if (stops != null) {
             return stops
         }
-        assert(colors.size >= 2) { "colors list must have at least two colors" }
+        require(colors.size >= 2) { "colors list must have at least two colors" }
         val separation: Float = 1f / (colors.size - 1)
         val newStops = FloatArray(colors.size)
         for (i in colors.indices) {

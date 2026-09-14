@@ -23,7 +23,7 @@ open class Flexible(
 ) : ParentDataWidget(
 ) {
     override fun applyParentData(renderBox: RenderBox) {
-        assert(renderBox.parentData is FlexParentData)
+        require(renderBox.parentData is FlexParentData) { "renderBox.parentData must be FlexParentData" }
         val parentData: FlexParentData = renderBox.parentData as FlexParentData
         if (parentData.flex != flex) {
             parentData.flex = flex
