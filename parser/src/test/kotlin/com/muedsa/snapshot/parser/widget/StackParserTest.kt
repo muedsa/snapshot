@@ -23,7 +23,7 @@ class StackParserTest {
         val snapshotElement = ParserTest.parse(text)
         val widget = snapshotElement.createWidget()
         assertTrue(widget is Stack, "widget is Stack")
-        val stack: Stack = widget as Stack
+        val stack: Stack = widget
         assertTrue(stack.alignment == BoxAlignment.CENTER, "stack.alignment == BoxAlignment.CENTER")
         assertTrue(stack.textDirection == Direction.LTR, "stack.textDirection == Direction.LTR")
         val children = stack.children

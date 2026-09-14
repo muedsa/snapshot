@@ -18,7 +18,7 @@ internal class CompoundBorder(
     override val dimensions: EdgeInsets =
         borders.fold(EdgeInsets.ZERO) { acc, shapeBorder -> acc.add(shapeBorder.dimensions) }
 
-    override fun add(other: ShapeBorder, reversed: Boolean): ShapeBorder? {
+    override fun add(other: ShapeBorder, reversed: Boolean): ShapeBorder {
         if (other !is CompoundBorder) {
             val ours: ShapeBorder = if (reversed) borders.last() else borders.first()
             val merged: ShapeBorder? = ours.add(other = other, reversed = reversed)

@@ -18,7 +18,7 @@ class ImageParserTest {
         val snapshotElement = ParserTest.parse(text)
         val widget = snapshotElement.createWidget()
         assertTrue(widget is RawImage, "widget is RawImage")
-        val rawImage: RawImage = widget as RawImage
+        val rawImage: RawImage = widget
         assertTrue(!rawImage.image.isEmpty, "!rawImage.image.isEmpty")
         assertTrue(rawImage.image.imageInfo.width == 480, "rawImage.image.imageInfo.width == 480")
         assertTrue(rawImage.image.imageInfo.height == 360, "rawImage.image.imageInfo.height == 360")

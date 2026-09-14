@@ -31,7 +31,7 @@ class ColumnParserTest {
         val snapshotElement = ParserTest.parse(text)
         val widget = snapshotElement.createWidget()
         assertTrue(widget is Column, "widget is Column")
-        val column: Column = widget as Column
+        val column: Column = widget
         assertTrue(column.mainAxisAlignment == MainAxisAlignment.START, "column.mainAxisAlignment == MainAxisAlignment.START")
         assertTrue(column.mainAxisSize == MainAxisSize.MAX, "column.mainAxisSize == MainAxisSize.MAX")
         assertTrue(column.crossAxisAlignment == CrossAxisAlignment.START, "column.crossAxisAlignment == CrossAxisAlignment.START")

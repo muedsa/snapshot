@@ -24,7 +24,7 @@ class ParserTest {
         val snapshotElement = parse(text)
         val widget = snapshotElement.createWidget()
         assertTrue(widget is Container, "widget is Container")
-        val container: Container = widget as Container
+        val container: Container = widget
         assertTrue(container.color == 0xFF00FF00.toInt(), "container.color == 0xFF00FF00.toInt()")
         assertTrue(container.width == 400f, "container.width == 400f")
         assertTrue(container.height == 300f, "container.height == 300f")
@@ -95,7 +95,7 @@ class ParserTest {
         val snapshotElement = parse(text)
         val widget = snapshotElement.createWidget()
         assertTrue(widget is Container, "widget is Container")
-        val container: Container = widget as Container
+        val container: Container = widget
         assertTrue(container.width == 400f, "container.width == 400f")
         assertTrue(container.height == 300f, "container.height == 300f")
         val richText: RichText = container.child as RichText

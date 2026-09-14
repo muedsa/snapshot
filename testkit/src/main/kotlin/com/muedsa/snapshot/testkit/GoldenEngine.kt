@@ -113,7 +113,7 @@ internal object GoldenEngine {
             for (x in 0 until width) {
                 val ca = a.getColor(x, y)
                 val cb = b.getColor(x, y)
-                val isChanged = if (ca == cb) false else colorDiffers(ca, cb, tolerance)
+                val isChanged = ca != cb && colorDiffers(ca, cb, tolerance)
                 changed[index] = isChanged
                 if (isChanged) {
                     count++

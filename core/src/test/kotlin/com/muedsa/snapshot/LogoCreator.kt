@@ -45,7 +45,7 @@ class LogoCreator {
                                     clipper = {
                                         PathBuilder().apply {
                                             arcTo(
-                                                oval = Rect.Companion.makeWH(it.width, it.height),
+                                                oval = Rect.makeWH(it.width, it.height),
                                                 startAngle = 45f,
                                                 sweepAngle = 180f,
                                                 forceMoveTo = true
@@ -68,7 +68,7 @@ class LogoCreator {
                                     clipper = {
                                         PathBuilder().apply {
                                             arcTo(
-                                                oval = Rect.Companion.makeWH(it.width, it.height),
+                                                oval = Rect.makeWH(it.width, it.height),
                                                 startAngle = 45f + 180f,
                                                 sweepAngle = 180f,
                                                 forceMoveTo = true

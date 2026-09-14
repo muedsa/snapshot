@@ -25,7 +25,7 @@ class BorderParserTest {
         val snapshotElement = ParserTest.parse(text)
         val widget = snapshotElement.createWidget()
         assertTrue(widget is DecoratedBox, "widget is DecoratedBox")
-        val decoratedBox: DecoratedBox = widget as DecoratedBox
+        val decoratedBox: DecoratedBox = widget
         assertTrue(decoratedBox.decoration is BoxDecoration, "decoratedBox.decoration is BoxDecoration")
         val boxDecorate: BoxDecoration = decoratedBox.decoration as BoxDecoration
         assertTrue(boxDecorate.border is Border, "boxDecorate.border is Border")
@@ -75,7 +75,7 @@ class BorderParserTest {
         val snapshotElement = ParserTest.parse(text)
         val widget = snapshotElement.createWidget()
         assertTrue(widget is DecoratedBox, "widget is DecoratedBox")
-        val decoratedBox: DecoratedBox = widget as DecoratedBox
+        val decoratedBox: DecoratedBox = widget
         assertTrue(decoratedBox.decoration is BoxDecoration, "decoratedBox.decoration is BoxDecoration")
         val boxDecorate: BoxDecoration = decoratedBox.decoration as BoxDecoration
         assertTrue(boxDecorate.border is Border, "boxDecorate.border is Border")

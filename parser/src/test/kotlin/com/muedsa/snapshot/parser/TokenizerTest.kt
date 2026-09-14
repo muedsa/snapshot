@@ -22,7 +22,7 @@ class TokenizerTest {
         val data = "a <= b"
         val token: Token = parseOnce("<![CDATA[$data]]>")
         assertTrue(token is Token.CDATA, "token is Token.CDATA")
-        assertTrue(data == (token as Token.CDATA).data, "data == (token as Token.CDATA).data")
+        assertTrue(data == token.data, "data == (token as Token.CDATA).data")
     }
 
     @Test

@@ -37,10 +37,7 @@ class TextSpan(
     }
 
     override fun visitDirectChildren(visitor: (InlineSpan) -> Boolean): Boolean {
-        if (children.isEmpty()) {
-            return true
-        }
-        return !children.any { !it.visitChildren(visitor) }
+        return children.isEmpty() || !children.any { !it.visitChildren(visitor) }
     }
 
     override fun computeToPlainText(buffer: StringBuffer, includePlaceholders: Boolean) {
