@@ -19,7 +19,7 @@ class Opacity(
 ) : SingleChildWidget() {
 
     init {
-        assert(opacity in 0f..1f)
+        require(opacity in 0f..1f) { "opacity must be between 0 and 1" }
     }
 
     override fun createRenderBox(child: Widget?): RenderBox = RenderOpacity(

@@ -8,7 +8,7 @@ class Vector3(vararg storage: Float) {
     val storage: FloatArray
 
     init {
-        assert(storage.size == 3)
+        require(storage.size == 3) { "Vector3 requires exactly 3 components, got ${storage.size}" }
         this.storage = storage
     }
 

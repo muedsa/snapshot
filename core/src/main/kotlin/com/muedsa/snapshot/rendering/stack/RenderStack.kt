@@ -110,8 +110,8 @@ open class RenderStack(
             size: Size,
             alignment: BoxAlignment,
         ): Boolean {
-            assert(childParentData.isPositioned)
-            assert(child.parentData == childParentData)
+            require(childParentData.isPositioned) { "childParentData must describe a positioned child" }
+            require(child.parentData == childParentData) { "childParentData must belong to child" }
             var hasVisualOverflow: Boolean = false
             var childConstraints: BoxConstraints = BoxConstraints()
             if (childParentData.left != null && childParentData.right != null) {

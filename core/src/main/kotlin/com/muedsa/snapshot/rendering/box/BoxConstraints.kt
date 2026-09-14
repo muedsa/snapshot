@@ -12,10 +12,10 @@ data class BoxConstraints(
     val maxHeight: Float = Float.POSITIVE_INFINITY,
 ) {
     init {
-        assert(maxWidth <= Float.POSITIVE_INFINITY)
-        assert(maxHeight <= Float.POSITIVE_INFINITY)
-        assert(minWidth in 0f..maxWidth)
-        assert(minHeight in 0f..maxHeight)
+        require(maxWidth <= Float.POSITIVE_INFINITY) { "maxWidth must not be NaN" }
+        require(maxHeight <= Float.POSITIVE_INFINITY) { "maxHeight must not be NaN" }
+        require(minWidth in 0f..maxWidth) { "minWidth must be between 0 and maxWidth" }
+        require(minHeight in 0f..maxHeight) { "minHeight must be between 0 and maxHeight" }
     }
 
     fun copyWith(
@@ -85,8 +85,8 @@ data class BoxConstraints(
         }
         var width = size.width
         var height = size.height
-        assert(width > 0)
-        assert(height > 0)
+        require(width > 0) { "size.width must be greater than 0" }
+        require(height > 0) { "size.height must be greater than 0" }
         val aspectRatio = width / height
 
         if (width > maxWidth) {

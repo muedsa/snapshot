@@ -73,7 +73,7 @@ class BorderSide(
 
         @JvmStatic
         fun merge(a: BorderSide, b: BorderSide): BorderSide {
-            assert(canMerge(a, b))
+            require(canMerge(a, b)) { "BorderSide values are not mergeable" }
             val aIsNone: Boolean = a.style == BorderStyle.NONE && a.width == 0f
             val bIsNone: Boolean = b.style == BorderStyle.NONE && b.width == 0f
             if (aIsNone && bIsNone) {

@@ -8,7 +8,7 @@ class RenderOpacity(
 ) : RenderSingleChildBox() {
 
     init {
-        assert(opacity in 0f..1f)
+        require(opacity in 0f..1f) { "opacity must be between 0 and 1" }
     }
 
     override fun paint(context: PaintingContext, offset: Offset) {

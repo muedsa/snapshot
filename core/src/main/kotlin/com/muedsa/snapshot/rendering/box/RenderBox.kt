@@ -108,7 +108,7 @@ abstract class RenderBox {
     open fun paint(context: PaintingContext, offset: Offset) {}
 
     open fun applyPaintTransform(child: RenderBox, transform: Matrix44CMO) {
-        assert(child.parent == this)
+        require(child.parent == this) { "child must belong to this RenderBox" }
     }
 
     fun getTransformTo(ancestor: RenderBox): Matrix44CMO {

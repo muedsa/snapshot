@@ -97,7 +97,7 @@ class Border(
                 BorderStyle.SOLID -> {
                     when (shape) {
                         BoxShape.CIRCLE -> {
-                            assert(borderRadius == null) { "A borderRadius cannot be given when shape is a BoxShape.CIRCLE." }
+                            require(borderRadius == null) { "A borderRadius cannot be given when shape is a BoxShape.CIRCLE." }
                             paintUniformBorderWithCircle(canvas, rect, top)
                         }
 
@@ -182,10 +182,10 @@ class Border(
 
         @JvmStatic
         fun merge(a: Border, b: Border): Border {
-            assert(BorderSide.canMerge(a.top, b.top))
-            assert(BorderSide.canMerge(a.right, b.right))
-            assert(BorderSide.canMerge(a.bottom, b.bottom))
-            assert(BorderSide.canMerge(a.left, b.left))
+            require(BorderSide.canMerge(a.top, b.top)) { "top border sides are not mergeable" }
+            require(BorderSide.canMerge(a.right, b.right)) { "right border sides are not mergeable" }
+            require(BorderSide.canMerge(a.bottom, b.bottom)) { "bottom border sides are not mergeable" }
+            require(BorderSide.canMerge(a.left, b.left)) { "left border sides are not mergeable" }
             return Border(
                 top = BorderSide.merge(a.top, b.top),
                 right = BorderSide.merge(a.right, b.right),
