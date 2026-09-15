@@ -7,6 +7,37 @@
 
 **Demo**: https://snapshot.muedsa.com
 
+## 项目特色展示
+
+这些展示图全部由项目自身离线渲染生成，没有使用外部图片素材。完整生成代码见
+[`ShowcaseSample.kt`](core/src/test/kotlin/com/muedsa/snapshot/ShowcaseSample.kt) 与
+[`ParserShowcaseSample.kt`](parser/src/test/kotlin/com/muedsa/snapshot/ParserShowcaseSample.kt)。
+
+只重新生成这三张离线展示图：
+
+```bash
+./gradlew :core:test -PincludeSamples --tests 'com.muedsa.snapshot.ShowcaseSample'
+./gradlew :parser:test -PincludeSamples --tests 'com.muedsa.snapshot.ParserShowcaseSample'
+```
+
+### 结构化 Bento 仪表盘
+
+使用 `Container`、`Row`、`Column`、`Stack` 和 `Positioned` 组合复杂布局，同时展示渐变、圆角、阴影、裁剪以及内置字体。
+
+![结构化 Bento 仪表盘](showcase_dashboard.png)
+
+### 霓虹视觉海报
+
+通过线性、径向和扫描渐变叠加几何图形，再结合透明度、旋转变换与精细排版生成完整海报。
+
+![霓虹视觉海报](showcase_poster.png)
+
+### 类 DOM 数据卡片
+
+同一套渲染能力也可以由类 DOM 文本驱动：解析标签和属性后构建 Widget 树，最终直接输出图片字节。
+
+![类 DOM 数据卡片](showcase_parser_card.png)
+
 > 📖 **文档导航**
 > - [使用说明](docs/usage/README.md)：环境与构建、快速上手、Widget 参考、布局/绘制/文本、类 DOM 解析器全部标签与属性、错误处理、FAQ
 > - [测试手册](docs/testing/README.md)：testkit、四层断言、golden 三态
@@ -157,6 +188,6 @@ File("sample_parse_dom_like.png").writeBytes(Parser().parse(StringReader(text)).
 
 ![Sample: Parse DOM-LIKE TEXT](sample_parse_dom_like.png)
 
-> 上述样例图由被 `@Tag("sample")` 标注的样例/配图再生成测试(Sample、LogoCreator、ParserSample)生成,已从默认测试排除(避免默认 `./gradlew test` 改写仓库根文件;样例图的外网下载只在显式再生成时发生)。手动再生成:`./gradlew :core:test -PincludeSamples` 与 `./gradlew :parser:test -PincludeSamples`。注:`-PincludeSamples` 只运行这些被标注的类,不执行完整测试套件。
+> 上述样例图由被 `@Tag("sample")` 标注的样例/配图再生成测试（`Sample`、`LogoCreator`、`ShowcaseSample`、`ParserSample`、`ParserShowcaseSample`）生成，已从默认测试排除，避免默认 `./gradlew test` 改写仓库根文件。三张特色展示图完全离线生成；旧的图片与文本示例仍只在显式再生成时访问外网。手动再生成：`./gradlew :core:test -PincludeSamples` 与 `./gradlew :parser:test -PincludeSamples`。`-PincludeSamples` 只运行这些被标注的类，不执行完整测试套件。
 >
 > 依赖外网的测试(网络图片缓存、`CachedNetworkImage`、含 `ImageEmojiSpan`/`<Emoji>` 的用例)统一标注 `@Tag("network")`,同样从默认 `./gradlew test` 排除;手动运行:`./gradlew :core:test -PincludeNetwork` 与 `./gradlew :parser:test -PincludeNetwork`(语义与 `-PincludeSamples` 相同:只跑该标签)。
