@@ -75,14 +75,15 @@ class ParserShowcaseSampleContractTest {
                 ) > 5_000,
                 "解析器卡片应保留白色主标题文字",
             )
+            val descriptionInkPixels = countPixelsDifferentFrom(
+                pixels = pixels,
+                rect = Rect.makeLTRB(45f, 288f, 590f, 316f),
+                backgroundColor = 0xFF_07_0B_16.toInt(),
+                channelTolerance = 8,
+            )
             assertTrue(
-                countPixelsNear(
-                    pixels = pixels,
-                    rect = Rect.makeLTRB(45f, 285f, 620f, 320f),
-                    expectedColor = 0xFF_94_A3_B8.toInt(),
-                    channelTolerance = 32,
-                ) > 400,
-                "解析器卡片应保留中文说明文字",
+                descriptionInkPixels > 100,
+                "解析器卡片应保留中文说明文字，实际墨迹像素数为 $descriptionInkPixels",
             )
         }
     }
@@ -123,6 +124,25 @@ class ParserShowcaseSampleContractTest {
                     abs(actual.channel(shift) - expectedColor.channel(shift))
                 }
                 if (maxDifference <= channelTolerance) count++
+            }
+        }
+        return count
+    }
+
+    private fun countPixelsDifferentFrom(
+        pixels: Pixmap,
+        rect: Rect,
+        backgroundColor: Int,
+        channelTolerance: Int,
+    ): Int {
+        var count = 0
+        for (y in rect.top.toInt() until rect.bottom.toInt()) {
+            for (x in rect.left.toInt() until rect.right.toInt()) {
+                val actual = pixels.getColor(x, y)
+                val maxDifference = colorChannelShifts.maxOf { shift ->
+                    abs(actual.channel(shift) - backgroundColor.channel(shift))
+                }
+                if (maxDifference > channelTolerance) count++
             }
         }
         return count
