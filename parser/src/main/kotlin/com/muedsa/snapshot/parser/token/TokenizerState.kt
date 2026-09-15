@@ -45,7 +45,7 @@ enum class TokenizerState {
         }
     },
     TAG_OPEN {
-        // from < in data
+        // 从 DATA 状态中的 < 进入。
         override fun read(t: Tokenizer, r: CharacterReader) {
             when (r.current()) {
 
@@ -59,7 +59,7 @@ enum class TokenizerState {
                         t.transition(TAG_NAME)
                     } else {
                         t.error(this)
-//                      t.emit('<') // char that got us here
+//                      t.emit('<') // 触发当前状态的字符
 //                      t.transition(DATA)
                     }
                 }
@@ -86,9 +86,9 @@ enum class TokenizerState {
         }
     },
     TAG_NAME {
-        // from < or </ in data, will have start or end tag pending
+        // 从 DATA 状态中的 < 或 </ 进入，此时已有待处理的开始或结束标签。
         override fun read(t: Tokenizer, r: CharacterReader) {
-            // previous TagOpen state did NOT consume, will have a letter char in current
+            // 前一个 TAG_OPEN 状态没有消费字符，因此当前位置应为字母。
             val tagName = r.consumeTagName()
             t.tagPending.appendTagName(tagName)
 
@@ -98,10 +98,10 @@ enum class TokenizerState {
 
                 '/' -> t.transition(SELF_CLOSING_START_TAG)
 
-                '<' -> {  // NOTE: out of spec, but clear author intent
+                '<' -> {  // 注意：不属于规范行为，但输入意图明确。
                     r.unconsume()
                     t.error(this)
-                    // intended fall through to next >
+                    // 按遇到下一个 > 的情况继续处理。
                 }
 
                 '>' -> {
@@ -109,9 +109,9 @@ enum class TokenizerState {
                     t.transition(DATA)
                 }
 
-                CharConst.NULL -> t.tagPending.appendTagName(REPLACEMENT_STR) // replacement
+                CharConst.NULL -> t.tagPending.appendTagName(REPLACEMENT_STR) // 使用替换字符。
 
-                CharConst.EOF -> { // should emit pending tag?
+                CharConst.EOF -> { // 是否应发射待处理标签？
                     t.eofError(this)
 //                  t.transition(DATA)
                 }
@@ -122,7 +122,7 @@ enum class TokenizerState {
         }
     },
     RCDATA_LESS_THAN_SIGN {
-        // from < in rcdata
+        // 从 RCDATA 状态中的 < 进入。
         override fun read(t: Tokenizer, r: CharacterReader) {
             if (r.matches('/')) {
                 t.createTempBuffer()
@@ -131,13 +131,13 @@ enum class TokenizerState {
                     t.appropriateEndTagSeq()
                 )
             ) {
-                // diverge from spec: got a start tag, but there's no appropriate end tag (</title>), so rather than
-                // consuming to EOF; break out here
+                // 与规范不同：遇到了开始标签，但不存在对应的结束标签（如 </title>）。
+                // 不继续消费到文件末尾，而是在此退出。
                 t.tagPending = t.createTagPending(false).apply {
                     tagName = t.appropriateEndTagName()
                 }
                 t.emitTagPending()
-                t.transition(TAG_OPEN) // straight into TagOpen, as we came from < and looks like we're on a start tag
+                t.transition(TAG_OPEN) // 当前字符来自 < 且后续形似开始标签，因此直接进入 TAG_OPEN。
             } else {
                 t.emit("<")
                 t.transition(RCDATA)
@@ -224,15 +224,15 @@ enum class TokenizerState {
         override fun read(t: Tokenizer, r: CharacterReader) {
             when (r.consume()) {
 
-                '\t', '\n', '\r', '\u000C', ' ' -> Unit // ignore whitespace
+                '\t', '\n', '\r', '\u000C', ' ' -> Unit // 忽略空白字符。
 
                 '/' -> t.transition(SELF_CLOSING_START_TAG)
 
                 '<' -> {
-                    // NOTE: out of spec, but clear (spec has this as a part of the attribute name)
+                    // 注意：不属于规范行为；规范会将其视为属性名的一部分。
                     r.unconsume()
                     t.error(this)
-                    // intended fall through as if >
+                    // 按遇到 > 的情况继续处理。
                 }
 
                 '>' -> {
@@ -260,7 +260,7 @@ enum class TokenizerState {
                 }
 
                 else -> {
-                    // A-Z, anything else
+                    // A-Z 或其他字符。
                     t.tagPending.newAttribute()
                     r.unconsume()
                     t.transition(ATTR_NAME)
@@ -298,7 +298,7 @@ enum class TokenizerState {
 //                  t.tagPending.appendAttributeName(c, pos, r.pos())
                 }
 
-                else -> t.tagPending.appendAttributeName(c!!, pos, r.pos()) // buffer underrun
+                else -> t.tagPending.appendAttributeName(c!!, pos, r.pos()) // 缓冲区数据不足。
             }
         }
     },
@@ -306,7 +306,7 @@ enum class TokenizerState {
         override fun read(t: Tokenizer, r: CharacterReader) {
             when (r.consume()) {
 
-                '\t', '\n', '\r', '\u000C', ' ' -> Unit // ignore
+                '\t', '\n', '\r', '\u000C', ' ' -> Unit // 忽略空白字符。
 
                 '/' -> t.transition(SELF_CLOSING_START_TAG)
 
@@ -335,7 +335,7 @@ enum class TokenizerState {
 //                  t.transition(ATTR_NAME)
                 }
 
-                // A-Z, anything else
+                // A-Z 或其他字符。
                 else -> {
                     t.tagPending.newAttribute()
                     r.unconsume()
@@ -349,7 +349,7 @@ enum class TokenizerState {
 
             when (r.consume()) {
 
-                '\t', '\n', '\r', '\u000C', ' ' -> Unit // ignore
+                '\t', '\n', '\r', '\u000C', ' ' -> Unit // 忽略空白字符。
 
                 '"' -> t.transition(ATTR_VALUE_DOUBLE_QUOTED)
 
@@ -416,7 +416,7 @@ enum class TokenizerState {
 //                  t.transition(DATA)
                 }
 
-                // hit end of buffer in first read, still in attribute
+                // 首次读取已到缓冲区末尾，但仍处于属性值中。
                 else -> {
                     t.tagPending.appendAttributeValue(c!!, pos, r.pos())
                 }
@@ -448,7 +448,7 @@ enum class TokenizerState {
 //                  t.transition(DATA)
                 }
 
-                //  hit end of buffer in first read, still in attribute
+                // 首次读取已到缓冲区末尾，但仍处于属性值中。
                 else -> t.tagPending.appendAttributeValue(c!!, pos, r.pos())
             }
         }
@@ -486,7 +486,7 @@ enum class TokenizerState {
 //                  t.tagPending.appendAttributeValue(c, pos, r.pos())
                 }
 
-                // hit end of buffer in first read, still in attribute
+                // 首次读取已到缓冲区末尾，但仍处于属性值中。
                 else -> t.tagPending.appendAttributeValue(c!!, pos, r.pos())
             }
         }
@@ -559,7 +559,7 @@ enum class TokenizerState {
             if (r.matchConsume("]]>") || r.isEmpty()) {
                 t.emit(Token.CDATA(t.dataBuffer.toString()))
                 t.transition(DATA)
-            } // otherwise, buffer underrun, stay in data section
+            } // 其他情况表示缓冲区数据不足，保持当前数据状态。
         }
     }
     ;
@@ -570,8 +570,8 @@ enum class TokenizerState {
         const val REPLACEMENT_STR: String = CharConst.NULL_REPLACEMENT_CHAR.toString()
 
         /**
-         * Handles RawtextEndTagName, ScriptDataEndTagName, and ScriptDataEscapedEndTagName. Same body impl, just
-         * different else exit transitions.
+         * 统一处理 RawtextEndTagName、ScriptDataEndTagName 和 ScriptDataEscapedEndTagName。
+         * 三者主体逻辑相同，仅未匹配时退出到的状态不同。
          */
         private fun handleDataEndTag(t: Tokenizer, r: CharacterReader, elseTransition: TokenizerState) {
             if (r.matchesLetter()) {

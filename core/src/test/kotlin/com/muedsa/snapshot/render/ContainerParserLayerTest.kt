@@ -10,6 +10,7 @@ import org.jetbrains.skia.Paint
 import org.jetbrains.skia.PaintMode
 import org.jetbrains.skia.Rect
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertFalse
 
 class ContainerParserLayerTest {
@@ -60,9 +61,9 @@ class ContainerParserLayerTest {
         val layer2Pixels = layerToPixels(size, size, layer2)
         val layer2ByteArray = layer2Pixels.buffer.bytes
 
-        assert(list1ByteArray.contentEquals(layer1ByteArray))
+        assertContentEquals(list1ByteArray, layer1ByteArray)
         assertFalse(list2ByteArray.contentEquals(layer1ByteArray))
         assertFalse(list1ByteArray.contentEquals(layer2ByteArray))
-        assert(list2ByteArray.contentEquals(layer2ByteArray))
+        assertContentEquals(list2ByteArray, layer2ByteArray)
     }
 }

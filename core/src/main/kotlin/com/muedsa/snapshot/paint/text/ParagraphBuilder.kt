@@ -4,7 +4,7 @@ import org.jetbrains.skia.paragraph.*
 import org.jetbrains.skia.paragraph.ParagraphBuilder
 
 /**
- * proxy class for ParagraphBuilder
+ * 对 Skia [ParagraphBuilder] 的轻量代理，并额外记录占位符数量。
  */
 class ParagraphBuilder(
     style: ParagraphStyle? = null,

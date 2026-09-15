@@ -4,42 +4,42 @@ import com.muedsa.snapshot.rendering.box.ContainerBoxParentData
 
 class StackParentData : ContainerBoxParentData() {
     /**
-     * The distance by which the child's top edge is inset from the top of the stack.
+     * 子节点上边缘相对堆叠容器上边缘的内缩距离。
      */
     var top: Float? = null
 
     /**
-     * The distance by which the child's right edge is inset from the right of the stack.
+     * 子节点右边缘相对堆叠容器右边缘的内缩距离。
      */
     var right: Float? = null
 
     /**
-     * The distance by which the child's bottom edge is inset from the bottom of the stack.
+     * 子节点下边缘相对堆叠容器下边缘的内缩距离。
      */
     var bottom: Float? = null
 
     /**
-     * The distance by which the child's left edge is inset from the left of the stack.
+     * 子节点左边缘相对堆叠容器左边缘的内缩距离。
      */
     var left: Float? = null
 
     /**
-     * The child's width.
+     * 子节点的宽度。
      *
-     * Ignored if both top and bottom are non-null.
+     * 当 [left] 与 [right] 均不为空时忽略此值。
      */
     var width: Float? = null
 
 
     /**
-     * The child's height.
+     * 子节点的高度。
      *
-     * Ignored if both top and bottom are non-null.
+     * 当 [top] 与 [bottom] 均不为空时忽略此值。
      */
     var height: Float? = null
 
     /**
-     * Get or set the current values in terms of a RelativeRect object.
+     * 以 [RelativeRect] 的形式获取或设置当前位置值。
      */
     var rect: RelativeRect
         get() = RelativeRect.fromLTRB(left!!, top!!, right!!, bottom!!)
@@ -52,12 +52,11 @@ class StackParentData : ContainerBoxParentData() {
 
 
     /**
-     *  Whether this child is considered positioned.
+     * 当前子节点是否属于定位子节点。
      *
-     *  A child is positioned if any of the top, right, bottom, or left properties
-     *  are non-null. Positioned children do not factor into determining the size
-     *  of the stack but are instead placed relative to the non-positioned
-     *  children in the stack.
+     * 只要 [top]、[right]、[bottom]、[left]、[width] 或 [height] 中任一值不为空，
+     * 子节点就属于定位子节点。定位子节点不参与确定堆叠容器的尺寸，而是相对容器中的
+     * 非定位子节点进行放置。
      */
     val isPositioned: Boolean
         get() = top != null || right != null || bottom != null || left != null || width != null || height != null

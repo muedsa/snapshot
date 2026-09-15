@@ -4,20 +4,20 @@ package com.muedsa.snapshot.tools
 object ImageFormatValidator {
 
     /**
-     * PNG file header
-     * @see <a href="https://en.wikipedia.org/wiki/PNG">PNG wikipedia</a>
+     * PNG 文件头。
+     * @see <a href="https://en.wikipedia.org/wiki/PNG">PNG 维基百科</a>
      */
     val PNG_MAGIC_NUMBER: ByteArray = "89504E470D0A1A0A".hexToByteArray()
 
     /**
-     * JPEG file header
-     * @see <a href="https://en.wikipedia.org/wiki/JPEG">JPEG wikipedia</a>
+     * JPEG 文件头。
+     * @see <a href="https://en.wikipedia.org/wiki/JPEG">JPEG 维基百科</a>
      */
     val JPEG_MAGIC_NUMBER: ByteArray = "FFD8FF".hexToByteArray()
 
     /**
-     * WEBP file header
-     * @see <a href="https://en.wikipedia.org/wiki/WEBP">WEBP wikipedia</a>
+     * WebP 文件头。
+     * @see <a href="https://en.wikipedia.org/wiki/WEBP">WebP 维基百科</a>
      */
     val WEBP_MAGIC_NUMBER_1: ByteArray = "52494646".hexToByteArray() // RIFF
     val WEBP_SKIP_LENGTH: Int = 4 // 中间的 4-7 字节代表 长度 + 12

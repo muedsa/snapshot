@@ -8,7 +8,7 @@ import kotlin.math.tan
 
 
 /**
- * Matrix44CMO (col-major order)
+ * 按列主序存储的 4×4 矩阵。
  *
  * @see org.jetbrains.skia.Matrix44
  */
@@ -17,7 +17,7 @@ class Matrix44CMO(vararg mat: Float) {
     val mat: FloatArray
 
     /**
-     * The constructor parameters are in col-major order.
+     * 构造参数按列主序排列。
      */
     init {
         require(mat.size == 16) { "Expected 16 elements, got ${mat.size}" }
@@ -36,34 +36,29 @@ class Matrix44CMO(vararg mat: Float) {
     }
 
     fun leftTranslate(tx: Float, ty: Float = 0f, tz: Float = 0f, tw: Float = 1f) {
-        // Column 1
+        // 第 1 列
         mat[0] += tx * mat[3]
         mat[1] += ty * mat[3]
         mat[2] += tz * mat[3]
         mat[3] = tw * mat[3]
 
-        // Column 2
+        // 第 2 列
         mat[4] += tx * mat[7]
         mat[5] += ty * mat[7]
         mat[6] += tz * mat[7]
         mat[7] = tw * mat[7]
 
-        // Column 3
+        // 第 3 列
         mat[8] += tx * mat[11]
         mat[9] += ty * mat[11]
         mat[10] += tz * mat[11]
         mat[11] = tw * mat[11]
 
-        // Column 4
+        // 第 4 列
         mat[12] += tx * mat[15]
         mat[13] += ty * mat[15]
         mat[14] += tz * mat[15]
         mat[15] = tw * mat[15]
-    }
-
-    fun transform(x: Float, y: Float, z: Float) {
-        //_mat[16]
-        TODO("transform")
     }
 
     fun clone(): Matrix44CMO {
