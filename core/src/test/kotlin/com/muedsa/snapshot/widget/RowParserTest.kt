@@ -10,7 +10,7 @@ import com.muedsa.snapshot.rendering.LayoutNode
 import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.flex.CrossAxisAlignment
 import com.muedsa.snapshot.rootLayout
-import com.muedsa.snapshot.testTypeface
+import com.muedsa.snapshot.testFontFamily
 import com.muedsa.snapshot.widget.text.RichText
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.paragraph.BaselineMode
@@ -141,7 +141,7 @@ class RowParserTest {
     // 用同一 API 独立测量基线距离,供基线对齐断言使用(两端同源实测,与字体无关)
     private fun baselineOf(text: String, fontSize: Float): Float =
         TextPainter(
-            text = TextSpan(text, style = TextStyle(fontSize = fontSize, typeface = testTypeface))
+            text = TextSpan(text, style = TextStyle(fontSize = fontSize, fontFamilies = listOf(testFontFamily)))
         ).apply { layout(0f, Float.POSITIVE_INFINITY) }
             .computeDistanceToActualBaseline(BaselineMode.ALPHABETIC)
 
@@ -154,8 +154,8 @@ class RowParserTest {
                 textDirection = Direction.LTR,
                 textBaseline = BaselineMode.ALPHABETIC
             ) {
-                RichText { TextSpan("Hello", style = TextStyle(fontSize = 20f, typeface = testTypeface)) }
-                RichText { TextSpan("Hello", style = TextStyle(fontSize = 40f, typeface = testTypeface)) }
+                RichText { TextSpan("Hello", style = TextStyle(fontSize = 20f, fontFamilies = listOf(testFontFamily))) }
+                RichText { TextSpan("Hello", style = TextStyle(fontSize = 40f, fontFamilies = listOf(testFontFamily))) }
             }
         }
         val small = root.children[0].rect

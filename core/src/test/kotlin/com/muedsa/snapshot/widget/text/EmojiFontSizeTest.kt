@@ -6,7 +6,7 @@ import com.muedsa.snapshot.paint.text.TextSpan
 import com.muedsa.snapshot.paint.text.TextStyle
 import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rootLayout
-import com.muedsa.snapshot.testTypeface
+import com.muedsa.snapshot.testFontFamily
 import org.jetbrains.skia.Image
 import org.jetbrains.skia.Surface
 import kotlin.test.Test
@@ -25,7 +25,7 @@ class EmojiFontSizeTest {
     fun emoji_inherits_font_size_from_rich_text() {
         val root = rootLayout {
             RichText {
-                TextSpan(style = TextStyle(fontSize = 40f, typeface = testTypeface)) {
+                TextSpan(style = TextStyle(fontSize = 40f, fontFamilies = listOf(testFontFamily))) {
                     ImageEmojiSpan(provider = { image })
                 }
             }

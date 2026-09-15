@@ -6,7 +6,7 @@ import com.muedsa.snapshot.painterPixels
 import com.muedsa.snapshot.paint.text.TextPainter
 import com.muedsa.snapshot.paint.text.TextSpan
 import com.muedsa.snapshot.paint.text.TextStyle
-import com.muedsa.snapshot.testTypeface
+import com.muedsa.snapshot.testFontFamily
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.FontMgr
 import org.jetbrains.skia.Pixmap
@@ -45,7 +45,7 @@ class TextPainterTest {
     // (实测:只给 maxWidth 时段落宽等于内容宽,六种对齐的墨迹完全相同)
     private fun alignedPainter(textAlign: Alignment, direction: Direction = Direction.LTR): TextPainter =
         TextPainter(
-            text = TextSpan(text = "Hello Word!", style = TextStyle(typeface = testTypeface)),
+            text = TextSpan(text = "Hello Word!", style = TextStyle(fontFamilies = listOf(testFontFamily))),
             textAlign = textAlign,
             textDirection = direction
         ).apply { layout(BOX_WIDTH, BOX_WIDTH) }
@@ -97,7 +97,7 @@ class TextPainterTest {
         fun heightOf(mode: HeightMode): Float = TextPainter(
             text = TextSpan(
                 text = "Line one\nLine two",
-                style = TextStyle(fontSize = 50f, height = 1.5f, typeface = testTypeface)
+                style = TextStyle(fontSize = 50f, height = 1.5f, fontFamilies = listOf(testFontFamily))
             ),
             textHeightMode = mode
         ).apply { layout(0f, Float.POSITIVE_INFINITY) }.height
@@ -127,12 +127,12 @@ class TextPainterTest {
     }
 
     private fun intrinsicWidthOf(text: String, fontSize: Float): Float =
-        TextPainter(text = TextSpan(text = text, style = TextStyle(fontSize = fontSize, typeface = testTypeface)))
+        TextPainter(text = TextSpan(text = text, style = TextStyle(fontSize = fontSize, fontFamilies = listOf(testFontFamily))))
             .apply { layout(0f, Float.POSITIVE_INFINITY) }
             .maxIntrinsicWidth
 
     private fun textHeightOf(text: String, fontSize: Float): Float =
-        TextPainter(text = TextSpan(text = text, style = TextStyle(fontSize = fontSize, typeface = testTypeface)))
+        TextPainter(text = TextSpan(text = text, style = TextStyle(fontSize = fontSize, fontFamilies = listOf(testFontFamily))))
             .apply { layout(0f, Float.POSITIVE_INFINITY) }
             .height
 

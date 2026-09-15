@@ -74,14 +74,16 @@ class Sample {
                             text = "Hello",
                             style = TextStyle(
                                 color = Color.RED,
-                                fontSize = 40f
+                                fontSize = 40f,
+                                fontFamilies = listOf(testFontFamily),
                             )
                         )
                         TextSpan(
                             text = " World",
                             style = TextStyle(
                                 color = Color.GREEN,
-                                fontSize = 30f
+                                fontSize = 30f,
+                                fontFamilies = listOf(testFontFamily),
                             )
                         )
                     }
