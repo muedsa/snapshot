@@ -97,7 +97,7 @@ private class BundledFontTextParser : TextParser() {
         val parsed = super.buildWidget(element) as RichText
         return RichText(
             text = TextSpan(
-                style = TextStyle(typeface = testTypeface),
+                style = TextStyle(fontFamilies = listOf(testFontFamily)),
                 initChildren = listOf(parsed.text),
             ),
         )

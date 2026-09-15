@@ -16,7 +16,7 @@ class ParserSample {
                     <Row>
                         <Container color="#FF0000" width="200" height="200"/>
                         <Container color="#FFFFFF" width="200" height="200">
-                            <Text color="#0000FF" fontSize="20">哈哈 233<![CDATA[ken_test <a></a> 233 哈哈]]>哈🤣🤣🤣</Text>
+                            <Text color="#0000FF" fontSize="20" fontFamily="$testFontFamily">哈哈 233<![CDATA[ken_test <a></a> 233 哈哈]]>哈🤣🤣🤣</Text>
                         </Container>
                     </Row>
                     <Row>

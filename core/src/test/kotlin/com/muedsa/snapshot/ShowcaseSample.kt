@@ -495,7 +495,7 @@ class ShowcaseSample {
         color = color,
         fontSize = size,
         fontStyle = weight,
-        typeface = testTypeface,
+        fontFamilies = listOf(testFontFamily),
         letterSpacing = spacing,
         height = 1.05f,
     )

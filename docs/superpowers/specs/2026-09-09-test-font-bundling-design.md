@@ -30,6 +30,8 @@ TextPainterTest > cn_font_size_monotonic_test() FAILED (TextPainterTest.kt:162)
 3. **适用范围**:**所有文本测试**显式用该字体(`TextTest`/`TextPainterTest`/`TextMetricsTest`/`RowParserTest` 的文本用例),而非只修两条失败断言——否则同类测试仍会零星闪断。
 4. **断言形态不变**:仍是区间/单调/关系断言,但因为度量确定,容差可以收紧并有据可依。
 
+> **后续修订(2026-09-15)**:Linux CI 的展示图证明，仅设置 `TextStyle.typeface` 时 Paragraph 仍可能输出缺字方框。testkit 现在会用 `TypefaceFontProvider` 把内置字体注册到 `TextPainter.FONT_COLLECTION`，文本测试和示例统一通过 `testFontFamily` 指定字体族；`testTypeface` 保留给直接检查字体字形等不经过 Paragraph 的场景。
+
 ## 实现要点
 
 ### 1. 资产
@@ -42,10 +44,17 @@ testkit/src/main/resources/fonts/NotoSansSC-OFL.txt  (OFL-1.1)
 ### 2. 加载入口(`testkit/src/main/kotlin/com/muedsa/snapshot/TestFonts.kt`)
 
 ```kotlin
-val testTypeface: Typeface by lazy {
-    val stream = checkNotNull(...getResourceAsStream("/fonts/NotoSansSC.ttf")) { "缺少测试字体资源" }
-    val bytes = stream.use { it.readBytes() }
-    checkNotNull(FontMgr.default.makeFromData(Data.makeFromBytes(bytes))) { "测试字体加载失败" }
+val testTypeface: Typeface
+    get() = testFontResources.typeface
+
+val testFontFamily: String
+    get() = testFontResources.typeface.familyName
+
+private val testFontResources by lazy {
+    val typeface = loadBundledTypeface()
+    val provider = TypefaceFontProvider().registerTypeface(typeface, typeface.familyName)
+    TextPainter.FONT_COLLECTION.setTestFontManager(provider)
+    TestFontResources(typeface, provider)
 }
 ```
 
@@ -55,11 +64,11 @@ val testTypeface: Typeface by lazy {
 
 | 文件 | 改动 |
 |---|---|
-| `paint/TextPainterTest.kt` | 所有 `TextStyle` 加 `typeface = testTypeface`;`cn_font_size_monotonic_test` 保留并改用该字体(去掉 `fontFamilies`) |
+| `paint/TextPainterTest.kt` | 所有渲染用 `TextStyle` 加 `fontFamilies = listOf(testFontFamily)`；`cn_font_size_monotonic_test` 保留 |
 | `widget/text/TextTest.kt` | 同上;`widget_span_test` 的蓝像素下界按新度量复测 |
 | `paint/text/TextMetricsTest.kt` | 同上(保持宽松区间,但度量确定) |
-| `widget/RowParserTest.kt` | 基线用例的 `RichText` 样式加 `typeface`,使 `top + baseline` 等式精确成立 |
-| `emoji_test` | **不加** `typeface`(Noto Sans SC 不含 emoji 字形,加了反而会在无 emoji 字体的 CI 上失去墨迹);断言降为"尺寸 > 0 + 可产出 artifact",并注释说明 emoji 字形来自 OS |
+| `widget/RowParserTest.kt` | 基线用例的 `RichText` 样式指定 `testFontFamily`,使 `top + baseline` 等式精确成立 |
+| `emoji_test` | Noto Sans SC 不含 emoji 字形，Unicode emoji 仍由 Skia 使用系统字体回退；断言降为“尺寸 > 0 + 可产出 artifact” |
 
 ### 4. 探针实测(内置字体,Windows)
 
