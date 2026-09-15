@@ -9,6 +9,7 @@ import org.jetbrains.skia.Paint
 import org.jetbrains.skia.PaintMode
 import org.jetbrains.skia.Rect
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 
 class PictureLayerTest {
 
@@ -34,6 +35,6 @@ class PictureLayerTest {
         val layerPixels = layerToPixels(size, size, pictureLayer)
         val layerByteArray = layerPixels.buffer.bytes
 
-        assert(pictureByteArray.contentEquals(layerByteArray))
+        assertContentEquals(pictureByteArray, layerByteArray)
     }
 }

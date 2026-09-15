@@ -9,7 +9,7 @@ import kotlin.math.min
 
 class CharacterReader @JvmOverloads constructor(private val reader: Reader, bufferSize: Int = MAX_BUFFER_LEN) {
 
-    private val charBuf: CharArray = CharArray(min(bufferSize, MAX_BUFFER_LEN))
+    private val charBuf: CharArray = CharArray(validateBufferSize(bufferSize))
     private var bufLength: Int = 0
     private var bufSplitPoint: Int = 0
     private var bufPos: Int = 0
@@ -46,15 +46,15 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
         }
         reader.reset()
         if (read > 0) {
-            assert(skipped == pos.toLong()) // Previously asserted that there is room in buf to skip, so this will be a WTF
+            assert(skipped == pos.toLong()) // 此前已确认缓冲区有足够空间可跳过，若不相等则是内部状态错误。
             bufLength = read
             readerPos += pos
             bufPos = offset
             if (bufMark != -1) bufMark = 0
             bufSplitPoint = min(bufLength, READ_AHEAD_LIMIT)
         }
-        scanBufferForNewlines() // if enabled, we index newline positions for line number tracking
-        lastIcSeq = null // cache for last containsIgnoreCase(seq)
+        scanBufferForNewlines() // 记录换行位置，以便跟踪行号。
+        lastIcSeq = null // 清除上一次 containsIgnoreCase(seq) 的缓存。
     }
 
 
@@ -65,7 +65,7 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
 
     fun getLineNumber(pos: Int): Int {
         val i: Int = getLineNumberIndex(pos)
-        if (i == -1) return lineNumberOffset // first line
+        if (i == -1) return lineNumberOffset // 第一行
         return i + lineNumberOffset + 1
     }
 
@@ -85,13 +85,13 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
 
     private fun scanBufferForNewlines() {
         if (newlinePositions.size > 0) {
-            // work out the line number that we have read up to (as we have likely scanned past this point)
+            // 计算已读取位置对应的行号，因为扫描位置通常已经越过该点。
             var index: Int = getLineNumberIndex(readerPos)
-            if (index == -1) index = 0 // first line
+            if (index == -1) index = 0 // 第一行
             val linePos = newlinePositions[index]
-            lineNumberOffset += index // the num lines we've read up to
+            lineNumberOffset += index // 累加已经读取的行数。
             newlinePositions.clear()
-            newlinePositions.add(linePos) // roll the last read pos to first, for cursor num after buffer
+            newlinePositions.add(linePos) // 保留最后一个已读位置，用于计算新缓冲区中的行列号。
         }
 
         for (i in bufPos until bufLength) {
@@ -121,22 +121,22 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
     }
 
     /**
-     * Unconsume one character (bufPos--). MUST only be called directly after a consume(), and no chance of a bufferUp.
+     * 回退一个字符（`bufPos--`）。只能紧接在 [consume] 后调用，并且两者之间不得触发缓冲区更新。
      */
     fun unconsume() {
-        if (bufPos < 1) throw UncheckedIOException(IOException("WTF: No buffer left to unconsume.")) // a bug if this fires, need to trace it.
+        if (bufPos < 1) throw UncheckedIOException(IOException("WTF: No buffer left to unconsume.")) // 触发此分支表示内部调用顺序有误。
         bufPos--
     }
 
     /**
-     * Moves the current position by one.
+     * 将当前位置向前移动一个字符。
      */
     fun advance() {
         bufPos++
     }
 
     fun mark() {
-        // make sure there is enough look ahead capacity
+        // 确保拥有足够的向前读取容量。
         if (bufLength - bufPos < MIN_READ_AHEAD_LEN) bufSplitPoint = 0
 
         bufferUp()
@@ -155,12 +155,12 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
     }
 
     /**
-     * Returns the number of characters between the current position and the next instance of the input char
-     * @param c scan target
-     * @return offset between current position and next instance of target. -1 if not found.
+     * 返回当前位置与下一个指定字符之间的字符数。
+     * @param c 扫描目标
+     * @return 当前位置到下一个目标字符的偏移量；未找到时返回 -1。
      */
     fun nextIndexOf(c: Char): Int {
-        // doesn't handle scanning for surrogates
+        // 不处理代理字符对。
         bufferUp()
         for (i in bufPos until bufLength) {
             if (c == charBuf[i]) return i - bufPos
@@ -169,18 +169,18 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
     }
 
     /**
-     * Returns the number of characters between the current position and the next instance of the input sequence
+     * 返回当前位置与下一个指定字符序列之间的字符数。
      *
-     * @param seq scan target
-     * @return offset between current position and next instance of target. -1 if not found.
+     * @param seq 扫描目标
+     * @return 当前位置到下一个目标序列的偏移量；未找到时返回 -1。
      */
     fun nextIndexOf(seq: CharSequence): Int {
         bufferUp()
-        // doesn't handle scanning for surrogates
+        // 不处理代理字符对。
         val startChar = seq[0]
         var offset = bufPos
         while (offset < bufLength) {
-            // scan to first instance of startchar:
+            // 先扫描到目标序列首字符的下一处位置。
             if (startChar != charBuf[offset]) while (++offset < bufLength && startChar != charBuf[offset]) { /* empty */
             }
             var i = offset + 1
@@ -191,7 +191,7 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
                     i++
                     j++
                 }
-                if (i == last) // found full sequence
+                if (i == last) // 已找到完整序列。
                     return offset - bufPos
             }
             offset++
@@ -200,9 +200,9 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
     }
 
     /**
-     * Reads characters up to the specific char.
-     * @param c the delimiter
-     * @return the chars read
+     * 读取指定字符之前的所有字符。
+     * @param c 分隔符
+     * @return 已读取的字符
      */
     fun consumeTo(c: Char): String {
         val offset = nextIndexOf(c)
@@ -222,11 +222,11 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
             bufPos += offset
             return consumed
         } else if (bufLength - bufPos < seq.length) {
-            // nextIndexOf() did a bufferUp(), so if the buffer is shorter than the search string, we must be at EOF
+            // nextIndexOf() 已更新缓冲区；若剩余缓冲区比目标字符串短，则必然已经到达文件末尾。
             return consumeToEnd()
         } else {
-            // the string we're looking for may be straddling a buffer boundary, so keep (length - 1) characters
-            // unread in case they contain the beginning of the search string
+            // 目标字符串可能跨越缓冲区边界，因此保留 length - 1 个字符不读取，
+            // 以免丢失目标字符串的起始部分。
             val endPos = bufLength - seq.length + 1
             val consumed: String = cacheString(charBuf, stringCache, bufPos, endPos - bufPos)
             bufPos = endPos
@@ -235,9 +235,9 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
     }
 
     /**
-     * Read characters until the first of any delimiters is found.
-     * @param chars delimiters to scan for
-     * @return characters read up to the matched delimiter.
+     * 读取字符，直到遇到任一分隔符。
+     * @param chars 要扫描的分隔符
+     * @return 匹配分隔符之前读取的字符
      */
     fun consumeToAny(vararg chars: Char): String {
         bufferUp()
@@ -287,8 +287,8 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
     }
 
     fun consumeData(): String {
-        // <, null. Character references are not decoded, so '&' is ordinary text.
-        //bufferUp(); // no need to bufferUp, just called consume()
+        // 遇到 < 或空字符时停止。字符引用不会解码，因此 '&' 属于普通文本。
+        // bufferUp()：调用方刚执行过 consume()，无需再次更新缓冲区。
         var pos = bufPos
         val start = pos
         val remaining = bufLength
@@ -310,8 +310,8 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
     }
 
     fun consumeAttributeQuoted(single: Boolean): String {
-        // null, " or ', &
-        //bufferUp(); // no need to bufferUp, just called consume()
+        // 遇到空字符、对应引号或 & 时停止。
+        // bufferUp()：调用方刚执行过 consume()，无需再次更新缓冲区。
         var pos = bufPos
         val start = pos
         val remaining = bufLength
@@ -336,8 +336,8 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
 
 
     fun consumeRawData(): String {
-        // <, null
-        //bufferUp(); // no need to bufferUp, just called consume()
+        // 遇到 < 或空字符时停止。
+        // bufferUp()：调用方刚执行过 consume()，无需再次更新缓冲区。
         var pos = bufPos
         val start = pos
         val remaining = bufLength
@@ -360,7 +360,7 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
 
     fun consumeTagName(): String {
         // '\t', '\n', '\r', '\f', ' ', '/', '>'
-        // NOTE: out of spec, added '<' to fix common author bugs; does not stop and append on nullChar but eats
+        // 注意：为兼容常见输入错误而额外识别 '<'，这不属于规范要求；空字符仍会被读取。
         bufferUp()
         var pos = bufPos
         val start = pos
@@ -490,8 +490,8 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
     }
 
     /**
-     * Checks if the current pos matches an ascii alpha (A-Z a-z) per https://infra.spec.whatwg.org/#ascii-alpha
-     * @return if it matches or not
+     * 按照 https://infra.spec.whatwg.org/#ascii-alpha 检查当前位置是否为 ASCII 字母（A-Z、a-z）。
+     * @return 当前位置是否匹配 ASCII 字母
      */
     fun matchesAsciiAlpha(): Boolean {
         if (isEmpty()) return false
@@ -524,13 +524,13 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
         }
     }
 
-    // we maintain a cache of the previously scanned sequence, and return that if applicable on repeated scans.
-    // that improves the situation where there is a sequence of <p<p<p<p<p<p<p...</title> and we're bashing on the <p
-    // looking for the </title>. Resets in bufferUp()
-    private var lastIcSeq: String? = null // scan cache
-    private var lastIcIndex = 0 // nearest found indexOf
+    // 缓存上一次扫描的序列，在重复扫描时直接复用结果。
+    // 这可改善在 <p<p<p<p<p<p<p...</title> 中反复跳过 <p 并查找 </title> 的场景。
+    // bufferUp() 会重置该缓存。
+    private var lastIcSeq: String? = null // 扫描目标缓存
+    private var lastIcIndex = 0 // 最近一次找到的位置
 
-    /** Used to check presence of ,  when we're in RCData and see a <xxx. Only finds consistent case.></xxx.>  */
+    /** 在 RCDATA 中遇到 `<xxx` 时检查对应结束标签是否存在；仅匹配大小写一致的序列。 */
     fun containsIgnoreCase(seq: String): Boolean {
         if (seq == lastIcSeq) {
             if (lastIcIndex == -1) return false
@@ -548,12 +548,12 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
         val hiScan = seq.uppercase()
         val hi = nextIndexOf(hiScan)
         val found = hi > -1
-        lastIcIndex = if (found) bufPos + hi else -1 // we don't care about finding the nearest, just that buf contains
+        lastIcIndex = if (found) bufPos + hi else -1 // 这里只关心缓冲区是否包含目标，不要求最近位置。
         return found
     }
 
     init {
-        assert(reader.markSupported())
+        require(reader.markSupported()) { "reader 必须支持 mark 和 reset" }
         bufferUp()
     }
 
@@ -565,26 +565,31 @@ class CharacterReader @JvmOverloads constructor(private val reader: Reader, buff
         private const val MAX_STRING_CACHE_lEN: Int = 12
         const val STRING_CACHE_SIZE = 512
 
+        private fun validateBufferSize(bufferSize: Int): Int {
+            require(bufferSize > 0) { "bufferSize 必须大于 0，实际为 $bufferSize" }
+            return min(bufferSize, MAX_BUFFER_LEN)
+        }
+
         private fun cacheString(charBuf: CharArray, stringCache: Array<String?>, start: Int, count: Int): String {
-            // limit (no cache):
+            // 超出长度限制时不缓存。
             if (count > MAX_STRING_CACHE_lEN) return String(charBuf, start, count)
             if (count < 1) return ""
 
-            // calculate hash:
+            // 计算哈希值。
             var hash = 0
             for (i in 0 until count) {
                 hash = 31 * hash + charBuf[start + i].code
             }
 
-            // get from cache
+            // 从缓存读取。
             val index = hash and STRING_CACHE_SIZE - 1
             var cached = stringCache[index]
             if (cached != null && rangeEquals(charBuf, start, count, cached)
-            ) // positive hit
+            ) // 命中缓存。
                 return cached
             else {
                 cached = String(charBuf, start, count)
-                stringCache[index] = cached // add or replace, assuming most recently used are most likely to recur next
+                stringCache[index] = cached // 添加或替换，最近使用的字符串更可能再次出现。
             }
             return cached
         }

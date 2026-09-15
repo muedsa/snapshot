@@ -21,7 +21,7 @@ class Tokenizer(reader: Reader) {
 
     private val startPending: Token.StartTag = Token.StartTag(this.reader)
     private val endPending: Token.EndTag = Token.EndTag(this.reader)
-    internal var tagPending: Token.Tag = startPending // tag we are building up: start or end pending
+    internal var tagPending: Token.Tag = startPending // 正在构建的开始或结束标签
     private val charPending: Token.Character = Token.Character()
     private var lastStartTag: String? = null
     private var lastStartCloseSeq: String? = null
@@ -34,7 +34,7 @@ class Tokenizer(reader: Reader) {
             state.read(this, reader)
         }
 
-        // if emit is pending, a non-character token was found: return any chars in buffer, and leave token for next read:
+        // 若已有待发射的非字符令牌，先返回缓冲区中的字符，并将该令牌留到下次读取。
         val cb = this.charsBuilder
         if (cb.isNotEmpty()) {
             val str = cb.toString()
@@ -73,19 +73,19 @@ class Tokenizer(reader: Reader) {
 
         if (token is Token.StartTag) {
             lastStartTag = token.tagName
-            lastStartCloseSeq = null // only lazy inits
+            lastStartCloseSeq = null // 仅在需要时延迟初始化
         } else if (token is Token.EndTag) {
             if (token.hasAttrs) error("Attributes incorrectly present on end tag [/${token.tagName}]")
         }
     }
 
     internal fun emit(str: String) {
-        // buffer strings up until last string token found, to emit only one token for a run of character refs etc.
-        // does not set isEmitPending; read checks that
+        // 将连续字符串缓冲起来，使一串字符引用等内容只发射一个令牌。
+        // 此处不设置 isEmitPending，由 read 负责检查。
         if (charsString == null) {
             charsString = str
         } else {
-            if (charsBuilder.isEmpty()) { // switching to string builder as more than one emit before read
+            if (charsBuilder.isEmpty()) { // 一次读取前多次发射时改用 StringBuilder
                 charsBuilder.append(charsString)
             }
             charsBuilder.append(str)
@@ -103,7 +103,7 @@ class Tokenizer(reader: Reader) {
         )
     }
 
-    // variations to limit need to create temp strings
+    // 以下重载用于减少临时字符串的创建。
     internal fun emit(str: StringBuilder) {
         if (charsString == null) {
             charsString = str.toString()
@@ -157,11 +157,11 @@ class Tokenizer(reader: Reader) {
 //    }
 
     internal fun transition(newState: TokenizerState) {
-        // track markup / data position on state transitions
+        // 在状态切换时记录标记与文本数据的位置。
         when (newState) {
             TokenizerState.TAG_OPEN -> markupStartPos = reader.pos()
             TokenizerState.DATA -> {
-                if (charStartPos == TrackPos.UNSET) // don't reset when we are jumping between e.g data -> char ref -> data
+                if (charStartPos == TrackPos.UNSET) // 在 DATA 与字符引用等状态之间往返时不重置
                     charStartPos = reader.pos()
             }
 
@@ -218,10 +218,10 @@ class Tokenizer(reader: Reader) {
     }
 
     /**
-     * Returns the closer sequence `</lastStart`
+     * 返回与最近开始标签对应的闭合序列 `</lastStart`。
      */
     internal fun appropriateEndTagSeq(): String {
-        if (lastStartCloseSeq == null) // reset on start tag emit
+        if (lastStartCloseSeq == null) // 发射开始标签时会重置
             lastStartCloseSeq = "</$lastStartTag"
         return lastStartCloseSeq!!
     }
