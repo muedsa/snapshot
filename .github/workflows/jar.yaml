@@ -1,10 +1,13 @@
-name: Build Jar
+name: Build and publish Jars
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -20,10 +23,36 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Test with Gradle
-        run: ./gradlew jar
+        run: ./gradlew test --no-daemon
+      - name: Build release jars
+        run: ./gradlew releaseJars --no-daemon
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v7.0.1
         with:
           name: jars
           path: |
-            **/build/libs
+            core/build/libs/snapshot-core-*.jar
+            parser/build/libs/snapshot-parser-*.jar
+
+  publish:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v7
+      - name: set up JDK 17
+        uses: actions/setup-java@v6
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Publish snapshot to GitHub Packages
+        run: ./gradlew :core:publish :parser:publish --no-daemon
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

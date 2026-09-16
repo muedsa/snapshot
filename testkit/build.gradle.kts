@@ -15,9 +15,6 @@ var targetArch = when (val osArch: String = System.getProperty("os.arch")) {
     else -> error("Unsupported arch: $osArch")
 }
 
-group = "com.muedsa.snapshot"
-version = "0.0.0-SNAPSHOT"
-
 val versionCatalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
 dependencies {
     // 本模块自带测试:锁定采样/区域断言的边界语义(见 SamplingAssertionsBoundaryTest)
@@ -32,17 +29,4 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
-}
-
-val jarBaseName = "${rootProject.name}-${project.name}"
-val manifestAttributes = mapOf(
-    "Implementation-Title" to jarBaseName,
-    "Implementation-Version" to project.version
-)
-
-tasks.jar {
-    archiveBaseName = jarBaseName
-    manifest {
-        attributes(manifestAttributes)
-    }
 }

@@ -15,9 +15,6 @@ plugins {
     alias(libs.plugins.jvm)
 }
 
-group = "com.muedsa.snapshot"
-version = "0.0.0-SNAPSHOT"
-
 val versionCatalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
 dependencies {
     // Use the Kotlin JUnit 5 integration.
@@ -26,7 +23,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.engine)
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-    implementation(project(":core"))
+    api(project(":core"))
 
     testImplementation(versionCatalog.findLibrary("skiko-$targetOs-$targetArch").get())
     testImplementation(project(":testkit"))
@@ -47,26 +44,5 @@ tasks.test {
     systemProperty("snapshotTest.mode", providers.gradleProperty("snapshotTest.mode").getOrElse("verify"))
     providers.gradleProperty("snapshotTest.goldenRoot").orNull?.let {
         systemProperty("snapshotTest.goldenRoot", it)
-    }
-}
-
-val jarBaseName = "${rootProject.name}-${project.name}"
-val manifestAttributes = mapOf(
-    "Implementation-Title" to jarBaseName,
-    "Implementation-Version" to project.version
-)
-
-tasks.jar {
-    archiveBaseName = jarBaseName
-    manifest {
-        attributes(manifestAttributes)
-    }
-}
-
-tasks.kotlinSourcesJar {
-    archiveBaseName = jarBaseName
-    archiveClassifier = "sources"
-    manifest {
-        attributes(manifestAttributes)
     }
 }
