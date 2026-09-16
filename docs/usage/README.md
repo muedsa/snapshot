@@ -122,6 +122,9 @@ gpr.key=YOUR_CLASSIC_PAT
 
 ```kotlin
 repositories {
+    mavenCentral()
+    // snapshot 当前依赖 Skiko 开发快照。
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     maven {
         url = uri("https://maven.pkg.github.com/muedsa/snapshot")
         credentials {
@@ -131,10 +134,30 @@ repositories {
     }
 }
 
+val snapshotVersion = "0.0.0-SNAPSHOT"
+val skikoVersion = "0.0.0-SNAPSHOT"
+
+val osName: String = System.getProperty("os.name")
+val targetOs = when {
+    osName == "Mac OS X" -> "macos"
+    osName.startsWith("Win") -> "windows"
+    osName.startsWith("Linux") -> "linux"
+    else -> error("Unsupported OS: $osName")
+}
+val targetArch = when (val osArch: String = System.getProperty("os.arch")) {
+    "x86_64", "amd64" -> "x64"
+    "aarch64" -> "arm64"
+    else -> error("Unsupported arch: $osArch")
+}
+val target = "$targetOs-$targetArch"
+
 dependencies {
-    implementation("com.muedsa.snapshot:snapshot-core:0.0.0-SNAPSHOT")
+    implementation("com.muedsa.snapshot:snapshot-core:$snapshotVersion")
     // 若使用类 DOM 解析器，改为依赖 parser；它会传递依赖 core。
-    // implementation("com.muedsa.snapshot:snapshot-parser:0.0.0-SNAPSHOT")
+    // implementation("com.muedsa.snapshot:snapshot-parser:$snapshotVersion")
+
+    // core 和 parser 都不会传递具体平台的 Skiko 原生运行时，使用方必须显式引入。
+    implementation("org.jetbrains.skiko:skiko-awt-runtime-$target:$skikoVersion")
 }
 ```
 
@@ -144,7 +167,7 @@ dependencies {
 2. **本地 JAR**：`./gradlew releaseJars` 后从 `core/build/libs/`、`parser/build/libs/` 取 JAR，自行放进 classpath；同时必须提供 skiko（`skiko-awt` + 对应平台的 `skiko-awt-runtime-<os>-<arch>`）。
 3. **Composite build**：在目标工程的 `settings.gradle.kts` 里 `includeBuild("path/to/snapshot")`，然后依赖 `com.muedsa.snapshot:snapshot-core`。
 
-平台相关 skiko 运行时坐标（`libs.versions.toml` 已定义，坐标为 `org.jetbrains.skiko:skiko-awt-runtime-{windows,linux,macos}-{x64,arm64}`）：
+无论选择 `snapshot-core` 还是 `snapshot-parser`，都必须额外引入应用运行平台对应的 Skiko 原生运行时。`snapshot-parser` 只会传递依赖 `snapshot-core`，不会替使用方选择具体平台。可用坐标为 `org.jetbrains.skiko:skiko-awt-runtime-{windows,linux,macos}-{x64,arm64}`：
 
 | OS | Arch | Artifact |
 |---|---|---|
@@ -152,7 +175,7 @@ dependencies {
 | Linux | x64 / arm64 | `skiko-awt-runtime-linux-x64` / `-linux-arm64` |
 | macOS | x64 / arm64 | `skiko-awt-runtime-macos-x64` / `-macos-arm64` |
 
-> 注意：`skiko-awt` 是 **`api` 依赖**（`core` 用 `api(libs.skiko.awt)` 声明），所以 `Color`、`BlendMode`、`ImageFilter` 等 `org.jetbrains.skia.*` 类型会直接出现在 snapshot 的公开签名里，使用方也需要能解析到 skiko。
+> 注意：`skiko-awt` 是 **`api` 依赖**（`core` 用 `api(libs.skiko.awt)` 声明），所以 `Color`、`BlendMode`、`ImageFilter` 等 `org.jetbrains.skia.*` 类型会直接出现在 snapshot 的公开签名里；但具体平台的 `skiko-awt-runtime-*` 不是传递依赖，必须由使用方显式声明，并与项目使用的 Skiko 版本保持一致。
 
 ---
 
