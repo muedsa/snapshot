@@ -503,13 +503,13 @@ class ShowcaseSample {
     private fun Int.withAlpha(alpha: Int): Int = (this and 0x00_FF_FF_FF) or (alpha shl 24)
 
     companion object {
-        private val DASHBOARD_BACKGROUND = 0xFF_07_0B_16.toInt()
-        private val POSTER_BACKGROUND = 0xFF_05_08_12.toInt()
-        private val CARD = 0xEE_15_1C_2E.toInt()
-        private val WHITE = 0xFF_F8_FA_FC.toInt()
-        private val MUTED = 0xFF_94_A3_B8.toInt()
-        private val ACCENT_PURPLE = 0xFF_8B_5C_F6.toInt()
-        private val ACCENT_CYAN = 0xFF_22_D3_EE.toInt()
-        private val ACCENT_GREEN = 0xFF_22_C5_5E.toInt()
+        private const val DASHBOARD_BACKGROUND = 0xFF_07_0B_16.toInt()
+        private const val POSTER_BACKGROUND = 0xFF_05_08_12.toInt()
+        private const val CARD = 0xEE_15_1C_2E.toInt()
+        private const val WHITE = 0xFF_F8_FA_FC.toInt()
+        private const val MUTED = 0xFF_94_A3_B8.toInt()
+        private const val ACCENT_PURPLE = 0xFF_8B_5C_F6.toInt()
+        private const val ACCENT_CYAN = 0xFF_22_D3_EE.toInt()
+        private const val ACCENT_GREEN = 0xFF_22_C5_5E.toInt()
     }
 }

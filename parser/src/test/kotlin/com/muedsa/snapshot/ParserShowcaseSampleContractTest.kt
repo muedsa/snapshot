@@ -135,7 +135,7 @@ class ParserShowcaseSampleContractTest {
     }
 
     private fun countPixelsNear(
-        pixels: org.jetbrains.skia.Pixmap,
+        pixels: Pixmap,
         rect: Rect,
         expectedColor: Int,
         channelTolerance: Int,
