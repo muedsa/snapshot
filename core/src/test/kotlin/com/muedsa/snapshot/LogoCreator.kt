@@ -90,7 +90,8 @@ class LogoCreator {
                         style = TextStyle(
                             color = 0xFF_A6_A6_A6.toInt(),
                             fontSize = size * 0.8f,
-                            fontStyle = FontStyle.BOLD
+                            fontStyle = FontStyle.BOLD,
+                            fontFamilies = listOf(testFontFamily),
                         )
                     )
                 }

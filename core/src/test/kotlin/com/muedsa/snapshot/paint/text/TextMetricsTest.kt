@@ -2,7 +2,7 @@ package com.muedsa.snapshot.paint.text
 
 import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.drawPainter
-import com.muedsa.snapshot.testTypeface
+import com.muedsa.snapshot.testFontFamily
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -17,7 +17,7 @@ import kotlin.test.assertTrue
 class TextMetricsTest {
 
     private fun layoutLine(text: String): TextPainter = TextPainter(
-        text = TextSpan(text = text, style = TextStyle(fontSize = 20f, typeface = testTypeface))
+        text = TextSpan(text = text, style = TextStyle(fontSize = 20f, fontFamilies = listOf(testFontFamily)))
     ).apply {
         layout(0f, Float.POSITIVE_INFINITY)
     }
@@ -40,7 +40,7 @@ class TextMetricsTest {
         val multi = TextPainter(
             text = TextSpan(
                 text = "line one\nline two\nline three",
-                style = TextStyle(fontSize = 20f, typeface = testTypeface)
+                style = TextStyle(fontSize = 20f, fontFamilies = listOf(testFontFamily))
             )
         ).apply {
             layout(0f, 400f)
