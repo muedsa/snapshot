@@ -11,9 +11,6 @@ var targetArch = when (val osArch: String = System.getProperty("os.arch")) {
     else -> error("Unsupported arch: $osArch")
 }
 
-group = "com.muedsa.snapshot"
-version = "0.0.0-SNAPSHOT"
-
 plugins {
     alias(libs.plugins.jvm)
 }
@@ -46,26 +43,5 @@ tasks.test {
     systemProperty("snapshotTest.mode", providers.gradleProperty("snapshotTest.mode").getOrElse("verify"))
     providers.gradleProperty("snapshotTest.goldenRoot").orNull?.let {
         systemProperty("snapshotTest.goldenRoot", it)
-    }
-}
-
-val jarBaseName = "${rootProject.name}-${project.name}"
-val manifestAttributes = mapOf(
-    "Implementation-Title" to jarBaseName,
-    "Implementation-Version" to project.version
-)
-
-tasks.jar {
-    archiveBaseName = jarBaseName
-    manifest {
-        attributes(manifestAttributes)
-    }
-}
-
-tasks.kotlinSourcesJar {
-    archiveBaseName = jarBaseName
-    archiveClassifier = "sources"
-    manifest {
-        attributes(manifestAttributes)
     }
 }

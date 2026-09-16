@@ -90,7 +90,8 @@ val png: ByteArray = Parser().parse(StringReader(text)).snapshot()
 
 ```bash
 ./gradlew build                 # 编译 + 测试
-./gradlew jar                   # 只产出各模块 jar（CI: Build Jar）
+./gradlew releaseJars           # 只构建 core/parser 的二进制与源码 JAR
+./gradlew jar                   # 开发用：构建所有子模块 JAR（包含内部 testkit）
 ./gradlew test                  # 全量测试（默认排除 sample / network 标签）
 ./gradlew :core:test            # 只测 core
 ./gradlew :core:compileKotlin   # 只编译 core
@@ -108,10 +109,39 @@ val png: ByteArray = Parser().parse(StringReader(text)).snapshot()
 
 ### 作为依赖引入
 
-仓库**目前没有配置 `maven-publish`**，也没有发布到 Maven Central，所以拿不到 `implementation("com.muedsa.snapshot:snapshot-core:0.0.0-SNAPSHOT")`。三种可行方式：
+仓库会在 `main` 分支构建和测试成功后，将 `0.0.0-SNAPSHOT` 发布到 GitHub Packages；目前尚未发布到 Maven Central。GitHub Packages 的 Maven 仓库即使用于公开包，下载时也需要 GitHub 用户名和具备 `read:packages` 权限的 classic personal access token。
+
+建议把凭据放在用户级 `~/.gradle/gradle.properties`，不要提交到项目：
+
+```properties
+gpr.user=YOUR_GITHUB_USERNAME
+gpr.key=YOUR_CLASSIC_PAT
+```
+
+在使用方的 `build.gradle.kts` 中配置仓库与依赖：
+
+```kotlin
+repositories {
+    maven {
+        url = uri("https://maven.pkg.github.com/muedsa/snapshot")
+        credentials {
+            username = providers.gradleProperty("gpr.user").orNull
+            password = providers.gradleProperty("gpr.key").orNull
+        }
+    }
+}
+
+dependencies {
+    implementation("com.muedsa.snapshot:snapshot-core:0.0.0-SNAPSHOT")
+    // 若使用类 DOM 解析器，改为依赖 parser；它会传递依赖 core。
+    // implementation("com.muedsa.snapshot:snapshot-parser:0.0.0-SNAPSHOT")
+}
+```
+
+同一快照版本会持续更新；需要立即获取最新构建时，可执行 `./gradlew --refresh-dependencies`。此外仍可采用以下方式：
 
 1. **同仓库开发**（推荐）：直接在 `:core` / `:parser` 的源码或测试里使用。
-2. **本地 jar**：`./gradlew jar` 后从 `core/build/libs/`、`parser/build/libs/` 取 jar，自行放进 classpath；同时必须提供 skiko（`skiko-awt` + 对应平台的 `skiko-awt-runtime-<os>-<arch>`）。
+2. **本地 JAR**：`./gradlew releaseJars` 后从 `core/build/libs/`、`parser/build/libs/` 取 JAR，自行放进 classpath；同时必须提供 skiko（`skiko-awt` + 对应平台的 `skiko-awt-runtime-<os>-<arch>`）。
 3. **Composite build**：在目标工程的 `settings.gradle.kts` 里 `includeBuild("path/to/snapshot")`，然后依赖 `com.muedsa.snapshot:snapshot-core`。
 
 平台相关 skiko 运行时坐标（`libs.versions.toml` 已定义，坐标为 `org.jetbrains.skiko:skiko-awt-runtime-{windows,linux,macos}-{x64,arm64}`）：
