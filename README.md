@@ -1,19 +1,16 @@
 ![logo](logo.png)
 
-品牌图由项目自身的 [`LogoCreator`](core/src/test/kotlin/com/muedsa/snapshot/LogoCreator.kt) 离线渲染生成，包含
-[`logo_mark.png`](logo_mark.png) 图案版、[`logo_mark_mono.png`](logo_mark_mono.png) 单色精简版和
-`logo.png` 项目名称横版。重新生成：
-
-```bash
-./gradlew :core:test -PincludeSamples --tests 'com.muedsa.snapshot.LogoCreator'
-```
-
 抄[Flutter](https://github.com/flutter/flutter)实现了一个可以直观~~简单快捷~~地构建图片的工具
 
 之前像 [taffy-pvp-card-sw](https://github.com/muedsa/taffy-pvp-card-sw) 这样直接使用Canvas的方式，会让后期维护和修改变的十分困难,
 所以急需一个可以结构化构建图像的工具
 
-**Demo**: https://snapshot.muedsa.com
+**Docs**: https://snapshot.muedsa.com
+
+> 品牌图由项目自身的 [`LogoCreator`](core/src/test/kotlin/com/muedsa/snapshot/LogoCreator.kt) 离线渲染生成，包含
+> [`logo_mark.png`](logo_mark.png) 图案版、[`logo_mark_mono.png`](logo_mark_mono.png) 单色精简版和
+> `logo.png` 项目名称横版。重新生成：`./gradlew :core:test -PincludeSamples --tests 'com.muedsa.snapshot.LogoCreator'`
+
 
 ## 项目特色展示
 
