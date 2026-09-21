@@ -5,6 +5,7 @@ import com.muedsa.snapshot.paint.ImageRepeat
 import com.muedsa.snapshot.parser.attr.nullable.*
 import com.muedsa.snapshot.parser.attr.required.RequiredStringAttrDefine
 import com.muedsa.snapshot.rendering.flex.CrossAxisAlignment
+import com.muedsa.snapshot.rendering.flex.FlexFit
 import com.muedsa.snapshot.rendering.flex.MainAxisAlignment
 import com.muedsa.snapshot.rendering.flex.MainAxisSize
 import com.muedsa.snapshot.rendering.flex.VerticalDirection
@@ -30,6 +31,8 @@ object CommonAttrDefine {
         name = "mainAxisSize",
         defaultValue = MainAxisSize.MAX
     )
+    val FLEX: IntAttrDefine = IntAttrDefine(name = "flex", defaultValue = 1)
+    val FLEX_FIT: FlexFitAttrDefine = FlexFitAttrDefine(name = "fit", defaultValue = FlexFit.LOOSE)
     val CROSS_AXIS_ALIGNMENT: CrossAxisAlignmentAttrDefine = CrossAxisAlignmentAttrDefine(
         name = "crossAxisAlignment",
         defaultValue = CrossAxisAlignment.CENTER

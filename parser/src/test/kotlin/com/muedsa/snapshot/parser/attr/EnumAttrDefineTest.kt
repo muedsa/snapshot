@@ -45,6 +45,12 @@ class EnumAttrDefineTest {
     }
 
     @Test
+    fun flex_fit_test() {
+        DefaultValueAttrDefineTest.tryDefaultValueTest(CommonAttrDefine.FLEX_FIT)
+        parseEnumTest(CommonAttrDefine.FLEX_FIT)
+    }
+
+    @Test
     fun nullable_box_fit_test() {
         DefaultValueAttrDefineTest.tryDefaultValueTest(CommonAttrDefine.FIT_N)
         parseNullableEnumTest(CommonAttrDefine.FIT_N)
