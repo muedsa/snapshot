@@ -35,20 +35,6 @@ open class BorderParser : WidgetParser {
             val borderBottom =
                 WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_BOTTOM_N, element.attrs) ?: defaultBorder
 
-            val defaultBorderRadius =
-                WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_RADIUS_N, element.attrs) ?: Radius.ZERO
-            val borderRadiusTopLeft =
-                WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_RADIUS_TOP_LEFT_N, element.attrs)
-                    ?: defaultBorderRadius
-            val borderRadiusTopRight =
-                WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_RADIUS_TOP_RIGHT_N, element.attrs)
-                    ?: defaultBorderRadius
-            val borderRadiusBottomLeft =
-                WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_RADIUS_BOTTOM_LEFT_N, element.attrs)
-                    ?: defaultBorderRadius
-            val borderRadiusBottomRight =
-                WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_RADIUS_BOTTOM_RIGHT_N, element.attrs)
-                    ?: defaultBorderRadius
             return BoxDecoration(
                 color = color,
                 border = Border(
@@ -57,13 +43,23 @@ open class BorderParser : WidgetParser {
                     right = borderRight,
                     bottom = borderBottom
                 ),
-                borderRadius = BorderRadius(
-                    topLeft = borderRadiusTopLeft,
-                    topRight = borderRadiusTopRight,
-                    bottomLeft = borderRadiusBottomLeft,
-                    bottomRight = borderRadiusBottomRight
-                ),
+                borderRadius = parseBorderRadius(element),
                 boxShadow = WidgetParser.parseAttrValue(CommonAttrDefine.BOX_SHADOW_N, element.attrs)
+            )
+        }
+
+        fun parseBorderRadius(element: Element): BorderRadius {
+            val defaultRadius =
+                WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_RADIUS_N, element.attrs) ?: Radius.ZERO
+            return BorderRadius(
+                topLeft = WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_RADIUS_TOP_LEFT_N, element.attrs)
+                    ?: defaultRadius,
+                topRight = WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_RADIUS_TOP_RIGHT_N, element.attrs)
+                    ?: defaultRadius,
+                bottomLeft = WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_RADIUS_BOTTOM_LEFT_N, element.attrs)
+                    ?: defaultRadius,
+                bottomRight = WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_RADIUS_BOTTOM_RIGHT_N, element.attrs)
+                    ?: defaultRadius,
             )
         }
 
