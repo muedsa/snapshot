@@ -47,6 +47,7 @@ object CommonAttrDefine {
         defaultValue = BaselineMode.ALPHABETIC
     )
     val ALIGNMENT: AlignmentAttrDefine = AlignmentAttrDefine(name = "alignment", defaultValue = BoxAlignment.CENTER)
+    val PADDING: EdgeInsetsAttrDefine = EdgeInsetsAttrDefine(name = "padding")
     val REPEAT: ImageRepeatAttrDefine = ImageRepeatAttrDefine(name = "repeat", defaultValue = ImageRepeat.NO_REPEAT)
     val SCALE: FloatAttrDefine = FloatAttrDefine(name = "scale", defaultValue = 1f)
     val OPACITY: FloatAttrDefine = FloatAttrDefine(name = "opacity", defaultValue = 1f)
@@ -63,6 +64,8 @@ object CommonAttrDefine {
     val COLOR_N: NullableColorAttrDefine = NullableColorAttrDefine(name = "color")
     val WIDTH_N: NullableFloatAttrDefine = NullableFloatAttrDefine(name = "width")
     val HEIGHT_N: NullableFloatAttrDefine = NullableFloatAttrDefine(name = "height")
+    val WIDTH_FACTOR_N: NullableFloatAttrDefine = NullableFloatAttrDefine(name = "widthFactor")
+    val HEIGHT_FACTOR_N: NullableFloatAttrDefine = NullableFloatAttrDefine(name = "heightFactor")
     val LEFT_N: NullableFloatAttrDefine = NullableFloatAttrDefine(name = "left")
     val TOP_N: NullableFloatAttrDefine = NullableFloatAttrDefine(name = "top")
     val RIGHT_N: NullableFloatAttrDefine = NullableFloatAttrDefine(name = "right")
