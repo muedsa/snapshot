@@ -34,6 +34,12 @@ open class Parser(
                     t
                 )
             }
+            if (token is Token.EOF && snapshotElement == null) {
+                throw ParseException(
+                    token.endPos.copy(),
+                    "Document must contain root element [${SnapshotParser.id}]"
+                )
+            }
             token.reset()
         } while (token !is Token.EOF)
 
