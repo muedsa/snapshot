@@ -1047,6 +1047,8 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Border` | 单子 | `DecoratedBox(BoxDecoration(...))` | 只画装饰（边框/圆角/阴影） |
 | `Row` | 多子 | `Row` | |
 | `Column` | 多子 | `Column` | |
+| `Expanded` | 单子 | `Expanded` | 只能作为 `Row` / `Column` 的直接子节点 |
+| `Flexible` | 单子 | `Flexible` | 只能作为 `Row` / `Column` 的直接子节点 |
 | `Stack` | 多子 | `Stack` | |
 | `Positioned` | 单子 | `Positioned` | 只能放在 `Stack` 里 |
 | `Image` | **无子** | `CachedNetworkImage` | 网络图 |
@@ -1054,7 +1056,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Raw` | 多子（行内 span） | 无（仅作 `Text` 的子节点） | 原样文本，**不 trim** |
 | `Emoji` | **无子** | `ImageEmoji`（行内图片） | 只能作为 `Text` 的子节点 |
 
-**没有对应标签的 Widget**（只能用 Kotlin DSL）：`Expanded`/`Flexible`、`Opacity`、`Transform`、各种 `Clip*`、`ColorFiltered`/`ImageFiltered`/`BackdropFilter`、`ConstrainedBox`/`LimitedBox`/`OverflowBox` 等——解析器目前覆盖 15 个标签。`<Border>` 的圆角/边框能力可以部分替代 `ClipRRect`。
+**没有对应标签的 Widget**（只能用 Kotlin DSL）：`Opacity`、`Transform`、各种 `Clip*`、`ColorFiltered`/`ImageFiltered`/`BackdropFilter`、`ConstrainedBox`/`LimitedBox`/`OverflowBox` 等——解析器目前覆盖 17 个标签。`<Border>` 的圆角/边框能力可以部分替代 `ClipRRect`。
 
 ### 10.3 属性取值格式
 
@@ -1232,6 +1234,28 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `textDirection` | enum | `LTR` | `LTR`/`RTL` |
 | `verticalDirection` | enum | `DOWN` | `UP`/`DOWN` |
 | `textBaseline` | enum | 不设置 | `ALPHABETIC`/`IDEOGRAPHIC`（`crossAxisAlignment="BASELINE"` 时需要） |
+
+#### `<Expanded>` / `<Flexible>`
+
+| 属性 | 适用标签 | 类型 | 默认 | 说明 |
+|---|---|---|---|---|
+| `flex` | 两者 | int | `1` | 参与剩余空间分配的权重 |
+| `fit` | `Flexible` | enum | `LOOSE` | `TIGHT` 必须占满分配空间；`LOOSE` 最多占用分配空间 |
+
+两者都最多包含 1 个子节点，并且只能直接放在 `<Row>` 或 `<Column>` 中。`Expanded` 固定使用 `fit="TIGHT"`，不接受 `fit` 属性。
+
+```html
+<SizedBox width="300" height="80">
+    <Row>
+        <Expanded>
+            <Container color="#FFFF0000"/>
+        </Expanded>
+        <Flexible flex="2" fit="TIGHT">
+            <Container color="#FF00FF00"/>
+        </Flexible>
+    </Row>
+</SizedBox>
+```
 
 #### `<Stack>`
 
