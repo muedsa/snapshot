@@ -169,8 +169,9 @@ open class Parser(
 
     private fun init(reader: Reader) {
         this.reader = reader
-        tokenizer = Tokenizer(this.reader)
         stack.clear()
+        snapshotElement = null
+        tokenizer = Tokenizer(this.reader)
     }
 
     companion object {
