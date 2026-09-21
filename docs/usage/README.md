@@ -1485,6 +1485,8 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
   <Text color="#0000FF" fontSize="20">哈哈 233<![CDATA[ken_test <a></a> 233 哈哈]]>哈🤣🤣🤣</Text>
   ```
 
+  若一直读取到 EOF 都没有遇到 `]]>`，CDATA 中已经读取的内容仍会作为文本发射，随后由 EOF 自动闭合尚未关闭的元素。
+
 - **`&` 会作为普通文本原样保留**。tokenizer 不实现字符引用解码，因此可以直接写裸 `&`，而 `&amp;` 不会转换成 `&`：
 
   ```html
@@ -1511,6 +1513,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | 触发条件 | 消息（节选） |
 |---|---|
 | 第一个标签不是 `Snapshot` | `First tag must be 'Snapshot', but get 'Xxx'` |
+| 输入为空或仅包含空白 | `Document must contain root element [Snapshot]` |
 | 之后又出现 `Snapshot` 开始标签 | `Tag 'Snapshot' only be used as the first, but get 'Snapshot' at Pos[…]` |
 | 未知标签 | `Unknown element tag [Xxx]` |
 | 标签名为空 | `element tag name can not be null` |
