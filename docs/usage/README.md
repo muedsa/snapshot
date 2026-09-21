@@ -1323,6 +1323,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `textDirection` | enum | `LTR` | `LTR`/`RTL` |
 | `verticalDirection` | enum | `DOWN` | `UP`/`DOWN` |
 | `textBaseline` | enum | 不设置 | `ALPHABETIC`/`IDEOGRAPHIC`（`crossAxisAlignment="BASELINE"` 时需要） |
+| `clipBehavior` | enum | `NONE` | 内容溢出时的裁剪方式，取值见 `ClipBehavior` |
 
 #### `<Expanded>` / `<Flexible>`
 
@@ -1458,8 +1459,10 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 |---|---|---|---|
 | `alignment` | alignment | **`TOP_LEFT`** | 非定位子节点的对齐（注意：DSL 默认是 `TOP_START`，解析器默认是 `TOP_LEFT`） |
 | `textDirection` | enum | `LTR` | `LTR`/`RTL` |
+| `fit` | enum | `LOOSE` | `LOOSE` / `EXPAND` / `PASSTHROUGH`，控制非定位子节点接收的约束 |
+| `clipBehavior` | enum | `HARD_EDGE` | 内容溢出时的裁剪方式，取值见 `ClipBehavior` |
 
-> 解析器提供的 `<Stack>` **不暴露** `fit` / `clipBehavior`，即固定 `StackFit.LOOSE` + `ClipBehavior.HARD_EDGE`。
+`clipBehavior="NONE"` 可保留超出 Stack 边界的绘制内容；`fit="EXPAND"` 会让非定位子节点填满 Stack，`fit="PASSTHROUGH"` 会把父约束直接传给非定位子节点。
 
 #### `<Positioned>`
 
@@ -1735,7 +1738,7 @@ Surface 尺寸 = `ceil()` 后的布局尺寸，内容以 1:1 从原点绘制。�
 `Container` 的 `color` 与 `decoration` 互斥（会 `check` 失败）。要"底色 + 边框"，用 `decoration = BoxDecoration(color = ..., border = ...)`。解析器里的 `<Container>` 已经做了这个转换：写了边框属性时 `color` 会自动并入 `decoration`。
 
 **Q：`Stack` 里超出的内容被切掉了？**
-`Stack` 的 `clipBehavior` 默认 `HARD_EDGE`。显式传 `ClipBehavior.NONE`。
+`Stack` 的 `clipBehavior` 默认 `HARD_EDGE`。Kotlin DSL 中显式传 `ClipBehavior.NONE`；Parser 中写 `<Stack clipBehavior="NONE">`。
 
 **Q：想旋转画布上的内容？**
 用 `Transform.rotate(angle, alignment = BoxAlignment.CENTER)`；`angle` 是弧度（`computeRotation`）。注意 DSL 的 `Transform(transform = ..., alignment = ...)` 没有默认 `alignment`，必须显式传（可传 `null`）。

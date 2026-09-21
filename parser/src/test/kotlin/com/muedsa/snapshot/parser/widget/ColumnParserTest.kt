@@ -1,6 +1,7 @@
 package com.muedsa.snapshot.parser.widget
 
 import com.muedsa.snapshot.parser.ParserTest
+import com.muedsa.snapshot.rendering.ClipBehavior
 import com.muedsa.snapshot.rendering.flex.CrossAxisAlignment
 import com.muedsa.snapshot.rendering.flex.MainAxisAlignment
 import com.muedsa.snapshot.rendering.flex.MainAxisSize
@@ -21,7 +22,8 @@ class ColumnParserTest {
                      mainAxisSize="MAX" 
                      crossAxisAlignment="START"
                      textDirection="RTL"
-                     verticalDirection="DOWN">
+                     verticalDirection="DOWN"
+                     clipBehavior="ANTI_ALIAS">
                     <Container width="33" height="44"/>
                     <Container width="77" height="34"/>
                     <Container width="88" height="56"/>
@@ -38,10 +40,14 @@ class ColumnParserTest {
         assertTrue(column.textDirection == Direction.RTL, "column.textDirection == Direction.RTL")
         assertTrue(column.verticalDirection == VerticalDirection.DOWN, "column.verticalDirection == VerticalDirection.DOWN")
         assertTrue(column.textBaseline == null, "column.textBaseline == null")
+        assertTrue(column.clipBehavior == ClipBehavior.ANTI_ALIAS, "column.clipBehavior == ClipBehavior.ANTI_ALIAS")
         val children = column.children
         assertTrue(children.size == 3, "children.size == 3")
         assertTrue(children[0] is Container, "children[0] is Container")
         assertTrue(children[1] is Container, "children[1] is Container")
         assertTrue(children[2] is Container, "children[2] is Container")
+
+        val defaultColumn = ParserTest.parse("<Snapshot><Column/></Snapshot>").createWidget() as Column
+        assertTrue(defaultColumn.clipBehavior == ClipBehavior.NONE, "column.clipBehavior == ClipBehavior.NONE")
     }
 }
