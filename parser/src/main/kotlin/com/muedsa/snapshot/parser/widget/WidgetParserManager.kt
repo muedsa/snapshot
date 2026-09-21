@@ -34,6 +34,8 @@ class WidgetParserManager {
             it.register(PaddingParser())
             it.register(AlignParser())
             it.register(CenterParser())
+            it.register(OpacityParser())
+            it.register(TransformParser())
             it.register(ImageParser())
             it.register(TextParser())
             it.register(RawTextParser())
