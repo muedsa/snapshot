@@ -1040,6 +1040,10 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 |---|---|---|---|
 | `Snapshot` | 单子 | 根，无对应 Widget | **必须是根节点且整个文档只有一个** |
 | `Container` | 单子 | `Container` | 最常用 |
+| `SizedBox` | 单子 | `SizedBox` | 固定或收紧宽高 |
+| `Padding` | 单子 | `Padding` | 为子节点添加内边距 |
+| `Align` | 单子 | `Align` | 对齐子节点，可按比例包裹 |
+| `Center` | 单子 | `Center` | 居中子节点，可按比例包裹 |
 | `Border` | 单子 | `DecoratedBox(BoxDecoration(...))` | 只画装饰（边框/圆角/阴影） |
 | `Row` | 多子 | `Row` | |
 | `Column` | 多子 | `Column` | |
@@ -1050,7 +1054,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Raw` | 多子（行内 span） | 无（仅作 `Text` 的子节点） | 原样文本，**不 trim** |
 | `Emoji` | **无子** | `ImageEmoji`（行内图片） | 只能作为 `Text` 的子节点 |
 
-**没有对应标签的 Widget**（只能用 Kotlin DSL）：`Expanded`/`Flexible`、`Opacity`、`Transform`、各种 `Clip*`、`ColorFiltered`/`ImageFiltered`/`BackdropFilter`、`Align`/`Center`/`Padding`/`SizedBox`/`LimitedBox`/`OverflowBox` 等——解析器只覆盖 11 个标签。`<Border>` 的圆角/边框能力可以部分替代 `ClipRRect`。
+**没有对应标签的 Widget**（只能用 Kotlin DSL）：`Expanded`/`Flexible`、`Opacity`、`Transform`、各种 `Clip*`、`ColorFiltered`/`ImageFiltered`/`BackdropFilter`、`ConstrainedBox`/`LimitedBox`/`OverflowBox` 等——解析器目前覆盖 15 个标签。`<Border>` 的圆角/边框能力可以部分替代 `ClipRRect`。
 
 ### 10.3 属性取值格式
 
@@ -1170,6 +1174,42 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 <Container color="#FF00FF00" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
     <Container color="#FFFF0000" width="100" height="50"/>
 </Container>
+```
+
+#### `<SizedBox>`
+
+| 属性 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `width` / `height` | float | 不设置 | 收紧对应方向的约束；两个属性都不写时只透传子节点尺寸 |
+
+子节点：最多 1 个。
+
+#### `<Padding>`
+
+| 属性 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `padding` | EdgeInsets | `0` | 内边距，格式见 [EdgeInsets](#edgeinsetspadding--margin) |
+
+子节点：最多 1 个。
+
+#### `<Align>` / `<Center>`
+
+| 属性 | 适用标签 | 类型 | 默认 | 说明 |
+|---|---|---|---|---|
+| `alignment` | `Align` | alignment | `CENTER` | 子节点在可用空间内的对齐方式 |
+| `widthFactor` | 两者 | float | 不设置 | 设为非负数时，宽度取子节点宽度乘该系数 |
+| `heightFactor` | 两者 | float | 不设置 | 设为非负数时，高度取子节点高度乘该系数 |
+
+`Center` 等价于固定 `alignment="CENTER"` 的 `Align`。两者都最多包含 1 个子节点；负数比例会在创建渲染对象时被拒绝。
+
+```html
+<Padding padding="(12,20)">
+    <Align alignment="BOTTOM_RIGHT" widthFactor="2" heightFactor="1.5">
+        <SizedBox width="120" height="60">
+            <Container color="#FF3F51B5"/>
+        </SizedBox>
+    </Align>
+</Padding>
 ```
 
 #### `<Border>`
@@ -1378,14 +1418,16 @@ val text = """
 File("out.png").writeBytes(Parser().parse(StringReader(text)).snapshot())
 ```
 
-`<Stack>` + `<Positioned>` 示例（解析器不支持 `Opacity`/`Padding` 标签，用 `Container` 的 `padding` 代替）：
+`<Stack>` + `<Positioned>` 示例（解析器暂不支持 `Opacity` 标签）：
 
 ```html
 <Snapshot background="#FFEEEEEE" type="png">
     <Stack alignment="TOP_LEFT">
         <Container width="400" height="300" color="#FFFFFFFF"/>
         <Positioned left="20" top="20">
-            <Container width="120" height="120" color="#FFFF5722" borderRadius="16"/>
+            <Padding padding="8">
+                <Container width="120" height="120" color="#FFFF5722" borderRadius="16"/>
+            </Padding>
         </Positioned>
         <Positioned bottom="20" right="20" width="160" height="60">
             <Container color="#FF3F51B5" borderRadius="30" alignment="CENTER">
