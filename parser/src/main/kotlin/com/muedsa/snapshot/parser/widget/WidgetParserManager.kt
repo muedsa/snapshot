@@ -24,6 +24,8 @@ class WidgetParserManager {
             it.register(SnapshotParser)
             it.register(ContainerParser())
             it.register(BorderParser())
+            it.register(ColoredBoxParser())
+            it.register(DecoratedBoxParser())
             it.register(RowParser())
             it.register(ColumnParser())
             it.register(ExpandedParser())
