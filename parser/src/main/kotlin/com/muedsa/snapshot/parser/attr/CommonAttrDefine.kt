@@ -4,6 +4,7 @@ import com.muedsa.geometry.BoxAlignment
 import com.muedsa.snapshot.paint.ImageRepeat
 import com.muedsa.snapshot.parser.attr.nullable.*
 import com.muedsa.snapshot.parser.attr.required.RequiredStringAttrDefine
+import com.muedsa.snapshot.rendering.ClipBehavior
 import com.muedsa.snapshot.rendering.flex.CrossAxisAlignment
 import com.muedsa.snapshot.rendering.flex.FlexFit
 import com.muedsa.snapshot.rendering.flex.MainAxisAlignment
@@ -54,6 +55,8 @@ object CommonAttrDefine {
     val REPEAT: ImageRepeatAttrDefine = ImageRepeatAttrDefine(name = "repeat", defaultValue = ImageRepeat.NO_REPEAT)
     val SCALE: FloatAttrDefine = FloatAttrDefine(name = "scale", defaultValue = 1f)
     val OPACITY: FloatAttrDefine = FloatAttrDefine(name = "opacity", defaultValue = 1f)
+    val CLIP_BEHAVIOR: ClipBehaviorAttrDefine =
+        ClipBehaviorAttrDefine(name = "clipBehavior", defaultValue = ClipBehavior.ANTI_ALIAS)
     val COLOR: ColorAttrDefine = ColorAttrDefine(name = "color", defaultValue = Color.BLACK)
     val FONT_SIZE = FloatAttrDefine(name = "fontSize", defaultValue = 14f)
     val FONT_STYLE = FontStyleAttrDefine("fontStyle", defaultValue = FontStyle.NORMAL)

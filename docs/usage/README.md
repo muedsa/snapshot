@@ -1055,6 +1055,9 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Flexible` | 单子 | `Flexible` | 只能作为 `Row` / `Column` 的直接子节点 |
 | `Opacity` | 单子 | `Opacity` | 调整子树透明度 |
 | `Transform` | 单子 | `Transform` | 使用 4×4 矩阵变换子树 |
+| `ClipRect` | 单子 | `ClipRect` | 按自身矩形范围裁剪子节点 |
+| `ClipOval` | 单子 | `ClipOval` | 按自身内接椭圆裁剪子节点 |
+| `ClipRRect` | 单子 | `ClipRRect` | 按圆角矩形裁剪子节点 |
 | `Stack` | 多子 | `Stack` | |
 | `Positioned` | 单子 | `Positioned` | 只能放在 `Stack` 里 |
 | `Image` | **无子** | `CachedNetworkImage` | 网络图 |
@@ -1062,7 +1065,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Raw` | 多子（行内 span） | 无（仅作 `Text` 的子节点） | 原样文本，**不 trim** |
 | `Emoji` | **无子** | `ImageEmoji`（行内图片） | 只能作为 `Text` 的子节点 |
 
-**没有对应标签的 Widget**（只能用 Kotlin DSL）：各种 `Clip*`、`ColorFiltered`/`ImageFiltered`/`BackdropFilter` 等——解析器目前覆盖 23 个标签。`<Border>` 的圆角/边框能力可以部分替代 `ClipRRect`。
+**没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath`、`ColorFiltered`/`ImageFiltered`/`BackdropFilter` 等——解析器目前覆盖 26 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。
 
 ### 10.3 属性取值格式
 
@@ -1149,7 +1152,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 
 #### 枚举属性
 
-绝大多数枚举（`fit`、`repeat`、`mainAxisAlignment`、`crossAxisAlignment`、`mainAxisSize`、`verticalDirection`、`textBaseline`、`baseline`、`blendMode`、`colorBlendMode`、`alignment`(占位符)…）都用 `Enum.valueOf(str)`，即：
+绝大多数枚举（`fit`、`repeat`、`mainAxisAlignment`、`crossAxisAlignment`、`mainAxisSize`、`verticalDirection`、`textBaseline`、`baseline`、`blendMode`、`colorBlendMode`、`clipBehavior`、`alignment`（占位符）等）都用 `Enum.valueOf(str)`，即：
 
 - **必须是源码里的精确常量名**（全大写 + 下划线）；
 - 大小写敏感，写错抛 `IllegalArgumentException`。
@@ -1365,6 +1368,35 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
     </SizedBox>
 </Transform>
 ```
+
+#### `<ClipRect>` / `<ClipOval>` / `<ClipRRect>`
+
+三种标签都最多包含 1 个子节点，并使用自身布局尺寸作为默认裁剪范围。解析器不暴露 Kotlin DSL 中的 `clipper` 回调。
+
+| 属性 | 适用标签 | 类型 | 默认 | 说明 |
+|---|---|---|---|---|
+| `clipBehavior` | 三者 | enum | `ClipRect` 为 `HARD_EDGE`；其余为 `ANTI_ALIAS` | `NONE` / `HARD_EDGE` / `ANTI_ALIAS` / `ANTI_ALIAS_WITH_SAVE_LAYER` |
+| `borderRadius` | `ClipRRect` | Radius | `0` | 四角的默认圆角 |
+| `borderRadiusTopLeft` / `borderRadiusTopRight` / `borderRadiusBottomLeft` / `borderRadiusBottomRight` | `ClipRRect` | Radius | 跟随 `borderRadius` | 单独覆盖对应角 |
+
+- `ClipRect` 按自身矩形边界裁剪，适合直接截断溢出内容。
+- `ClipOval` 按自身矩形的内接椭圆裁剪；宽高相等时得到圆形。
+- `ClipRRect` 使用与 `<Container>`、`<Border>` 相同的圆角格式。
+- `clipBehavior="NONE"` 会关闭裁剪；`ANTI_ALIAS_WITH_SAVE_LAYER` 质量最高，但会增加中间图层开销。
+
+```html
+<ClipRRect borderRadius="24" clipBehavior="ANTI_ALIAS">
+    <Container width="200" height="120" color="#FF3F51B5"/>
+</ClipRRect>
+```
+
+```html
+<ClipOval>
+    <Container width="120" height="120" color="#FF00C853"/>
+</ClipOval>
+```
+
+任意路径裁剪仍需使用 Kotlin DSL 的 `ClipPath(clipper = { size -> ... })`。
 
 #### `<Stack>`
 
@@ -1657,8 +1689,8 @@ EdgeInsets 必须写成 `"(1,2,3,4)"` 或 `"10"` 或 `"(1,2)"`，圆括号和逗
 **Q：`<Snapshot debug>` 没打开调试？**
 裸属性会被当成 `null` 并回落到默认值 `false`。写 `debug="true"`。
 
-**Q：解析器里能用 `Expanded` 吗？**
-不能——解析器只注册了 11 个标签（见 [10.2](#102-标签总表)）。需要 `Expanded`/`Opacity`/`Transform`/`Clip*` 等请在 Kotlin DSL 侧构建，或按 [10.8](#108-扩展自定义标签) 注册自定义标签。
+**Q：解析器里能用 `Expanded` 或裁剪标签吗？**
+可以。`Expanded`、`Flexible`、`Opacity`、`Transform`、`ClipRect`、`ClipOval`、`ClipRRect` 都已内置，完整列表见 [10.2](#102-标签总表)。任意路径裁剪 `ClipPath` 仍需在 Kotlin DSL 中构建，或按 [10.8](#108-扩展自定义标签) 注册自定义标签。
 
 **Q：文本里怎么写 `<` `>`？**
 用 `<![CDATA[ ... ]]>`。库**不做** HTML 实体解码，`&lt;` 会原样输出；裸 `&` 可以直接书写并会原样保留（见 [10.5](#105-文本空白与-cdata)）。注释 `<!-- -->` 也不支持。
