@@ -342,7 +342,7 @@ ProxyWidget(根)          →    (透传)
 - `AlignmentDirectional(start, y)`：方向相关版本（`TOP_START`…`BOTTOM_END`），**必须**结合 `textDirection` 才能 resolve——`Stack` 的默认对齐就是 `AlignmentDirectional.TOP_START`。
 - `EdgeInsets`：`EdgeInsets.all(v)` / `symmetric(vertical, horizontal)` / `only(...)` / `fromLTRB(...)` / `ZERO`。
 - `Offset`、`Size`、`Rect`、`Radius`（`Radius.circular(r)` / `Radius.elliptical(x, y)`）、`BorderRadius`（`circular`/`all`/`only`/`vertical`/`horizontal`/`ZERO`）、`Matrix44CMO` 都在 `com.muedsa.geometry`。
-  > ⚠️ `Matrix44CMO.transform(x, y, z)` 的源码体是 `TODO("transform")`，调用会抛 `NotImplementedError`。需要做矩阵运算请用已验证的 `toRMO()` / `multiplied()` / `clone()` / `rotate()` / `translationValues()` 等。
+  `Matrix44CMO` 按列主序保存 4×4 矩阵，可使用 `toRMO()` / `multiplied()` / `clone()` / `rotate()` / `translationValues()` 等方法。
 
 ---
 
@@ -1049,6 +1049,8 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Column` | 多子 | `Column` | |
 | `Expanded` | 单子 | `Expanded` | 只能作为 `Row` / `Column` 的直接子节点 |
 | `Flexible` | 单子 | `Flexible` | 只能作为 `Row` / `Column` 的直接子节点 |
+| `Opacity` | 单子 | `Opacity` | 调整子树透明度 |
+| `Transform` | 单子 | `Transform` | 使用 4×4 矩阵变换子树 |
 | `Stack` | 多子 | `Stack` | |
 | `Positioned` | 单子 | `Positioned` | 只能放在 `Stack` 里 |
 | `Image` | **无子** | `CachedNetworkImage` | 网络图 |
@@ -1056,7 +1058,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Raw` | 多子（行内 span） | 无（仅作 `Text` 的子节点） | 原样文本，**不 trim** |
 | `Emoji` | **无子** | `ImageEmoji`（行内图片） | 只能作为 `Text` 的子节点 |
 
-**没有对应标签的 Widget**（只能用 Kotlin DSL）：`Opacity`、`Transform`、各种 `Clip*`、`ColorFiltered`/`ImageFiltered`/`BackdropFilter`、`ConstrainedBox`/`LimitedBox`/`OverflowBox` 等——解析器目前覆盖 17 个标签。`<Border>` 的圆角/边框能力可以部分替代 `ClipRRect`。
+**没有对应标签的 Widget**（只能用 Kotlin DSL）：各种 `Clip*`、`ColorFiltered`/`ImageFiltered`/`BackdropFilter`、`ConstrainedBox`/`LimitedBox`/`OverflowBox` 等——解析器目前覆盖 19 个标签。`<Border>` 的圆角/边框能力可以部分替代 `ClipRRect`。
 
 ### 10.3 属性取值格式
 
@@ -1096,6 +1098,20 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 "BOTTOM_LEFT" | "BOTTOM_CENTER" | "BOTTOM_RIGHT"
 "(0.5,-0.5)"        // 自定义,范围语义同 BoxAlignment
 ```
+
+#### 偏移 origin
+
+`Transform.origin` 使用 `"(x,y)"`，例如 `origin="(20,-10)"`。两个值必须有限，且括号和逗号之间不能有空格。
+
+#### 4×4 变换矩阵 matrix
+
+`Transform.matrix` 使用 16 个按列主序排列的有限浮点数：
+
+```text
+"(m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13,m14,m15)"
+```
+
+值之间不能有空格。单位矩阵为 `"(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1)"`；其中 `m12`、`m13` 分别表示 x、y 平移量。
 
 #### 圆角 borderRadius / borderRadius{Corner}
 
@@ -1255,6 +1271,32 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
         </Flexible>
     </Row>
 </SizedBox>
+```
+
+#### `<Opacity>`
+
+| 属性 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `opacity` | float | `1` | 透明度，必须在 `0..1` 内 |
+
+最多包含 1 个子节点。`0` 表示完全透明，`1` 表示完全不透明。
+
+#### `<Transform>`
+
+| 属性 | 类型 | 必填 | 默认 | 说明 |
+|---|---|---|---|---|
+| `matrix` | Matrix44CMO | **是** | — | 16 个列主序浮点数 |
+| `origin` | Offset | 否 | 不设置 | 绝对变换原点，格式为 `"(x,y)"` |
+| `alignment` | alignment | 否 | 不设置 | 相对子节点尺寸的变换原点 |
+
+最多包含 1 个子节点。以下矩阵将子节点向右平移 20、向下平移 10：
+
+```html
+<Transform matrix="(1,0,0,0,0,1,0,0,0,0,1,0,20,10,0,1)">
+    <SizedBox width="120" height="60">
+        <Container color="#FF3F51B5"/>
+    </SizedBox>
+</Transform>
 ```
 
 #### `<Stack>`
@@ -1442,16 +1484,18 @@ val text = """
 File("out.png").writeBytes(Parser().parse(StringReader(text)).snapshot())
 ```
 
-`<Stack>` + `<Positioned>` 示例（解析器暂不支持 `Opacity` 标签）：
+`<Stack>` + `<Positioned>` 示例：
 
 ```html
 <Snapshot background="#FFEEEEEE" type="png">
     <Stack alignment="TOP_LEFT">
         <Container width="400" height="300" color="#FFFFFFFF"/>
         <Positioned left="20" top="20">
-            <Padding padding="8">
-                <Container width="120" height="120" color="#FFFF5722" borderRadius="16"/>
-            </Padding>
+            <Opacity opacity="0.85">
+                <Padding padding="8">
+                    <Container width="120" height="120" color="#FFFF5722" borderRadius="16"/>
+                </Padding>
+            </Opacity>
         </Positioned>
         <Positioned bottom="20" right="20" width="160" height="60">
             <Container color="#FF3F51B5" borderRadius="30" alignment="CENTER">
