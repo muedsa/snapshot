@@ -1049,6 +1049,8 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Align` | 单子 | `Align` | 对齐子节点，可按比例包裹 |
 | `Center` | 单子 | `Center` | 居中子节点，可按比例包裹 |
 | `Border` | 单子 | `DecoratedBox(BoxDecoration(...))` | 只画装饰（边框/圆角/阴影） |
+| `ColoredBox` | 单子 | `ColoredBox` | 使用必填颜色填充子节点区域 |
+| `DecoratedBox` | 单子 | `DecoratedBox(BoxDecoration(...))` | 在子节点背景或前景绘制装饰 |
 | `Row` | 多子 | `Row` | |
 | `Column` | 多子 | `Column` | |
 | `Expanded` | 单子 | `Expanded` | 只能作为 `Row` / `Column` 的直接子节点 |
@@ -1068,7 +1070,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Raw` | 多子（行内 span） | 无（仅作 `Text` 的子节点） | 原样文本，**不 trim** |
 | `Emoji` | **无子** | `ImageEmoji`（行内图片） | 只能作为 `Text` 的子节点 |
 
-**没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath` 等——解析器目前覆盖 29 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。滤镜标签目前只开放颜色混合与高斯模糊；滤镜矩阵、阴影、组合滤镜和运行时着色器仍需 Kotlin DSL。
+**没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath` 等——解析器目前覆盖 31 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。滤镜标签目前只开放颜色混合与高斯模糊；滤镜矩阵、阴影、组合滤镜和运行时着色器仍需 Kotlin DSL。
 
 ### 10.3 属性取值格式
 
@@ -1155,7 +1157,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 
 #### 枚举属性
 
-绝大多数枚举（`fit`、`repeat`、`mainAxisAlignment`、`crossAxisAlignment`、`mainAxisSize`、`verticalDirection`、`textBaseline`、`baseline`、`blendMode`、`colorBlendMode`、`clipBehavior`、`tileMode`、`alignment`（占位符）等）都用 `Enum.valueOf(str)`，即：
+绝大多数枚举（`fit`、`repeat`、`mainAxisAlignment`、`crossAxisAlignment`、`mainAxisSize`、`verticalDirection`、`textBaseline`、`baseline`、`blendMode`、`colorBlendMode`、`clipBehavior`、`tileMode`、`position`、`alignment`（占位符）等）都用 `Enum.valueOf(str)`，即：
 
 - **必须是源码里的精确常量名**（全大写 + 下划线）；
 - 大小写敏感，写错抛 `IllegalArgumentException`。
@@ -1311,6 +1313,32 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 <Border border="4 SOLID #FF2196F3" borderRadius="16" boxShadow="ELEVATION_4">
     <Container color="#FFFFFFFF" width="200" height="100"/>
 </Border>
+```
+
+#### `<ColoredBox>` / `<DecoratedBox>`
+
+`ColoredBox` 适合只需要纯色填充的场景，`color` 为必填属性；最多包含 1 个子节点。
+
+```html
+<ColoredBox color="#FF2196F3">
+    <SizedBox width="200" height="100"/>
+</ColoredBox>
+```
+
+`DecoratedBox` 支持与 `<Border>` 相同的 `BoxDecoration` 属性，并可通过 `position` 控制装饰绘制在子节点的背景还是前景：
+
+| 属性 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `color` | color | 不设置 | 装饰底色 |
+| `border` / `borderLeft` / `borderTop` / `borderRight` / `borderBottom` | BorderSide | 不设置 | 边框 |
+| `borderRadius` / `borderRadiusTopLeft` / `borderRadiusTopRight` / `borderRadiusBottomLeft` / `borderRadiusBottomRight` | Radius | 不设置 | 圆角 |
+| `boxShadow` | BoxShadow | 不设置 | 阴影 |
+| `position` | enum | `BACKGROUND` | `BACKGROUND` 在子节点之前绘制；`FOREGROUND` 在子节点之后绘制 |
+
+```html
+<DecoratedBox color="#66FFFFFF" border="2 SOLID #FFFFFFFF" position="FOREGROUND">
+    <SizedBox width="200" height="100"/>
+</DecoratedBox>
 ```
 
 #### `<Row>` / `<Column>`
