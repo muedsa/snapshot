@@ -1041,6 +1041,10 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Snapshot` | 单子 | 根，无对应 Widget | **必须是根节点且整个文档只有一个** |
 | `Container` | 单子 | `Container` | 最常用 |
 | `SizedBox` | 单子 | `SizedBox` | 固定或收紧宽高 |
+| `ConstrainedBox` | 单子 | `ConstrainedBox` | 为子节点施加额外的最小/最大尺寸约束 |
+| `LimitedBox` | 单子 | `LimitedBox` | 仅在父约束无界时限制子节点最大尺寸 |
+| `OverflowBox` | 单子 | `OverflowBox` | 允许子节点使用不同约束并溢出自身范围 |
+| `SizedOverflowBox` | 单子 | `SizedOverflowBox` | 自身使用指定尺寸，子节点可溢出 |
 | `Padding` | 单子 | `Padding` | 为子节点添加内边距 |
 | `Align` | 单子 | `Align` | 对齐子节点，可按比例包裹 |
 | `Center` | 单子 | `Center` | 居中子节点，可按比例包裹 |
@@ -1058,7 +1062,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Raw` | 多子（行内 span） | 无（仅作 `Text` 的子节点） | 原样文本，**不 trim** |
 | `Emoji` | **无子** | `ImageEmoji`（行内图片） | 只能作为 `Text` 的子节点 |
 
-**没有对应标签的 Widget**（只能用 Kotlin DSL）：各种 `Clip*`、`ColorFiltered`/`ImageFiltered`/`BackdropFilter`、`ConstrainedBox`/`LimitedBox`/`OverflowBox` 等——解析器目前覆盖 19 个标签。`<Border>` 的圆角/边框能力可以部分替代 `ClipRRect`。
+**没有对应标签的 Widget**（只能用 Kotlin DSL）：各种 `Clip*`、`ColorFiltered`/`ImageFiltered`/`BackdropFilter` 等——解析器目前覆盖 23 个标签。`<Border>` 的圆角/边框能力可以部分替代 `ClipRRect`。
 
 ### 10.3 属性取值格式
 
@@ -1201,6 +1205,69 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `width` / `height` | float | 不设置 | 收紧对应方向的约束；两个属性都不写时只透传子节点尺寸 |
 
 子节点：最多 1 个。
+
+#### `<ConstrainedBox>`
+
+| 属性 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `minWidth` / `minHeight` | float | `0` | 子节点允许使用的最小宽度/高度 |
+| `maxWidth` / `maxHeight` | float | `∞` | 子节点允许使用的最大宽度/高度 |
+
+最多包含 1 个子节点。四个值会组成一套额外约束，再与父节点传入的约束合并；最小值不能大于对应的最大值。
+
+```html
+<ConstrainedBox minWidth="120" maxWidth="240" minHeight="80" maxHeight="160">
+    <SizedBox width="300" height="40"/>
+</ConstrainedBox>
+```
+
+#### `<LimitedBox>`
+
+| 属性 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `maxWidth` / `maxHeight` | float | `∞` | 仅在父节点对应方向无界时使用的最大尺寸 |
+
+最多包含 1 个子节点。父约束在某个方向已经有界时，对应的最大值不会生效；这个标签主要用于给无界布局中的子节点设置尺寸上限。
+
+```html
+<LimitedBox maxWidth="240" maxHeight="160">
+    <SizedBox width="300" height="200"/>
+</LimitedBox>
+```
+
+#### `<OverflowBox>`
+
+| 属性 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `alignment` | alignment | `CENTER` | 子节点超出自身范围时的对齐方式 |
+| `minWidth` / `maxWidth` / `minHeight` / `maxHeight` | float | 不设置 | 覆盖对应方向传给子节点的约束；未设置的值沿用父约束 |
+
+最多包含 1 个子节点。标签自身仍按父约束确定尺寸，但可以给子节点一套更宽松的约束，让子节点溢出自身范围；外层是否显示溢出部分取决于是否存在裁剪。
+
+`OverflowBox` 通常应放在宽高有界的父节点中。若根节点或父节点在某个方向无界，而该方向又没有通过 `maxWidth` / `maxHeight` 收口，最终布局尺寸可能为无限并导致渲染失败。
+
+```html
+<SizedBox width="200" height="120">
+    <OverflowBox maxWidth="320" maxHeight="200" alignment="BOTTOM_RIGHT">
+        <SizedBox width="320" height="200"/>
+    </OverflowBox>
+</SizedBox>
+```
+
+#### `<SizedOverflowBox>`
+
+| 属性 | 类型 | 必填 | 默认 | 说明 |
+|---|---|---|---|---|
+| `width` / `height` | float | **是** | — | 标签自身请求的固定尺寸，两个属性都必须提供 |
+| `alignment` | alignment | 否 | `CENTER` | 子节点超出自身范围时的对齐方式 |
+
+最多包含 1 个子节点。标签自身按 `width`、`height` 确定尺寸，子节点按父约束布局，因此可以比标签自身更大。
+
+```html
+<SizedOverflowBox width="200" height="120" alignment="BOTTOM_RIGHT">
+    <SizedBox width="320" height="200"/>
+</SizedOverflowBox>
+```
 
 #### `<Padding>`
 
