@@ -1,6 +1,7 @@
 package com.muedsa.snapshot.parser.widget
 
 import com.muedsa.snapshot.parser.ParserTest
+import com.muedsa.snapshot.rendering.ClipBehavior
 import com.muedsa.snapshot.rendering.flex.CrossAxisAlignment
 import com.muedsa.snapshot.rendering.flex.MainAxisAlignment
 import com.muedsa.snapshot.rendering.flex.MainAxisSize
@@ -21,7 +22,8 @@ class RowParserTest {
                      mainAxisSize="MAX" 
                      crossAxisAlignment="START"
                      textDirection="RTL"
-                     verticalDirection="DOWN">
+                     verticalDirection="DOWN"
+                     clipBehavior="HARD_EDGE">
                     <Container width="33" height="44"/>
                     <Container width="77" height="34"/>
                     <Container width="88" height="56"/>
@@ -38,10 +40,14 @@ class RowParserTest {
         assertTrue(row.textDirection == Direction.RTL, "row.textDirection == Direction.RTL")
         assertTrue(row.verticalDirection == VerticalDirection.DOWN, "row.verticalDirection == VerticalDirection.DOWN")
         assertTrue(row.textBaseline == null, "row.textBaseline == null")
+        assertTrue(row.clipBehavior == ClipBehavior.HARD_EDGE, "row.clipBehavior == ClipBehavior.HARD_EDGE")
         val children = row.children
         assertTrue(children.size == 3, "children.size == 3")
         assertTrue(children[0] is Container, "children[0] is Container")
         assertTrue(children[1] is Container, "children[1] is Container")
         assertTrue(children[2] is Container, "children[2] is Container")
+
+        val defaultRow = ParserTest.parse("<Snapshot><Row/></Snapshot>").createWidget() as Row
+        assertTrue(defaultRow.clipBehavior == ClipBehavior.NONE, "row.clipBehavior == ClipBehavior.NONE")
     }
 }
