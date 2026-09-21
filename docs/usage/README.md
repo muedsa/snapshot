@@ -1058,6 +1058,9 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `ClipRect` | 单子 | `ClipRect` | 按自身矩形范围裁剪子节点 |
 | `ClipOval` | 单子 | `ClipOval` | 按自身内接椭圆裁剪子节点 |
 | `ClipRRect` | 单子 | `ClipRRect` | 按圆角矩形裁剪子节点 |
+| `ColorFiltered` | 单子 | `ColorFiltered` | 对子树应用颜色混合滤镜 |
+| `ImageFiltered` | 单子 | `ImageFiltered` | 对子树应用高斯模糊 |
+| `BackdropFilter` | 单子 | `BackdropFilter` | 对已经绘制的下层内容应用高斯模糊 |
 | `Stack` | 多子 | `Stack` | |
 | `Positioned` | 单子 | `Positioned` | 只能放在 `Stack` 里 |
 | `Image` | **无子** | `CachedNetworkImage` | 网络图 |
@@ -1065,7 +1068,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Raw` | 多子（行内 span） | 无（仅作 `Text` 的子节点） | 原样文本，**不 trim** |
 | `Emoji` | **无子** | `ImageEmoji`（行内图片） | 只能作为 `Text` 的子节点 |
 
-**没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath`、`ColorFiltered`/`ImageFiltered`/`BackdropFilter` 等——解析器目前覆盖 26 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。
+**没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath` 等——解析器目前覆盖 29 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。滤镜标签目前只开放颜色混合与高斯模糊；滤镜矩阵、阴影、组合滤镜和运行时着色器仍需 Kotlin DSL。
 
 ### 10.3 属性取值格式
 
@@ -1152,7 +1155,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 
 #### 枚举属性
 
-绝大多数枚举（`fit`、`repeat`、`mainAxisAlignment`、`crossAxisAlignment`、`mainAxisSize`、`verticalDirection`、`textBaseline`、`baseline`、`blendMode`、`colorBlendMode`、`clipBehavior`、`alignment`（占位符）等）都用 `Enum.valueOf(str)`，即：
+绝大多数枚举（`fit`、`repeat`、`mainAxisAlignment`、`crossAxisAlignment`、`mainAxisSize`、`verticalDirection`、`textBaseline`、`baseline`、`blendMode`、`colorBlendMode`、`clipBehavior`、`tileMode`、`alignment`（占位符）等）都用 `Enum.valueOf(str)`，即：
 
 - **必须是源码里的精确常量名**（全大写 + 下划线）；
 - 大小写敏感，写错抛 `IllegalArgumentException`。
@@ -1397,6 +1400,57 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 ```
 
 任意路径裁剪仍需使用 Kotlin DSL 的 `ClipPath(clipper = { size -> ... })`。
+
+#### `<ColorFiltered>`
+
+| 属性 | 类型 | 必填 | 说明 |
+|---|---|---|---|
+| `color` | color | **是** | 参与滤镜混合的颜色 |
+| `blendMode` | enum | **是** | Skia `BlendMode` 常量名，例如 `MODULATE`、`SATURATION` |
+
+最多包含 1 个子节点，内部等价于 `ColorFilter.makeBlend(color, blendMode)`。
+
+```html
+<ColorFiltered color="#FFFF0000" blendMode="MODULATE">
+    <Container width="200" height="120" color="#FF00FF00"/>
+</ColorFiltered>
+```
+
+#### `<ImageFiltered>` / `<BackdropFilter>`
+
+Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声明高斯模糊：
+
+| 属性 | 适用标签 | 类型 | 必填 | 默认 | 说明 |
+|---|---|---|---|---|---|
+| `sigmaX` / `sigmaY` | 两者 | float | **是** | — | 水平和垂直模糊标准差，必须是有限非负数 |
+| `tileMode` | 两者 | enum | 否 | `CLAMP` | `CLAMP` / `REPEAT` / `MIRROR` / `DECAL` |
+| `blendMode` | `BackdropFilter` | enum | 否 | `SRC_OVER` | 滤镜结果与当前画布的混合方式 |
+
+两者都最多包含 1 个子节点：
+
+- `ImageFiltered` 只处理自己的子树。
+- `BackdropFilter` 处理绘制顺序中位于它下面的已有内容，通常放在 `Stack` 中，并用 `ClipRect`、`ClipOval` 或 `ClipRRect` 限定滤镜区域。
+
+```html
+<ImageFiltered sigmaX="8" sigmaY="8" tileMode="CLAMP">
+    <Container width="200" height="120" color="#FF3F51B5"/>
+</ImageFiltered>
+```
+
+```html
+<SizedBox width="320" height="200">
+    <Stack alignment="CENTER">
+        <Container width="320" height="200" color="#FF3F51B5"/>
+        <ClipRRect borderRadius="20">
+            <BackdropFilter sigmaX="12" sigmaY="12" blendMode="SRC_OVER">
+                <SizedBox width="240" height="160"/>
+            </BackdropFilter>
+        </ClipRRect>
+    </Stack>
+</SizedBox>
+```
+
+颜色矩阵、滤镜组合、阴影滤镜、位移映射和运行时着色器等高级能力仍需在 Kotlin DSL 中直接构造 Skia `ColorFilter` / `ImageFilter`。
 
 #### `<Stack>`
 
@@ -1729,6 +1783,8 @@ EdgeInsets 必须写成 `"(1,2,3,4)"` 或 `"10"` 或 `"(1,2)"`，圆括号和逗
 | `VerticalDirection` | `UP` `DOWN` |
 | `StackFit` | `LOOSE` `EXPAND` `PASSTHROUGH` |
 | `ClipBehavior` | `NONE` `HARD_EDGE` `ANTI_ALIAS` `ANTI_ALIAS_WITH_SAVE_LAYER` |
+| `FilterTileMode`（skiko） | `CLAMP` `REPEAT` `MIRROR` `DECAL` |
+| `BlendMode`（skiko） | `CLEAR` `SRC` `DST` `SRC_OVER` `DST_OVER` `SRC_IN` `DST_IN` `SRC_OUT` `DST_OUT` `SRC_ATOP` `DST_ATOP` `XOR` `PLUS` `MODULATE` `SCREEN` `OVERLAY` `DARKEN` `LIGHTEN` `COLOR_DODGE` `COLOR_BURN` `HARD_LIGHT` `SOFT_LIGHT` `DIFFERENCE` `EXCLUSION` `MULTIPLY` `HUE` `SATURATION` `COLOR` `LUMINOSITY` |
 | `DecorationPosition` | `BACKGROUND` `FOREGROUND` |
 | `BoxShape` | `RECTANGLE` `CIRCLE` |
 | `BorderStyle` | `NONE` `SOLID` |

@@ -11,6 +11,7 @@ import com.muedsa.snapshot.rendering.flex.MainAxisAlignment
 import com.muedsa.snapshot.rendering.flex.MainAxisSize
 import com.muedsa.snapshot.rendering.flex.VerticalDirection
 import org.jetbrains.skia.Color
+import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.Direction
@@ -57,6 +58,8 @@ object CommonAttrDefine {
     val OPACITY: FloatAttrDefine = FloatAttrDefine(name = "opacity", defaultValue = 1f)
     val CLIP_BEHAVIOR: ClipBehaviorAttrDefine =
         ClipBehaviorAttrDefine(name = "clipBehavior", defaultValue = ClipBehavior.ANTI_ALIAS)
+    val FILTER_TILE_MODE: FilterTileModeAttrDefine =
+        FilterTileModeAttrDefine(name = "tileMode", defaultValue = FilterTileMode.CLAMP)
     val COLOR: ColorAttrDefine = ColorAttrDefine(name = "color", defaultValue = Color.BLACK)
     val FONT_SIZE = FloatAttrDefine(name = "fontSize", defaultValue = 14f)
     val FONT_STYLE = FontStyleAttrDefine("fontStyle", defaultValue = FontStyle.NORMAL)
