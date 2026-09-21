@@ -1028,9 +1028,9 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 
 - `snapshot()` 与 `SnapshotPNG` 的差异：**`background` 默认透明**（`Color.TRANSPARENT`），且 Surface 固定为 CPU 光栅化。想要白底请在根标签写 `background="#FFFFFFFF"`。
 - 未写的属性名（或大小写写错的属性名）会被**静默忽略**，不会报错——写错 `Color=` 只会得到"没设颜色"。
-- ⚠️ **`Parser` 实例只能成功解析一次**：`parse()` 内部只重置了 reader/tokenizer/栈，**没有重置 `snapshotElement`**，所以同一实例第二次调用会抛 `Duplicate root element [...]`。每次解析请 `Parser()` 新建实例。
+- **`Parser` 实例可以复用**：每次调用 `parse()` 都会重置 reader、tokenizer、元素栈和根元素状态；即使前一次解析失败，后续调用也可以正常处理新的文档。已经返回的 `SnapshotElement` 不受后续解析影响。
 
-> `parse()` 标注了 `@Synchronized`，多线程下不会互相踩状态；但如上所述，实例本身不可复用。
+> `parse()` 标注了 `@Synchronized`；多个线程共用同一实例时，解析调用会依次执行，不会共享同一次解析的中间状态。
 
 ### 10.2 标签总表
 
@@ -1695,8 +1695,8 @@ EdgeInsets 必须写成 `"(1,2,3,4)"` 或 `"10"` 或 `"(1,2)"`，圆括号和逗
 **Q：文本里怎么写 `<` `>`？**
 用 `<![CDATA[ ... ]]>`。库**不做** HTML 实体解码，`&lt;` 会原样输出；裸 `&` 可以直接书写并会原样保留（见 [10.5](#105-文本空白与-cdata)）。注释 `<!-- -->` 也不支持。
 
-**Q：第二次调用 `Parser().parse(...)` 报 `Duplicate root element`？**
-是同一个 `Parser` 实例被复用了——`parse()` 不重置内部的 `snapshotElement`。每次解析都 `Parser()` 新建一个。
+**Q：同一个 `Parser` 实例可以重复使用吗？**
+可以。每次 `parse()` 都会重置内部解析状态，前一次成功或失败都不会污染下一次调用；同一实例上的并发调用会由 `@Synchronized` 依次执行。
 
 **Q：解析出来什么都没变，属性像是没生效？**
 先确认属性名拼写与大小写。**未知属性会被静默忽略**；另外 Boolean 属性必须显式写 `"true"`。属性值的报错要到 `createWidget()`/`snapshot()` 阶段才会抛出，`parse()` 成功不代表文档完全合法。

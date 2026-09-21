@@ -5,9 +5,16 @@ import com.muedsa.geometry.EdgeInsets
 import com.muedsa.snapshot.getTestPngFile
 import com.muedsa.snapshot.widget.Container
 import com.muedsa.snapshot.widget.text.RichText
-import kotlin.test.assertFailsWith
 import java.io.StringReader
+import java.util.concurrent.Callable
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertIs
+import kotlin.test.assertNotSame
 import kotlin.test.assertTrue
 
 class ParserTest {
@@ -103,6 +110,70 @@ class ParserTest {
         richText.text.computeToPlainText(stringBuffer, false)
         assertTrue(stringBuffer.toString() == "char_token_test <a></a> 233 哈哈✅🤣哈", "stringBuffer.toString() == \"char_token_test <a></a> 233 哈哈✅🤣哈\"")
         getTestPngFile("parser/text").writeBytes(snapshotElement.snapshot())
+    }
+
+    @Test
+    fun parser_instance_can_parse_multiple_documents() {
+        val parser = Parser()
+
+        val first = parser.parse(
+            StringReader("<Snapshot><Container width=\"10\" height=\"20\"/></Snapshot>")
+        )
+        val second = parser.parse(
+            StringReader("<Snapshot><Container width=\"30\" height=\"40\"/></Snapshot>")
+        )
+
+        assertNotSame(first, second)
+        assertEquals(10f, assertIs<Container>(first.createWidget()).width)
+        assertEquals(20f, assertIs<Container>(first.createWidget()).height)
+        assertEquals(30f, assertIs<Container>(second.createWidget()).width)
+        assertEquals(40f, assertIs<Container>(second.createWidget()).height)
+    }
+
+    @Test
+    fun parser_instance_recovers_after_failed_parse() {
+        val parser = Parser()
+
+        assertFailsWith<ParseException> {
+            parser.parse(StringReader("<Snapshot><Unknown/></Snapshot>"))
+        }
+
+        val recovered = parser.parse(
+            StringReader("<Snapshot><Container width=\"50\" height=\"60\"/></Snapshot>")
+        )
+        val widget = assertIs<Container>(recovered.createWidget())
+        assertEquals(50f, widget.width)
+        assertEquals(60f, widget.height)
+    }
+
+    @Test
+    fun parser_instance_serializes_concurrent_parse_calls() {
+        val parser = Parser()
+        val executor = Executors.newFixedThreadPool(4)
+        val start = CountDownLatch(1)
+
+        try {
+            val widths = 1..8
+            val futures = widths.map { width ->
+                executor.submit(Callable {
+                    start.await()
+                    assertIs<Container>(
+                        parser.parse(
+                            StringReader(
+                                "<Snapshot><Container width=\"$width\" height=\"10\"/></Snapshot>"
+                            )
+                        ).createWidget()
+                    )
+                })
+            }
+
+            start.countDown()
+            futures.zip(widths).forEach { (future, width) ->
+                assertEquals(width.toFloat(), future.get(10, TimeUnit.SECONDS).width)
+            }
+        } finally {
+            executor.shutdownNow()
+        }
     }
 
     companion object {
