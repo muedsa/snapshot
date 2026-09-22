@@ -1158,7 +1158,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 
 #### 枚举属性
 
-绝大多数枚举（`direction`、`fit`、`repeat`、`mainAxisAlignment`、`crossAxisAlignment`、`mainAxisSize`、`verticalDirection`、`textBaseline`、`baseline`、`blendMode`、`backgroundBlendMode`、`colorBlendMode`、`shape`、`clipBehavior`、`tileMode`、`position`、`textAlign`、`overflow`、`textWidthBasis`、`textHeightMode`、`alignment`（占位符）等）都用 `Enum.valueOf(str)`，即：
+绝大多数枚举（`direction`、`fit`、`repeat`、`mainAxisAlignment`、`crossAxisAlignment`、`mainAxisSize`、`verticalDirection`、`textBaseline`、`baseline`、`baselineMode`、`fontEdging`、`fontHinting`、`blendMode`、`backgroundBlendMode`、`colorBlendMode`、`shape`、`clipBehavior`、`tileMode`、`position`、`textAlign`、`overflow`、`textWidthBasis`、`textHeightMode`、`alignment`（占位符）等）都用 `Enum.valueOf(str)`，即：
 
 - **必须是源码里的精确常量名**（全大写 + 下划线）；
 - 大小写敏感，写错抛 `IllegalArgumentException`。
@@ -1548,6 +1548,14 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 | `fontSize` | float | 不设置 | |
 | `fontFamily` | string | 不设置 | 多个字体用**英文逗号**分隔，且**不做 trim**：`"A, B"` 的第二个字体名会带上前导空格 |
 | `fontStyle` | enum | 不设置 | `NORMAL`/`BOLD`/`ITALIC`/`BOLD_ITALIC` |
+| `height` | float | 不设置 | 行高倍数 |
+| `topRatio` | float | 不设置 | 基线在行高中的顶部比例 |
+| `letterSpacing` / `wordSpacing` | float | 不设置 | 字距 / 词距 |
+| `locale` | string | 不设置 | 语言区域，例如 `zh-CN`、`en-US` |
+| `baselineMode` | enum | 不设置 | `ALPHABETIC` / `IDEOGRAPHIC` |
+| `fontEdging` | enum | 不设置 | `ALIAS` / `ANTI_ALIAS` / `SUBPIXEL_ANTI_ALIAS` |
+| `fontHinting` | enum | 不设置 | `NONE` / `SLIGHT` / `NORMAL` / `FULL` |
+| `subpixel` | bool | 不设置 | 是否启用子像素定位；只有字符串 `true`（忽略大小写）表示启用 |
 | `textAlign` | enum | `START` | `LEFT`/`RIGHT`/`CENTER`/`JUSTIFY`/`START`/`END` |
 | `textDirection` | enum | `LTR` | `LTR`/`RTL`，同时影响 `START` 与 `END` 的实际方向 |
 | `softWrap` | bool | `true` | 是否按可用宽度自动换行 |
@@ -1556,7 +1564,7 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 | `textWidthBasis` | enum | `PARENT` | `PARENT`/`LONGESTLINE`，控制多行文本宽度的计算基准 |
 | `textHeightMode` | enum | 不设置 | `ALL`/`DISABLE_FIRST_ASCENT`/`DISABLE_LAST_DESCENT`/`DISABLE_ALL` |
 
-`<Text>` 可以嵌套 `<Text>`/`<Raw>`/`<Emoji>` 组成富文本；子 span 的样式会覆盖/继承父 span。布局类属性只作用于创建 `RichText` 的最外层 `<Text>`，嵌套 `<Text>` 仍只表示行内 span。
+`<Text>` 可以嵌套 `<Text>`/`<Raw>`/`<Emoji>` 组成富文本；子 span 的样式会覆盖/继承父 span。所有文本样式属性都可用于嵌套 `<Text>`，布局类属性只作用于创建 `RichText` 的最外层 `<Text>`，嵌套 `<Text>` 仍只表示行内 span。
 
 ```html
 <Text color="#FF0000" fontSize="40" textAlign="CENTER" maxLines="2" overflow="ELLIPSIS">Hello<Text color="#00FF00" fontSize="30"> World</Text></Text>
@@ -1564,7 +1572,7 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 
 #### `<Raw>`
 
-属性与 `<Text>` 完全相同（`text`、`color`、`fontSize`、`fontFamily`、`fontStyle`），区别只有一个：**文本不做 trim**，首尾空白与换行原样保留（源码里走 `parseTextSpan(raw = true)`）。仅可作为 `<Text>` 的子节点。
+支持与 `<Text>` 相同的 `text` 及全部文本样式属性，但不使用 `textAlign`、`softWrap`、`overflow` 等 `RichText` 布局属性。区别是 `<Raw>` 的文本**不做 trim**，首尾空白与换行原样保留（源码里走 `parseTextSpan(raw = true)`）。仅可作为 `<Text>` 的子节点。
 
 #### `<Emoji>`
 
