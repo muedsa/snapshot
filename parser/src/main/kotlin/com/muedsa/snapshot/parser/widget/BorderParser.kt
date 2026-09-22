@@ -25,15 +25,37 @@ open class BorderParser : WidgetParser {
 
     companion object {
 
-        fun parseBorderDecoration(element: Element): BoxDecoration {
-            val color = WidgetParser.parseAttrValue(CommonAttrDefine.COLOR_N, element.attrs)
-            val defaultBorder = WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_N, element.attrs) ?: BorderSide.NONE
-            val borderLeft = WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_LEFT_N, element.attrs) ?: defaultBorder
-            val borderTop = WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_TOP_N, element.attrs) ?: defaultBorder
+        fun parseBorderDecoration(element: Element, prefix: String = ""): BoxDecoration {
+            val color = WidgetParser.parseAttrValue(
+                CommonAttrDefine.COLOR_N.copyWith(prefixedName(prefix, CommonAttrDefine.COLOR_N.name)),
+                element.attrs
+            )
+            val defaultBorder = WidgetParser.parseAttrValue(
+                CommonAttrDefine.BORDER_N.copyWith(prefixedName(prefix, CommonAttrDefine.BORDER_N.name)),
+                element.attrs
+            ) ?: BorderSide.NONE
+            val borderLeft = WidgetParser.parseAttrValue(
+                CommonAttrDefine.BORDER_LEFT_N.copyWith(prefixedName(prefix, CommonAttrDefine.BORDER_LEFT_N.name)),
+                element.attrs
+            ) ?: defaultBorder
+            val borderTop = WidgetParser.parseAttrValue(
+                CommonAttrDefine.BORDER_TOP_N.copyWith(prefixedName(prefix, CommonAttrDefine.BORDER_TOP_N.name)),
+                element.attrs
+            ) ?: defaultBorder
             val borderRight =
-                WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_RIGHT_N, element.attrs) ?: defaultBorder
+                WidgetParser.parseAttrValue(
+                    CommonAttrDefine.BORDER_RIGHT_N.copyWith(
+                        prefixedName(prefix, CommonAttrDefine.BORDER_RIGHT_N.name)
+                    ),
+                    element.attrs
+                ) ?: defaultBorder
             val borderBottom =
-                WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_BOTTOM_N, element.attrs) ?: defaultBorder
+                WidgetParser.parseAttrValue(
+                    CommonAttrDefine.BORDER_BOTTOM_N.copyWith(
+                        prefixedName(prefix, CommonAttrDefine.BORDER_BOTTOM_N.name)
+                    ),
+                    element.attrs
+                ) ?: defaultBorder
 
             return BoxDecoration(
                 color = color,
@@ -43,25 +65,58 @@ open class BorderParser : WidgetParser {
                     right = borderRight,
                     bottom = borderBottom
                 ),
-                borderRadius = parseBorderRadius(element),
-                boxShadow = WidgetParser.parseAttrValue(CommonAttrDefine.BOX_SHADOW_N, element.attrs)
+                borderRadius = parseBorderRadius(element, prefix),
+                boxShadow = WidgetParser.parseAttrValue(
+                    CommonAttrDefine.BOX_SHADOW_N.copyWith(
+                        prefixedName(prefix, CommonAttrDefine.BOX_SHADOW_N.name)
+                    ),
+                    element.attrs
+                )
             )
         }
 
-        fun parseBorderRadius(element: Element): BorderRadius {
+        fun parseBorderRadius(element: Element, prefix: String = ""): BorderRadius {
             val defaultRadius =
-                WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_RADIUS_N, element.attrs) ?: Radius.ZERO
+                WidgetParser.parseAttrValue(
+                    CommonAttrDefine.BORDER_RADIUS_N.copyWith(
+                        prefixedName(prefix, CommonAttrDefine.BORDER_RADIUS_N.name)
+                    ),
+                    element.attrs
+                ) ?: Radius.ZERO
             return BorderRadius(
-                topLeft = WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_RADIUS_TOP_LEFT_N, element.attrs)
+                topLeft = WidgetParser.parseAttrValue(
+                    CommonAttrDefine.BORDER_RADIUS_TOP_LEFT_N.copyWith(
+                        prefixedName(prefix, CommonAttrDefine.BORDER_RADIUS_TOP_LEFT_N.name)
+                    ),
+                    element.attrs
+                )
                     ?: defaultRadius,
-                topRight = WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_RADIUS_TOP_RIGHT_N, element.attrs)
+                topRight = WidgetParser.parseAttrValue(
+                    CommonAttrDefine.BORDER_RADIUS_TOP_RIGHT_N.copyWith(
+                        prefixedName(prefix, CommonAttrDefine.BORDER_RADIUS_TOP_RIGHT_N.name)
+                    ),
+                    element.attrs
+                )
                     ?: defaultRadius,
-                bottomLeft = WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_RADIUS_BOTTOM_LEFT_N, element.attrs)
+                bottomLeft = WidgetParser.parseAttrValue(
+                    CommonAttrDefine.BORDER_RADIUS_BOTTOM_LEFT_N.copyWith(
+                        prefixedName(prefix, CommonAttrDefine.BORDER_RADIUS_BOTTOM_LEFT_N.name)
+                    ),
+                    element.attrs
+                )
                     ?: defaultRadius,
-                bottomRight = WidgetParser.parseAttrValue(CommonAttrDefine.BORDER_RADIUS_BOTTOM_RIGHT_N, element.attrs)
+                bottomRight = WidgetParser.parseAttrValue(
+                    CommonAttrDefine.BORDER_RADIUS_BOTTOM_RIGHT_N.copyWith(
+                        prefixedName(prefix, CommonAttrDefine.BORDER_RADIUS_BOTTOM_RIGHT_N.name)
+                    ),
+                    element.attrs
+                )
                     ?: defaultRadius,
             )
         }
+
+        private fun prefixedName(prefix: String, name: String): String =
+            if (prefix.isEmpty()) name else prefix + name.replaceFirstChar { it.uppercaseChar() }
 
         fun isNullBorder(boxDecoration: BoxDecoration): Boolean {
             var flag = when (val border = boxDecoration.border) {

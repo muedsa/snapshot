@@ -1197,8 +1197,17 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `border` / `borderLeft` / `borderTop` / `borderRight` / `borderBottom` | BorderSide | 不设置 | 边框 |
 | `borderRadius` / `borderRadiusTopLeft` / `borderRadiusTopRight` / `borderRadiusBottomLeft` / `borderRadiusBottomRight` | Radius | 不设置 | 圆角 |
 | `boxShadow` | BoxShadow | 不设置 | 阴影 |
+| `foregroundColor` | color | 不设置 | 在子节点之后绘制的前景颜色 |
+| `foregroundBorder` / `foregroundBorderLeft` / `foregroundBorderTop` / `foregroundBorderRight` / `foregroundBorderBottom` | BorderSide | 不设置 | 在子节点之后绘制的前景边框 |
+| `foregroundBorderRadius` / `foregroundBorderRadiusTopLeft` / `foregroundBorderRadiusTopRight` / `foregroundBorderRadiusBottomLeft` / `foregroundBorderRadiusBottomRight` | Radius | 不设置 | 前景装饰的圆角 |
+| `foregroundBoxShadow` | BoxShadow | 不设置 | 在子节点之后绘制的前景阴影 |
+| `transform` | Matrix44CMO | 不设置 | 16 个列主序浮点数组成的 4×4 变换矩阵，格式与 `<Transform matrix="...">` 相同 |
+| `transformAlignment` | alignment | 不设置 | 变换的对齐原点，仅在设置 `transform` 时生效 |
+| `clipBehavior` | enum | `NONE` | 子节点裁剪方式；非 `NONE` 时必须同时存在背景装饰 |
 
 子节点：最多 1 个。
+
+背景装饰与 `foreground*` 前景装饰相互独立；前景装饰会在子节点之后绘制。`clipBehavior` 使用背景装饰的路径裁剪子节点，因此设置为 `HARD_EDGE`、`ANTI_ALIAS` 或 `ANTI_ALIAS_WITH_SAVE_LAYER` 时，必须同时提供 `border`、`borderRadius` 或 `boxShadow` 等背景装饰属性。
 
 ```html
 <Container color="#FF00FF00" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
