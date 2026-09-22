@@ -1603,6 +1603,7 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 | `decorationThickness` | float | `1` | 装饰线粗细倍数，必须为有限正数；仅在设置 `decoration` 时可用 |
 | `decorationGaps` | bool | `true` | 装饰线是否避让字形；仅在设置 `decoration` 时可用 |
 | `textShadow` | 文本阴影列表 | 不设置 | 文本阴影；格式见下文。写 `NONE` 可显式取消继承的阴影 |
+| `fontFeatures` | OpenType 特性列表 | 不设置 | OpenType 字体特性；格式见下文。写 `NONE` 可显式取消继承的特性 |
 | `textAlign` | enum | `START` | `LEFT`/`RIGHT`/`CENTER`/`JUSTIFY`/`START`/`END` |
 | `textDirection` | enum | `LTR` | `LTR`/`RTL`，同时影响 `START` 与 `END` 的实际方向 |
 | `softWrap` | bool | `true` | 是否按可用宽度自动换行 |
@@ -1639,6 +1640,14 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 ```
 
 子 span 可通过 `textShadow="NONE"` 显式取消父级阴影；`NONE` 不能与其他阴影组合。
+
+OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英文字母或数字组成。`liga` 或 `+liga` 表示值 `1`，`-kern` 表示值 `0`，`tnum=2` 可指定非负整数值；还可使用 `smcp[2:8]` 把特性限制在指定字符范围，范围起点不能大于终点。
+
+```html
+<Text fontFeatures="+liga -kern tnum=2 smcp[2:8]">OpenType 1234</Text>
+```
+
+子 span 可通过 `fontFeatures="NONE"` 显式取消父级字体特性；`NONE` 不能与其他特性组合。字体是否实际支持某项特性取决于所选字体。
 
 #### `<Raw>`
 
@@ -1750,6 +1759,9 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 | `decoration="NONE"` 与其他装饰组合 | `Attr [decoration] value NONE can not be combined with other decorations` |
 | 文本阴影参数数量错误 | `Attr [textShadow] shadow must contain offsetX offsetY and optional blurSigma/color` |
 | `textShadow="NONE"` 与其他阴影组合 | `Attr [textShadow] value NONE can not be combined with other shadows` |
+| OpenType 特性格式错误 | `Can’t parse FontFeature: …` |
+| OpenType 特性范围倒置 | `Attr [fontFeatures] font feature range start must not exceed its end` |
+| `fontFeatures="NONE"` 与其他特性组合 | `Attr [fontFeatures] value NONE can not be combined with other font features` |
 
 **`snapshot()` 的渲染阶段（非 `ParseException`）**
 
