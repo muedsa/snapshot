@@ -18,42 +18,67 @@ class WidgetParserManager {
 
     operator fun get(tagId: String): WidgetParser? = tags[tagId]
 
+    /**
+     * 创建当前注册表的独立副本。
+     *
+     * 复制后的注册表可以安全地增删或替换标签，不会影响原注册表。
+     */
+    fun copy(): WidgetParserManager = WidgetParserManager().also { copy ->
+        tags.values.forEach(copy::register)
+    }
+
     companion object {
 
-        val DEFAULT_MANAGER: WidgetParserManager = WidgetParserManager().also {
-            it.register(SnapshotParser)
-            it.register(ContainerParser())
-            it.register(BorderParser())
-            it.register(ColoredBoxParser())
-            it.register(DecoratedBoxParser())
-            it.register(FlexParser())
-            it.register(RowParser())
-            it.register(ColumnParser())
-            it.register(ExpandedParser())
-            it.register(FlexibleParser())
-            it.register(StackParser())
-            it.register(PositionedParser())
-            it.register(SizedBoxParser())
-            it.register(ConstrainedBoxParser())
-            it.register(LimitedBoxParser())
-            it.register(OverflowBoxParser())
-            it.register(SizedOverflowBoxParser())
-            it.register(PaddingParser())
-            it.register(AlignParser())
-            it.register(CenterParser())
-            it.register(OpacityParser())
-            it.register(TransformParser())
-            it.register(ClipRectParser())
-            it.register(ClipOvalParser())
-            it.register(ClipRRectParser())
-            it.register(ColorFilteredParser())
-            it.register(ImageFilteredParser())
-            it.register(BackdropFilterParser())
-            it.register(ImageParser())
-            it.register(TextParser())
-            it.register(RawTextParser())
-            it.register(EmojiParser())
-            it.register(WidgetSpanParser())
+        private val DEFAULT_PARSER_FACTORIES: List<() -> WidgetParser> = listOf(
+            { SnapshotParser },
+            { ContainerParser() },
+            { BorderParser() },
+            { ColoredBoxParser() },
+            { DecoratedBoxParser() },
+            { FlexParser() },
+            { RowParser() },
+            { ColumnParser() },
+            { ExpandedParser() },
+            { FlexibleParser() },
+            { StackParser() },
+            { PositionedParser() },
+            { SizedBoxParser() },
+            { ConstrainedBoxParser() },
+            { LimitedBoxParser() },
+            { OverflowBoxParser() },
+            { SizedOverflowBoxParser() },
+            { PaddingParser() },
+            { AlignParser() },
+            { CenterParser() },
+            { OpacityParser() },
+            { TransformParser() },
+            { ClipRectParser() },
+            { ClipOvalParser() },
+            { ClipRRectParser() },
+            { ColorFilteredParser() },
+            { ImageFilteredParser() },
+            { BackdropFilterParser() },
+            { ImageParser() },
+            { TextParser() },
+            { RawTextParser() },
+            { EmojiParser() },
+            { WidgetSpanParser() },
+        )
+
+        /**
+         * 创建包含所有内置标签的新注册表。
+         *
+         * 每次调用都会创建独立的注册表和解析器实例，调用方的修改不会影响其他 Parser。
+         */
+        @JvmStatic
+        fun withDefaults(): WidgetParserManager = WidgetParserManager().also { manager ->
+            DEFAULT_PARSER_FACTORIES.forEach { factory -> manager.register(factory()) }
         }
+
+        @Deprecated(
+            message = "共享的默认注册表容易被意外修改，请改用 WidgetParserManager.withDefaults()",
+            replaceWith = ReplaceWith("WidgetParserManager.withDefaults()"),
+        )
+        val DEFAULT_MANAGER: WidgetParserManager = withDefaults()
     }
 }
