@@ -1051,10 +1051,11 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Border` | 单子 | `DecoratedBox(BoxDecoration(...))` | 只画装饰（边框/圆角/阴影） |
 | `ColoredBox` | 单子 | `ColoredBox` | 使用必填颜色填充子节点区域 |
 | `DecoratedBox` | 单子 | `DecoratedBox(BoxDecoration(...))` | 在子节点背景或前景绘制装饰 |
+| `Flex` | 多子 | `Flex` | 通过必填的 `direction` 选择水平或垂直主轴 |
 | `Row` | 多子 | `Row` | |
 | `Column` | 多子 | `Column` | |
-| `Expanded` | 单子 | `Expanded` | 只能作为 `Row` / `Column` 的直接子节点 |
-| `Flexible` | 单子 | `Flexible` | 只能作为 `Row` / `Column` 的直接子节点 |
+| `Expanded` | 单子 | `Expanded` | 只能作为 `Flex` / `Row` / `Column` 的直接子节点 |
+| `Flexible` | 单子 | `Flexible` | 只能作为 `Flex` / `Row` / `Column` 的直接子节点 |
 | `Opacity` | 单子 | `Opacity` | 调整子树透明度 |
 | `Transform` | 单子 | `Transform` | 使用 4×4 矩阵变换子树 |
 | `ClipRect` | 单子 | `ClipRect` | 按自身矩形范围裁剪子节点 |
@@ -1070,7 +1071,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Raw` | 多子（行内 span） | 无（仅作 `Text` 的子节点） | 原样文本，**不 trim** |
 | `Emoji` | **无子** | `ImageEmoji`（行内图片） | 只能作为 `Text` 的子节点 |
 
-**没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath` 等——解析器目前覆盖 31 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。滤镜标签目前只开放颜色混合与高斯模糊；滤镜矩阵、阴影、组合滤镜和运行时着色器仍需 Kotlin DSL。
+**没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath` 等——解析器目前覆盖 32 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。滤镜标签目前只开放颜色混合与高斯模糊；滤镜矩阵、阴影、组合滤镜和运行时着色器仍需 Kotlin DSL。
 
 ### 10.3 属性取值格式
 
@@ -1157,7 +1158,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 
 #### 枚举属性
 
-绝大多数枚举（`fit`、`repeat`、`mainAxisAlignment`、`crossAxisAlignment`、`mainAxisSize`、`verticalDirection`、`textBaseline`、`baseline`、`blendMode`、`backgroundBlendMode`、`colorBlendMode`、`shape`、`clipBehavior`、`tileMode`、`position`、`textAlign`、`overflow`、`textWidthBasis`、`textHeightMode`、`alignment`（占位符）等）都用 `Enum.valueOf(str)`，即：
+绝大多数枚举（`direction`、`fit`、`repeat`、`mainAxisAlignment`、`crossAxisAlignment`、`mainAxisSize`、`verticalDirection`、`textBaseline`、`baseline`、`blendMode`、`backgroundBlendMode`、`colorBlendMode`、`shape`、`clipBehavior`、`tileMode`、`position`、`textAlign`、`overflow`、`textWidthBasis`、`textHeightMode`、`alignment`（占位符）等）都用 `Enum.valueOf(str)`，即：
 
 - **必须是源码里的精确常量名**（全大写 + 下划线）；
 - 大小写敏感，写错抛 `IllegalArgumentException`。
@@ -1356,10 +1357,11 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 </DecoratedBox>
 ```
 
-#### `<Row>` / `<Column>`
+#### `<Flex>` / `<Row>` / `<Column>`
 
 | 属性 | 类型 | 默认 | 说明 |
 |---|---|---|---|
+| `direction` | enum | `<Flex>` 必填 | `HORIZONTAL` / `VERTICAL`；`Row` 与 `Column` 不使用此属性 |
 | `mainAxisAlignment` | enum | `START` | `START`/`END`/`CENTER`/`SPACE_BETWEEN`/`SPACE_AROUND`/`SPACE_EVENLY` |
 | `mainAxisSize` | enum | `MAX` | `MIN`/`MAX` |
 | `crossAxisAlignment` | enum | `CENTER` | `START`/`END`/`CENTER`/`STRETCH`/`BASELINE` |
@@ -1368,6 +1370,8 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `textBaseline` | enum | 不设置 | `ALPHABETIC`/`IDEOGRAPHIC`（`crossAxisAlignment="BASELINE"` 时需要） |
 | `clipBehavior` | enum | `NONE` | 内容溢出时的裁剪方式，取值见 `ClipBehavior` |
 
+`<Flex direction="HORIZONTAL">` 与 `<Row>` 等价，`<Flex direction="VERTICAL">` 与 `<Column>` 等价。`direction` 必须显式设置，适合需要由模板属性动态决定主轴的场景。
+
 #### `<Expanded>` / `<Flexible>`
 
 | 属性 | 适用标签 | 类型 | 默认 | 说明 |
@@ -1375,7 +1379,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `flex` | 两者 | int | `1` | 参与剩余空间分配的权重 |
 | `fit` | `Flexible` | enum | `LOOSE` | `TIGHT` 必须占满分配空间；`LOOSE` 最多占用分配空间 |
 
-两者都最多包含 1 个子节点，并且只能直接放在 `<Row>` 或 `<Column>` 中。`Expanded` 固定使用 `fit="TIGHT"`，不接受 `fit` 属性。
+两者都最多包含 1 个子节点，并且只能直接放在 `<Flex>`、`<Row>` 或 `<Column>` 中。`Expanded` 固定使用 `fit="TIGHT"`，不接受 `fit` 属性。
 
 ```html
 <SizedBox width="300" height="80">
