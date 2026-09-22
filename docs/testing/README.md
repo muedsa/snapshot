@@ -409,7 +409,7 @@ drawPainter("paint/text/text_metrics", width = 300f, height = 60f) { canvas -> .
 - **测试文件**:`core/src/test/kotlin/com/muedsa/snapshot/<area>/…Test.kt`,类名以 `Test` 结尾,包名匹配 `<area>` 目录。parser 测试在 `parser/src/test/...`;**框架自身的边界单测**在 `testkit/src/test/kotlin/com/muedsa/snapshot/`(如 `SamplingAssertionsBoundaryTest`,锁定采样/区域断言的边界语义)。
 - **golden 基准**:`core/src/test/resources/golden/<id>.png`,`<id>` 与测试包/文件层级呼应(`widget/clip_oval_green`、`paint/gradient/linear_two_stop`),测试与基准图**同一提交**原子入库。
 - **断言风格**:新/迁移测试统一 `kotlin.test`(`@Test`/`assertTrue`/`assertFailsWith`);不引入 `org.junit.jupiter`。
-- **标签例外**:`@Tag` 来自 `org.junit.jupiter.api`(kotlin.test 无标签注解)。现有两类:`sample`(样例再生成)与 `network`(依赖外网的用例,如网络图片缓存、`CachedNetworkImage`、含 `ImageEmojiSpan`/`<Emoji>` 的测试)。默认 `./gradlew test` **排除**这两类;显式运行用 `-PincludeSamples` / `-PincludeNetwork`(可同时给出,取并集)。
+- **标签例外**:`@Tag` 来自 `org.junit.jupiter.api`(kotlin.test 无标签注解)。现有两类:`sample`(样例再生成)与 `network`(确实访问外网的网络图片缓存、`CachedNetworkImage` 等用例)。可注入本地图片缓存的 `<Emoji>` 等测试应保持离线并进入默认测试。默认 `./gradlew test` **排除**这两类标签;显式运行用 `-PincludeSamples` / `-PincludeNetwork`(可同时给出,取并集)。
 - **无 `println`**:失败信息靠断言消息表达。
 - **确定性原则**(代码与文档一致):golden 只装"纯几何/渐变/本地位图/纯 shader"等可确定复现内容。
 
@@ -442,7 +442,7 @@ golden 失配自动抛 `AssertionError` 并落 actual/diff,本身就是失败路
 大部分纯解析测试不需要。若需要渲染解析产物(把解析结果画成图),parser 测试也已 `testImplementation(:testkit)`,同一套入口可用。
 
 **Q: CI 在意工作树被 test 弄脏?**
-仓库根有两个演示类(`Sample.kt`/`ParserSample.kt`)每次全量 test 会把示例 PNG 写到仓库根(既有行为)。CI 可用 `--tests` 排除演示类,或把其输出改到 build 目录(另见仓库 issues)。
+默认测试不会改写仓库根：所有样例/配图再生成器均标注为 `sample`，只有显式传入 `-PincludeSamples` 时才执行。普通测试如需保留人工检查图片，应写入模块的 `build/test-results/test-image-outputs/`；CI 还会通过 `git diff --exit-code` 检查测试后工作区是否干净。
 
 ---
 
