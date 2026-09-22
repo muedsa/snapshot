@@ -72,8 +72,16 @@ private fun Element.parseTextSpan(raw: Boolean = false): TextSpan {
     if (!raw) {
         text = text?.trim { it.isWhitespace() }?.trim()
     }
+    return TextSpan(
+        text = text,
+        style = parseTextStyle(),
+        initChildren = children.map { it.parseInlineSpan() }
+    )
+}
+
+private fun Element.parseTextStyle(): TextStyle? {
     val fontFamilyNames: List<String>? = WidgetParser.parseAttrValue(CommonAttrDefine.FONT_FAMILY_N, attrs)?.split(",")
-    val style = TextStyle(
+    return TextStyle(
         color = WidgetParser.parseAttrValue(CommonAttrDefine.COLOR_N, attrs),
         fontSize = WidgetParser.parseAttrValue(CommonAttrDefine.FONT_SIZE_N, attrs),
         fontFamilies = fontFamilyNames,
@@ -88,11 +96,6 @@ private fun Element.parseTextSpan(raw: Boolean = false): TextSpan {
         fontHinting = WidgetParser.parseAttrValue(TextParser.ATTR_FONT_HINTING, attrs),
         subpixel = WidgetParser.parseAttrValue(TextParser.ATTR_SUBPIXEL, attrs),
     ).takeUnless { it.isEmpty() }
-    return TextSpan(
-        text = text,
-        style = style,
-        initChildren = children.map { it.parseInlineSpan() }
-    )
 }
 
 private fun Element.parseEmojiSpan(): WidgetSpan {
@@ -127,11 +130,24 @@ private fun Element.parseEmojiSpan(): WidgetSpan {
     )
 }
 
+private fun Element.parseWidgetSpan(): WidgetSpan {
+    require(children.size == 1) {
+        "Tag WidgetSpan must have exactly one child element, but got ${children.size}"
+    }
+    return WidgetSpan(
+        alignment = WidgetParser.parseAttrValue(WidgetSpanParser.ATTR_ALIGNMENT, attrs),
+        baseline = WidgetParser.parseAttrValue(CommonAttrDefine.BASELINE_N, attrs),
+        style = parseTextStyle(),
+        child = children.single().createWidget(),
+    )
+}
+
 private fun Element.parseInlineSpan(): InlineSpan {
     return when (widgetParser) {
         is TextParser -> parseTextSpan(raw = false)
         is RawTextParser -> parseTextSpan(raw = true)
         is EmojiParser -> parseEmojiSpan()
+        is WidgetSpanParser -> parseWidgetSpan()
         else -> throw IllegalArgumentException("Unknown inline span type: ${widgetParser.id}")
     }
 }

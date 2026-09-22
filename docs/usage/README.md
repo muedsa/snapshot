@@ -1023,7 +1023,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | 阶段 | 做什么 | 会报什么错 |
 |---|---|---|
 | `parse()` | 词法分析 + 结构校验；**只有根标签 `<Snapshot>` 的属性**在这一阶段被解析校验 | 未知标签、重复属性、子节点数量违规、非文本标签里的文本、首标签不是 `Snapshot`、根标签属性格式错 |
-| `createWidget()` / `snapshot()` | 建 Widget 树，此时才解析**其余所有标签的属性** | 属性值格式错、缺少必填属性、`<Text>` 里的非法子标签、`<Raw>`/`<Emoji>` 用错位置 |
+| `createWidget()` / `snapshot()` | 建 Widget 树，此时才解析**其余所有标签的属性** | 属性值格式错、缺少必填属性、`<Text>` 里的非法子标签、`<Raw>`/`<Emoji>`/`<WidgetSpan>` 用错位置 |
 | `snapshot()` 的渲染阶段 | 布局 + 渲染 + 编码 | 根无子节点、布局尺寸为空/无限 |
 
 - `snapshot()` 与 `SnapshotPNG` 的差异：**`background` 默认透明**（`Color.TRANSPARENT`），且 Surface 固定为 CPU 光栅化。想要白底请在根标签写 `background="#FFFFFFFF"`。
@@ -1067,11 +1067,12 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Stack` | 多子 | `Stack` | |
 | `Positioned` | 单子 | `Positioned` | 只能放在 `Stack` 里 |
 | `Image` | **无子** | `CachedNetworkImage` | 网络图 |
-| `Text` | 多子（行内 span） | `RichText` | 子节点只能是 `Text`/`Raw`/`Emoji` |
+| `Text` | 多子（行内 span） | `RichText` | 子节点只能是 `Text`/`Raw`/`Emoji`/`WidgetSpan` |
 | `Raw` | 多子（行内 span） | 无（仅作 `Text` 的子节点） | 原样文本，**不 trim** |
 | `Emoji` | **无子** | `ImageEmoji`（行内图片） | 只能作为 `Text` 的子节点 |
+| `WidgetSpan` | **单子** | `WidgetSpan` | 把一个普通 Widget 嵌入文本，只能作为 `Text` 的子节点 |
 
-**没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath` 等——解析器目前覆盖 32 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。滤镜标签目前只开放颜色混合与高斯模糊；滤镜矩阵、阴影、组合滤镜和运行时着色器仍需 Kotlin DSL。
+**没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath` 等——解析器目前覆盖 33 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。滤镜标签目前只开放颜色混合与高斯模糊；滤镜矩阵、阴影、组合滤镜和运行时着色器仍需 Kotlin DSL。
 
 ### 10.3 属性取值格式
 
@@ -1604,7 +1605,7 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 | `textWidthBasis` | enum | `PARENT` | `PARENT`/`LONGESTLINE`，控制多行文本宽度的计算基准 |
 | `textHeightMode` | enum | 不设置 | `ALL`/`DISABLE_FIRST_ASCENT`/`DISABLE_LAST_DESCENT`/`DISABLE_ALL` |
 
-`<Text>` 可以嵌套 `<Text>`/`<Raw>`/`<Emoji>` 组成富文本；子 span 的样式会覆盖/继承父 span。所有文本样式属性都可用于嵌套 `<Text>`，布局类属性只作用于创建 `RichText` 的最外层 `<Text>`，嵌套 `<Text>` 仍只表示行内 span。
+`<Text>` 可以嵌套 `<Text>`/`<Raw>`/`<Emoji>`/`<WidgetSpan>` 组成富文本；子 span 的样式会覆盖/继承父 span。所有文本样式属性都可用于嵌套 `<Text>` 和 `<WidgetSpan>`，布局类属性只作用于创建 `RichText` 的最外层 `<Text>`，嵌套 `<Text>` 仍只表示行内 span。
 
 ```html
 <Text color="#FF0000" fontSize="40" textAlign="CENTER" maxLines="2" overflow="ELLIPSIS">Hello<Text color="#00FF00" fontSize="30"> World</Text></Text>
@@ -1613,6 +1614,25 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 #### `<Raw>`
 
 支持与 `<Text>` 相同的 `text` 及全部文本样式属性，但不使用 `textAlign`、`softWrap`、`overflow` 等 `RichText` 布局属性。区别是 `<Raw>` 的文本**不做 trim**，首尾空白与换行原样保留（源码里走 `parseTextSpan(raw = true)`）。仅可作为 `<Text>` 的子节点。
+
+#### `<WidgetSpan>`
+
+`<WidgetSpan>` 可以把任意一个可构建的普通 Widget 作为行内占位内容嵌入 `<Text>`。它必须且只能包含一个子标签，并且自身只能作为 `<Text>` 的子节点。
+
+| 属性 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `alignment` | enum | `BOTTOM` | `PlaceholderAlignment`：`BASELINE` / `ABOVE_BASELINE` / `BELOW_BASELINE` / `TOP` / `BOTTOM` / `MIDDLE` |
+| `baseline` | enum | 不设置 | `BaselineMode`：`ALPHABETIC` / `IDEOGRAPHIC` |
+| 文本样式属性 | 见 `<Text>` | 不设置 | 支持 `color`、`fontSize`、`fontFamily`、`fontStyle`、`height`、`topRatio`、字距、语言区域等；用于占位符样式及继承 |
+
+```html
+<Text fontSize="20">
+    价格
+    <WidgetSpan alignment="MIDDLE">
+        <Container width="40" height="24" color="#FFFF0000"/>
+    </WidgetSpan>
+</Text>
+```
 
 #### `<Emoji>`
 
@@ -1695,7 +1715,8 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 | 枚举名写错 | `Enum.valueOf` 抛出的 `IllegalArgumentException`（消息为常量名） |
 | `fontStyle` 取值非法 | `Unexpected font style XXX` |
 | `<Text>` 里出现非行内标签 | `Unknown inline span type: Xxx` |
-| `<Raw>`/`<Emoji>` 用在 `<Text>` 之外 | `Element [Raw] … can not buildWidget, it can only be used in the Text` |
+| `<Raw>`/`<Emoji>`/`<WidgetSpan>` 用在 `<Text>` 之外 | `Element [Raw] … can not buildWidget, it can only be used in the Text` |
+| `<WidgetSpan>` 没有子标签 | `Tag WidgetSpan must have exactly one child element, but got 0` |
 
 **`snapshot()` 的渲染阶段（非 `ParseException`）**
 
@@ -1792,7 +1813,7 @@ class MyTagParser : WidgetParser {
 
 - `containerMode`：`NONE`（不允许子节点）/ `SINGLE`（最多 1 个）/ `MULTIPLE`（任意个）；
 - 属性用 `AttrDefine` 描述（`DefaultValueAttrDefine` 有默认值、`required.AttrDefine` 必填），`WidgetParser.parseAttrValue(define, element.attrs)` 负责解析并把 `Throwable` 包装成带位置的 `ParseException`；
-- 若要新增"行内 span"类标签，需要同时改 `Element.parseInlineSpan()` 的分支（目前只认 `TextParser`/`RawTextParser`/`EmojiParser`）。
+- 若要新增"行内 span"类标签，需要同时改 `Element.parseInlineSpan()` 的分支（目前只认 `TextParser`/`RawTextParser`/`EmojiParser`/`WidgetSpanParser`）。
 
 ---
 

@@ -53,6 +53,7 @@ class WidgetParserManager {
             it.register(TextParser())
             it.register(RawTextParser())
             it.register(EmojiParser())
+            it.register(WidgetSpanParser())
         }
     }
 }
