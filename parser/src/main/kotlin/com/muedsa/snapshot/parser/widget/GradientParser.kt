@@ -31,33 +31,27 @@ object GradientParser {
     private val END_ANGLE = NullableFloatAttrDefine("gradientEndAngle")
     private val TILE_MODE = CommonAttrDefine.FILTER_TILE_MODE.copyWith("gradientTileMode")
 
-    private val ALL_ATTR_NAMES = listOf(
-        TYPE.name,
-        COLORS.name,
-        STOPS.name,
-        ROTATION.name,
-        BEGIN.name,
-        END.name,
-        CENTER.name,
-        RADIUS.name,
-        FOCAL.name,
-        FOCAL_RADIUS.name,
-        START_ANGLE.name,
-        END_ANGLE.name,
-        TILE_MODE.name,
+    private val TYPE_CONTRACT = RequiredAttributeContract(
+        TYPE,
+        COLORS,
+        STOPS,
+        ROTATION,
+        BEGIN,
+        END,
+        CENTER,
+        RADIUS,
+        FOCAL,
+        FOCAL_RADIUS,
+        START_ANGLE,
+        END_ANGLE,
+        TILE_MODE,
     )
+    private val FOCAL_CONTRACT = RequiredAttributeContract(FOCAL, FOCAL_RADIUS)
 
     fun parseGradient(element: Element, prefix: String = ""): Gradient? {
         val type = WidgetParser.parseAttrValue(TYPE.copyWith(prefixedName(prefix, TYPE.name)), element.attrs)
         if (type == null) {
-            val unexpectedName = ALL_ATTR_NAMES
-                .asSequence()
-                .drop(1)
-                .map { prefixedName(prefix, it) }
-                .firstOrNull(element.attrs::containsKey)
-            require(unexpectedName == null) {
-                "Attr [${prefixedName(prefix, TYPE.name)}] is required when [$unexpectedName] is specified"
-            }
+            TYPE_CONTRACT.validate(false, element.attrs) { prefixedName(prefix, it) }
             return null
         }
 
@@ -113,10 +107,7 @@ object GradientParser {
                     FOCAL.copyWith(prefixedName(prefix, FOCAL.name)),
                     element.attrs
                 )
-                require(focal != null || !element.attrs.containsKey(prefixedName(prefix, FOCAL_RADIUS.name))) {
-                    "Attr [${prefixedName(prefix, FOCAL.name)}] is required when " +
-                            "[${prefixedName(prefix, FOCAL_RADIUS.name)}] is specified"
-                }
+                FOCAL_CONTRACT.validate(focal != null, element.attrs) { prefixedName(prefix, it) }
                 val focalRadius = parseNonNegativeFloat(element, prefix, FOCAL_RADIUS, 0.5f)
                 RadialGradient(
                     center = WidgetParser.parseAttrValue(
