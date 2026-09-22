@@ -5,6 +5,7 @@ import com.muedsa.snapshot.paint.BoxFit
 import com.muedsa.snapshot.paint.ImageRepeat
 import com.muedsa.snapshot.paint.text.InlineSpan
 import com.muedsa.snapshot.paint.text.TextSpan
+import com.muedsa.snapshot.paint.text.TextStyle
 import com.muedsa.snapshot.parser.ContainerMode
 import com.muedsa.snapshot.parser.Element
 import com.muedsa.snapshot.parser.attr.BooleanAttrDefine
@@ -12,15 +13,18 @@ import com.muedsa.snapshot.parser.attr.CommonAttrDefine
 import com.muedsa.snapshot.parser.attr.ParagraphAlignmentAttrDefine
 import com.muedsa.snapshot.parser.attr.TextOverflowAttrDefine
 import com.muedsa.snapshot.parser.attr.TextWidthBasisAttrDefine
+import com.muedsa.snapshot.parser.attr.nullable.NullableBooleanAttrDefine
+import com.muedsa.snapshot.parser.attr.nullable.NullableFloatAttrDefine
+import com.muedsa.snapshot.parser.attr.nullable.NullableFontEdgingAttrDefine
+import com.muedsa.snapshot.parser.attr.nullable.NullableFontHintingAttrDefine
 import com.muedsa.snapshot.parser.attr.nullable.NullableHeightModeAttrDefine
 import com.muedsa.snapshot.parser.attr.nullable.NullableIntAttrDefine
+import com.muedsa.snapshot.parser.attr.nullable.NullableStringAttrDefine
 import com.muedsa.snapshot.widget.Widget
 import com.muedsa.snapshot.widget.text.ImageEmoji
 import com.muedsa.snapshot.widget.text.RichText
-import com.muedsa.snapshot.paint.text.TextStyle
 import com.muedsa.snapshot.widget.text.WidgetSpan
 import org.jetbrains.skia.BlendMode
-import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.PlaceholderAlignment
 
@@ -51,6 +55,15 @@ open class TextParser : WidgetParser {
         val ATTR_MAX_LINES = NullableIntAttrDefine("maxLines")
         val ATTR_TEXT_WIDTH_BASIS = TextWidthBasisAttrDefine("textWidthBasis")
         val ATTR_TEXT_HEIGHT_MODE = NullableHeightModeAttrDefine("textHeightMode")
+        val ATTR_HEIGHT = NullableFloatAttrDefine("height")
+        val ATTR_TOP_RATIO = NullableFloatAttrDefine("topRatio")
+        val ATTR_LETTER_SPACING = NullableFloatAttrDefine("letterSpacing")
+        val ATTR_WORD_SPACING = NullableFloatAttrDefine("wordSpacing")
+        val ATTR_LOCALE = NullableStringAttrDefine("locale")
+        val ATTR_BASELINE_MODE = CommonAttrDefine.BASELINE_N.copyWith("baselineMode")
+        val ATTR_FONT_EDGING = NullableFontEdgingAttrDefine("fontEdging")
+        val ATTR_FONT_HINTING = NullableFontHintingAttrDefine("fontHinting")
+        val ATTR_SUBPIXEL = NullableBooleanAttrDefine("subpixel")
     }
 }
 
@@ -59,17 +72,22 @@ private fun Element.parseTextSpan(raw: Boolean = false): TextSpan {
     if (!raw) {
         text = text?.trim { it.isWhitespace() }?.trim()
     }
-    val color: Int? = WidgetParser.parseAttrValue(CommonAttrDefine.COLOR_N, attrs)
-    val fontSize: Float? = WidgetParser.parseAttrValue(CommonAttrDefine.FONT_SIZE_N, attrs)
     val fontFamilyNames: List<String>? = WidgetParser.parseAttrValue(CommonAttrDefine.FONT_FAMILY_N, attrs)?.split(",")
-    val fontStyle: FontStyle? = WidgetParser.parseAttrValue(CommonAttrDefine.FONT_STYLE_N, attrs)
-    val style: TextStyle? = if (color != null || fontSize != null || !fontFamilyNames.isNullOrEmpty() || fontStyle != null)
-        TextStyle(
-            color = color,
-            fontSize = fontSize,
-            fontFamilies = fontFamilyNames,
-            fontStyle = fontStyle
-        ) else null
+    val style = TextStyle(
+        color = WidgetParser.parseAttrValue(CommonAttrDefine.COLOR_N, attrs),
+        fontSize = WidgetParser.parseAttrValue(CommonAttrDefine.FONT_SIZE_N, attrs),
+        fontFamilies = fontFamilyNames,
+        fontStyle = WidgetParser.parseAttrValue(CommonAttrDefine.FONT_STYLE_N, attrs),
+        height = WidgetParser.parseAttrValue(TextParser.ATTR_HEIGHT, attrs),
+        topRatio = WidgetParser.parseAttrValue(TextParser.ATTR_TOP_RATIO, attrs),
+        letterSpacing = WidgetParser.parseAttrValue(TextParser.ATTR_LETTER_SPACING, attrs),
+        wordSpacing = WidgetParser.parseAttrValue(TextParser.ATTR_WORD_SPACING, attrs),
+        locale = WidgetParser.parseAttrValue(TextParser.ATTR_LOCALE, attrs),
+        baselineMode = WidgetParser.parseAttrValue(TextParser.ATTR_BASELINE_MODE, attrs),
+        fontEdging = WidgetParser.parseAttrValue(TextParser.ATTR_FONT_EDGING, attrs),
+        fontHinting = WidgetParser.parseAttrValue(TextParser.ATTR_FONT_HINTING, attrs),
+        subpixel = WidgetParser.parseAttrValue(TextParser.ATTR_SUBPIXEL, attrs),
+    ).takeUnless { it.isEmpty() }
     return TextSpan(
         text = text,
         style = style,
