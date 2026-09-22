@@ -1048,7 +1048,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Padding` | 单子 | `Padding` | 为子节点添加内边距 |
 | `Align` | 单子 | `Align` | 对齐子节点，可按比例包裹 |
 | `Center` | 单子 | `Center` | 居中子节点，可按比例包裹 |
-| `Border` | 单子 | `DecoratedBox(BoxDecoration(...))` | 只画装饰（边框/圆角/阴影） |
+| `Border` | 单子 | `DecoratedBox(BoxDecoration(...))` | 只画装饰（颜色/边框/圆角/阴影/渐变） |
 | `ColoredBox` | 单子 | `ColoredBox` | 使用必填颜色填充子节点区域 |
 | `DecoratedBox` | 单子 | `DecoratedBox(BoxDecoration(...))` | 在子节点背景或前景绘制装饰 |
 | `Flex` | 多子 | `Flex` | 通过必填的 `direction` 选择水平或垂直主轴 |
@@ -1156,9 +1156,42 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 - `#color` 可省略（默认黑）；`blurMode` 取 `org.jetbrains.skia.FilterBlurMode` 的常量名（如 `NORMAL`）。
 - 每条阴影参数个数必须在 **2..6** 之间。
 
+#### 渐变属性
+
+背景装饰通过一组以 `gradient` 开头的属性声明渐变；用于 `<Container>` 前景装饰时，将每个属性改为 `foregroundGradient` 前缀，例如 `foregroundGradientType`、`foregroundGradientColors`。
+
+| 通用属性 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `gradientType` | enum | 不设置 | `LINEAR` / `RADIAL` / `SWEEP`；设置其他渐变属性时必填 |
+| `gradientColors` | color 列表 | **渐变必填** | 至少两种颜色，以英文逗号分隔；逗号两侧允许空白 |
+| `gradientStops` | float 列表 | 等距生成 | 数量必须与颜色一致，值须在 `0..1` 内并按升序排列 |
+| `gradientTileMode` | enum | `CLAMP` | `CLAMP` / `REPEAT` / `MIRROR` / `DECAL` |
+| `gradientRotation` | float | 不设置 | 围绕装饰中心旋转的弧度数 |
+
+各类型的专用属性：
+
+| 渐变类型 | 属性 | 默认 | 说明 |
+|---|---|---|---|
+| `LINEAR` | `gradientBegin` / `gradientEnd` | `CENTER_LEFT` / `CENTER_RIGHT` | 起点与终点对齐位置 |
+| `RADIAL` | `gradientCenter` / `gradientRadius` | `CENTER` / `0.5` | 圆心及相对短边的半径；半径必须大于 0 |
+| `RADIAL` | `gradientFocal` / `gradientFocalRadius` | 不设置 / `0.5` | 双点圆锥焦点；显式设置焦点半径时必须同时设置焦点 |
+| `SWEEP` | `gradientCenter` | `CENTER` | 扫描中心 |
+| `SWEEP` | `gradientStartAngle` / `gradientEndAngle` | `0` / `2π` | 起止弧度，起始值必须小于结束值 |
+
+不同类型的专用属性不能混用。示例：
+
+```html
+<Container width="320" height="120"
+           gradientType="LINEAR"
+           gradientColors="#FF6750A4, #FF03DAC6, #FFFFC107"
+           gradientStops="0, 0.55, 1"
+           gradientBegin="TOP_LEFT"
+           gradientEnd="BOTTOM_RIGHT"/>
+```
+
 #### 枚举属性
 
-绝大多数枚举（`direction`、`fit`、`repeat`、`mainAxisAlignment`、`crossAxisAlignment`、`mainAxisSize`、`verticalDirection`、`textBaseline`、`baseline`、`baselineMode`、`fontEdging`、`fontHinting`、`blendMode`、`backgroundBlendMode`、`colorBlendMode`、`shape`、`clipBehavior`、`tileMode`、`position`、`textAlign`、`overflow`、`textWidthBasis`、`textHeightMode`、`alignment`（占位符）等）都用 `Enum.valueOf(str)`，即：
+绝大多数枚举（`direction`、`fit`、`repeat`、`mainAxisAlignment`、`crossAxisAlignment`、`mainAxisSize`、`verticalDirection`、`textBaseline`、`baseline`、`baselineMode`、`fontEdging`、`fontHinting`、`gradientType`、`gradientTileMode`、`blendMode`、`backgroundBlendMode`、`colorBlendMode`、`shape`、`clipBehavior`、`tileMode`、`position`、`textAlign`、`overflow`、`textWidthBasis`、`textHeightMode`、`alignment`（占位符）等）都用 `Enum.valueOf(str)`，即：
 
 - **必须是源码里的精确常量名**（全大写 + 下划线）；
 - 大小写敏感，写错抛 `IllegalArgumentException`。
@@ -1199,13 +1232,19 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `borderRadius` / `borderRadiusTopLeft` / `borderRadiusTopRight` / `borderRadiusBottomLeft` / `borderRadiusBottomRight` | Radius | 不设置 | 圆角 |
 | `boxShadow` | BoxShadow | 不设置 | 阴影 |
 | `shape` | enum | `RECTANGLE` | 背景装饰形状：`RECTANGLE` / `CIRCLE`；圆形不能配合非零圆角 |
-| `backgroundBlendMode` | enum | 不设置 | 背景颜色的 Skia 混合模式；必须同时设置 `color` |
+| `backgroundBlendMode` | enum | 不设置 | 背景颜色或渐变的 Skia 混合模式；必须同时设置 `color` 或渐变 |
+| `gradientType` / `gradientColors` | enum / color 列表 | 不设置 | 背景渐变类型与颜色，完整属性见[渐变属性](#渐变属性) |
+| `gradientStops` / `gradientTileMode` / `gradientRotation` | 列表 / enum / float | 自动 / `CLAMP` / 不设置 | 背景渐变的色标、平铺和旋转 |
+| `gradientBegin` / `gradientEnd` | alignment | `CENTER_LEFT` / `CENTER_RIGHT` | 线性渐变参数 |
+| `gradientCenter` / `gradientRadius` / `gradientFocal` / `gradientFocalRadius` | alignment / float | 见渐变说明 | 径向渐变参数 |
+| `gradientStartAngle` / `gradientEndAngle` | float | `0` / `2π` | 扫描渐变参数，单位为弧度 |
 | `foregroundColor` | color | 不设置 | 在子节点之后绘制的前景颜色 |
 | `foregroundBorder` / `foregroundBorderLeft` / `foregroundBorderTop` / `foregroundBorderRight` / `foregroundBorderBottom` | BorderSide | 不设置 | 在子节点之后绘制的前景边框 |
 | `foregroundBorderRadius` / `foregroundBorderRadiusTopLeft` / `foregroundBorderRadiusTopRight` / `foregroundBorderRadiusBottomLeft` / `foregroundBorderRadiusBottomRight` | Radius | 不设置 | 前景装饰的圆角 |
 | `foregroundBoxShadow` | BoxShadow | 不设置 | 在子节点之后绘制的前景阴影 |
 | `foregroundShape` | enum | `RECTANGLE` | 前景装饰形状：`RECTANGLE` / `CIRCLE` |
-| `foregroundBackgroundBlendMode` | enum | 不设置 | 前景颜色的 Skia 混合模式；必须同时设置 `foregroundColor` |
+| `foregroundBackgroundBlendMode` | enum | 不设置 | 前景颜色或渐变的 Skia 混合模式 |
+| `foregroundGradient*` | 与背景渐变相同 | 不设置 | 前景渐变；将每个 `gradient*` 属性加上 `foreground` 前缀 |
 | `transform` | Matrix44CMO | 不设置 | 16 个列主序浮点数组成的 4×4 变换矩阵，格式与 `<Transform matrix="...">` 相同 |
 | `transformAlignment` | alignment | 不设置 | 变换的对齐原点，仅在设置 `transform` 时生效 |
 | `clipBehavior` | enum | `NONE` | 子节点裁剪方式；非 `NONE` 时必须同时存在背景装饰 |
@@ -1321,7 +1360,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 
 #### `<Border>`
 
-属性与 `<Container>` 的背景装饰类属性完全一致：`color`、`border`、`borderLeft/Top/Right/Bottom`、`borderRadius`、`borderRadius{Corner}`、`boxShadow`、`shape`、`backgroundBlendMode`。解析成 `DecoratedBox(decoration = BoxDecoration(...))`，**不支持** `width`/`height`/`padding` 等布局属性。
+属性与 `<Container>` 的背景装饰类属性完全一致：`color`、`border`、`borderLeft/Top/Right/Bottom`、`borderRadius`、`borderRadius{Corner}`、`boxShadow`、`shape`、`backgroundBlendMode` 及全套 `gradient*` 属性。解析成 `DecoratedBox(decoration = BoxDecoration(...))`，**不支持** `width`/`height`/`padding` 等布局属性。
 
 ```html
 <Border border="4 SOLID #FF2196F3" borderRadius="16" boxShadow="ELEVATION_4">
@@ -1348,7 +1387,8 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `borderRadius` / `borderRadiusTopLeft` / `borderRadiusTopRight` / `borderRadiusBottomLeft` / `borderRadiusBottomRight` | Radius | 不设置 | 圆角 |
 | `boxShadow` | BoxShadow | 不设置 | 阴影 |
 | `shape` | enum | `RECTANGLE` | `RECTANGLE` / `CIRCLE`；圆形不能配合非零圆角 |
-| `backgroundBlendMode` | enum | 不设置 | 背景颜色的 Skia 混合模式；必须同时设置 `color` |
+| `backgroundBlendMode` | enum | 不设置 | 背景颜色或渐变的 Skia 混合模式 |
+| `gradient*` | 见渐变说明 | 不设置 | 支持线性、径向和扫描渐变，完整格式见[渐变属性](#渐变属性) |
 | `position` | enum | `BACKGROUND` | `BACKGROUND` 在子节点之前绘制；`FOREGROUND` 在子节点之后绘制 |
 
 ```html
