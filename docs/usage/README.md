@@ -1157,7 +1157,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 
 #### 枚举属性
 
-绝大多数枚举（`fit`、`repeat`、`mainAxisAlignment`、`crossAxisAlignment`、`mainAxisSize`、`verticalDirection`、`textBaseline`、`baseline`、`blendMode`、`colorBlendMode`、`clipBehavior`、`tileMode`、`position`、`alignment`（占位符）等）都用 `Enum.valueOf(str)`，即：
+绝大多数枚举（`fit`、`repeat`、`mainAxisAlignment`、`crossAxisAlignment`、`mainAxisSize`、`verticalDirection`、`textBaseline`、`baseline`、`blendMode`、`colorBlendMode`、`clipBehavior`、`tileMode`、`position`、`textAlign`、`overflow`、`textWidthBasis`、`textHeightMode`、`alignment`（占位符）等）都用 `Enum.valueOf(str)`，即：
 
 - **必须是源码里的精确常量名**（全大写 + 下划线）；
 - 大小写敏感，写错抛 `IllegalArgumentException`。
@@ -1529,11 +1529,18 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 | `fontSize` | float | 不设置 | |
 | `fontFamily` | string | 不设置 | 多个字体用**英文逗号**分隔，且**不做 trim**：`"A, B"` 的第二个字体名会带上前导空格 |
 | `fontStyle` | enum | 不设置 | `NORMAL`/`BOLD`/`ITALIC`/`BOLD_ITALIC` |
+| `textAlign` | enum | `START` | `LEFT`/`RIGHT`/`CENTER`/`JUSTIFY`/`START`/`END` |
+| `textDirection` | enum | `LTR` | `LTR`/`RTL`，同时影响 `START` 与 `END` 的实际方向 |
+| `softWrap` | bool | `true` | 是否按可用宽度自动换行 |
+| `overflow` | enum | `CLIP` | `CLIP`/`FADE`/`ELLIPSIS`/`VISIBLE` |
+| `maxLines` | int | 不设置 | 最大行数；配合 `overflow="ELLIPSIS"` 可显示省略号 |
+| `textWidthBasis` | enum | `PARENT` | `PARENT`/`LONGESTLINE`，控制多行文本宽度的计算基准 |
+| `textHeightMode` | enum | 不设置 | `ALL`/`DISABLE_FIRST_ASCENT`/`DISABLE_LAST_DESCENT`/`DISABLE_ALL` |
 
-`<Text>` 可以嵌套 `<Text>`/`<Raw>`/`<Emoji>` 组成富文本；子 span 的样式会覆盖/继承父 span。
+`<Text>` 可以嵌套 `<Text>`/`<Raw>`/`<Emoji>` 组成富文本；子 span 的样式会覆盖/继承父 span。布局类属性只作用于创建 `RichText` 的最外层 `<Text>`，嵌套 `<Text>` 仍只表示行内 span。
 
 ```html
-<Text color="#FF0000" fontSize="40">Hello<Text color="#00FF00" fontSize="30"> World</Text></Text>
+<Text color="#FF0000" fontSize="40" textAlign="CENTER" maxLines="2" overflow="ELLIPSIS">Hello<Text color="#00FF00" fontSize="30"> World</Text></Text>
 ```
 
 #### `<Raw>`
@@ -1827,6 +1834,8 @@ EdgeInsets 必须写成 `"(1,2,3,4)"` 或 `"10"` 或 `"(1,2)"`，圆括号和逗
 | `FontStyle`（skiko） | `NORMAL` `BOLD` `ITALIC` `BOLD_ITALIC` |
 | `FilterBlurMode`（skiko） | `NORMAL` `SOLID` `OUTER` `INNER` |
 | `Direction`（skiko paragraph） | `LTR` `RTL` |
+| `Alignment`（skiko paragraph） | `LEFT` `RIGHT` `CENTER` `JUSTIFY` `START` `END` |
+| `HeightMode`（skiko paragraph） | `ALL` `DISABLE_FIRST_ASCENT` `DISABLE_LAST_DESCENT` `DISABLE_ALL` |
 | `BaselineMode`（skiko paragraph） | `ALPHABETIC` `IDEOGRAPHIC` |
 | `PlaceholderAlignment`（skiko paragraph） | `BASELINE` `ABOVE_BASELINE` `BELOW_BASELINE` `TOP` `BOTTOM` `MIDDLE` |
 
