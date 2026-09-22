@@ -993,7 +993,7 @@ painter.debugPaint(canvas, offset)        // 调试描边
 
 ```kotlin
 open class Parser(
-    protected var widgetParserManager: WidgetParserManager = WidgetParserManager.DEFAULT_MANAGER,
+    protected var widgetParserManager: WidgetParserManager = WidgetParserManager.withDefaults(),
 ) {
     @Synchronized
     fun parse(reader: Reader): SnapshotElement
@@ -1892,13 +1892,13 @@ File("out.png").writeBytes(Parser().parse(StringReader(text)).snapshot())
 
 ### 10.8 扩展：自定义标签
 
-`WidgetParserManager` 是可变的标签注册表，`Parser` 的构造参数是 `protected`，可以通过继承替换：
+`WidgetParserManager` 是可变的标签注册表。`Parser` 默认通过 `withDefaults()` 获得一份独立的内置标签表，
+因此修改某个 Parser 的注册表不会影响其他 Parser。构造参数是 `protected`，可以通过继承替换：
 
 ```kotlin
-// 复制一份内置标签表,再注册自己的标签 —— 不要直接往 DEFAULT_MANAGER 里 register(那是全局单例)
-val manager = WidgetParserManager().also { m ->
-    WidgetParserManager.DEFAULT_MANAGER.tags.values.forEach(m::register)
-    m.register(MyTagParser())
+// 创建一份独立的内置标签表，再注册或替换自己的标签。
+val manager = WidgetParserManager.withDefaults().also {
+    it.register(MyTagParser())
 }
 
 class MyParser : Parser(manager)
@@ -1914,6 +1914,8 @@ class MyTagParser : WidgetParser {
 要点：
 
 - `containerMode`：`NONE`（不允许子节点）/ `SINGLE`（最多 1 个）/ `MULTIPLE`（任意个）；
+- `withDefaults()` 每次返回独立注册表；`copy()` 可以复制已有注册表，后续增删互不影响；
+- `DEFAULT_MANAGER` 仅为兼容旧代码保留并已弃用，新代码不应直接修改或传递它；
 - 属性用 `AttrDefine` 描述（`DefaultValueAttrDefine` 有默认值、`required.AttrDefine` 必填），`WidgetParser.parseAttrValue(define, element.attrs)` 负责解析并把 `Throwable` 包装成带位置的 `ParseException`；
 - 若要新增"行内 span"类标签，需要同时改 `Element.parseInlineSpan()` 的分支（目前只认 `TextParser`/`RawTextParser`/`EmojiParser`/`WidgetSpanParser`）。
 

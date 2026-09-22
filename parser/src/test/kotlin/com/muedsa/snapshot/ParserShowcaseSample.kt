@@ -28,8 +28,7 @@ class ParserShowcaseSample {
     }
 
     companion object {
-        private val SHOWCASE_PARSER_MANAGER = WidgetParserManager().also { manager ->
-            WidgetParserManager.DEFAULT_MANAGER.tags.values.forEach(manager::register)
+        private val SHOWCASE_PARSER_MANAGER = WidgetParserManager.withDefaults().also { manager ->
             manager.register(BundledFontTextParser())
         }
 

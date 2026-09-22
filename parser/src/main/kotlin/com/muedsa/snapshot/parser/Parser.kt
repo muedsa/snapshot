@@ -8,7 +8,7 @@ import com.muedsa.snapshot.parser.widget.*
 import java.io.Reader
 
 open class Parser(
-    protected var widgetParserManager: WidgetParserManager = WidgetParserManager.DEFAULT_MANAGER,
+    protected var widgetParserManager: WidgetParserManager = WidgetParserManager.withDefaults(),
 ) {
 
     protected lateinit var reader: Reader
