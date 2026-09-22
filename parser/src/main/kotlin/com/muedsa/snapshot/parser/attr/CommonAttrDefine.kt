@@ -2,6 +2,7 @@ package com.muedsa.snapshot.parser.attr
 
 import com.muedsa.geometry.BoxAlignment
 import com.muedsa.snapshot.paint.ImageRepeat
+import com.muedsa.snapshot.paint.decoration.BoxShape
 import com.muedsa.snapshot.parser.attr.nullable.*
 import com.muedsa.snapshot.parser.attr.required.RequiredStringAttrDefine
 import com.muedsa.snapshot.rendering.ClipBehavior
@@ -60,6 +61,7 @@ object CommonAttrDefine {
         ClipBehaviorAttrDefine(name = "clipBehavior", defaultValue = ClipBehavior.ANTI_ALIAS)
     val FILTER_TILE_MODE: FilterTileModeAttrDefine =
         FilterTileModeAttrDefine(name = "tileMode", defaultValue = FilterTileMode.CLAMP)
+    val BOX_SHAPE: BoxShapeAttrDefine = BoxShapeAttrDefine(name = "shape", defaultValue = BoxShape.RECTANGLE)
     val COLOR: ColorAttrDefine = ColorAttrDefine(name = "color", defaultValue = Color.BLACK)
     val FONT_SIZE = FloatAttrDefine(name = "fontSize", defaultValue = 14f)
     val FONT_STYLE = FontStyleAttrDefine("fontStyle", defaultValue = FontStyle.NORMAL)
@@ -87,6 +89,7 @@ object CommonAttrDefine {
     val BASELINE_N: NullableBaselineAttrDefine = NullableBaselineAttrDefine("baseline")
     val FIT_N: NullableBoxFitAttrDefine = NullableBoxFitAttrDefine("fit")
     val BLEND_MODE_N: NullableBlendModeAttrDefine = NullableBlendModeAttrDefine("blendMode")
+    val BACKGROUND_BLEND_MODE_N: NullableBlendModeAttrDefine = NullableBlendModeAttrDefine("backgroundBlendMode")
     val FONT_FAMILY_N = NullableStringAttrDefine(name = "fontFamily")
     val BORDER_N: NullableBorderSideAttrDefine = NullableBorderSideAttrDefine("border")
     val BORDER_LEFT_N: NullableBorderSideAttrDefine = NullableBorderSideAttrDefine("borderLeft")
