@@ -2,9 +2,16 @@ package com.muedsa.snapshot.parser
 
 import com.muedsa.geometry.BoxAlignment
 import com.muedsa.geometry.EdgeInsets
-import com.muedsa.snapshot.getTestPngFile
+import com.muedsa.snapshot.expectColorAt
+import com.muedsa.snapshot.regionStats
+import com.muedsa.snapshot.snapshotPixels
+import com.muedsa.snapshot.testFontFamily
 import com.muedsa.snapshot.widget.Container
+import com.muedsa.snapshot.widget.RawImage
 import com.muedsa.snapshot.widget.text.RichText
+import org.jetbrains.skia.Color
+import org.jetbrains.skia.Image
+import org.jetbrains.skia.Rect
 import java.io.StringReader
 import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
@@ -43,7 +50,15 @@ class ParserTest {
         assertTrue(childContainer.color == 0xFFFF0000.toInt(), "childContainer.color == 0xFFFF0000.toInt()")
         assertTrue(childContainer.width == 100f, "childContainer.width == 100f")
         assertTrue(childContainer.height == 50f, "childContainer.height == 50f")
-        getTestPngFile("parser/container").writeBytes(snapshotElement.snapshot())
+        val encodedImage = Image.makeFromEncoded(snapshotElement.snapshot())
+        assertEquals(405, encodedImage.width)
+        assertEquals(310, encodedImage.height)
+        val pixels = snapshotPixels(background = Color.TRANSPARENT) {
+            RawImage(image = encodedImage)
+        }
+        expectColorAt(pixels, 0, 0, Color.WHITE)
+        expectColorAt(pixels, 5, 5, Color.GREEN)
+        expectColorAt(pixels, 200, 150, Color.RED)
     }
 
     @Test
@@ -95,7 +110,7 @@ class ParserTest {
         val text = """
             <Snapshot>
                 <Container width="400" height="300">
-                    <Text>char_to<![CDATA[ken_test <a></a> 233 哈哈]]>✅🤣哈</Text>
+                    <Text fontFamily="$testFontFamily">char_to<![CDATA[ken_test <a></a> 233 哈哈]]>✅🤣哈</Text>
                 </Container>
             </Snapshot>
         """.trimIndent()
@@ -108,8 +123,17 @@ class ParserTest {
         val richText: RichText = container.child as RichText
         val stringBuffer: StringBuffer = StringBuffer()
         richText.text.computeToPlainText(stringBuffer, false)
-        assertTrue(stringBuffer.toString() == "char_token_test <a></a> 233 哈哈✅🤣哈", "stringBuffer.toString() == \"char_token_test <a></a> 233 哈哈✅🤣哈\"")
-        getTestPngFile("parser/text").writeBytes(snapshotElement.snapshot())
+        assertEquals("char_token_test <a></a> 233 哈哈✅🤣哈", stringBuffer.toString())
+
+        val encodedImage = Image.makeFromEncoded(snapshotElement.snapshot())
+        assertEquals(400, encodedImage.width)
+        assertEquals(300, encodedImage.height)
+        val pixels = snapshotPixels(background = Color.TRANSPARENT) {
+            RawImage(image = encodedImage)
+        }
+        val stats = pixels.regionStats(Rect.makeWH(400f, 300f))
+        val inkPixels = stats.pixelCount - stats.transparentCount
+        assertTrue(inkPixels > 100, "解析后的中英文文本应产生可见墨迹，实际像素数为 $inkPixels")
     }
 
     @Test

@@ -1,169 +1,213 @@
 package com.muedsa.snapshot.parser.widget
 
 import com.muedsa.geometry.EdgeInsets
-import com.muedsa.snapshot.SnapshotPNG
-import com.muedsa.snapshot.getTestPngFile
 import com.muedsa.snapshot.paint.text.TextSpan
+import com.muedsa.snapshot.paint.text.TextStyle
 import com.muedsa.snapshot.parser.ParserTest
+import com.muedsa.snapshot.parser.SnapshotElement
 import com.muedsa.snapshot.parser.attr.CommonAttrDefine
 import com.muedsa.snapshot.parser.token.RawAttr
-import com.muedsa.snapshot.widget.*
+import com.muedsa.snapshot.snapshotPixels
+import com.muedsa.snapshot.testFontFamily
+import com.muedsa.snapshot.tools.NetworkImageCache
+import com.muedsa.snapshot.widget.Column
+import com.muedsa.snapshot.widget.Container
 import com.muedsa.snapshot.widget.text.RichText
 import com.muedsa.snapshot.widget.text.Text
-import com.muedsa.snapshot.paint.text.TextStyle
+import org.jetbrains.skia.Color
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.Image
-import org.junit.jupiter.api.Tag
-import kotlin.test.*
+import org.jetbrains.skia.Pixmap
+import org.jetbrains.skia.Surface
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
 class TextParserTest {
 
     @Test
-    fun parse_text_attr_test() {
-        CommonAttrDefine.TEXT.parseValue(RawAttr(CommonAttrDefine.TEXT.name, "123 123132✅1ada asda 🤣"))
-    }
-
-    @Test
-    fun buildWidget_test() {
-        val text = """
-            <Snapshot>
-                <Text color="#FFFF0000" 
-                    fontSize="12" 
-                    fontFamily="Noto Sans SC,WenQuanYi Micro Hei Mono" 
-                    fontStyle="BOLD"
-                >Hello Word! 你好，世界！</Text>
-            </Snapshot>
-        """.trimIndent()
-        val snapshotElement = ParserTest.parse(text)
-        val widget = snapshotElement.createWidget()
-        assertTrue(widget is RichText, "widget is RichText")
-        val richText: RichText = widget
-        assertTrue(richText.text is TextSpan, "richText.text is TextSpan")
-        val textSpan: TextSpan = widget.text as TextSpan
-        assertTrue(textSpan.style?.color == 0xFF_FF_00_00.toInt(), "textSpan.style?.color == 0xFF_FF_00_00.toInt()")
-        assertTrue(textSpan.style?.fontSize == 12f, "textSpan.style?.fontSize == 12f")
-        assertNotNull(textSpan.style?.fontFamilies)
-        assertTrue(textSpan.style?.fontFamilies?.size == 2, "textSpan.style?.fontFamilies?.size == 2")
-        assertTrue(textSpan.style?.fontFamilies!!.contains("Noto Sans SC"), "textSpan.style?.fontFamilies!!.contains(\"Noto Sans SC\")")
-        assertTrue(textSpan.style?.fontFamilies!!.contains("WenQuanYi Micro Hei Mono"), "textSpan.style?.fontFamilies!!.contains(\"WenQuanYi Micro Hei Mono\")")
-        assertTrue(textSpan.style?.fontStyle?.weight == FontStyle.BOLD.weight, "textSpan.style?.fontStyle?.weight == FontStyle.BOLD.weight")
-        assertTrue(textSpan.style?.fontStyle?.width == FontStyle.BOLD.width, "textSpan.style?.fontStyle?.width == FontStyle.BOLD.width")
-        assertTrue(textSpan.style?.fontStyle?.slant == FontStyle.BOLD.slant, "textSpan.style?.fontStyle?.slant == FontStyle.BOLD.slant")
-        assertTrue(textSpan.children.size == 1, "textSpan.children.size == 1")
-        assertTrue(textSpan.children[0] is TextSpan, "textSpan.children[0] is TextSpan")
-        val childTextSpan = textSpan.children[0] as TextSpan
-        assertTrue(childTextSpan.text == "Hello Word! 你好，世界！", "childTextSpan.text == \"Hello Word! 你好，世界！\"")
-    }
-
-    @Test
-    fun font_diff_test() {
-        val text = ("""
-                <Snapshot background="#FFFFFFFF">
-                    <Column>
-                        <Text color="#FFFF0000" 
-                              fontSize="32" 
-                              fontFamily="Noto Sans SC"
-                        >Hello Word! 你好，世界！</Text>
-                        <Text color="#FFFF0000" 
-                              fontSize="32"
-                        >Hello Word! 你好，世界！</Text>
-                    </Column>
-                </Snapshot>
-            """).trimIndent()
-        val snapshotElement = ParserTest.parse(text)
-        getTestPngFile("parser/text_diff_font").writeBytes(snapshotElement.snapshot())
-    }
-
-    @Test
-    fun text_diff_test() {
-        val text = ("""
-            <Snapshot background="#FFE59865" type="png">
-                <Container padding="20">
-                    <Column>
-                        <Text color="#FFFFFFFF" 
-                              fontSize="14" 
-                              fontFamily="Noto Sans SC"
-                        >鉴于对人类家庭所有成员的固有尊严及其平等的和不移的权利的承认,乃是世界自由、正义与和平的基础</Text>
-                        <Text color="#FFFFFFFF" 
-                              fontSize="14"
-                              fontFamily="Noto Sans SC"
-                        >This is parsed from dom</Text>
-                    </Column>
-                </Container>
-            </Snapshot>
-            """).trimIndent()
-        val snapshotElement = ParserTest.parse(text)
-        getTestPngFile("parser/text_diff").writeBytes(
-            SnapshotPNG {
-                Column {
-                    Container(
-                        color = 0xFF_E5_98_65.toInt(),
-                        padding = EdgeInsets.all(20f),
-                    ) {
-                        Column {
-                            Text(
-                                text = "鉴于对人类家庭所有成员的固有尊严及其平等的和不移的权利的承认,乃是世界自由、正义与和平的基础",
-                                style = TextStyle(
-                                    color = 0xFF_FF_FF_FF.toInt(),
-                                    fontSize = 14f,
-                                    fontFamilies = listOf("Noto Sans SC")
-                                )
-                            )
-                            Text(
-                                text = "This generated from code",
-                                style = TextStyle(
-                                    color = 0xFF_FF_FF_FF.toInt(),
-                                    fontSize = 14f,
-                                    fontFamilies = listOf("Noto Sans SC")
-                                )
-                            )
-                        }
-                    }
-                    Padding(
-                        padding = EdgeInsets.only(top = 20f),
-                    )
-                    RawImage(image = Image.makeFromEncoded(snapshotElement.snapshot()))
-                }
-            }
+    fun parses_required_text_attribute() {
+        val expected = "123 123132✅1ada asda 🤣"
+        assertEquals(
+            expected,
+            CommonAttrDefine.TEXT.parseValue(RawAttr(CommonAttrDefine.TEXT.name, expected)),
         )
     }
 
-
-    @Tag("network")
     @Test
-    fun rich_text_test() {
-        val text = """
+    fun parses_text_style_and_renders_bundled_font() {
+        val expectedText = "Hello World! 你好，世界！"
+        val widget = ParserTest.parse(
+            """
             <Snapshot>
-                <Text color="#FFFF0000" 
-                    fontSize="12" 
-                    fontFamily="Noto Sans SC,WenQuanYi Micro Hei Mono" 
-                    fontStyle="BOLD">
-                    Hello Word! 
-                    <Emoji url="http://i0.hdslb.com/bfs/garb/69c5565c2971bcc2298d0c6347ceed9012c32300.png@65w.webp"></Emoji>
-                    <Text color="#FFFF0000" 
-                        fontSize="20" 
-                        fontFamily="Noto Sans SC,WenQuanYi Micro Hei Mono" 
-                        fontStyle="BOLD">
-                        Hello Word! 
-                        <Emoji url="http://i0.hdslb.com/bfs/garb/69c5565c2971bcc2298d0c6347ceed9012c32300.png@65w.webp"></Emoji>
-                        <Text color="#FFFF0000" 
-                            fontSize="30" 
-                            fontFamily="Noto Sans SC,WenQuanYi Micro Hei Mono" 
-                            fontStyle="BOLD">
-                            Hello Word! 
-                            <Emoji url="http://i0.hdslb.com/bfs/garb/69c5565c2971bcc2298d0c6347ceed9012c32300.png@65w.webp"></Emoji>
-                            你好，世界！
-                        </Text>
-                        你好，世界！
-                    </Text>
-                    你好，世界！
-                    <Raw> 
-                        渲染原始文本
-                    </Raw>
-                </Text>
+                <Text color="#FFFF0000"
+                      fontSize="20"
+                      fontFamily="$testFontFamily"
+                      fontStyle="BOLD">$expectedText</Text>
             </Snapshot>
-        """.trimIndent()
-        val snapshotElement = ParserTest.parse(text)
-        getTestPngFile("parser/rich_text").writeBytes(snapshotElement.snapshot())
+            """.trimIndent()
+        ).createWidget()
+
+        val richText = assertIs<RichText>(widget)
+        val rootSpan = assertIs<TextSpan>(richText.text)
+        val style = requireNotNull(rootSpan.style)
+        assertEquals(Color.RED, style.color)
+        assertEquals(20f, style.fontSize)
+        assertEquals(listOf(testFontFamily), style.fontFamilies)
+        assertEquals(FontStyle.BOLD, style.fontStyle)
+
+        val plainText = StringBuffer()
+        rootSpan.computeToPlainText(plainText, includePlaceholders = false)
+        assertEquals(expectedText, plainText.toString())
+
+        val pixels = snapshotPixels(background = Color.TRANSPARENT) { attach(richText) }
+        val redInk = pixels.countPixels { color -> color.isReddish() }
+        assertTrue(redInk > 100, "内置字体应渲染出红色中英文墨迹，实际像素数为 $redInk")
+    }
+
+    @Test
+    fun parser_and_kotlin_dsl_render_the_same_text_scene() {
+        val chinese = "结构化文本与 Kotlin DSL 应生成一致的像素"
+        val english = "Parser rendering contract"
+        val parsedWidget = ParserTest.parse(
+            """
+            <Snapshot>
+                <Container color="#FFE59865" padding="20">
+                    <Column>
+                        <Text color="#FFFFFFFF" fontSize="18" fontFamily="$testFontFamily">$chinese</Text>
+                        <Text color="#FFFFFFFF" fontSize="14" fontFamily="$testFontFamily">$english</Text>
+                    </Column>
+                </Container>
+            </Snapshot>
+            """.trimIndent()
+        ).createWidget()
+
+        val parsedPixels = snapshotPixels(background = Color.TRANSPARENT) { attach(parsedWidget) }
+        val dslPixels = snapshotPixels(background = Color.TRANSPARENT) {
+            Container(
+                color = 0xFF_E5_98_65.toInt(),
+                padding = EdgeInsets.all(20f),
+            ) {
+                Column {
+                    Text(
+                        text = chinese,
+                        style = TextStyle(
+                            color = Color.WHITE,
+                            fontSize = 18f,
+                            fontFamilies = listOf(testFontFamily),
+                        ),
+                    )
+                    Text(
+                        text = english,
+                        style = TextStyle(
+                            color = Color.WHITE,
+                            fontSize = 14f,
+                            fontFamilies = listOf(testFontFamily),
+                        ),
+                    )
+                }
+            }
+        }
+
+        assertPixelsEqual(dslPixels, parsedPixels)
+    }
+
+    @Test
+    fun parses_nested_text_raw_and_emoji_without_network() {
+        val emojiImage = solidImage(Color.BLUE)
+        val cache = FixedImageCache(emojiImage)
+        val previousCacheBuilder = SnapshotElement.NETWORK_IMAGE_CACHE_BUILDER
+        SnapshotElement.NETWORK_IMAGE_CACHE_BUILDER = { cache }
+        try {
+            val widget = ParserTest.parse(
+                """
+                <Snapshot>
+                    <Text color="#FFFF0000" fontSize="20" fontFamily="$testFontFamily">
+                        第一层
+                        <Emoji url="https://example.invalid/emoji.png" width="18" height="18"/>
+                        <Text fontSize="24">第二层<Raw> 保留空格 </Raw></Text>
+                    </Text>
+                </Snapshot>
+                """.trimIndent()
+            ).createWidget()
+
+            val richText = assertIs<RichText>(widget)
+            assertEquals(1, richText.children.size)
+            val plainText = StringBuffer()
+            richText.text.computeToPlainText(plainText, includePlaceholders = false)
+            assertTrue(plainText.contains("第一层"))
+            assertTrue(plainText.contains("第二层 保留空格 "))
+            assertEquals(listOf("https://example.invalid/emoji.png" to false), cache.requests)
+
+            val pixels = snapshotPixels(background = Color.TRANSPARENT) { attach(richText) }
+            val redInk = pixels.countPixels { color -> color.isReddish() }
+            val bluePixels = pixels.countPixels { color -> color.isBlueish() }
+            assertTrue(redInk > 50, "嵌套文本应产生红色墨迹，实际像素数为 $redInk")
+            assertTrue(bluePixels > 100, "本地 emoji 应产生蓝色像素，实际像素数为 $bluePixels")
+        } finally {
+            SnapshotElement.NETWORK_IMAGE_CACHE_BUILDER = previousCacheBuilder
+        }
+    }
+
+    private fun assertPixelsEqual(expected: Pixmap, actual: Pixmap) {
+        assertEquals(expected.info.width, actual.info.width, "渲染宽度不一致")
+        assertEquals(expected.info.height, actual.info.height, "渲染高度不一致")
+        var mismatchCount = 0
+        for (y in 0 until expected.info.height) {
+            for (x in 0 until expected.info.width) {
+                if (expected.getColor(x, y) != actual.getColor(x, y)) mismatchCount++
+            }
+        }
+        assertEquals(0, mismatchCount, "Parser 与 Kotlin DSL 的渲染像素不一致")
+    }
+
+    private fun Pixmap.countPixels(predicate: (Int) -> Boolean): Int {
+        var count = 0
+        for (y in 0 until info.height) {
+            for (x in 0 until info.width) {
+                val color = getColor(x, y)
+                if (((color ushr 24) and 0xFF) != 0 && predicate(color)) count++
+            }
+        }
+        return count
+    }
+
+    private fun Int.isReddish(): Boolean {
+        val red = (this ushr 16) and 0xFF
+        val green = (this ushr 8) and 0xFF
+        val blue = this and 0xFF
+        return red > green + 60 && red > blue + 60
+    }
+
+    private fun Int.isBlueish(): Boolean {
+        val red = (this ushr 16) and 0xFF
+        val green = (this ushr 8) and 0xFF
+        val blue = this and 0xFF
+        return blue > red + 60 && blue > green + 60
+    }
+
+    private fun solidImage(color: Int): Image {
+        val surface = Surface.makeRasterN32Premul(8, 8)
+        surface.canvas.clear(color)
+        return surface.makeImageSnapshot()
+    }
+
+    private class FixedImageCache(private val image: Image) : NetworkImageCache {
+        override val name: String = "parser-test-fixed-image"
+        val requests = mutableListOf<Pair<String, Boolean>>()
+
+        override fun getImage(url: String, noCache: Boolean): Image {
+            requests += url to noCache
+            return image
+        }
+
+        override fun clearAll() = Unit
+
+        override fun clearImage(url: String) = Unit
+
+        override fun count(): Int = 1
+
+        override fun size(): Int = image.width * image.height * 4
     }
 }
