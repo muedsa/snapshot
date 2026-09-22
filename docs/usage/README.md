@@ -1597,6 +1597,9 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 | `fontEdging` | enum | 不设置 | `ALIAS` / `ANTI_ALIAS` / `SUBPIXEL_ANTI_ALIAS` |
 | `fontHinting` | enum | 不设置 | `NONE` / `SLIGHT` / `NORMAL` / `FULL` |
 | `subpixel` | bool | 不设置 | 是否启用子像素定位；只有字符串 `true`（忽略大小写）表示启用 |
+| `foregroundColor` | color | 不设置 | 创建文本前景画笔；设置后画笔会优先于普通 `color` 绘制字形 |
+| `foreground*` | 前景画笔参数 | Skiko 默认 | 控制填充/描边模式、笔触宽度与连接方式；属性见下文 |
+| `backgroundColor` | color | 不设置 | 创建纯色文本背景画笔 |
 | `decoration` | enum list | 不设置 | 文本装饰，英文逗号分隔：`UNDERLINE` / `OVERLINE` / `LINE_THROUGH`；`NONE` 表示显式取消继承的装饰且不能与其他值组合 |
 | `decorationColor` | color | `#FF000000` | 装饰线颜色；仅在设置 `decoration` 时可用 |
 | `decorationLineStyle` | enum | `SOLID` | `SOLID` / `DOUBLE` / `DOTTED` / `DASHED` / `WAVY`；仅在设置 `decoration` 时可用 |
@@ -1614,6 +1617,30 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 | `textHeightMode` | enum | 不设置 | `ALL`/`DISABLE_FIRST_ASCENT`/`DISABLE_LAST_DESCENT`/`DISABLE_ALL` |
 
 `<Text>` 可以嵌套 `<Text>`/`<Raw>`/`<Emoji>`/`<WidgetSpan>` 组成富文本；子 span 的样式会覆盖/继承父 span。所有文本样式属性都可用于嵌套 `<Text>` 和 `<WidgetSpan>`，布局类属性只作用于创建 `RichText` 的最外层 `<Text>`，嵌套 `<Text>` 仍只表示行内 span。
+
+文本前景与背景画笔属性：
+
+| 属性 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `foregroundColor` | color | 不设置 | 前景画笔颜色，同时也是使用其他 `foreground*` 参数的必填属性 |
+| `foregroundMode` | enum | Skiko 默认 | `FILL` / `STROKE` / `STROKE_AND_FILL` |
+| `foregroundStrokeWidth` | float | Skiko 默认 | 描边宽度，必须为非负有限数 |
+| `foregroundStrokeMiter` | float | Skiko 默认 | 尖角斜接限制，必须为有限正数 |
+| `foregroundStrokeCap` | enum | Skiko 默认 | `BUTT` / `ROUND` / `SQUARE` |
+| `foregroundStrokeJoin` | enum | Skiko 默认 | `MITER` / `ROUND` / `BEVEL` |
+| `foregroundAntiAlias` | bool | Skiko 默认 | 是否对前景画笔启用抗锯齿 |
+| `backgroundColor` | color | 不设置 | 文本运行区域的纯色背景 |
+
+```html
+<Text fontSize="40"
+      foregroundColor="#FFE53935"
+      foregroundMode="STROKE_AND_FILL"
+      foregroundStrokeWidth="2"
+      foregroundStrokeJoin="ROUND"
+      backgroundColor="#FFFFF59D">描边文字</Text>
+```
+
+若同时设置 `color` 与 `foregroundColor`，两者都会保存在 `TextStyle` 中，但 Skiko 使用前景画笔绘制字形。`foregroundMode` 等修饰参数不能脱离 `foregroundColor` 单独使用。当前 Parser 的背景画笔只开放纯色，以避免把着色器、图片滤镜等复杂对象混入文本属性格式。
 
 ```html
 <Text color="#FF0000" fontSize="40" textAlign="CENTER" maxLines="2" overflow="ELLIPSIS">Hello<Text color="#00FF00" fontSize="30"> World</Text></Text>
@@ -1790,6 +1817,8 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 | `fontFeatures="NONE"` 与其他特性组合 | `Attr [fontFeatures] value NONE can not be combined with other font features` |
 | Strut 字体族包含空项 | `Attr [strutFontFamily] contains an empty font family` |
 | Strut 字号或行高不是正数 | `Attr [strutFontSize] must be finite and positive` |
+| 前景修饰参数缺少颜色 | `Attr [foregroundColor] is required when [foregroundMode] is specified` |
+| 前景描边宽度为负数 | `Attr [foregroundStrokeWidth] must be finite and non-negative` |
 
 **`snapshot()` 的渲染阶段（非 `ParseException`）**
 
@@ -2001,6 +2030,9 @@ EdgeInsets 必须写成 `"(1,2,3,4)"` 或 `"10"` 或 `"(1,2)"`，圆括号和逗
 | `HeightMode`（skiko paragraph） | `ALL` `DISABLE_FIRST_ASCENT` `DISABLE_LAST_DESCENT` `DISABLE_ALL` |
 | `BaselineMode`（skiko paragraph） | `ALPHABETIC` `IDEOGRAPHIC` |
 | `PlaceholderAlignment`（skiko paragraph） | `BASELINE` `ABOVE_BASELINE` `BELOW_BASELINE` `TOP` `BOTTOM` `MIDDLE` |
+| `PaintMode`（skiko） | `FILL` `STROKE` `STROKE_AND_FILL` |
+| `PaintStrokeCap`（skiko） | `BUTT` `ROUND` `SQUARE` |
+| `PaintStrokeJoin`（skiko） | `MITER` `ROUND` `BEVEL` |
 
 ---
 
