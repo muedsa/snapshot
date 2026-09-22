@@ -7,7 +7,13 @@ import com.muedsa.snapshot.paint.text.InlineSpan
 import com.muedsa.snapshot.paint.text.TextSpan
 import com.muedsa.snapshot.parser.ContainerMode
 import com.muedsa.snapshot.parser.Element
+import com.muedsa.snapshot.parser.attr.BooleanAttrDefine
 import com.muedsa.snapshot.parser.attr.CommonAttrDefine
+import com.muedsa.snapshot.parser.attr.ParagraphAlignmentAttrDefine
+import com.muedsa.snapshot.parser.attr.TextOverflowAttrDefine
+import com.muedsa.snapshot.parser.attr.TextWidthBasisAttrDefine
+import com.muedsa.snapshot.parser.attr.nullable.NullableHeightModeAttrDefine
+import com.muedsa.snapshot.parser.attr.nullable.NullableIntAttrDefine
 import com.muedsa.snapshot.widget.Widget
 import com.muedsa.snapshot.widget.text.ImageEmoji
 import com.muedsa.snapshot.widget.text.RichText
@@ -26,11 +32,25 @@ open class TextParser : WidgetParser {
 
     override fun buildWidget(element: Element): Widget =
         RichText(
-            text = element.parseInlineSpan()
+            text = element.parseInlineSpan(),
+            textAlign = WidgetParser.parseAttrValue(ATTR_TEXT_ALIGN, element.attrs),
+            textDirection = WidgetParser.parseAttrValue(ATTR_TEXT_DIRECTION, element.attrs),
+            softWrap = WidgetParser.parseAttrValue(ATTR_SOFT_WRAP, element.attrs),
+            overflow = WidgetParser.parseAttrValue(ATTR_OVERFLOW, element.attrs),
+            maxLines = WidgetParser.parseAttrValue(ATTR_MAX_LINES, element.attrs),
+            textWidthBasis = WidgetParser.parseAttrValue(ATTR_TEXT_WIDTH_BASIS, element.attrs),
+            textHeightMode = WidgetParser.parseAttrValue(ATTR_TEXT_HEIGHT_MODE, element.attrs),
         )
 
     companion object {
         val ATTR_IMAGE_ALIGNMENT = CommonAttrDefine.ALIGNMENT.copyWith("imageAlignment")
+        val ATTR_TEXT_ALIGN = ParagraphAlignmentAttrDefine("textAlign")
+        val ATTR_TEXT_DIRECTION = CommonAttrDefine.DIRECTION.copyWith("textDirection")
+        val ATTR_SOFT_WRAP = BooleanAttrDefine("softWrap", defaultValue = true)
+        val ATTR_OVERFLOW = TextOverflowAttrDefine("overflow")
+        val ATTR_MAX_LINES = NullableIntAttrDefine("maxLines")
+        val ATTR_TEXT_WIDTH_BASIS = TextWidthBasisAttrDefine("textWidthBasis")
+        val ATTR_TEXT_HEIGHT_MODE = NullableHeightModeAttrDefine("textHeightMode")
     }
 }
 
