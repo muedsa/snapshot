@@ -15,6 +15,7 @@ import com.muedsa.snapshot.parser.attr.TextOverflowAttrDefine
 import com.muedsa.snapshot.parser.attr.TextWidthBasisAttrDefine
 import com.muedsa.snapshot.parser.attr.nullable.NullableBooleanAttrDefine
 import com.muedsa.snapshot.parser.attr.nullable.NullableDecorationLineStyleAttrDefine
+import com.muedsa.snapshot.parser.attr.nullable.NullableEnumAttrDefine
 import com.muedsa.snapshot.parser.attr.nullable.NullableFloatAttrDefine
 import com.muedsa.snapshot.parser.attr.nullable.NullableFontEdgingAttrDefine
 import com.muedsa.snapshot.parser.attr.nullable.NullableFontFeatureListAttrDefine
@@ -31,6 +32,10 @@ import com.muedsa.snapshot.widget.text.RichText
 import com.muedsa.snapshot.widget.text.WidgetSpan
 import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.Color
+import org.jetbrains.skia.Paint
+import org.jetbrains.skia.PaintMode
+import org.jetbrains.skia.PaintStrokeCap
+import org.jetbrains.skia.PaintStrokeJoin
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.DecorationLineStyle
 import org.jetbrains.skia.paragraph.DecorationStyle
@@ -89,6 +94,14 @@ open class TextParser : WidgetParser {
         val ATTR_STRUT_LEADING = NullableFloatAttrDefine("strutLeading")
         val ATTR_STRUT_HEIGHT_FORCED = NullableBooleanAttrDefine("strutHeightForced")
         val ATTR_STRUT_HEIGHT_OVERRIDDEN = NullableBooleanAttrDefine("strutHeightOverridden")
+        val ATTR_FOREGROUND_COLOR = CommonAttrDefine.COLOR_N.copyWith("foregroundColor")
+        val ATTR_FOREGROUND_MODE = NullableEnumAttrDefine("foregroundMode", PaintMode::valueOf)
+        val ATTR_FOREGROUND_STROKE_WIDTH = NullableFloatAttrDefine("foregroundStrokeWidth")
+        val ATTR_FOREGROUND_STROKE_MITER = NullableFloatAttrDefine("foregroundStrokeMiter")
+        val ATTR_FOREGROUND_STROKE_CAP = NullableEnumAttrDefine("foregroundStrokeCap", PaintStrokeCap::valueOf)
+        val ATTR_FOREGROUND_STROKE_JOIN = NullableEnumAttrDefine("foregroundStrokeJoin", PaintStrokeJoin::valueOf)
+        val ATTR_FOREGROUND_ANTI_ALIAS = NullableBooleanAttrDefine("foregroundAntiAlias")
+        val ATTR_BACKGROUND_COLOR = CommonAttrDefine.COLOR_N.copyWith("backgroundColor")
     }
 }
 
@@ -157,6 +170,8 @@ private fun Element.parseTextStyle(): TextStyle? {
     val fontFamilyNames: List<String>? = WidgetParser.parseAttrValue(CommonAttrDefine.FONT_FAMILY_N, attrs)?.split(",")
     return TextStyle(
         color = WidgetParser.parseAttrValue(CommonAttrDefine.COLOR_N, attrs),
+        foreground = parseForegroundPaint(),
+        background = parseBackgroundPaint(),
         decorationStyle = parseDecorationStyle(),
         shadows = WidgetParser.parseAttrValue(TextParser.ATTR_TEXT_SHADOW, attrs),
         fontFeatures = WidgetParser.parseAttrValue(TextParser.ATTR_FONT_FEATURES, attrs),
@@ -174,6 +189,51 @@ private fun Element.parseTextStyle(): TextStyle? {
         subpixel = WidgetParser.parseAttrValue(TextParser.ATTR_SUBPIXEL, attrs),
     ).takeUnless { it.isEmpty() }
 }
+
+private val FOREGROUND_MODIFIER_ATTR_NAMES = setOf(
+    TextParser.ATTR_FOREGROUND_MODE.name,
+    TextParser.ATTR_FOREGROUND_STROKE_WIDTH.name,
+    TextParser.ATTR_FOREGROUND_STROKE_MITER.name,
+    TextParser.ATTR_FOREGROUND_STROKE_CAP.name,
+    TextParser.ATTR_FOREGROUND_STROKE_JOIN.name,
+    TextParser.ATTR_FOREGROUND_ANTI_ALIAS.name,
+)
+
+private fun Element.parseForegroundPaint(): Paint? {
+    val color = WidgetParser.parseAttrValue(TextParser.ATTR_FOREGROUND_COLOR, attrs)
+    if (color == null) {
+        val unexpectedName = FOREGROUND_MODIFIER_ATTR_NAMES.firstOrNull(attrs::containsKey)
+        require(unexpectedName == null) {
+            "Attr [${TextParser.ATTR_FOREGROUND_COLOR.name}] is required when [$unexpectedName] is specified"
+        }
+        return null
+    }
+
+    return Paint().also { paint ->
+        paint.color = color
+        WidgetParser.parseAttrValue(TextParser.ATTR_FOREGROUND_MODE, attrs)?.let { paint.mode = it }
+        WidgetParser.parseAttrValue(TextParser.ATTR_FOREGROUND_STROKE_WIDTH, attrs)?.let { value ->
+            require(value.isFinite() && value >= 0f) {
+                "Attr [${TextParser.ATTR_FOREGROUND_STROKE_WIDTH.name}] must be finite and non-negative"
+            }
+            paint.strokeWidth = value
+        }
+        WidgetParser.parseAttrValue(TextParser.ATTR_FOREGROUND_STROKE_MITER, attrs)?.let { value ->
+            require(value.isFinite() && value > 0f) {
+                "Attr [${TextParser.ATTR_FOREGROUND_STROKE_MITER.name}] must be finite and positive"
+            }
+            paint.strokeMiter = value
+        }
+        WidgetParser.parseAttrValue(TextParser.ATTR_FOREGROUND_STROKE_CAP, attrs)?.let { paint.strokeCap = it }
+        WidgetParser.parseAttrValue(TextParser.ATTR_FOREGROUND_STROKE_JOIN, attrs)?.let { paint.strokeJoin = it }
+        WidgetParser.parseAttrValue(TextParser.ATTR_FOREGROUND_ANTI_ALIAS, attrs)?.let { paint.isAntiAlias = it }
+    }
+}
+
+private fun Element.parseBackgroundPaint(): Paint? =
+    WidgetParser.parseAttrValue(TextParser.ATTR_BACKGROUND_COLOR, attrs)?.let { color ->
+        Paint().also { it.color = color }
+    }
 
 private fun Element.parseDecorationStyle(): DecorationStyle? {
     val decoration = WidgetParser.parseAttrValue(TextParser.ATTR_DECORATION, attrs)
