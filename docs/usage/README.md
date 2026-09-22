@@ -1597,6 +1597,11 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 | `fontEdging` | enum | 不设置 | `ALIAS` / `ANTI_ALIAS` / `SUBPIXEL_ANTI_ALIAS` |
 | `fontHinting` | enum | 不设置 | `NONE` / `SLIGHT` / `NORMAL` / `FULL` |
 | `subpixel` | bool | 不设置 | 是否启用子像素定位；只有字符串 `true`（忽略大小写）表示启用 |
+| `decoration` | enum list | 不设置 | 文本装饰，英文逗号分隔：`UNDERLINE` / `OVERLINE` / `LINE_THROUGH`；`NONE` 表示显式取消继承的装饰且不能与其他值组合 |
+| `decorationColor` | color | `#FF000000` | 装饰线颜色；仅在设置 `decoration` 时可用 |
+| `decorationLineStyle` | enum | `SOLID` | `SOLID` / `DOUBLE` / `DOTTED` / `DASHED` / `WAVY`；仅在设置 `decoration` 时可用 |
+| `decorationThickness` | float | `1` | 装饰线粗细倍数，必须为有限正数；仅在设置 `decoration` 时可用 |
+| `decorationGaps` | bool | `true` | 装饰线是否避让字形；仅在设置 `decoration` 时可用 |
 | `textAlign` | enum | `START` | `LEFT`/`RIGHT`/`CENTER`/`JUSTIFY`/`START`/`END` |
 | `textDirection` | enum | `LTR` | `LTR`/`RTL`，同时影响 `START` 与 `END` 的实际方向 |
 | `softWrap` | bool | `true` | 是否按可用宽度自动换行 |
@@ -1610,6 +1615,19 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 ```html
 <Text color="#FF0000" fontSize="40" textAlign="CENTER" maxLines="2" overflow="ELLIPSIS">Hello<Text color="#00FF00" fontSize="30"> World</Text></Text>
 ```
+
+文本装饰示例：
+
+```html
+<Text color="#FF1565C0"
+      fontSize="36"
+      decoration="UNDERLINE,LINE_THROUGH"
+      decorationColor="#FFE53935"
+      decorationLineStyle="WAVY"
+      decorationThickness="1.5">带装饰的文本</Text>
+```
+
+只设置 `decorationColor` 等修饰参数而不设置 `decoration` 会抛出 `ParseException`。需要在子 span 中取消父级装饰时，应显式写 `decoration="NONE"`。
 
 #### `<Raw>`
 
@@ -1717,6 +1735,8 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 | `<Text>` 里出现非行内标签 | `Unknown inline span type: Xxx` |
 | `<Raw>`/`<Emoji>`/`<WidgetSpan>` 用在 `<Text>` 之外 | `Element [Raw] … can not buildWidget, it can only be used in the Text` |
 | `<WidgetSpan>` 没有子标签 | `Tag WidgetSpan must have exactly one child element, but got 0` |
+| 装饰修饰参数缺少 `decoration` | `Attr [decoration] is required when [decorationColor] is specified` |
+| `decoration="NONE"` 与其他装饰组合 | `Attr [decoration] value NONE can not be combined with other decorations` |
 
 **`snapshot()` 的渲染阶段（非 `ParseException`）**
 
@@ -1923,6 +1943,8 @@ EdgeInsets 必须写成 `"(1,2,3,4)"` 或 `"10"` 或 `"(1,2)"`，圆括号和逗
 | `FilterBlurMode`（skiko） | `NORMAL` `SOLID` `OUTER` `INNER` |
 | `Direction`（skiko paragraph） | `LTR` `RTL` |
 | `Alignment`（skiko paragraph） | `LEFT` `RIGHT` `CENTER` `JUSTIFY` `START` `END` |
+| 文本装饰（parser） | `NONE`，或用英文逗号组合 `UNDERLINE` `OVERLINE` `LINE_THROUGH` |
+| `DecorationLineStyle`（skiko paragraph） | `SOLID` `DOUBLE` `DOTTED` `DASHED` `WAVY` |
 | `HeightMode`（skiko paragraph） | `ALL` `DISABLE_FIRST_ASCENT` `DISABLE_LAST_DESCENT` `DISABLE_ALL` |
 | `BaselineMode`（skiko paragraph） | `ALPHABETIC` `IDEOGRAPHIC` |
 | `PlaceholderAlignment`（skiko paragraph） | `BASELINE` `ABOVE_BASELINE` `BELOW_BASELINE` `TOP` `BOTTOM` `MIDDLE` |
