@@ -82,6 +82,7 @@ open class BorderParser : WidgetParser {
                     ),
                     element.attrs
                 ),
+                gradient = GradientParser.parseGradient(element, prefix),
                 backgroundBlendMode = WidgetParser.parseAttrValue(
                     CommonAttrDefine.BACKGROUND_BLEND_MODE_N.copyWith(
                         prefixedName(prefix, CommonAttrDefine.BACKGROUND_BLEND_MODE_N.name)
