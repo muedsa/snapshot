@@ -30,19 +30,19 @@ open class ContainerParser : WidgetParser {
             )
         } else null
         val borderDecoration = BorderParser.parseBorderDecoration(element)
-        val hasBorder: Boolean = !BorderParser.isNullBorder(borderDecoration)
+        val hasDecoration = BorderParser.requiresBoxDecoration(borderDecoration)
         val foregroundDecoration = BorderParser.parseBorderDecoration(element, FOREGROUND_PREFIX)
         val hasForegroundDecoration = foregroundDecoration.color != null ||
-                !BorderParser.isNullBorder(foregroundDecoration)
+                BorderParser.requiresBoxDecoration(foregroundDecoration)
         return Container(
             alignment = WidgetParser.parseAttrValue(CommonAttrDefine.ALIGNMENT_N, element.attrs),
             padding = WidgetParser.parseAttrValue(CommonAttrDefine.PADDING_N, element.attrs),
-            color = if (hasBorder) null else WidgetParser.parseAttrValue(CommonAttrDefine.COLOR_N, element.attrs),
+            color = if (hasDecoration) null else WidgetParser.parseAttrValue(CommonAttrDefine.COLOR_N, element.attrs),
             width = WidgetParser.parseAttrValue(CommonAttrDefine.WIDTH_N, element.attrs),
             height = WidgetParser.parseAttrValue(CommonAttrDefine.HEIGHT_N, element.attrs),
             constraints = constraints,
             margin = WidgetParser.parseAttrValue(CommonAttrDefine.MARGIN_N, element.attrs),
-            decoration = if (hasBorder) borderDecoration else null,
+            decoration = if (hasDecoration) borderDecoration else null,
             foregroundDecoration = if (hasForegroundDecoration) foregroundDecoration else null,
             transform = WidgetParser.parseAttrValue(TRANSFORM, element.attrs),
             transformAlignment = WidgetParser.parseAttrValue(TRANSFORM_ALIGNMENT, element.attrs),

@@ -352,7 +352,7 @@ ProxyWidget(根)          →    (透传)
 
 > **关于"约束"这一列**：源码里有两类检查，强度完全不同——
 > - `check(...)` / `require(...)`：**始终生效**。违反即抛异常，例如 `Container` 的颜色/装饰互斥、`RichText` 不许嵌套、`MultiChildWidget` 不许重复子节点、`Matrix44CMO` 必须 16 个元素。
-> - `assert(...)`：**默认不生效**，只有 JVM 开了断言才会检查。本手册中标 `assert` 的位置——`Opacity` 的 `0f..1f`、`Positioned` 的位置组合、`Flex` 用 `BASELINE` 时必须给 `textBaseline`、`BoxDecoration.backgroundBlendMode` 需配 `color`/`gradient`、`BoxConstraints` 的 `min <= max`——在常规运行下**不会拦住你**，传错值只会静默产生奇怪布局。
+> - `assert(...)`：**默认不生效**，只有 JVM 开了断言才会检查。本手册中标 `assert` 的位置——`Opacity` 的 `0f..1f`、`Positioned` 的位置组合、`Flex` 用 `BASELINE` 时必须给 `textBaseline`、`BoxConstraints` 的 `min <= max`——在常规运行下**不会拦住你**，传错值只会静默产生奇怪布局。
 >
 > 注意 Gradle 的 `Test` 任务默认 `enableAssertions = true`，所以**跑测试时这些 assert 是会生效的**；IDE 直接跑需要自行勾选 "Enable assertions"，生产运行时需要 `-ea`。
 
@@ -732,7 +732,7 @@ BoxDecoration(
 )
 ```
 
-- `assert(backgroundBlendMode == null || color != null || gradient != null)`。
+- `require(backgroundBlendMode == null || color != null || gradient != null)`，混合模式必须配合底色或渐变使用。
 - `shape = CIRCLE` 时用内切圆作为裁剪路径（`getClipPath`）。
 
 配套类型：
@@ -1157,7 +1157,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 
 #### 枚举属性
 
-绝大多数枚举（`fit`、`repeat`、`mainAxisAlignment`、`crossAxisAlignment`、`mainAxisSize`、`verticalDirection`、`textBaseline`、`baseline`、`blendMode`、`colorBlendMode`、`clipBehavior`、`tileMode`、`position`、`textAlign`、`overflow`、`textWidthBasis`、`textHeightMode`、`alignment`（占位符）等）都用 `Enum.valueOf(str)`，即：
+绝大多数枚举（`fit`、`repeat`、`mainAxisAlignment`、`crossAxisAlignment`、`mainAxisSize`、`verticalDirection`、`textBaseline`、`baseline`、`blendMode`、`backgroundBlendMode`、`colorBlendMode`、`shape`、`clipBehavior`、`tileMode`、`position`、`textAlign`、`overflow`、`textWidthBasis`、`textHeightMode`、`alignment`（占位符）等）都用 `Enum.valueOf(str)`，即：
 
 - **必须是源码里的精确常量名**（全大写 + 下划线）；
 - 大小写敏感，写错抛 `IllegalArgumentException`。
@@ -1197,17 +1197,21 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `border` / `borderLeft` / `borderTop` / `borderRight` / `borderBottom` | BorderSide | 不设置 | 边框 |
 | `borderRadius` / `borderRadiusTopLeft` / `borderRadiusTopRight` / `borderRadiusBottomLeft` / `borderRadiusBottomRight` | Radius | 不设置 | 圆角 |
 | `boxShadow` | BoxShadow | 不设置 | 阴影 |
+| `shape` | enum | `RECTANGLE` | 背景装饰形状：`RECTANGLE` / `CIRCLE`；圆形不能配合非零圆角 |
+| `backgroundBlendMode` | enum | 不设置 | 背景颜色的 Skia 混合模式；必须同时设置 `color` |
 | `foregroundColor` | color | 不设置 | 在子节点之后绘制的前景颜色 |
 | `foregroundBorder` / `foregroundBorderLeft` / `foregroundBorderTop` / `foregroundBorderRight` / `foregroundBorderBottom` | BorderSide | 不设置 | 在子节点之后绘制的前景边框 |
 | `foregroundBorderRadius` / `foregroundBorderRadiusTopLeft` / `foregroundBorderRadiusTopRight` / `foregroundBorderRadiusBottomLeft` / `foregroundBorderRadiusBottomRight` | Radius | 不设置 | 前景装饰的圆角 |
 | `foregroundBoxShadow` | BoxShadow | 不设置 | 在子节点之后绘制的前景阴影 |
+| `foregroundShape` | enum | `RECTANGLE` | 前景装饰形状：`RECTANGLE` / `CIRCLE` |
+| `foregroundBackgroundBlendMode` | enum | 不设置 | 前景颜色的 Skia 混合模式；必须同时设置 `foregroundColor` |
 | `transform` | Matrix44CMO | 不设置 | 16 个列主序浮点数组成的 4×4 变换矩阵，格式与 `<Transform matrix="...">` 相同 |
 | `transformAlignment` | alignment | 不设置 | 变换的对齐原点，仅在设置 `transform` 时生效 |
 | `clipBehavior` | enum | `NONE` | 子节点裁剪方式；非 `NONE` 时必须同时存在背景装饰 |
 
 子节点：最多 1 个。
 
-背景装饰与 `foreground*` 前景装饰相互独立；前景装饰会在子节点之后绘制。`clipBehavior` 使用背景装饰的路径裁剪子节点，因此设置为 `HARD_EDGE`、`ANTI_ALIAS` 或 `ANTI_ALIAS_WITH_SAVE_LAYER` 时，必须同时提供 `border`、`borderRadius` 或 `boxShadow` 等背景装饰属性。
+背景装饰与 `foreground*` 前景装饰相互独立；前景装饰会在子节点之后绘制。`clipBehavior` 使用背景装饰的路径裁剪子节点，因此设置为 `HARD_EDGE`、`ANTI_ALIAS` 或 `ANTI_ALIAS_WITH_SAVE_LAYER` 时，必须同时提供边框、圆角、阴影、非默认形状或背景混合模式等需要构造 `BoxDecoration` 的属性；只有 `color` 时仍会使用轻量的纯色组件，不能作为裁剪路径。
 
 ```html
 <Container color="#FF00FF00" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
@@ -1316,7 +1320,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 
 #### `<Border>`
 
-属性与 `<Container>` 的装饰类属性完全一致：`color`、`border`、`borderLeft/Top/Right/Bottom`、`borderRadius`、`borderRadius{Corner}`、`boxShadow`。解析成 `DecoratedBox(decoration = BoxDecoration(...))`，**不支持** `width`/`height`/`padding` 等布局属性。
+属性与 `<Container>` 的背景装饰类属性完全一致：`color`、`border`、`borderLeft/Top/Right/Bottom`、`borderRadius`、`borderRadius{Corner}`、`boxShadow`、`shape`、`backgroundBlendMode`。解析成 `DecoratedBox(decoration = BoxDecoration(...))`，**不支持** `width`/`height`/`padding` 等布局属性。
 
 ```html
 <Border border="4 SOLID #FF2196F3" borderRadius="16" boxShadow="ELEVATION_4">
@@ -1342,6 +1346,8 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `border` / `borderLeft` / `borderTop` / `borderRight` / `borderBottom` | BorderSide | 不设置 | 边框 |
 | `borderRadius` / `borderRadiusTopLeft` / `borderRadiusTopRight` / `borderRadiusBottomLeft` / `borderRadiusBottomRight` | Radius | 不设置 | 圆角 |
 | `boxShadow` | BoxShadow | 不设置 | 阴影 |
+| `shape` | enum | `RECTANGLE` | `RECTANGLE` / `CIRCLE`；圆形不能配合非零圆角 |
+| `backgroundBlendMode` | enum | 不设置 | 背景颜色的 Skia 混合模式；必须同时设置 `color` |
 | `position` | enum | `BACKGROUND` | `BACKGROUND` 在子节点之前绘制；`FOREGROUND` 在子节点之后绘制 |
 
 ```html
