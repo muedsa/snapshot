@@ -22,6 +22,7 @@ import com.muedsa.snapshot.parser.attr.nullable.NullableHeightModeAttrDefine
 import com.muedsa.snapshot.parser.attr.nullable.NullableIntAttrDefine
 import com.muedsa.snapshot.parser.attr.nullable.NullableStringAttrDefine
 import com.muedsa.snapshot.parser.attr.nullable.NullableTextDecorationAttrDefine
+import com.muedsa.snapshot.parser.attr.nullable.NullableTextShadowAttrDefine
 import com.muedsa.snapshot.parser.attr.nullable.TextDecorationLine
 import com.muedsa.snapshot.widget.Widget
 import com.muedsa.snapshot.widget.text.ImageEmoji
@@ -75,6 +76,7 @@ open class TextParser : WidgetParser {
         val ATTR_DECORATION_LINE_STYLE = NullableDecorationLineStyleAttrDefine("decorationLineStyle")
         val ATTR_DECORATION_THICKNESS = NullableFloatAttrDefine("decorationThickness")
         val ATTR_DECORATION_GAPS = NullableBooleanAttrDefine("decorationGaps")
+        val ATTR_TEXT_SHADOW = NullableTextShadowAttrDefine("textShadow")
     }
 }
 
@@ -95,6 +97,7 @@ private fun Element.parseTextStyle(): TextStyle? {
     return TextStyle(
         color = WidgetParser.parseAttrValue(CommonAttrDefine.COLOR_N, attrs),
         decorationStyle = parseDecorationStyle(),
+        shadows = WidgetParser.parseAttrValue(TextParser.ATTR_TEXT_SHADOW, attrs),
         fontSize = WidgetParser.parseAttrValue(CommonAttrDefine.FONT_SIZE_N, attrs),
         fontFamilies = fontFamilyNames,
         fontStyle = WidgetParser.parseAttrValue(CommonAttrDefine.FONT_STYLE_N, attrs),

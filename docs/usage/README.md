@@ -1602,6 +1602,7 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 | `decorationLineStyle` | enum | `SOLID` | `SOLID` / `DOUBLE` / `DOTTED` / `DASHED` / `WAVY`；仅在设置 `decoration` 时可用 |
 | `decorationThickness` | float | `1` | 装饰线粗细倍数，必须为有限正数；仅在设置 `decoration` 时可用 |
 | `decorationGaps` | bool | `true` | 装饰线是否避让字形；仅在设置 `decoration` 时可用 |
+| `textShadow` | 文本阴影列表 | 不设置 | 文本阴影；格式见下文。写 `NONE` 可显式取消继承的阴影 |
 | `textAlign` | enum | `START` | `LEFT`/`RIGHT`/`CENTER`/`JUSTIFY`/`START`/`END` |
 | `textDirection` | enum | `LTR` | `LTR`/`RTL`，同时影响 `START` 与 `END` 的实际方向 |
 | `softWrap` | bool | `true` | 是否按可用宽度自动换行 |
@@ -1628,6 +1629,16 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 ```
 
 只设置 `decorationColor` 等修饰参数而不设置 `decoration` 会抛出 `ParseException`。需要在子 span 中取消父级装饰时，应显式写 `decoration="NONE"`。
+
+文本阴影使用 `offsetX offsetY [blurSigma] [color]`，多个阴影用英文逗号分隔。偏移量必须是有限浮点数，模糊 sigma 必须是非负有限数；未写模糊值时默认为 `0`，未写颜色时默认为黑色。可选的模糊值和颜色顺序不限，但同一阴影中不能重复。
+
+```html
+<Text color="#FF1565C0"
+      fontSize="36"
+      textShadow="3 4 1.5 #66000000,-2 0 #66E53935">多重文本阴影</Text>
+```
+
+子 span 可通过 `textShadow="NONE"` 显式取消父级阴影；`NONE` 不能与其他阴影组合。
 
 #### `<Raw>`
 
@@ -1737,6 +1748,8 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 | `<WidgetSpan>` 没有子标签 | `Tag WidgetSpan must have exactly one child element, but got 0` |
 | 装饰修饰参数缺少 `decoration` | `Attr [decoration] is required when [decorationColor] is specified` |
 | `decoration="NONE"` 与其他装饰组合 | `Attr [decoration] value NONE can not be combined with other decorations` |
+| 文本阴影参数数量错误 | `Attr [textShadow] shadow must contain offsetX offsetY and optional blurSigma/color` |
+| `textShadow="NONE"` 与其他阴影组合 | `Attr [textShadow] value NONE can not be combined with other shadows` |
 
 **`snapshot()` 的渲染阶段（非 `ParseException`）**
 
