@@ -1604,6 +1604,7 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 | `decorationGaps` | bool | `true` | 装饰线是否避让字形；仅在设置 `decoration` 时可用 |
 | `textShadow` | 文本阴影列表 | 不设置 | 文本阴影；格式见下文。写 `NONE` 可显式取消继承的阴影 |
 | `fontFeatures` | OpenType 特性列表 | 不设置 | OpenType 字体特性；格式见下文。写 `NONE` 可显式取消继承的特性 |
+| `strut*` | 段落支撑样式 | 不设置 | 控制最小行高和统一基线节奏；仅作用于最外层 `<Text>`，属性见下文 |
 | `textAlign` | enum | `START` | `LEFT`/`RIGHT`/`CENTER`/`JUSTIFY`/`START`/`END` |
 | `textDirection` | enum | `LTR` | `LTR`/`RTL`，同时影响 `START` 与 `END` 的实际方向 |
 | `softWrap` | bool | `true` | 是否按可用宽度自动换行 |
@@ -1648,6 +1649,31 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 ```
 
 子 span 可通过 `fontFeatures="NONE"` 显式取消父级字体特性；`NONE` 不能与其他特性组合。字体是否实际支持某项特性取决于所选字体。
+
+段落支撑样式对应 Skiko 的 `StrutStyle`，用于为每一行提供统一的最小字体度量。只要指定任意 `strut*` 属性就会创建并默认启用支撑样式，也可以显式写 `strutEnabled="false"` 暂停其效果。
+
+| 属性 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `strutEnabled` | bool | `true` | 指定任意 `strut*` 属性后的 Parser 默认值 |
+| `strutFontFamily` | string | Skiko 默认 | 多个字体族用英文逗号分隔，名称两侧空白会被移除 |
+| `strutFontStyle` | enum | Skiko 默认 | `NORMAL` / `BOLD` / `ITALIC` / `BOLD_ITALIC` |
+| `strutFontSize` | float | Skiko 默认 | 支撑字号，必须为有限正数 |
+| `strutHeight` | float | Skiko 默认 | 行高倍数，必须为有限正数 |
+| `strutLeading` | float | Skiko 默认 | 额外行距，必须为有限数值 |
+| `strutHeightForced` | bool | `false` | 是否强制所有行仅采用 Strut 高度 |
+| `strutHeightOverridden` | bool | `false` | 是否使用显式 `strutHeight` 覆盖字体度量 |
+
+```html
+<Text fontSize="16"
+      strutFontFamily="Noto Sans SC"
+      strutFontSize="24"
+      strutHeight="1.5"
+      strutHeightForced="true"
+      strutHeightOverridden="true">第一行
+第二行</Text>
+```
+
+这些属性与 `textAlign`、`maxLines` 等一样只作用于创建 `RichText` 的最外层 `<Text>`。当前 Skiko 快照虽然在 Kotlin API 中声明了 `StrutStyle.topRatio`，但运行时缺少对应原生符号，因此 Parser 暂不提供 `strutTopRatio`，以避免运行时发生 `UnsatisfiedLinkError`。
 
 #### `<Raw>`
 
@@ -1762,6 +1788,8 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 | OpenType 特性格式错误 | `Can’t parse FontFeature: …` |
 | OpenType 特性范围倒置 | `Attr [fontFeatures] font feature range start must not exceed its end` |
 | `fontFeatures="NONE"` 与其他特性组合 | `Attr [fontFeatures] value NONE can not be combined with other font features` |
+| Strut 字体族包含空项 | `Attr [strutFontFamily] contains an empty font family` |
+| Strut 字号或行高不是正数 | `Attr [strutFontSize] must be finite and positive` |
 
 **`snapshot()` 的渲染阶段（非 `ParseException`）**
 
