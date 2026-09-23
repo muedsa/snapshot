@@ -1120,7 +1120,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Image` | **无子** | `CachedNetworkImage` 或 `RawImage` | `url` 网络图，或 `dataUri` 内嵌图片 |
 | `Text` | 多子（行内 span） | `RichText` | 子节点只能是 `Text`/`Raw`/`Emoji`/`WidgetSpan` |
 | `Raw` | 多子（行内 span） | 无（仅作 `Text` 的子节点） | 原样文本，**不 trim** |
-| `Emoji` | **无子** | `ImageEmoji`（行内图片） | 只能作为 `Text` 的子节点 |
+| `Emoji` | **无子** | `ImageEmoji`（行内图片） | `url` 网络图或 `dataUri` 内嵌图片；只能作为 `Text` 的子节点 |
 | `WidgetSpan` | **单子** | `WidgetSpan` | 把一个普通 Widget 嵌入文本，只能作为 `Text` 的子节点 |
 
 **没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath` 等——解析器目前覆盖 38 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。滤镜标签目前只开放颜色混合与高斯模糊；滤镜矩阵、阴影、组合滤镜和运行时着色器仍需 Kotlin DSL。
@@ -1258,7 +1258,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 
 #### URL
 
-使用 `url` 图片来源时，解析属性会用 `java.net.URL(valueStr)` 做一次格式校验（只校验语法，不发起请求）。`<Emoji>` 仍要求 `url`；`<Image>` 可改用 `dataUri`。
+`<Image>` 与 `<Emoji>` 都必须且只能指定 `url` 或 `dataUri` 其中一个。使用 `url` 时，解析属性会用 `java.net.URL(valueStr)` 做一次格式校验（只校验语法，不发起请求）。
 
 ### 10.4 逐标签属性表
 
@@ -1699,7 +1699,7 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 <Image width="200" height="200" dataUri="data:image/png;base64,iVBORw0KGgo..." fit="CONTAIN"/>
 ```
 
-默认的 `SimpleDataUriImageDecoder` 只处理 PNG、JPEG、WebP 的 Base64 Data URI，调用 JDK Base64 与 Skia 解码，不访问本地文件或网络，也不提供额外限制与缓存。解码发生在 `createWidget()` / `snapshot()` 阶段；格式或图片数据错误会指向 `dataUri` 属性值。需要自行处理输入的应用可按 Parser 实例注入实现：
+`<Image>` 与 `<Emoji>` 共用同一个 `DataUriImageDecoder`。默认的 `SimpleDataUriImageDecoder` 只处理 PNG、JPEG、WebP 的 Base64 Data URI，调用 JDK Base64 与 Skia 解码，不访问本地文件或网络，也不提供额外限制与缓存。解码发生在 `createWidget()` / `snapshot()` 阶段；格式或图片数据错误会指向 `dataUri` 属性值。需要自行处理输入的应用可按 Parser 实例注入实现：
 
 ```kotlin
 val parser = Parser(dataUriImageDecoder = DataUriImageDecoder { dataUri ->
@@ -1857,7 +1857,8 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 
 | 属性 | 类型 | 必填 | 默认 | 说明 |
 |---|---|---|---|---|
-| `url` | url | **是** | — | emoji 图片地址 |
+| `url` | url | 二选一 | — | 网络图片地址；与 `dataUri` 不能同时指定 |
+| `dataUri` | string | 二选一 | — | `data:image/png;base64,...` 等内嵌图片；与 `url` 不能同时指定 |
 | `alignment` | enum | 否 | `BASELINE` | `PlaceholderAlignment`：`BASELINE` / `ABOVE_BASELINE` / `BELOW_BASELINE` / `TOP` / `BOTTOM` / `MIDDLE`（注意是**占位符对齐**，不是 `BoxAlignment`） |
 | `baseline` | enum | 否 | 不设置 | `BaselineMode`：`ALPHABETIC`/`IDEOGRAPHIC` |
 | `width` / `height` | float | 否 | 不设置 | 不给则按所在 span 的 `fontSize` 推导 |
@@ -1873,6 +1874,8 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 
 ```html
 <Text fontSize="40">你好<Emoji url="https://example.com/smile.png" width="40" height="40"/>世界</Text>
+<!-- Base64 内容仅作格式示意，请替换省略部分。 -->
+<Text fontSize="40">你好<Emoji dataUri="data:image/png;base64,iVBORw0KGgo..." width="40" height="40"/>世界</Text>
 ```
 
 ### 10.5 文本、空白与 CDATA
@@ -2119,7 +2122,7 @@ EdgeInsets 必须写成 `"(1,2,3,4)"` 或 `"10"` 或 `"(1,2)"`，圆括号和逗
 先确认属性名拼写与大小写。**未知属性会被静默忽略**；另外 Boolean 属性必须显式写 `"true"`。属性值的报错要到 `createWidget()`/`snapshot()` 阶段才会抛出，`parse()` 成功不代表文档完全合法。
 
 **Q：网络图加载是异步的吗？**
-不是。`CachedNetworkImage`、`<Image url="...">` 和 `<Emoji>` 在构建 Widget 时同步取图，缓存未命中时可能发起 HTTP 请求；`<Image dataUri="...">` 只解码内嵌图片，不发起网络请求。注意网络取图所在的线程与超时。
+不是。`CachedNetworkImage`、`<Image url="...">` 和 `<Emoji url="...">` 在构建 Widget 时同步取图，缓存未命中时可能发起 HTTP 请求；两种标签的 `dataUri` 来源只解码内嵌图片，不发起网络请求。注意网络取图所在的线程与超时。
 
 **Q：运行时怎么调试布局？**
 `Snapshot(..., debug = true)` 会画调试辅助（空盒灰块、`ClipPath` 的调试描边等）；更结构化地用 `layoutWidget { ... }` 拿到 `RenderBox` 树，或 `LayoutNode` 只读自省树。
