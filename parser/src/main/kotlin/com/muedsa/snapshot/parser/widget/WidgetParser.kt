@@ -25,12 +25,16 @@ interface WidgetParser {
             } catch (pex: ParseException) {
                 throw pex
             } catch (t: Throwable) {
-                if (rawAttr != null) throw ParseException(
-                    rawAttr.nameStartPos,
-                    t.message ?: "Parse attr [${attrDefine.name}] error",
-                    t
-                )
-                else throw t
+                if (rawAttr == null) throw t
+
+                val detail = t.message?.takeIf { it.isNotBlank() }
+                val message = if (detail?.startsWith("Attr [${attrDefine.name}]") == true) {
+                    detail
+                } else {
+                    "Attr [${attrDefine.name}] value is invalid" + (detail?.let { ": $it" } ?: "")
+                }
+                val position = rawAttr.valueStartPos.takeIf { it.hasSetting() } ?: rawAttr.nameStartPos
+                throw ParseException(position.copy(), message, t)
             }
         }
 
