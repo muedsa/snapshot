@@ -666,12 +666,12 @@ SnapshotPNG {
 | Widget | 必填 | 其余参数 |
 |---|---|---|
 | `RawImage(image: Image, ...)` | `image` | `width`, `height`, `fit`, `alignment`, `repeat`, `scale`, `opacity`, `color`, `colorBlendMode` |
-| `ProviderImage(provider: () -> Image, ...)` | `provider` | 与 `RawImage` 相同，只是把 `image` 换成惰性取图函数 |
+| `ProviderImage(provider: () -> Image, ...)` | `provider` | 与 `RawImage` 相同；构造 Widget 时立即调用 `provider` 一次取得图片，并非绘制时惰性取图 |
 | `CachedNetworkImage(url: String, ...)` | `url` | 与 `ProviderImage` 相同，另加 `noCache: Boolean = false`、`cache: NetworkImageCache = NetworkImageCacheManager.defaultCache` |
 
-参数默认值：`width = null`、`height = null`、`fit = null`、`alignment = BoxAlignment.CENTER`、`repeat = ImageRepeat.NO_REPEAT`、`scale = 1f`、`opacity = 1f`、`color = null`、`colorBlendMode = null`。
+参数默认值：`width = null`、`height = null`、`fit = null`、`alignment = BoxAlignment.CENTER`、`repeat = ImageRepeat.NO_REPEAT`、`scale = 1f`、`opacity = 1f`、`color = null`、`colorBlendMode = null`。`scale` 必须是大于 0 的有限数。
 
-尺寸规则：以 `constraints.tightFor(width, height)` 为基础，在父约束内**按原始宽高比**收缩（`constrainSizeAndAttemptToPreserveAspectRatio`）；`image` 为 `null` 时取最小尺寸。`fit` 为 `null` 时按 `BoxFit.FILL` 处理（拉伸铺满目标框；若同时给了 `centerSlice` 则按 `SCALE_DOWN`）。
+尺寸规则：以 `constraints.tightFor(width, height)` 为基础，在父约束内**按原始宽高比**收缩（`constrainSizeAndAttemptToPreserveAspectRatio`）；`image` 为 `null` 时取最小尺寸。`fit` 为 `null` 时按 `BoxFit.FILL` 处理（拉伸铺满目标框）；底层 `RenderImage` / `paintImage` 指定 `centerSlice` 时默认按 `SCALE_DOWN` 处理。
 
 ```kotlin
 SnapshotPNG {
@@ -874,7 +874,7 @@ CachedNetworkImage(url = url, noCache = true)
 
 注意事项：
 
-- **网络访问是同步阻塞的**：`provider` 在构建 Widget / 绘制布局时就会发起 HTTP 请求。请自行放在合适的线程上，并注意超时。
+- **网络访问是同步阻塞的**：`CachedNetworkImage` 通过 `ProviderImage` 在构造 Widget 时立即调用取图函数，缓存未命中时可能发起 HTTP 请求；不是等到布局或绘制时才加载。请自行放在合适的线程上，并注意超时。
 - `SimpleLimitedNetworkImageCache` 遇到 404 会抛 `IllegalStateException("Get http 404 from $url")`。
 - **解析器的限额是独立的**（`SnapshotElement` 的静态字段）：
 
