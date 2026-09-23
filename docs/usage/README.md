@@ -372,6 +372,7 @@ ProxyWidget(根)          →    (透传)
 | `Align` / `Center` | 单 | 对齐（`Center` = 居中版 `Align`） |
 | `Flex` / `Row` / `Column` | 多 | 一维弹性布局 |
 | `Expanded` / `Flexible` | 单 | Flex 子项伸缩参数（**只能放在 Flex/Row/Column 里**） |
+| `Spacer` | — | 在 Flex/Row/Column 主轴上按权重占用剩余空间，不绘制内容 |
 | `Stack` | 多 | 层叠布局 |
 | `IndexedStack` | 多 | 布局全部子节点，只绘制指定索引的子节点 |
 | `Positioned` | 单 | Stack 子项定位（**只能放在 Stack 或 IndexedStack 里**） |
@@ -521,25 +522,28 @@ fun Widget.Row(
 | `textBaseline` | `null` | `crossAxisAlignment = BASELINE` 时**必须**给（否则 `assert` 失败） |
 | `clipBehavior` | `NONE` | 溢出时是否裁剪 |
 
-#### Expanded / Flexible
+#### Expanded / Flexible / Spacer
 
 ```kotlin
 fun Flex.Expanded(flex: Int = 1, content: Expanded.() -> Unit = {})     // FlexFit.TIGHT
 fun Flex.Flexible(flex: Int = 1, fit: FlexFit = FlexFit.LOOSE, content: Flexible.() -> Unit = {})
+fun Flex.Spacer(flex: Int = 1)
 ```
 
-接收者是 `Flex`，所以**只能出现在 `Row`/`Column`/`Flex` 的直接子位置**。`flex` 是剩余空间的分配权重；`TIGHT` 表示必须占满分配到的空间，`LOOSE` 表示"至多"那么多。
+接收者是 `Flex`，所以**只能出现在 `Row`/`Column`/`Flex` 的直接子位置**。`flex` 是剩余空间的分配权重；`TIGHT` 表示必须占满分配到的空间，`LOOSE` 表示"至多"那么多。`Spacer` 不接受子节点，相当于占满分配空间但不绘制内容；其 `flex` 必须是正整数。
 
 ```kotlin
 SnapshotPNG {
     SizedBox(width = 300f, height = 60f) {
         Row {
-            Expanded { Container(color = Color.RED) }        // 占 1/3
+            Expanded { Container(color = Color.RED) }             // 占 1/3
             Expanded(flex = 2) { Container(color = Color.GREEN) } // 占 2/3
         }
     }
 }
 ```
+
+若只需要留白，可以在 `Row` 或 `Column` 中直接使用 `Spacer()`；例如两个固定宽度各为 `60` 的子项放进宽度为 `300` 的 `Row` 时，`Spacer()` 与 `Spacer(flex = 2)` 分别占剩余 `180` 的 `60` 和 `120`。
 
 #### Stack / IndexedStack / Positioned
 
@@ -1094,6 +1098,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Column` | 多子 | `Column` | |
 | `Expanded` | 单子 | `Expanded` | 只能作为 `Flex` / `Row` / `Column` 的直接子节点 |
 | `Flexible` | 单子 | `Flexible` | 只能作为 `Flex` / `Row` / `Column` 的直接子节点 |
+| `Spacer` | **无子** | `Spacer` | 按权重占用 Flex 主轴的剩余空间 |
 | `Opacity` | 单子 | `Opacity` | 调整子树透明度 |
 | `Transform` | 单子 | `Transform` | 使用 4×4 矩阵变换子树 |
 | `ClipRect` | 单子 | `ClipRect` | 按自身矩形范围裁剪子节点 |
@@ -1111,7 +1116,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Emoji` | **无子** | `ImageEmoji`（行内图片） | 只能作为 `Text` 的子节点 |
 | `WidgetSpan` | **单子** | `WidgetSpan` | 把一个普通 Widget 嵌入文本，只能作为 `Text` 的子节点 |
 
-**没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath` 等——解析器目前覆盖 36 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。滤镜标签目前只开放颜色混合与高斯模糊；滤镜矩阵、阴影、组合滤镜和运行时着色器仍需 Kotlin DSL。
+**没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath` 等——解析器目前覆盖 37 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。滤镜标签目前只开放颜色混合与高斯模糊；滤镜矩阵、阴影、组合滤镜和运行时着色器仍需 Kotlin DSL。
 
 ### 10.3 属性取值格式
 
@@ -1485,14 +1490,14 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 
 `<Flex direction="HORIZONTAL">` 与 `<Row>` 等价，`<Flex direction="VERTICAL">` 与 `<Column>` 等价。`direction` 必须显式设置，适合需要由模板属性动态决定主轴的场景。
 
-#### `<Expanded>` / `<Flexible>`
+#### `<Expanded>` / `<Flexible>` / `<Spacer>`
 
 | 属性 | 适用标签 | 类型 | 默认 | 说明 |
 |---|---|---|---|---|
-| `flex` | 两者 | int | `1` | 参与剩余空间分配的权重 |
+| `flex` | 三者 | int | `1` | 参与剩余空间分配的权重；`Spacer` 要求正整数 |
 | `fit` | `Flexible` | enum | `LOOSE` | `TIGHT` 必须占满分配空间；`LOOSE` 最多占用分配空间 |
 
-两者都最多包含 1 个子节点，并且只能直接放在 `<Flex>`、`<Row>` 或 `<Column>` 中。`Expanded` 固定使用 `fit="TIGHT"`，不接受 `fit` 属性。
+三者都只能直接放在 `<Flex>`、`<Row>` 或 `<Column>` 中。`Expanded` 和 `Flexible` 最多包含 1 个子节点；`Spacer` 没有子节点且不绘制内容。`Expanded` 与 `Spacer` 固定使用 `TIGHT`，不接受 `fit` 属性。
 
 ```html
 <SizedBox width="300" height="80">
@@ -1506,6 +1511,8 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
     </Row>
 </SizedBox>
 ```
+
+需要在两个固定宽度的子项之间留白时，可写成 `<Row><SizedBox width="60"/><Spacer/><SizedBox width="60"/></Row>`；外层宽度为 `300` 时，`Spacer` 占据中间的 `180`。
 
 #### `<Opacity>`
 

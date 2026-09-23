@@ -40,6 +40,7 @@ class WidgetParserManager {
             { ColumnParser() },
             { ExpandedParser() },
             { FlexibleParser() },
+            { SpacerParser() },
             { StackParser() },
             { IndexedStackParser() },
             { PositionedParser() },
