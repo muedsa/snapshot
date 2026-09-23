@@ -41,6 +41,7 @@ class WidgetParserManager {
             { ExpandedParser() },
             { FlexibleParser() },
             { StackParser() },
+            { IndexedStackParser() },
             { PositionedParser() },
             { SizedBoxParser() },
             { ConstrainedBoxParser() },
