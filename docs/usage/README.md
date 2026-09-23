@@ -1893,6 +1893,8 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 
 解析与建树阶段的错误统一包装成 `com.muedsa.snapshot.parser.ParseException`（`RuntimeException` 子类），`toString()` 形如 `Pos[行:列]~偏移: 消息`（行列从 1 起，偏移从 0 起；未设置显示 `UNSET`）；原异常在 `cause` 里。
 
+通过统一属性解析入口产生的格式错误会在消息中标明属性名，并将位置指向属性值的起始字符；只写属性名而没有值时指向属性名。缺少必填属性时没有可定位的属性，位置为所在标签的起始处。若属性解析器已有更具体的 `Attr [名称] …` 消息，会原样保留，避免重复添加前缀。
+
 **`parse()` 阶段（结构性错误）**
 
 | 触发条件 | 消息（节选） |
@@ -1917,9 +1919,9 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 |---|---|
 | 缺必填属性 | `Attr [url] must not be null` |
 | 颜色格式错 | `Attr [color] value must start with #` / `must be ARGB or RGB color hex` |
-| 数值/结构格式错 | `Attr [padding] value format error`、`boxShadows format error`、`not exist elevation 111, …` |
-| 枚举名写错 | `Enum.valueOf` 抛出的 `IllegalArgumentException`（消息为常量名） |
-| `fontStyle` 取值非法 | `Unexpected font style XXX` |
+| 数值/结构格式错 | `Attr [width] value is invalid: For input string: "bad"`、`Attr [padding] value format error` 等 |
+| 枚举名写错 | `Attr [mainAxisAlignment] value is invalid: …`；原 `IllegalArgumentException` 保留在 `cause` 中 |
+| `fontStyle` 取值非法 | `Attr [fontStyle] value is invalid: Unexpected font style XXX` |
 | `<Text>` 里出现非行内标签 | `Unknown inline span type: Xxx` |
 | `<Raw>`/`<Emoji>`/`<WidgetSpan>` 用在 `<Text>` 之外 | `Element [Raw] … can not buildWidget, it can only be used in the Text` |
 | `<WidgetSpan>` 没有子标签 | `Tag WidgetSpan must have exactly one child element, but got 0` |
@@ -1927,7 +1929,7 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 | `decoration="NONE"` 与其他装饰组合 | `Attr [decoration] value NONE can not be combined with other decorations` |
 | 文本阴影参数数量错误 | `Attr [textShadow] shadow must contain offsetX offsetY and optional blurSigma/color` |
 | `textShadow="NONE"` 与其他阴影组合 | `Attr [textShadow] value NONE can not be combined with other shadows` |
-| OpenType 特性格式错误 | `Can’t parse FontFeature: …` |
+| OpenType 特性格式错误 | `Attr [fontFeatures] value is invalid: Can’t parse FontFeature: …` |
 | OpenType 特性范围倒置 | `Attr [fontFeatures] font feature range start must not exceed its end` |
 | `fontFeatures="NONE"` 与其他特性组合 | `Attr [fontFeatures] value NONE can not be combined with other font features` |
 | Strut 字体族包含空项 | `Attr [strutFontFamily] contains an empty font family` |
