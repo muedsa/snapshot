@@ -23,7 +23,8 @@ fun paintImage(
     blendMode: BlendMode = BlendMode.SRC_OVER,
 ) {
     require(!image.isClosed) { "Cannot paint an image that is disposed." }
-    if (image.isEmpty) {
+    if (image.isEmpty || rect.width <= 0f || rect.height <= 0f ||
+        !rect.width.isFinite() || !rect.height.isFinite()) {
         return
     }
     var outputSize: Size = rect.size
@@ -44,6 +45,11 @@ fun paintImage(
     }
     val fittedSizes: FittedSizes =
         FittedSizes.applyBoxFit(fit = imageFit, inputSize = inputSize, outputSize = outputSize)
+    if (fittedSizes == FittedSizes.ZERO ||
+        fittedSizes.destination.width <= 0f || fittedSizes.destination.height <= 0f ||
+        !fittedSizes.destination.width.isFinite() || !fittedSizes.destination.height.isFinite()) {
+        return
+    }
     val sourceSize: Size = fittedSizes.source * scale
     var destinationSize: Size = fittedSizes.destination
     if (centerSlice != null) {
@@ -152,6 +158,9 @@ internal fun generateImageTileRects(outputRect: Rect, fundamentalRect: Rect, rep
     var stopY = 0
     val strideX = fundamentalRect.width
     val strideY = fundamentalRect.height
+    if (strideX <= 0f || strideY <= 0f || !strideX.isFinite() || !strideY.isFinite()) {
+        return emptyList()
+    }
 
     if (repeat == ImageRepeat.REPEAT || repeat == ImageRepeat.REPEAT_X) {
         startX = floor((outputRect.left - fundamentalRect.left) / strideX).toInt()
