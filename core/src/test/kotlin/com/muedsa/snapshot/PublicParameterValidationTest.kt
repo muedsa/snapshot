@@ -8,6 +8,7 @@ import com.muedsa.snapshot.paint.text.TextPainter
 import com.muedsa.snapshot.paint.text.TextSpan
 import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderConstrainedBox
+import com.muedsa.snapshot.rendering.box.RenderImage
 import com.muedsa.snapshot.rendering.box.RenderOpacity
 import com.muedsa.snapshot.rendering.box.RenderPositionedBox
 import com.muedsa.snapshot.rendering.flex.CrossAxisAlignment
@@ -17,11 +18,14 @@ import com.muedsa.snapshot.rendering.stack.StackParentData
 import com.muedsa.snapshot.widget.Flexible
 import com.muedsa.snapshot.widget.Opacity
 import com.muedsa.snapshot.widget.Positioned
+import com.muedsa.snapshot.widget.ProviderImage
+import com.muedsa.snapshot.widget.RawImage
 import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.Surface
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class PublicParameterValidationTest {
@@ -132,6 +136,26 @@ class PublicParameterValidationTest {
     }
 
     @Test
+    fun paint_image_rejects_center_slice_when_fit_crops_the_source() {
+        val surface = Surface.makeRasterN32Premul(6, 6)
+        val image = surface.makeImageSnapshot()
+        try {
+            assertFailsWith<IllegalArgumentException> {
+                paintImage(
+                    canvas = surface.canvas,
+                    rect = Rect.makeWH(12f, 8f),
+                    image = image,
+                    fit = BoxFit.FIT_WIDTH,
+                    centerSlice = Rect.makeXYWH(2f, 2f, 2f, 2f),
+                )
+            }
+        } finally {
+            image.close()
+            surface.close()
+        }
+    }
+
+    @Test
     fun paint_image_rejects_closed_images() {
         val surface = Surface.makeRasterN32Premul(1, 1)
         val image = surface.makeImageSnapshot()
@@ -145,6 +169,29 @@ class PublicParameterValidationTest {
                 )
             }
         } finally {
+            surface.close()
+        }
+    }
+
+    @Test
+    fun image_apis_reject_non_positive_or_non_finite_scale_before_loading() {
+        val surface = Surface.makeRasterN32Premul(4, 4)
+        val image = surface.makeImageSnapshot()
+        var providerCalls = 0
+        try {
+            for (scale in listOf(0f, -1f, Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY)) {
+                assertFailsWith<IllegalArgumentException> { RawImage(image = image, scale = scale) }
+                assertFailsWith<IllegalArgumentException> { RenderImage(image = image, scale = scale) }
+                assertFailsWith<IllegalArgumentException> {
+                    ProviderImage(provider = { providerCalls++; image }, scale = scale)
+                }
+                assertFailsWith<IllegalArgumentException> {
+                    paintImage(surface.canvas, Rect.makeWH(4f, 4f), image, scale = scale)
+                }
+            }
+            assertEquals(0, providerCalls, "无效缩放参数不应触发图片提供函数")
+        } finally {
+            image.close()
             surface.close()
         }
     }

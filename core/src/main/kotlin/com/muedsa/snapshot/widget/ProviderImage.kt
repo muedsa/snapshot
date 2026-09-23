@@ -3,8 +3,14 @@ package com.muedsa.snapshot.widget
 import com.muedsa.geometry.BoxAlignment
 import com.muedsa.snapshot.paint.BoxFit
 import com.muedsa.snapshot.paint.ImageRepeat
+import com.muedsa.snapshot.paint.requireValidImageScale
 import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.Image
+
+private fun resolveImage(provider: () -> Image, scale: Float): Image {
+    requireValidImageScale(scale)
+    return provider()
+}
 
 fun ChildSlot.ProviderImage(
     width: Float? = null,
@@ -47,7 +53,7 @@ open class ProviderImage(
     color: Int? = null,
     colorBlendMode: BlendMode? = null,
 ) : RawImage(
-    image = provider.invoke(),
+    image = resolveImage(provider, scale),
     width = width,
     height = height,
     fit = fit,

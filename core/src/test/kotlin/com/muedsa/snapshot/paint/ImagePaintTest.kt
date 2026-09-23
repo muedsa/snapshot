@@ -28,6 +28,21 @@ class ImagePaintTest {
         }
     }
 
+    private fun ninePatchImage(patchSize: Float = 2f): Image =
+        painterImage(patchSize * 3f, patchSize * 3f, Color.MAGENTA) { canvas ->
+            val paint = Paint()
+            for ((rect, color) in listOf(
+                Rect.makeXYWH(0f, 0f, patchSize, patchSize) to Color.RED,
+                Rect.makeXYWH(2f * patchSize, 0f, patchSize, patchSize) to Color.GREEN,
+                Rect.makeXYWH(0f, 2f * patchSize, patchSize, patchSize) to Color.BLUE,
+                Rect.makeXYWH(2f * patchSize, 2f * patchSize, patchSize, patchSize) to Color.YELLOW,
+                Rect.makeXYWH(patchSize, patchSize, patchSize, patchSize) to Color.CYAN,
+            )) {
+                paint.color = color
+                canvas.drawRect(rect, paint)
+            }
+        }
+
     @Test
     fun contain_and_alignment_place_the_entire_image() {
         val image = quadrantImage()
@@ -107,6 +122,102 @@ class ImagePaintTest {
             } finally {
                 filter.close()
             }
+        } finally {
+            image.close()
+        }
+    }
+
+    @Test
+    fun center_slice_stretches_the_center_without_changing_corners() {
+        val image = ninePatchImage()
+        try {
+            val pixels = painterPixels(12f, 12f) { canvas ->
+                paintImage(
+                    canvas, Rect.makeWH(12f, 12f), image,
+                    centerSlice = Rect.makeXYWH(2f, 2f, 2f, 2f), fit = BoxFit.FILL,
+                )
+            }
+            expectColorAt(pixels, 0, 0, Color.RED)
+            expectColorAt(pixels, 11, 0, Color.GREEN)
+            expectColorAt(pixels, 0, 11, Color.BLUE)
+            expectColorAt(pixels, 11, 11, Color.YELLOW)
+            expectColorAt(pixels, 6, 6, Color.CYAN)
+            expectColorAt(pixels, 6, 0, Color.MAGENTA)
+            expectColorAt(pixels, 0, 6, Color.MAGENTA)
+        } finally {
+            image.close()
+        }
+    }
+
+    @Test
+    fun center_slice_can_repeat_without_losing_the_clip() {
+        val image = ninePatchImage()
+        try {
+            val pixels = painterPixels(16f, 16f) { canvas ->
+                paintImage(
+                    canvas, Rect.makeXYWH(1f, 1f, 14f, 14f), image,
+                    centerSlice = Rect.makeXYWH(2f, 2f, 2f, 2f),
+                    fit = BoxFit.SCALE_DOWN, alignment = BoxAlignment.TOP_LEFT, repeat = ImageRepeat.REPEAT,
+                )
+            }
+            expectColorAt(pixels, 1, 1, Color.RED)
+            expectColorAt(pixels, 7, 1, Color.RED)
+            expectColorAt(pixels, 13, 13, Color.RED)
+            expectColorAt(pixels, 14, 14, Color.RED)
+            expectColorAt(pixels, 15, 14, Color.WHITE)
+        } finally {
+            image.close()
+        }
+    }
+
+    @Test
+    fun center_slice_uses_logical_coordinates_for_scaled_images() {
+        val image = ninePatchImage(patchSize = 4f)
+        try {
+            val pixels = painterPixels(12f, 12f) { canvas ->
+                paintImage(
+                    canvas, Rect.makeWH(12f, 12f), image,
+                    scale = 2f, centerSlice = Rect.makeXYWH(2f, 2f, 2f, 2f), fit = BoxFit.FILL,
+                )
+            }
+            expectColorAt(pixels, 1, 1, Color.RED)
+            expectColorAt(pixels, 10, 1, Color.GREEN)
+            expectColorAt(pixels, 1, 10, Color.BLUE)
+            expectColorAt(pixels, 10, 10, Color.YELLOW)
+            expectColorAt(pixels, 6, 6, Color.CYAN)
+        } finally {
+            image.close()
+        }
+    }
+
+    @Test
+    fun horizontal_flip_mirrors_pixels_and_restores_the_canvas() {
+        val image = quadrantImage()
+        try {
+            val pixels = painterPixels(12f, 8f) { canvas ->
+                paintImage(canvas, Rect.makeXYWH(2f, 0f, 8f, 8f), image, flipHorizontally = true)
+                canvas.drawRect(Rect.makeXYWH(0f, 0f, 1f, 1f), Paint().apply { color = Color.BLACK })
+            }
+            expectColorAt(pixels, 3, 1, Color.GREEN)
+            expectColorAt(pixels, 8, 1, Color.RED)
+            expectColorAt(pixels, 3, 6, Color.YELLOW)
+            expectColorAt(pixels, 8, 6, Color.BLUE)
+            expectColorAt(pixels, 0, 0, Color.BLACK)
+            expectColorAt(pixels, 11, 1, Color.WHITE)
+        } finally {
+            image.close()
+        }
+    }
+
+    @Test
+    fun multiply_blend_mode_combines_image_and_background() {
+        val image = quadrantImage()
+        try {
+            val pixels = painterPixels(8f, 8f, background = Color.BLUE) { canvas ->
+                paintImage(canvas, Rect.makeWH(8f, 8f), image, blendMode = BlendMode.MULTIPLY)
+            }
+            expectColorAt(pixels, 1, 1, Color.BLACK)
+            expectColorAt(pixels, 1, 6, Color.BLUE)
         } finally {
             image.close()
         }

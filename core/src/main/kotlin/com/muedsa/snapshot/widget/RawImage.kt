@@ -3,6 +3,7 @@ package com.muedsa.snapshot.widget
 import com.muedsa.geometry.BoxAlignment
 import com.muedsa.snapshot.paint.BoxFit
 import com.muedsa.snapshot.paint.ImageRepeat
+import com.muedsa.snapshot.paint.requireValidImageScale
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderImage
 import org.jetbrains.skia.BlendMode
@@ -48,6 +49,10 @@ open class RawImage(
     var color: Int? = null,
     var colorBlendMode: BlendMode? = null,
 ) : Widget() {
+
+    init {
+        requireValidImageScale(scale)
+    }
 
     override fun createRenderBox(): RenderBox {
         return RenderImage(
