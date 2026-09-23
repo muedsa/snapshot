@@ -6,6 +6,7 @@ import com.muedsa.geometry.Size
 import com.muedsa.snapshot.paint.BoxFit
 import com.muedsa.snapshot.paint.ImageRepeat
 import com.muedsa.snapshot.paint.paintImage
+import com.muedsa.snapshot.paint.requireValidImageScale
 import com.muedsa.snapshot.rendering.PaintingContext
 import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.ColorFilter
@@ -26,6 +27,10 @@ open class RenderImage(
     val centerSlice: Rect? = null,
     val isAntiAlias: Boolean = false,
 ) : RenderBox() {
+
+    init {
+        requireValidImageScale(scale)
+    }
 
     val colorFilter: ColorFilter? = color?.let { ColorFilter.makeBlend(it, colorBlendMode ?: BlendMode.SRC_IN) }
 

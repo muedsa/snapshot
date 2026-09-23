@@ -5,6 +5,10 @@ import org.jetbrains.skia.*
 import kotlin.math.ceil
 import kotlin.math.floor
 
+internal fun requireValidImageScale(scale: Float) {
+    require(scale.isFinite() && scale > 0f) { "Image scale must be finite and greater than zero." }
+}
+
 
 fun paintImage(
     canvas: Canvas,
@@ -23,6 +27,7 @@ fun paintImage(
     blendMode: BlendMode = BlendMode.SRC_OVER,
 ) {
     require(!image.isClosed) { "Cannot paint an image that is disposed." }
+    requireValidImageScale(scale)
     if (image.isEmpty || rect.width <= 0f || rect.height <= 0f ||
         !rect.width.isFinite() || !rect.height.isFinite()) {
         return
@@ -57,7 +62,9 @@ fun paintImage(
         destinationSize += sliceBorder
         // We don't have the ability to draw a subset of the image at the same time
         // as we apply a nine-patch stretch.
-        assert(sourceSize == inputSize) { "centerSlice was used with a BoxFit that does not guarantee that the image is fully visible." }
+        require(fittedSizes.source == inputSize) {
+            "centerSlice was used with a BoxFit that does not guarantee that the image is fully visible."
+        }
     }
 
     var imageRepeat = repeat
