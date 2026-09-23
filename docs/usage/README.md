@@ -363,6 +363,7 @@ ProxyWidget(根)          →    (透传)
 | `Container` | 单 | 瑞士军刀：尺寸 + 内边距 + 外边距 + 底色/装饰 + 对齐 + 裁剪 + 变换 |
 | `SizedBox` | 单 | 强制宽/高 |
 | `AspectRatio` | 单 | 根据父约束和指定宽高比确定自身及子节点尺寸 |
+| `FractionallySizedBox` | 单 | 按父约束最大宽高的比例设置子节点尺寸 |
 | `ConstrainedBox` | 单 | 施加额外约束 |
 | `LimitedBox` | 单 | **仅当约束无限时**才施加最大宽/高 |
 | `OverflowBox` | 单 | 给子节点不同于自己的约束（可溢出） |
@@ -453,17 +454,21 @@ SnapshotPNG {
 }
 ```
 
-#### SizedBox / AspectRatio / ConstrainedBox / LimitedBox
+#### SizedBox / AspectRatio / FractionallySizedBox / ConstrainedBox / LimitedBox
 
 ```kotlin
-fun Widget.SizedBox(width: Float? = null, height: Float? = null, content: SizedBox.() -> Unit = {})
-fun Widget.AspectRatio(aspectRatio: Float, content: AspectRatio.() -> Unit = {})
-fun Widget.ConstrainedBox(constraints: BoxConstraints, content: ConstrainedBox.() -> Unit = {})
-fun Widget.LimitedBox(maxWidth: Float = Float.POSITIVE_INFINITY, maxHeight: Float = Float.POSITIVE_INFINITY, content: LimitedBox.() -> Unit = {})
+fun ChildSlot.SizedBox(width: Float? = null, height: Float? = null, content: SizedBox.() -> Unit = {})
+fun ChildSlot.AspectRatio(aspectRatio: Float, content: AspectRatio.() -> Unit = {})
+fun ChildSlot.FractionallySizedBox(widthFactor: Float? = null, heightFactor: Float? = null,
+                                   alignment: BoxAlignment = BoxAlignment.CENTER,
+                                   content: FractionallySizedBox.() -> Unit = {})
+fun ChildSlot.ConstrainedBox(constraints: BoxConstraints, content: ConstrainedBox.() -> Unit = {})
+fun ChildSlot.LimitedBox(maxWidth: Float = Float.POSITIVE_INFINITY, maxHeight: Float = Float.POSITIVE_INFINITY, content: LimitedBox.() -> Unit = {})
 ```
 
 - `SizedBox`：宽度/高度为 `null` 表示"该方向不额外约束"。快捷构造（类上）：`SizedBox.expand()`（无穷）、`SizedBox.shrink()`（0）、`SizedBox.square(d)`、`SizedBox.fromSize(size)`。
 - `AspectRatio`：`aspectRatio = 宽度 / 高度`，必须为有限正数。至少需要一个有界的最大宽度或高度；双向无界时无法确定尺寸。父约束过紧或与比例冲突时以父约束为准，子节点获得最终尺寸的紧约束。
+- `FractionallySizedBox`：比例乘以父约束在对应方向的最大尺寸，结果作为子节点的紧约束；未设置比例的方向沿用父约束。比例必须为有限非负数，指定比例的方向必须有界。自身仍受父约束限制；比例大于 `1` 时子节点可溢出，并按 `alignment` 对齐。
 - `ConstrainedBox`：把 `additionalConstraints` **强制**施加给子节点。
 - `LimitedBox`：只在**传入约束是无限**时才用 `maxWidth`/`maxHeight` 收口，有界时原样透传。它是 `Container` 空子节点场景的实现基础。
 
@@ -1073,6 +1078,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Container` | 单子 | `Container` | 最常用 |
 | `SizedBox` | 单子 | `SizedBox` | 固定或收紧宽高 |
 | `AspectRatio` | 单子 | `AspectRatio` | 根据父约束和宽高比确定尺寸 |
+| `FractionallySizedBox` | 单子 | `FractionallySizedBox` | 根据父约束最大宽高的比例设置子节点尺寸 |
 | `ConstrainedBox` | 单子 | `ConstrainedBox` | 为子节点施加额外的最小/最大尺寸约束 |
 | `LimitedBox` | 单子 | `LimitedBox` | 仅在父约束无界时限制子节点最大尺寸 |
 | `OverflowBox` | 单子 | `OverflowBox` | 允许子节点使用不同约束并溢出自身范围 |
@@ -1105,7 +1111,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Emoji` | **无子** | `ImageEmoji`（行内图片） | 只能作为 `Text` 的子节点 |
 | `WidgetSpan` | **单子** | `WidgetSpan` | 把一个普通 Widget 嵌入文本，只能作为 `Text` 的子节点 |
 
-**没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath` 等——解析器目前覆盖 35 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。滤镜标签目前只开放颜色混合与高斯模糊；滤镜矩阵、阴影、组合滤镜和运行时着色器仍需 Kotlin DSL。
+**没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath` 等——解析器目前覆盖 36 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。滤镜标签目前只开放颜色混合与高斯模糊；滤镜矩阵、阴影、组合滤镜和运行时着色器仍需 Kotlin DSL。
 
 ### 10.3 属性取值格式
 
@@ -1314,6 +1320,23 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
     <AspectRatio aspectRatio="2">
         <ColoredBox color="#FF2196F3"/>
     </AspectRatio>
+</ConstrainedBox>
+```
+
+#### `<FractionallySizedBox>`
+
+| 属性 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `widthFactor` / `heightFactor` | float | 不设置 | 父约束对应方向最大尺寸的倍数，必须为有限非负数 |
+| `alignment` | alignment | `CENTER` | 子节点尺寸与自身尺寸不同时的对齐方式 |
+
+最多包含 1 个子节点。设置比例的方向必须有界，否则布局会报错；未设置比例的方向沿用父约束。标签自身仍受父约束限制，因此比例大于 `1` 时子节点可能溢出。没有子节点时，已设置的比例仍参与确定标签尺寸。
+
+```html
+<ConstrainedBox maxWidth="240" maxHeight="160">
+    <FractionallySizedBox widthFactor="0.5" heightFactor="0.5">
+        <ColoredBox color="#FF2196F3"/>
+    </FractionallySizedBox>
 </ConstrainedBox>
 ```
 
