@@ -396,7 +396,7 @@ ProxyWidget(根)          →    (透传)
 #### Container
 
 ```kotlin
-fun Widget.Container(
+fun ChildSlot.Container(
     alignment: BoxAlignment? = null,
     padding: EdgeInsets? = null,
     color: Int? = null,
@@ -481,10 +481,10 @@ fun ChildSlot.LimitedBox(maxWidth: Float = Float.POSITIVE_INFINITY, maxHeight: F
 #### OverflowBox / SizedOverflowBox
 
 ```kotlin
-fun Widget.OverflowBox(alignment: BoxAlignment = BoxAlignment.CENTER,
+fun ChildSlot.OverflowBox(alignment: BoxAlignment = BoxAlignment.CENTER,
                        minWidth: Float? = null, maxWidth: Float? = null,
                        minHeight: Float? = null, maxHeight: Float? = null, content: OverflowBox.() -> Unit = {})
-fun Widget.SizedOverflowBox(size: Size, alignment: BoxAlignment = BoxAlignment.CENTER, content: SizedOverflowBox.() -> Unit = {})
+fun ChildSlot.SizedOverflowBox(size: Size, alignment: BoxAlignment = BoxAlignment.CENTER, content: SizedOverflowBox.() -> Unit = {})
 ```
 
 - `OverflowBox`：自己按父约束定尺寸，但**给子节点另一套约束**，子节点可以画到外面（是否被裁取决于外层是否有 `Clip*`）。
@@ -493,9 +493,9 @@ fun Widget.SizedOverflowBox(size: Size, alignment: BoxAlignment = BoxAlignment.C
 #### Padding / Align / Center
 
 ```kotlin
-fun Widget.Padding(padding: EdgeInsets, content: Padding.() -> Unit = {})
-fun Widget.Align(alignment: BoxAlignment = BoxAlignment.CENTER, widthFactor: Float? = null, heightFactor: Float? = null, content: Align.() -> Unit = {})
-fun Widget.Center(widthFactor: Float? = null, heightFactor: Float? = null, content: Center.() -> Unit = {})
+fun ChildSlot.Padding(padding: EdgeInsets, content: Padding.() -> Unit = {})
+fun ChildSlot.Align(alignment: BoxAlignment = BoxAlignment.CENTER, widthFactor: Float? = null, heightFactor: Float? = null, content: Align.() -> Unit = {})
+fun ChildSlot.Center(widthFactor: Float? = null, heightFactor: Float? = null, content: Center.() -> Unit = {})
 ```
 
 `widthFactor`/`heightFactor` 为 `null` 时尽量撑满父约束；给出数值时自身尺寸 = 子尺寸 × 系数（例如 `1f` 表示"包裹内容"）。
@@ -503,7 +503,7 @@ fun Widget.Center(widthFactor: Float? = null, heightFactor: Float? = null, conte
 #### Flex / Row / Column
 
 ```kotlin
-fun Widget.Row(
+fun ChildSlot.Row(
     mainAxisAlignment: MainAxisAlignment = MainAxisAlignment.START,
     mainAxisSize: MainAxisSize = MainAxisSize.MAX,
     crossAxisAlignment: CrossAxisAlignment = CrossAxisAlignment.CENTER,
@@ -553,7 +553,7 @@ SnapshotPNG {
 #### Stack / IndexedStack / Positioned
 
 ```kotlin
-fun Widget.Stack(
+fun ChildSlot.Stack(
     alignment: AlignmentGeometry = AlignmentDirectional.TOP_START,
     textDirection: Direction = Direction.LTR,
     fit: StackFit = StackFit.LOOSE,
@@ -561,7 +561,7 @@ fun Widget.Stack(
     content: Stack.() -> Unit = {},
 )
 
-fun Widget.IndexedStack(
+fun ChildSlot.IndexedStack(
     index: Int? = 0,
     alignment: AlignmentGeometry = AlignmentDirectional.TOP_START,
     textDirection: Direction = Direction.LTR,
@@ -618,7 +618,7 @@ SnapshotPNG {
 #### Transform
 
 ```kotlin
-fun Widget.Transform(
+fun ChildSlot.Transform(
     transform: Matrix44CMO,
     origin: Offset? = null,
     alignment: BoxAlignment?,     // 没有默认值,必须显式给出(可传 null)
@@ -686,7 +686,7 @@ SnapshotPNG {
 ### 5.5 文本 Widget
 
 ```kotlin
-fun Widget.Text(
+fun ChildSlot.Text(
     text: String,
     style: TextStyle? = null,
     textAlign: Alignment = Alignment.START,
@@ -700,14 +700,14 @@ fun Widget.Text(
 )
 ```
 
-`Widget.Text` 内部就是构造一个 `RichText(text = TextSpan(text, style), ...)`。
+`ChildSlot.Text` 内部就是构造一个 `RichText(text = TextSpan(text, style), ...)`。
 
 ```kotlin
-fun Widget.RichText(text: InlineSpan, textAlign = START, textDirection = LTR, softWrap = true,
+fun ChildSlot.RichText(text: InlineSpan, textAlign = START, textDirection = LTR, softWrap = true,
                     overflow = CLIP, maxLines = null, strutStyle = null,
                     textWidthBasis = PARENT, textHeightMode = null)
 
-fun Widget.RichText(textAlign = START, /* 同上 */ content: TextSpan.() -> Unit)   // DSL 版
+fun ChildSlot.RichText(textAlign = START, /* 同上 */ content: TextSpan.() -> Unit)   // DSL 版
 ```
 
 详见[第 9 节](#9-文本与富文本)。
@@ -949,9 +949,9 @@ SnapshotPNG {
 }
 ```
 
-`Widget.RichText { }` 的接收者是根 `TextSpan`；`TextSpan.TextSpan(...)` 两个重载分别追加"文本子 span"与"分组子 span"。样式沿树向下继承（`mergedStyle`）。
+`ChildSlot.RichText { }` 的 `content` 接收者是根 `TextSpan`；`TextSpan.TextSpan(...)` 两个重载分别追加"文本子 span"与"分组子 span"。样式沿树向下继承（`mergedStyle`）。
 
-> 注意：`RichText` 的 Widget 版重载带 `check(this !is RichText)`，不要嵌套 `RichText`。
+> 注意：`RichText` 的 `InlineSpan` 版重载带 `check(this !is RichText)`，不要嵌套 `RichText`。
 
 ### 9.3 行内 Widget：WidgetSpan 与 ImageEmojiSpan
 
