@@ -1039,6 +1039,7 @@ painter.debugPaint(canvas, offset)        // 调试描边
 ```kotlin
 open class Parser(
     protected var widgetParserManager: WidgetParserManager = WidgetParserManager.withDefaults(),
+    private val dataUriImageDecoder: DataUriImageDecoder = SimpleDataUriImageDecoder,
 ) {
     @Synchronized
     fun parse(reader: Reader): SnapshotElement
@@ -1073,7 +1074,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 
 - `snapshot()` 与 `SnapshotPNG` 的差异：**`background` 默认透明**（`Color.TRANSPARENT`），且 Surface 固定为 CPU 光栅化。想要白底请在根标签写 `background="#FFFFFFFF"`。
 - 未写的属性名（或大小写写错的属性名）会被**静默忽略**，不会报错——写错 `Color=` 只会得到"没设颜色"。
-- **`Parser` 实例可以复用**：每次调用 `parse()` 都会重置 reader、tokenizer、元素栈和根元素状态；即使前一次解析失败，后续调用也可以正常处理新的文档。已经返回的 `SnapshotElement` 不受后续解析影响。
+- **`Parser` 实例可以复用**：每次调用 `parse()` 都会重置 reader、tokenizer、元素栈和根元素状态；即使前一次解析失败，后续调用也可以正常处理新的文档。已经返回的 `SnapshotElement` 不受后续解析影响；它仍使用创建时传入的 Data URI 解码器。
 
 > `parse()` 标注了 `@Synchronized`；多个线程共用同一实例时，解析调用会依次执行，不会共享同一次解析的中间状态。
 
@@ -1116,10 +1117,10 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Stack` | 多子 | `Stack` | |
 | `IndexedStack` | 多子 | `IndexedStack` | 布局全部子节点，仅绘制指定索引 |
 | `Positioned` | 单子 | `Positioned` | 只能放在 `Stack` 或 `IndexedStack` 里 |
-| `Image` | **无子** | `CachedNetworkImage` | 网络图 |
+| `Image` | **无子** | `CachedNetworkImage` 或 `RawImage` | `url` 网络图，或 `dataUri` 内嵌图片 |
 | `Text` | 多子（行内 span） | `RichText` | 子节点只能是 `Text`/`Raw`/`Emoji`/`WidgetSpan` |
 | `Raw` | 多子（行内 span） | 无（仅作 `Text` 的子节点） | 原样文本，**不 trim** |
-| `Emoji` | **无子** | `ImageEmoji`（行内图片） | 只能作为 `Text` 的子节点 |
+| `Emoji` | **无子** | `ImageEmoji`（行内图片） | `url` 网络图或 `dataUri` 内嵌图片；只能作为 `Text` 的子节点 |
 | `WidgetSpan` | **单子** | `WidgetSpan` | 把一个普通 Widget 嵌入文本，只能作为 `Text` 的子节点 |
 
 **没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath` 等——解析器目前覆盖 38 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。滤镜标签目前只开放颜色混合与高斯模糊；滤镜矩阵、阴影、组合滤镜和运行时着色器仍需 Kotlin DSL。
@@ -1257,7 +1258,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 
 #### URL
 
-`url` 是必填属性，解析时用 `java.net.URL(valueStr)` 做一次格式校验（只校验语法，不发起请求）。
+`<Image>` 与 `<Emoji>` 都必须且只能指定 `url` 或 `dataUri` 其中一个。使用 `url` 时，解析属性会用 `java.net.URL(valueStr)` 做一次格式校验（只校验语法，不发起请求）。
 
 ### 10.4 逐标签属性表
 
@@ -1680,7 +1681,8 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 
 | 属性 | 类型 | 必填 | 默认 | 说明 |
 |---|---|---|---|---|
-| `url` | url | **是** | — | 图片地址 |
+| `url` | url | 二选一 | — | 网络图片地址；与 `dataUri` 不能同时指定 |
+| `dataUri` | string | 二选一 | — | `data:image/png;base64,...` 等内嵌图片；与 `url` 不能同时指定 |
 | `width` / `height` | float | 否 | 不设置 | |
 | `fit` | enum | 否 | 不设置 | `FILL`/`CONTAIN`/`COVER`/`FIT_WIDTH`/`FIT_HEIGHT`/`NONE`/`SCALE_DOWN` |
 | `alignment` | alignment | 否 | `CENTER` | 图片在盒内的对齐 |
@@ -1689,10 +1691,21 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 | `opacity` | float | 否 | `1` | 透明度 |
 | `color` | color | 否 | 不设置 | 叠加色 |
 | `colorBlendMode` | enum | 否 | 不设置 | `org.jetbrains.skia.BlendMode` 常量名 |
-| `noCache` | bool | 否 | `false` | 绕过缓存（需写 `"true"`） |
+| `noCache` | bool | 否 | `false` | 仅用于 `url`；绕过网络缓存（需写 `"true"`） |
 
 ```html
 <Image width="200" height="200" url="https://samples-files.com/samples/images/jpg/480-360-sample.jpg" fit="COVER"/>
+<!-- Base64 内容仅作格式示意，请替换省略部分。 -->
+<Image width="200" height="200" dataUri="data:image/png;base64,iVBORw0KGgo..." fit="CONTAIN"/>
+```
+
+`<Image>` 与 `<Emoji>` 共用同一个 `DataUriImageDecoder`。默认的 `SimpleDataUriImageDecoder` 只处理 PNG、JPEG、WebP 的 Base64 Data URI，调用 JDK Base64 与 Skia 解码，不访问本地文件或网络，也不提供额外限制与缓存。解码发生在 `createWidget()` / `snapshot()` 阶段；格式或图片数据错误会指向 `dataUri` 属性值。需要自行处理输入的应用可按 Parser 实例注入实现：
+
+```kotlin
+val parser = Parser(dataUriImageDecoder = DataUriImageDecoder { dataUri ->
+    // 在此执行应用自己的检查或处理，再交给默认解码器；也可完全自行实现。
+    SimpleDataUriImageDecoder.decode(dataUri)
+})
 ```
 
 #### `<Text>`
@@ -1844,7 +1857,8 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 
 | 属性 | 类型 | 必填 | 默认 | 说明 |
 |---|---|---|---|---|
-| `url` | url | **是** | — | emoji 图片地址 |
+| `url` | url | 二选一 | — | 网络图片地址；与 `dataUri` 不能同时指定 |
+| `dataUri` | string | 二选一 | — | `data:image/png;base64,...` 等内嵌图片；与 `url` 不能同时指定 |
 | `alignment` | enum | 否 | `BASELINE` | `PlaceholderAlignment`：`BASELINE` / `ABOVE_BASELINE` / `BELOW_BASELINE` / `TOP` / `BOTTOM` / `MIDDLE`（注意是**占位符对齐**，不是 `BoxAlignment`） |
 | `baseline` | enum | 否 | 不设置 | `BaselineMode`：`ALPHABETIC`/`IDEOGRAPHIC` |
 | `width` / `height` | float | 否 | 不设置 | 不给则按所在 span 的 `fontSize` 推导 |
@@ -1860,6 +1874,8 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 
 ```html
 <Text fontSize="40">你好<Emoji url="https://example.com/smile.png" width="40" height="40"/>世界</Text>
+<!-- Base64 内容仅作格式示意，请替换省略部分。 -->
+<Text fontSize="40">你好<Emoji dataUri="data:image/png;base64,iVBORw0KGgo..." width="40" height="40"/>世界</Text>
 ```
 
 ### 10.5 文本、空白与 CDATA
@@ -2106,7 +2122,7 @@ EdgeInsets 必须写成 `"(1,2,3,4)"` 或 `"10"` 或 `"(1,2)"`，圆括号和逗
 先确认属性名拼写与大小写。**未知属性会被静默忽略**；另外 Boolean 属性必须显式写 `"true"`。属性值的报错要到 `createWidget()`/`snapshot()` 阶段才会抛出，`parse()` 成功不代表文档完全合法。
 
 **Q：网络图加载是异步的吗？**
-不是。`CachedNetworkImage`/`<Image>`/`<Emoji>` 在构建/绘制时同步发起 HTTP 请求。注意线程与超时。
+不是。`CachedNetworkImage`、`<Image url="...">` 和 `<Emoji url="...">` 在构建 Widget 时同步取图，缓存未命中时可能发起 HTTP 请求；两种标签的 `dataUri` 来源只解码内嵌图片，不发起网络请求。注意网络取图所在的线程与超时。
 
 **Q：运行时怎么调试布局？**
 `Snapshot(..., debug = true)` 会画调试辅助（空盒灰块、`ClipPath` 的调试描边等）；更结构化地用 `layoutWidget { ... }` 拿到 `RenderBox` 树，或 `LayoutNode` 只读自省树。

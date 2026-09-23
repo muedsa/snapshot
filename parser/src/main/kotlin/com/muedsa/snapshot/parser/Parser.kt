@@ -1,6 +1,8 @@
 package com.muedsa.snapshot.parser
 
 import com.muedsa.snapshot.parser.attr.CommonAttrDefine
+import com.muedsa.snapshot.parser.image.DataUriImageDecoder
+import com.muedsa.snapshot.parser.image.SimpleDataUriImageDecoder
 import com.muedsa.snapshot.parser.token.RawAttr
 import com.muedsa.snapshot.parser.token.Token
 import com.muedsa.snapshot.parser.token.Tokenizer
@@ -9,6 +11,7 @@ import java.io.Reader
 
 open class Parser(
     protected var widgetParserManager: WidgetParserManager = WidgetParserManager.withDefaults(),
+    private val dataUriImageDecoder: DataUriImageDecoder = SimpleDataUriImageDecoder,
 ) {
 
     protected lateinit var reader: Reader
@@ -67,7 +70,8 @@ open class Parser(
         val element = if (widgetParser is SnapshotParser) {
             SnapshotElement(
                 attrs = buildTokenTagAttrMap(token),
-                pos = token.startPos.copy()
+                pos = token.startPos.copy(),
+                dataUriImageDecoder = dataUriImageDecoder,
             )
         } else {
             Element(

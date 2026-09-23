@@ -4,6 +4,8 @@ import com.muedsa.snapshot.drawRenderBox
 import com.muedsa.snapshot.parser.attr.BooleanAttrDefine
 import com.muedsa.snapshot.parser.attr.ColorAttrDefine
 import com.muedsa.snapshot.parser.attr.StringAttrDefine
+import com.muedsa.snapshot.parser.image.DataUriImageDecoder
+import com.muedsa.snapshot.parser.image.SimpleDataUriImageDecoder
 import com.muedsa.snapshot.parser.token.RawAttr
 import com.muedsa.snapshot.parser.widget.SnapshotParser
 import com.muedsa.snapshot.parser.widget.WidgetParser
@@ -19,6 +21,7 @@ import kotlin.math.ceil
 class SnapshotElement(
     attrs: MutableMap<String, RawAttr>,
     pos: TrackPos,
+    val dataUriImageDecoder: DataUriImageDecoder = SimpleDataUriImageDecoder,
 ) : Element(widgetParser = SnapshotParser, attrs = attrs, pos = pos) {
 
     val type: String = WidgetParser.parseAttrValue(ATTR_TYPE, attrs)
