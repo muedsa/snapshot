@@ -671,6 +671,8 @@ SnapshotPNG {
 
 参数默认值：`width = null`、`height = null`、`fit = null`、`alignment = BoxAlignment.CENTER`、`repeat = ImageRepeat.NO_REPEAT`、`scale = 1f`、`opacity = 1f`、`color = null`、`colorBlendMode = null`。`scale` 必须是大于 0 的有限数。
 
+重复绘制默认最多生成 `100_000` 个平铺矩形。应用可通过 core 的全局配置 `ImageRepeatConfig.maxTileCount = 10_000` 调整此上限（必须大于零）；一次绘制预计超限时会抛出 `IllegalArgumentException`，不会只绘制部分图片。此配置也约束 Parser 解析出的图片，解析文本不能修改它。
+
 尺寸规则：以 `constraints.tightFor(width, height)` 为基础，在父约束内**按原始宽高比**收缩（`constrainSizeAndAttemptToPreserveAspectRatio`）；`image` 为 `null` 时取最小尺寸。`fit` 为 `null` 时按 `BoxFit.FILL` 处理（拉伸铺满目标框）；底层 `RenderImage` / `paintImage` 指定 `centerSlice` 时默认按 `SCALE_DOWN` 处理。
 
 ```kotlin

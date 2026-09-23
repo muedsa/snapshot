@@ -88,6 +88,12 @@ fun paintImage(
     val dy: Float = halfHeightDelta + alignment.y * halfHeightDelta
     val destinationPosition: Offset = rect.topLeft.translate(dx, dy)
     val destinationRect: Rect = destinationPosition combine destinationSize
+    // 在修改 Canvas 状态前验证平铺数量，避免异常中断后留下未恢复的 save/clip。
+    val tileRects = if (imageRepeat == ImageRepeat.NO_REPEAT) {
+        emptyList()
+    } else {
+        generateImageTileRects(rect, destinationRect, imageRepeat)
+    }
 
     // Set to true if we added a saveLayer to the canvas to invert/flip the image.
     val invertedCanvas: Boolean = false
@@ -118,7 +124,7 @@ fun paintImage(
                 paint = paint
             )
         } else {
-            for (tileRect in generateImageTileRects(rect, destinationRect, imageRepeat)) {
+            for (tileRect in tileRects) {
                 canvas.drawImageRect(
                     image = image,
                     sourceRect,
@@ -138,7 +144,7 @@ fun paintImage(
                 paint = paint
             )
         } else {
-            for (tileRect in generateImageTileRects(rect, destinationRect, imageRepeat)) {
+            for (tileRect in tileRects) {
                 canvas.drawImageNine(
                     image = image,
                     centerSlice.scale(scale).toIRect(),
@@ -159,10 +165,10 @@ fun paintImage(
 }
 
 internal fun generateImageTileRects(outputRect: Rect, fundamentalRect: Rect, repeat: ImageRepeat): List<Rect> {
-    var startX = 0
-    var startY = 0
-    var stopX = 0
-    var stopY = 0
+    var startX = 0.0
+    var startY = 0.0
+    var stopX = 0.0
+    var stopY = 0.0
     val strideX = fundamentalRect.width
     val strideY = fundamentalRect.height
     if (strideX <= 0f || strideY <= 0f || !strideX.isFinite() || !strideY.isFinite()) {
@@ -170,18 +176,28 @@ internal fun generateImageTileRects(outputRect: Rect, fundamentalRect: Rect, rep
     }
 
     if (repeat == ImageRepeat.REPEAT || repeat == ImageRepeat.REPEAT_X) {
-        startX = floor((outputRect.left - fundamentalRect.left) / strideX).toInt()
-        stopX = ceil((outputRect.right - fundamentalRect.right) / strideX).toInt()
+        startX = floor((outputRect.left.toDouble() - fundamentalRect.left.toDouble()) / strideX)
+        stopX = ceil((outputRect.right.toDouble() - fundamentalRect.right.toDouble()) / strideX)
     }
 
     if (repeat == ImageRepeat.REPEAT || repeat == ImageRepeat.REPEAT_Y) {
-        startY = floor((outputRect.top - fundamentalRect.top) / strideY).toInt()
-        stopY = ceil((outputRect.bottom - fundamentalRect.bottom) / strideY).toInt()
+        startY = floor((outputRect.top.toDouble() - fundamentalRect.top.toDouble()) / strideY)
+        stopY = ceil((outputRect.bottom.toDouble() - fundamentalRect.bottom.toDouble()) / strideY)
+    }
+
+    val tileCount = (stopX - startX + 1.0) * (stopY - startY + 1.0)
+    val maxTileCount = ImageRepeatConfig.maxTileCount
+    require(tileCount.isFinite() && tileCount <= maxTileCount) {
+        "Image repeat requires $tileCount tiles, exceeding the configured limit of $maxTileCount."
+    }
+    require(startX >= Int.MIN_VALUE && stopX <= Int.MAX_VALUE &&
+        startY >= Int.MIN_VALUE && stopY <= Int.MAX_VALUE) {
+        "Image repeat tile index exceeds the supported integer range."
     }
 
     return buildList {
-        for (i in startX..stopX) {
-            for (j in startY..stopY) {
+        for (i in startX.toInt()..stopX.toInt()) {
+            for (j in startY.toInt()..stopY.toInt()) {
                 add(fundamentalRect.shift(Offset(i * strideX, j * strideY)))
             }
         }

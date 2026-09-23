@@ -4,6 +4,7 @@ import com.muedsa.snapshot.expectColorAt
 import com.muedsa.snapshot.painterImage
 import com.muedsa.snapshot.snapshotPixels
 import com.muedsa.snapshot.paint.BoxFit
+import com.muedsa.snapshot.paint.ImageRepeatConfig
 import com.muedsa.snapshot.parser.ParseException
 import com.muedsa.snapshot.parser.Parser
 import com.muedsa.snapshot.parser.image.DataUriImageDecoder
@@ -98,5 +99,24 @@ class ImageDataUriParserTest {
         val error = assertFailsWith<ParseException> { snapshot.createWidget() }
         assertEquals(rawAttr.valueStartPos, error.pos)
         assertTrue(error.message!!.contains("Attr [dataUri]"))
+    }
+
+    @Test
+    fun repeated_image_from_parser_respects_core_tile_limit() {
+        val previousLimit = ImageRepeatConfig.maxTileCount
+        val image = painterImage(2f, 2f, Color.RED) { }
+        try {
+            ImageRepeatConfig.maxTileCount = 3
+            val parser = Parser(dataUriImageDecoder = DataUriImageDecoder { image })
+            val snapshot = parse(
+                "<Image dataUri=\"data:image/png;base64,ignored\" width=\"4\" height=\"4\" fit=\"NONE\" repeat=\"REPEAT\"/>",
+                parser,
+            )
+            val error = assertFailsWith<IllegalArgumentException> { snapshot.snapshot() }
+            assertTrue(error.message.orEmpty().contains("configured limit"))
+        } finally {
+            image.close()
+            ImageRepeatConfig.maxTileCount = previousLimit
+        }
     }
 }
