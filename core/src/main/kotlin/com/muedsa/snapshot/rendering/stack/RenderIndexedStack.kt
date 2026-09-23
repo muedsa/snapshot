@@ -5,13 +5,9 @@ import com.muedsa.geometry.AlignmentGeometry
 import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.rendering.ClipBehavior
 import com.muedsa.snapshot.rendering.PaintingContext
-import com.muedsa.snapshot.rendering.box.RenderBox
 import org.jetbrains.skia.paragraph.Direction
 
-/**
- * 只渲染指定的child
- * 感觉用不到
- */
+/** 布局所有子节点，但只绘制 [index] 指定的子节点；为 null 时不绘制。 */
 class RenderIndexedStack(
     val index: Int? = 0,
     alignment: AlignmentGeometry = AlignmentDirectional.TOP_START,
@@ -25,16 +21,21 @@ class RenderIndexedStack(
     clipBehavior = clipBehavior,
 ) {
 
-    private fun childAtIndex(): RenderBox {
-        assert(index != null)
-        return children[index!!]
+    init {
+        require(index == null || index >= 0) { "index must be null or non-negative, got $index" }
+    }
+
+    override fun performLayout() {
+        require(index == null || children.isEmpty() || index < childCount) {
+            "index $index is out of range for $childCount children"
+        }
+        super.performLayout()
     }
 
     override fun paintStack(context: PaintingContext, offset: Offset) {
-        if (children.isEmpty() || index == null) {
-            return
-        }
-        val child = childAtIndex()
+        if (index == null || children.isEmpty()) return
+        require(index < childCount) { "index $index is out of range for $childCount children" }
+        val child = children[index]
         val childParentData = child.parentData!!
         context.paintChild(child, childParentData.offset + offset)
     }

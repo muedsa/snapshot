@@ -298,13 +298,13 @@ ProxyWidget(根)          →    (透传)
 |---|---|---|
 | `ProxyWidget` | 1 个（`widget`） | 透传包装，`Container` 等复合 Widget 内部靠它拼装 |
 | `SingleChildWidget` | 1 个（`child`） | 绝大多数布局/装饰 Widget |
-| `MultiChildWidget` | 多个（`children`） | `Flex`/`Row`/`Column`/`Stack`/`RichText` |
+| `MultiChildWidget` | 多个（`children`） | `Flex`/`Row`/`Column`/`Stack`/`IndexedStack`/`RichText` |
 | （直接继承 `Widget`） | 0 个 | 叶子：`RawImage`、`ProviderImage`、`CachedNetworkImage` |
 
 前三类都实现了 **`ChildSlot`** 接口（唯一方法 `attach(child)`），而直接继承 `Widget` 的叶子**不是** `ChildSlot`。所有 Widget DSL 函数（`Padding` / `Row` / `Stack` …）的接收者都是 `ChildSlot`，这带来两条**编译期**保证：
 
 - 在没有子槽位的 Widget 上挂子节点 → **编译错误**（不再是运行时异常）；
-- 把节点挂到错误的父节点上（例如 `Stack { Row { Positioned(…) } }`——`Positioned` 的接收者是 `Stack`，而最近的接收者是 `Row`）→ **编译错误**。
+- 把节点挂到错误的父节点上（例如 `Stack { Row { Positioned(…) } }`——`Positioned` 的接收者是 `Stack` 或 `IndexedStack`，而最近的接收者是 `Row`）→ **编译错误**。
 
 因此如果你写了自己的辅助函数，接收者要声明成 `fun ChildSlot.myCard() { … }`；写成 `fun Widget.myCard()` 会在里面调不到任何 Widget DSL 函数。`attach` 同时也是唯一设置子槽位与 `parent` 回指的入口，同一个子槽位重复挂载会抛 `IllegalStateException`。
 
@@ -371,7 +371,8 @@ ProxyWidget(根)          →    (透传)
 | `Flex` / `Row` / `Column` | 多 | 一维弹性布局 |
 | `Expanded` / `Flexible` | 单 | Flex 子项伸缩参数（**只能放在 Flex/Row/Column 里**） |
 | `Stack` | 多 | 层叠布局 |
-| `Positioned` | 单 | Stack 子项定位（**只能放在 Stack 里**） |
+| `IndexedStack` | 多 | 布局全部子节点，只绘制指定索引的子节点 |
+| `Positioned` | 单 | Stack 子项定位（**只能放在 Stack 或 IndexedStack 里**） |
 | `Transform` | 单 | 仿射变换（旋转/平移/自定义矩阵） |
 | `ColoredBox` | 单 | 填充底色 |
 | `DecoratedBox` | 单 | 背景/前景装饰（边框、圆角、阴影、渐变、图片） |
@@ -532,7 +533,7 @@ SnapshotPNG {
 }
 ```
 
-#### Stack / Positioned
+#### Stack / IndexedStack / Positioned
 
 ```kotlin
 fun Widget.Stack(
@@ -543,7 +544,22 @@ fun Widget.Stack(
     content: Stack.() -> Unit = {},
 )
 
+fun Widget.IndexedStack(
+    index: Int? = 0,
+    alignment: AlignmentGeometry = AlignmentDirectional.TOP_START,
+    textDirection: Direction = Direction.LTR,
+    fit: StackFit = StackFit.LOOSE,
+    clipBehavior: ClipBehavior = ClipBehavior.HARD_EDGE,
+    content: IndexedStack.() -> Unit = {},
+)
+
 fun Stack.Positioned(
+    left: Float? = null, top: Float? = null, right: Float? = null, bottom: Float? = null,
+    width: Float? = null, height: Float? = null,
+    content: Positioned.() -> Unit = {},
+)
+
+fun IndexedStack.Positioned(
     left: Float? = null, top: Float? = null, right: Float? = null, bottom: Float? = null,
     width: Float? = null, height: Float? = null,
     content: Positioned.() -> Unit = {},
@@ -551,8 +567,9 @@ fun Stack.Positioned(
 ```
 
 - `Stack` 按子节点加入顺序**从下往上**叠放；非 `Positioned` 的子节点按 `alignment` 对齐，尺寸策略由 `fit` 决定（`LOOSE`/`EXPAND`/`PASSTHROUGH`）。
-- **注意默认裁剪**：`Stack` 的 `clipBehavior` 默认是 `HARD_EDGE`（会裁掉溢出部分），要允许溢出请显式传 `ClipBehavior.NONE`。
-- `Positioned` 约束（`assert`）：`left`/`right`/`width` 三者最多给两个；`top`/`bottom`/`height` 同理。快捷构造：`Positioned.fill(...)`、`Positioned.fromRect(rect)`、`Positioned.fromRelativeRect(rr)`、`Positioned.directional(textDirection, start, end, ...)`。
+- `IndexedStack` 布局全部子节点，尺寸由全部子节点共同决定，但只绘制 `index` 指定的子节点。索引从 `0` 开始；`null` 表示不绘制任何子节点。非空栈的索引必须在子节点范围内。
+- **注意默认裁剪**：`Stack` 和 `IndexedStack` 的 `clipBehavior` 默认是 `HARD_EDGE`（会裁掉溢出部分），要允许溢出请显式传 `ClipBehavior.NONE`。
+- `Positioned` 约束（`require`）：`left`/`right`/`width` 三者最多给两个；`top`/`bottom`/`height` 同理。快捷构造：`Positioned.fill(...)`、`Positioned.fromRect(rect)`、`Positioned.fromRelativeRect(rr)`、`Positioned.directional(textDirection, start, end, ...)`。
 
 ```kotlin
 SnapshotPNG {
@@ -566,6 +583,17 @@ SnapshotPNG {
                 Container(width = 80f, height = 80f, color = Color.BLUE)
             }
         }
+    }
+}
+```
+
+只显示第二张卡片，同时保留第一张卡片对布局尺寸的影响：
+
+```kotlin
+SnapshotPNG {
+    IndexedStack(index = 1) {
+        Container(width = 200f, height = 120f, color = Color.RED)
+        Container(width = 100f, height = 80f, color = Color.BLUE)
     }
 }
 ```
@@ -1065,14 +1093,15 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `ImageFiltered` | 单子 | `ImageFiltered` | 对子树应用高斯模糊 |
 | `BackdropFilter` | 单子 | `BackdropFilter` | 对已经绘制的下层内容应用高斯模糊 |
 | `Stack` | 多子 | `Stack` | |
-| `Positioned` | 单子 | `Positioned` | 只能放在 `Stack` 里 |
+| `IndexedStack` | 多子 | `IndexedStack` | 布局全部子节点，仅绘制指定索引 |
+| `Positioned` | 单子 | `Positioned` | 只能放在 `Stack` 或 `IndexedStack` 里 |
 | `Image` | **无子** | `CachedNetworkImage` | 网络图 |
 | `Text` | 多子（行内 span） | `RichText` | 子节点只能是 `Text`/`Raw`/`Emoji`/`WidgetSpan` |
 | `Raw` | 多子（行内 span） | 无（仅作 `Text` 的子节点） | 原样文本，**不 trim** |
 | `Emoji` | **无子** | `ImageEmoji`（行内图片） | 只能作为 `Text` 的子节点 |
 | `WidgetSpan` | **单子** | `WidgetSpan` | 把一个普通 Widget 嵌入文本，只能作为 `Text` 的子节点 |
 
-**没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath` 等——解析器目前覆盖 33 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。滤镜标签目前只开放颜色混合与高斯模糊；滤镜矩阵、阴影、组合滤镜和运行时着色器仍需 Kotlin DSL。
+**没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath` 等——解析器目前覆盖 34 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。滤镜标签目前只开放颜色混合与高斯模糊；滤镜矩阵、阴影、组合滤镜和运行时着色器仍需 Kotlin DSL。
 
 ### 10.3 属性取值格式
 
@@ -1541,7 +1570,7 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 
 颜色矩阵、滤镜组合、阴影滤镜、位移映射和运行时着色器等高级能力仍需在 Kotlin DSL 中直接构造 Skia `ColorFilter` / `ImageFilter`。
 
-#### `<Stack>`
+#### `<Stack>` / `<IndexedStack>`
 
 | 属性 | 类型 | 默认 | 说明 |
 |---|---|---|---|
@@ -1549,6 +1578,17 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 | `textDirection` | enum | `LTR` | `LTR`/`RTL` |
 | `fit` | enum | `LOOSE` | `LOOSE` / `EXPAND` / `PASSTHROUGH`，控制非定位子节点接收的约束 |
 | `clipBehavior` | enum | `HARD_EDGE` | 内容溢出时的裁剪方式，取值见 `ClipBehavior` |
+
+`<IndexedStack>` 还支持 `index`：整数，默认 `0`，从零开始选择要绘制的子节点；仅写 `index` 而不赋值表示 `null`，即不绘制任何子节点。所有子节点仍参与布局和尺寸计算。非空栈的索引超出范围会在布局时抛出异常。
+
+```html
+<Snapshot>
+    <IndexedStack index="1">
+        <Container width="200" height="120" color="#FFFF0000"/>
+        <Container width="100" height="80" color="#FF0000FF"/>
+    </IndexedStack>
+</Snapshot>
+```
 
 `clipBehavior="NONE"` 可保留超出 Stack 边界的绘制内容；`fit="EXPAND"` 会让非定位子节点填满 Stack，`fit="PASSTHROUGH"` 会把父约束直接传给非定位子节点。
 

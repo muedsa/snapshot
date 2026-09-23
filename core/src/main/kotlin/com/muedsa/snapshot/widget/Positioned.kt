@@ -27,6 +27,27 @@ inline fun Stack.Positioned(
     )
 }
 
+inline fun IndexedStack.Positioned(
+    left: Float? = null,
+    top: Float? = null,
+    right: Float? = null,
+    bottom: Float? = null,
+    width: Float? = null,
+    height: Float? = null,
+    content: Positioned.() -> Unit = {},
+) {
+    attach(
+        com.muedsa.snapshot.widget.Positioned(
+            left = left,
+            top = top,
+            right = right,
+            bottom = bottom,
+            width = width,
+            height = height,
+        ).apply(content)
+    )
+}
+
 class Positioned(
     var left: Float? = null,
     var top: Float? = null,
