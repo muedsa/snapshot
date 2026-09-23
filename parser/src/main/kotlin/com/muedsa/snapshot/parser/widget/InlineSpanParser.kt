@@ -10,6 +10,7 @@ import com.muedsa.snapshot.parser.attr.CommonAttrDefine
 import com.muedsa.snapshot.widget.text.ImageEmoji
 import com.muedsa.snapshot.widget.text.WidgetSpan
 import org.jetbrains.skia.BlendMode
+import org.jetbrains.skia.Image
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.PlaceholderAlignment
 
@@ -26,9 +27,9 @@ private fun Element.parseTextSpan(raw: Boolean = false): TextSpan {
 }
 
 private fun Element.parseEmojiSpan(): WidgetSpan {
+    val source = imageSource()
     val baseline: BaselineMode? = WidgetParser.parseAttrValue(CommonAttrDefine.BASELINE_N, attrs)
     val alignment: PlaceholderAlignment = WidgetParser.parseAttrValue(CommonAttrDefine.PLACEHOLDER_ALIGNMENT, attrs)
-    val url: String = WidgetParser.parseAttrValue(CommonAttrDefine.URL, attrs)
     val width: Float? = WidgetParser.parseAttrValue(CommonAttrDefine.WIDTH_N, attrs)
     val height: Float? = WidgetParser.parseAttrValue(CommonAttrDefine.HEIGHT_N, attrs)
     val fit: BoxFit? = WidgetParser.parseAttrValue(CommonAttrDefine.FIT_N, attrs)
@@ -38,8 +39,20 @@ private fun Element.parseEmojiSpan(): WidgetSpan {
     val opacity: Float = WidgetParser.parseAttrValue(CommonAttrDefine.OPACITY, attrs)
     val color: Int? = WidgetParser.parseAttrValue(CommonAttrDefine.COLOR_N, attrs)
     val colorBlendMode: BlendMode? = WidgetParser.parseAttrValue(ImageParser.ATTR_COLOR_BLEND_MODE, attrs)
+    val provider: () -> Image = when (source) {
+        ImageSource.URL -> {
+            val url = WidgetParser.parseAttrValue(CommonAttrDefine.URL, attrs)
+            val imageProvider: () -> Image = { owner!!.getNetworkImageCache().getImage(url) }
+            imageProvider
+        }
+        ImageSource.DATA_URI -> {
+            val image = decodeDataUriImage()
+            val imageProvider: () -> Image = { image }
+            imageProvider
+        }
+    }
     val imageEmojiWidget = ImageEmoji(
-        provider = { owner!!.getNetworkImageCache().getImage(url) },
+        provider = provider,
         width = width,
         height = height,
         fit = fit,
