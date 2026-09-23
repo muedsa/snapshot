@@ -47,6 +47,7 @@ class WidgetParserManager {
             { SizedBoxParser() },
             { AspectRatioParser() },
             { FractionallySizedBoxParser() },
+            { UnconstrainedBoxParser() },
             { ConstrainedBoxParser() },
             { LimitedBoxParser() },
             { OverflowBoxParser() },
