@@ -9,6 +9,7 @@ import com.muedsa.snapshot.rendering.box.RenderColoredBox
 import com.muedsa.snapshot.rendering.flex.FlexFit
 import com.muedsa.snapshot.rendering.toLayoutNode
 import com.muedsa.snapshot.widget.Expanded
+import com.muedsa.snapshot.widget.Flex
 import com.muedsa.snapshot.widget.Flexible
 import com.muedsa.snapshot.widget.Row
 import com.muedsa.snapshot.widget.SizedBox
@@ -53,6 +54,33 @@ class FlexibleParserTest {
         val green = checkNotNull(renderRoot.findType<RenderColoredBox> { it.color == Color.GREEN })
         red.assertGlobalRect(0f, 0f, 100f, 100f)
         green.assertGlobalRect(100f, 0f, 200f, 100f)
+    }
+
+    @Test
+    fun flex_tag_accepts_expanded_and_flexible_as_direct_children() {
+        val snapshot = ParserTest.parse(
+            """
+            <Snapshot>
+                <SizedBox width="300" height="100">
+                    <Flex direction="HORIZONTAL">
+                        <Expanded><Container color="#FFFF0000"/></Expanded>
+                        <Flexible flex="2" fit="TIGHT"><Container color="#FF00FF00"/></Flexible>
+                    </Flex>
+                </SizedBox>
+            </Snapshot>
+            """.trimIndent()
+        )
+
+        val root = assertIs<SizedBox>(snapshot.createWidget())
+        val flex = assertIs<Flex>(root.child)
+        assertIs<Expanded>(flex.children[0])
+        assertIs<Flexible>(flex.children[1])
+
+        val layout = root.createRenderBox().also { it.layout(BoxConstraints()) }.toLayoutNode()
+        checkNotNull(layout.findType<RenderColoredBox> { it.color == Color.RED })
+            .assertGlobalRect(0f, 0f, 100f, 100f)
+        checkNotNull(layout.findType<RenderColoredBox> { it.color == Color.GREEN })
+            .assertGlobalRect(100f, 0f, 200f, 100f)
     }
 
     @Test

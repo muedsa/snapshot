@@ -25,7 +25,7 @@ open class FlexibleParser : WidgetParser {
 
 internal fun requireFlexParent(element: Element, tagId: String) {
     val parentParser = element.parent?.widgetParser
-    require(parentParser is RowParser || parentParser is ColumnParser) {
-        "Tag [$tagId] must be a direct child of Row or Column"
+    require(parentParser is FlexParser || parentParser is RowParser || parentParser is ColumnParser) {
+        "Tag [$tagId] must be a direct child of Flex, Row or Column"
     }
 }
