@@ -80,7 +80,7 @@ val png: ByteArray = Parser().parse(StringReader(text)).snapshot()
 | 构建工具 | Gradle Wrapper **9.7.1** | `gradle/wrapper/gradle-wrapper.properties` |
 | JVM 工具链（编译） | **Java 11**（`subprojects { toolchain 11 }`） | `build.gradle.kts` |
 | CI 使用的 JDK | **17**（temurin） | `.github/workflows/*.yaml` |
-| Kotlin | **2.4.10** | `gradle/libs.versions.toml` |
+| Kotlin | **2.4.20** | `gradle/libs.versions.toml` |
 | 图形依赖 | `org.jetbrains.skiko:skiko-awt:0.0.0-SNAPSHOT` | `gradle/libs.versions.toml` |
 | 依赖仓库 | `mavenCentral()` + `https://maven.pkg.jetbrains.space/public/p/compose/dev` | `settings.gradle.kts` |
 
@@ -253,23 +253,29 @@ SnapshotPNG(
 
 ```kotlin
 SnapshotPNG { Container(width = 200f, height = 200f, color = Color.RED) }  // ✅ 200×200
-SnapshotPNG { Container() }                                               // ❌ layout size is infinite
+SnapshotPNG { Container() }                                               // ❌ layout size is empty
 SnapshotPNG { Row {} }                                                    // ❌ layout size is empty
 SnapshotPNG { SizedBox(width = 200f) { Text("hi") } }                     // ⚠️ 高度由文本决定
 ```
 
-> 原因：空 `Container()` 没有子节点又没有约束时，内部会组合出 `ConstrainedBox(BoxConstraints.expand())`（即"尽可能大"），在"最大无限"的根约束下就变成无限大。给它 `width`/`height`/`constraints` 即可。
+> 原因：空 `Container()` 没有子节点又没有约束时，内部的 `LimitedBox(maxWidth = 0, maxHeight = 0)` 会在无界根约束下将尺寸限制为零。给它非零的 `width`/`height`，或添加能确定非零尺寸的子节点即可。
 
 ### 3.4 接到 HTTP 服务
 
 `snapshot()` 返回的就是可直接写响应的字节数组（Web Demo <https://snapshot.muedsa.com> 的 `POST /snapshot` 就是这么做的）：
 
 ```kotlin
-// 伪代码:Ktor / Spring 均可
+// Ktor 示例；其他框架同样应按实际编码格式设置 Content-Type。
 post("/snapshot") {
     val body = call.receiveText()                       // 类 DOM 文本
-    val bytes = Parser().parse(StringReader(body)).snapshot()
-    call.respondBytes(bytes, ContentType.Image.PNG)     // Content-Type: image/png
+    val element = Parser().parse(StringReader(body))
+    val contentType = when (element.type) {
+        "png" -> ContentType.Image.PNG
+        "jpg" -> ContentType.Image.JPEG
+        "webp" -> ContentType.parse("image/webp")
+        else -> error("Unsupported image type")
+    }
+    call.respondBytes(element.snapshot(), contentType)
 }
 ```
 
@@ -434,7 +440,7 @@ fun ChildSlot.Container(
 - **约束**：`check(color == null || decoration == null)`——颜色和装饰不能同时给；要两者都要，用 `decoration = BoxDecoration(color = ...)`。
 - `width`/`height` 不会单独建节点，而是并进 `constraints`：`constraints?.tighten(width, height) ?: BoxConstraints.tightFor(width, height)`。
 - 注意 `ClipPath` 在 `DecoratedBox(背景)` **内**层，也就是**装饰本身不会被 `clipBehavior` 裁掉**，被裁的是子节点内容。
-- **无子节点时的特殊行为**（第 0 行）：会变成"占满可用空间"。有界约束下就是"铺满父容器"，无限约束下会报 *layout size is infinite*（见 [3.3](#33-尺寸规则与常见异常)）。
+- **无子节点时的特殊行为**（第 0 行）：没有显式约束或仅有紧约束时，会通过 `LimitedBox(maxWidth = 0, maxHeight = 0)` 处理。有界父约束下仍遵守父约束；无界根约束下会收缩为零并报 *layout size is empty*（见 [3.3](#33-尺寸规则与常见异常)）。
 
 ```kotlin
 SnapshotPNG {
@@ -1834,7 +1840,7 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 
 #### `<Raw>`
 
-支持与 `<Text>` 相同的 `text` 及全部文本样式属性，但不使用 `textAlign`、`softWrap`、`overflow` 等 `RichText` 布局属性。区别是 `<Raw>` 的文本**不做 trim**，首尾空白与换行原样保留（源码里走 `parseTextSpan(raw = true)`）。仅可作为 `<Text>` 的子节点。
+支持与 `<Text>` 相同的 `text` 及全部文本样式属性，但不使用 `textAlign`、`softWrap`、`overflow` 等 `RichText` 布局属性。区别是 `<Raw>` 的文本**不做 trim**，首尾空白与换行原样保留（源码里走 `parseTextSpan(raw = true)`）。`Raw` 可嵌套行内 Span，但只能出现在由最外层 `<Text>` 创建的行内内容树中。
 
 #### `<WidgetSpan>`
 
@@ -2087,8 +2093,8 @@ class MyWidgetTest {
 
 ## 12. 常见问题
 
-**Q：`SnapshotPNG { Container() }` 为什么报 `layout size is infinite`？**
-空 `Container` 在没有约束时会组合出"尽可能大"的约束；根约束的最大值是无限，于是尺寸无限。给它 `width`/`height`，或外面套 `SizedBox`/有界 `Container`。
+**Q：`SnapshotPNG { Container() }` 为什么报 `layout size is empty`？**
+空 `Container` 在无界根约束下会被内部的 `LimitedBox` 限制为零尺寸。给它非零的 `width` 和 `height`，或添加能确定非零尺寸的子节点。
 
 **Q：为什么 `Row {}` 报 `layout size is empty`？**
 Flex 在主轴无界时会收缩到子节点总尺寸，没有子节点就是 `0×0`。给子节点或给显式尺寸。
