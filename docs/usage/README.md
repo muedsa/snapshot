@@ -1886,7 +1886,7 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 <Text fontSize="40">你好<Emoji dataUri="data:image/png;base64,iVBORw0KGgo..." width="40" height="40"/>世界</Text>
 ```
 
-### 10.5 文本、空白与 CDATA
+### 10.5 文本、空白、注释与 CDATA
 
 - **CDATA 可用**：`<![CDATA[ ... ]]>` 中的内容原样作为文本，`<`、`>`、`&` 都无需转义。
 
@@ -1907,7 +1907,8 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 
   属性值里的 `&` 是安全的（会被当作普通字符保留，同样不解码）。
 - **不支持 HTML 实体**：`&lt;` 会**原样**保留成四个字符 `&lt;`。需要在文本中包含 `<` 时请使用 CDATA。
-- **不支持注释与 DOCTYPE**：`<!-- ... -->`、`<!DOCTYPE ...>` 都会报 `Unexpected character '<' in input state [MARKUP_DECLARATION_OPEN]`。只有 `<![CDATA[` 这一种标记声明。
+- **支持注释**：`<!-- ... -->` 可写在根标签前后、标签之间或文本中，注释内容会被忽略；未遇到 `-->` 就到达 EOF 会抛出 `ParseException`。CDATA 中的相同字样仍是普通文本。
+- **不支持 DOCTYPE**：`<!DOCTYPE ...>` 会报 `Unexpected character '<' in input state [MARKUP_DECLARATION_OPEN]`。
 - **`<Text>` 内的文本会被 trim**，首尾空白丢失；`<Raw>` 不 trim、原样保留（内部换行也保留）。
 - **非文本标签内不允许出现非空白字符**：`<Container>hello</Container>` 会抛 `ParseException: Not Support RAWTEXT: hello`。标签之间的缩进/换行属于纯空白，会被忽略。
 - **标签可以不闭合**：`parse()` 结束时会自动闭合栈内剩余标签。结束标签会在最多 **256 层**（`Parser.MAX_QUEUE_DEPTH`）栈深度内按标签名回溯匹配，**找不到就静默忽略**；因此写错闭合标签往往不会报错，只是结构和你以为的不一样。
@@ -2121,7 +2122,7 @@ EdgeInsets 必须写成 `"(1,2,3,4)"` 或 `"10"` 或 `"(1,2)"`，圆括号和逗
 可以。`Expanded`、`Flexible`、`Opacity`、`Transform`、`ClipRect`、`ClipOval`、`ClipRRect` 都已内置，完整列表见 [10.2](#102-标签总表)。任意路径裁剪 `ClipPath` 仍需在 Kotlin DSL 中构建，或按 [10.8](#108-扩展自定义标签) 注册自定义标签。
 
 **Q：文本里怎么写 `<` `>`？**
-用 `<![CDATA[ ... ]]>`。库**不做** HTML 实体解码，`&lt;` 会原样输出；裸 `&` 可以直接书写并会原样保留（见 [10.5](#105-文本空白与-cdata)）。注释 `<!-- -->` 也不支持。
+用 `<![CDATA[ ... ]]>`。库**不做** HTML 实体解码，`&lt;` 会原样输出；裸 `&` 可以直接书写并会原样保留（见 [10.5](#105-文本空白注释与-cdata)）。`<!-- ... -->` 会被当作注释忽略，不能用来显示字面量 `<`。
 
 **Q：同一个 `Parser` 实例可以重复使用吗？**
 可以。每次 `parse()` 都会重置内部解析状态，前一次成功或失败都不会污染下一次调用；同一实例上的并发调用会由 `@Synchronized` 依次执行。
