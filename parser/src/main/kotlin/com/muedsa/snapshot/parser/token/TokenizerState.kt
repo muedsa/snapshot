@@ -545,10 +545,22 @@ enum class TokenizerState {
             if (r.matchConsume("[CDATA[")) {
                 t.createTempBuffer()
                 t.transition(CDATA_SECTION)
+            } else if (r.matchConsume("--")) {
+                t.transition(COMMENT)
             } else {
                 t.error(this)
 //              t.createTagPending(true)
 //              t.transition(TAG_NAME)
+            }
+        }
+    },
+    COMMENT {
+        override fun read(t: Tokenizer, r: CharacterReader) {
+            r.consumeTo("-->")
+            if (r.matchConsume("-->")) {
+                t.transition(DATA)
+            } else if (r.isEmpty()) {
+                t.eofError(this)
             }
         }
     },

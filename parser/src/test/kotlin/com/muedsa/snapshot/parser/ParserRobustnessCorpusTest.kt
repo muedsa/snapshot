@@ -61,8 +61,9 @@ class ParserRobustnessCorpusTest {
     @Test
     fun parser_result_is_stable_across_fragmented_reader_reads() {
         val document = """
+            <!-- 文档注释 -->
             <Snapshot background="#FFFFFFFF">
-                <Text fontSize="12">prefix & <![CDATA[<tag attr="&">]]><Raw>  保留空格 &amp;  </Raw>suffix</Text>
+                <Text fontSize="12">prefix & <!-- 行内注释 --><![CDATA[<tag attr="&">]]><Raw>  保留空格 &amp;  </Raw>suffix</Text>
             </Snapshot>
         """.trimIndent()
         val expected = Parser().parse(StringReader(document))
@@ -78,7 +79,7 @@ class ParserRobustnessCorpusTest {
     }
 
     @Test
-    fun quoted_attribute_and_cdata_survive_internal_buffer_boundaries() {
+    fun quoted_attribute_cdata_and_comments_survive_internal_buffer_boundaries() {
         val attributePayload = buildString(CharacterReader.MAX_BUFFER_LEN + 2_048) {
             repeat(CharacterReader.MAX_BUFFER_LEN + 2_048) { append('a') }
             listOf(
@@ -104,6 +105,11 @@ class ParserRobustnessCorpusTest {
             val document = "$prefix$cdata]]>tail</Text></Snapshot>"
 
             assertEquals("${cdata}tail", parseWithinTimeout(document).plainText())
+
+            val commentPrefix = "<Snapshot><Text>before<!--"
+            val comment = "x".repeat(terminatorPosition - commentPrefix.length)
+            val commentDocument = "$commentPrefix$comment-->after</Text></Snapshot>"
+            assertEquals("beforeafter", parseWithinTimeout(commentDocument).plainText())
         }
     }
 
@@ -162,6 +168,9 @@ class ParserRobustnessCorpusTest {
                 ">",
                 "</",
                 "<!",
+                "<!--",
+                "<!-- unfinished",
+                "<!-- --",
                 "<![CDATA[",
                 "<![CDATA[]]",
                 "<![CDATA[&<>]]>",
