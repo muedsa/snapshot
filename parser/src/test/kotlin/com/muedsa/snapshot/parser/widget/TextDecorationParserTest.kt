@@ -25,11 +25,11 @@ class TextDecorationParserTest {
             ParserTest.parse(
                 """
                 <Snapshot>
-                    <Text color="#FF0000FF"
+                    <Text color="#0000FFFF"
                           fontSize="40"
                           fontFamily="$testFontFamily"
                           decoration="UNDERLINE,LINE_THROUGH"
-                          decorationColor="#FFFF0000"
+                          decorationColor="#FF0000FF"
                           decorationLineStyle="WAVY"
                           decorationThickness="2"
                           decorationGaps="false">装饰文本展示</Text>
@@ -107,7 +107,7 @@ class TextDecorationParserTest {
             "<Snapshot><Text decoration=\"UNDERLINE\" decorationLineStyle=\"UNKNOWN\">text</Text></Snapshot>",
             "<Snapshot><Text decoration=\"UNDERLINE\" decorationThickness=\"0\">text</Text></Snapshot>",
             "<Snapshot><Text decoration=\"UNDERLINE\" decorationThickness=\"NaN\">text</Text></Snapshot>",
-            "<Snapshot><Text decorationColor=\"#FFFF0000\">text</Text></Snapshot>",
+            "<Snapshot><Text decorationColor=\"#FF0000FF\">text</Text></Snapshot>",
         ).forEach { source ->
             assertFailsWith<ParseException>(source) {
                 ParserTest.parse(source).createWidget()

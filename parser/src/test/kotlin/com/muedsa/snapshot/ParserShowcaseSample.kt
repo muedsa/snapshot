@@ -33,53 +33,53 @@ class ParserShowcaseSample {
         }
 
         private val DOM_CARD = """
-            <Snapshot background="#FF070B16" type="png">
-                <Container width="1000" height="560" color="#FF070B16">
+            <Snapshot background="#070B16FF" type="png">
+                <Container width="1000" height="560" color="#070B16FF">
                     <Stack alignment="TOP_LEFT">
-                        <Container width="1000" height="560" color="#FF070B16"/>
+                        <Container width="1000" height="560" color="#070B16FF"/>
                         <Positioned left="610" top="-170" width="520" height="520">
-                            <Container width="520" height="520" color="#FF40207A" borderRadius="260"/>
+                            <Container width="520" height="520" color="#40207AFF" borderRadius="260"/>
                         </Positioned>
                         <Positioned left="720" top="-80" width="320" height="320">
-                            <Container width="320" height="320" color="#FF06B6D4" borderRadius="160"/>
+                            <Container width="320" height="320" color="#06B6D4FF" borderRadius="160"/>
                         </Positioned>
                         <Positioned left="56" top="48" right="56" height="48">
                             <Row mainAxisAlignment="SPACE_BETWEEN" crossAxisAlignment="CENTER">
-                                <Text color="#FFF8FAFC" fontSize="18" fontStyle="BOLD">SNAPSHOT / PARSER</Text>
-                                <Container color="#DD07101C" border="1 SOLID #FF22C55E" borderRadius="18" padding="(12,7,12,7)">
-                                    <Text color="#FF86EFAC" fontSize="11" fontStyle="BOLD">OFFLINE READY</Text>
+                                <Text color="#F8FAFCFF" fontSize="18" fontStyle="BOLD">SNAPSHOT / PARSER</Text>
+                                <Container color="#07101CDD" border="1 SOLID #22C55EFF" borderRadius="18" padding="(12,7,12,7)">
+                                    <Text color="#86EFACFF" fontSize="11" fontStyle="BOLD">OFFLINE READY</Text>
                                 </Container>
                             </Row>
                         </Positioned>
                         <Positioned left="56" top="142" width="570" height="190">
                             <Column crossAxisAlignment="START">
-                                <Text color="#FFA78BFA" fontSize="13" fontStyle="BOLD">DOM-LIKE INPUT  →  NATIVE PIXELS</Text>
-                                <Text color="#FFF8FAFC" fontSize="48" fontStyle="BOLD">Describe once.</Text>
-                                <Text color="#FFF8FAFC" fontSize="48" fontStyle="BOLD">Render anywhere.</Text>
-                                <Text color="#FF94A3B8" fontSize="16">将结构化文本解析为同一棵 Widget 树，再输出 PNG、JPEG 或 WEBP。</Text>
+                                <Text color="#A78BFAFF" fontSize="13" fontStyle="BOLD">DOM-LIKE INPUT  →  NATIVE PIXELS</Text>
+                                <Text color="#F8FAFCFF" fontSize="48" fontStyle="BOLD">Describe once.</Text>
+                                <Text color="#F8FAFCFF" fontSize="48" fontStyle="BOLD">Render anywhere.</Text>
+                                <Text color="#94A3B8FF" fontSize="16">将结构化文本解析为同一棵 Widget 树，再输出 PNG、JPEG 或 WEBP。</Text>
                             </Column>
                         </Positioned>
                         <Positioned left="56" bottom="46" width="888" height="130">
                             <Row mainAxisAlignment="SPACE_BETWEEN" crossAxisAlignment="CENTER">
-                                <Container width="272" height="116" color="#FF151C2E" border="1 SOLID #FF334155" borderRadius="24" padding="20">
+                                <Container width="272" height="116" color="#151C2EFF" border="1 SOLID #334155FF" borderRadius="24" padding="20">
                                     <Column crossAxisAlignment="START">
-                                        <Text color="#FF22D3EE" fontSize="11" fontStyle="BOLD">01 / PARSE</Text>
-                                        <Text color="#FFF8FAFC" fontSize="21" fontStyle="BOLD">Readable source</Text>
-                                        <Text color="#FF94A3B8" fontSize="12">标签、属性、CDATA</Text>
+                                        <Text color="#22D3EEFF" fontSize="11" fontStyle="BOLD">01 / PARSE</Text>
+                                        <Text color="#F8FAFCFF" fontSize="21" fontStyle="BOLD">Readable source</Text>
+                                        <Text color="#94A3B8FF" fontSize="12">标签、属性、CDATA</Text>
                                     </Column>
                                 </Container>
-                                <Container width="272" height="116" color="#FF151C2E" border="1 SOLID #FF334155" borderRadius="24" padding="20">
+                                <Container width="272" height="116" color="#151C2EFF" border="1 SOLID #334155FF" borderRadius="24" padding="20">
                                     <Column crossAxisAlignment="START">
-                                        <Text color="#FFA78BFA" fontSize="11" fontStyle="BOLD">02 / LAYOUT</Text>
-                                        <Text color="#FFF8FAFC" fontSize="21" fontStyle="BOLD">Widget semantics</Text>
-                                        <Text color="#FF94A3B8" fontSize="12">Row、Column、Stack</Text>
+                                        <Text color="#A78BFAFF" fontSize="11" fontStyle="BOLD">02 / LAYOUT</Text>
+                                        <Text color="#F8FAFCFF" fontSize="21" fontStyle="BOLD">Widget semantics</Text>
+                                        <Text color="#94A3B8FF" fontSize="12">Row、Column、Stack</Text>
                                     </Column>
                                 </Container>
-                                <Container width="272" height="116" color="#FF151C2E" border="1 SOLID #FF334155" borderRadius="24" padding="20">
+                                <Container width="272" height="116" color="#151C2EFF" border="1 SOLID #334155FF" borderRadius="24" padding="20">
                                     <Column crossAxisAlignment="START">
-                                        <Text color="#FF22C55E" fontSize="11" fontStyle="BOLD">03 / EXPORT</Text>
-                                        <Text color="#FFF8FAFC" fontSize="21" fontStyle="BOLD">Image bytes</Text>
-                                        <Text color="#FF94A3B8" fontSize="12">One call, ready to ship</Text>
+                                        <Text color="#22C55EFF" fontSize="11" fontStyle="BOLD">03 / EXPORT</Text>
+                                        <Text color="#F8FAFCFF" fontSize="21" fontStyle="BOLD">Image bytes</Text>
+                                        <Text color="#94A3B8FF" fontSize="12">One call, ready to ship</Text>
                                     </Column>
                                 </Container>
                             </Row>

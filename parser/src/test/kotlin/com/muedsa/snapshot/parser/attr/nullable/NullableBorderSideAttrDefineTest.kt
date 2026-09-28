@@ -20,7 +20,7 @@ class NullableBorderSideAttrDefineTest {
                 style = BorderStyle.SOLID
             )
         ) {
-            attr.parseValue(RawAttr(attrName, "2 SOLID #FF00FF00"))
+            attr.parseValue(RawAttr(attrName, "2 SOLID #00FF00FF"))
         }
 
         expect(

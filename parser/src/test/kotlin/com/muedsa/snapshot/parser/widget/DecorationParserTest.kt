@@ -22,7 +22,7 @@ class DecorationParserTest {
         val widget = ParserTest.parse(
             """
             <Snapshot>
-                <ColoredBox color="#FF336699">
+                <ColoredBox color="#336699FF">
                     <SizedBox width="20" height="10"/>
                 </ColoredBox>
             </Snapshot>
@@ -49,7 +49,7 @@ class DecorationParserTest {
         val widget = ParserTest.parse(
             """
             <Snapshot>
-                <DecoratedBox position="FOREGROUND" color="#FFFF0000" border="2 SOLID #FF00FF00">
+                <DecoratedBox position="FOREGROUND" color="#FF0000FF" border="2 SOLID #00FF00FF">
                     <SizedBox width="30" height="15"/>
                 </DecoratedBox>
             </Snapshot>

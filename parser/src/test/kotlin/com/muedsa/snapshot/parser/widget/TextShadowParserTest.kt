@@ -23,10 +23,10 @@ class TextShadowParserTest {
             ParserTest.parse(
                 """
                 <Snapshot>
-                    <Text color="#FF0000FF"
+                    <Text color="#0000FFFF"
                           fontSize="40"
                           fontFamily="$testFontFamily"
-                          textShadow="6 0 0 #FFFF0000,-2 2 1.5 #8000FF00">文本阴影展示</Text>
+                          textShadow="6 0 0 #FF0000FF,-2 2 1.5 #00FF0080">文本阴影展示</Text>
                 </Snapshot>
                 """.trimIndent()
             ).createWidget()
@@ -92,11 +92,11 @@ class TextShadowParserTest {
         listOf(
             "<Snapshot><Text textShadow>text</Text></Snapshot>",
             "<Snapshot><Text textShadow=\"1\">text</Text></Snapshot>",
-            "<Snapshot><Text textShadow=\"1 2 3 #FF000000 extra\">text</Text></Snapshot>",
+            "<Snapshot><Text textShadow=\"1 2 3 #000000FF extra\">text</Text></Snapshot>",
             "<Snapshot><Text textShadow=\"NaN 0\">text</Text></Snapshot>",
             "<Snapshot><Text textShadow=\"0 0 -1\">text</Text></Snapshot>",
             "<Snapshot><Text textShadow=\"0 0 1 2\">text</Text></Snapshot>",
-            "<Snapshot><Text textShadow=\"0 0 #FF000000 #FFFFFFFF\">text</Text></Snapshot>",
+            "<Snapshot><Text textShadow=\"0 0 #000000FF #FFFFFFFF\">text</Text></Snapshot>",
             "<Snapshot><Text textShadow=\"0 0 UNKNOWN\">text</Text></Snapshot>",
             "<Snapshot><Text textShadow=\"NONE,0 0\">text</Text></Snapshot>",
         ).forEach { source ->

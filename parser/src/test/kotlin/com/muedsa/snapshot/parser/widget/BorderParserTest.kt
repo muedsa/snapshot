@@ -15,11 +15,11 @@ class BorderParserTest {
     fun build_widget_test() {
         val text = """
             <Snapshot>
-                <Border border="2 SOLID #FF00FF00" 
-                        borderLeft="1 SOLID #FFFFFF00" 
+                <Border border="2 SOLID #00FF00FF"
+                        borderLeft="1 SOLID #FFFF00FF"
                         borderRadius="(1.2,2.3)" 
                         borderRadiusBottomLeft="5"
-                        boxShadow="5 7 3 2 #FF00FF00 SOLID"/>
+                        boxShadow="5 7 3 2 #00FF00FF SOLID"/>
             </Snapshot>
         """.trimIndent()
         val snapshotElement = ParserTest.parse(text)
@@ -69,7 +69,7 @@ class BorderParserTest {
     fun build_widget_without_default_test() {
         val text = """
             <Snapshot>
-                <Border borderLeft="1 SOLID #FFFFFF00" borderRadiusBottomLeft="(2.1,3.4)"/>
+                <Border borderLeft="1 SOLID #FFFF00FF" borderRadiusBottomLeft="(2.1,3.4)"/>
             </Snapshot>
         """.trimIndent()
         val snapshotElement = ParserTest.parse(text)

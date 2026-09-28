@@ -24,9 +24,9 @@ class FilterParserTest {
         val snapshot = ParserTest.parse(
             """
             <Snapshot>
-                <ColorFiltered color="#FFFF0000" blendMode="MODULATE">
+                <ColorFiltered color="#FF0000FF" blendMode="MODULATE">
                     <SizedBox width="20" height="20">
-                        <Container color="#FF00FF00"/>
+                        <Container color="#00FF00FF"/>
                     </SizedBox>
                 </ColorFiltered>
             </Snapshot>
@@ -46,8 +46,8 @@ class FilterParserTest {
             <Snapshot>
                 <ImageFiltered sigmaX="3" sigmaY="3" tileMode="CLAMP">
                     <Row>
-                        <Container width="50" height="20" color="#FFFF0000"/>
                         <Container width="50" height="20" color="#FF0000FF"/>
+                        <Container width="50" height="20" color="#0000FFFF"/>
                     </Row>
                 </ImageFiltered>
             </Snapshot>

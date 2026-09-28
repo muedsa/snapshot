@@ -26,7 +26,7 @@ class FractionallySizedBoxParserTest {
                 <Snapshot>
                     <ConstrainedBox maxWidth="120" maxHeight="80">
                         <FractionallySizedBox widthFactor="0.5" heightFactor="0.5" alignment="BOTTOM_RIGHT">
-                            <ColoredBox color="#FF0000FF"/>
+                            <ColoredBox color="#0000FFFF"/>
                         </FractionallySizedBox>
                     </ConstrainedBox>
                 </Snapshot>

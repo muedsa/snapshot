@@ -1140,13 +1140,18 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 #### 颜色
 
 ```
-#RRGGBB      → 不透明(alpha = 0xFF)
-#AARRGGBB    → 带 alpha
+#RGB / #RRGGBB       → 不透明
+#RGBA / #RRGGBBAA    → 最后两位是 alpha
+red / rebeccapurple  → CSS 颜色名称（大小写不敏感）
+transparent          → 完全透明
+rgb(255, 0, 0) / rgba(255, 0, 0, .5)
+hsl(120, 100%, 50%) / hsla(120, 100%, 50%, 50%)
+rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 ```
 
-- **必须以 `#` 开头**，长度必须是 **7 或 9**（`#` + 6 或 8 位十六进制）。
-- 十六进制大小写均可。
-- 错误信息：`Attr [xxx] value must start with #` / `must be ARGB or RGB color hex`。
+- 十六进制支持 3、4、6、8 位，颜色名称支持 CSS 标准名称及 `transparent`；函数支持逗号分隔或空格加 `/` 的 alpha 写法，RGB 通道可用数字或百分比，HSL 色相可用 `deg`、`rad`、`grad`、`turn`。
+- **迁移注意**：旧版 Parser 的 8 位十六进制按 `#AARRGGBB` 解释，现在改为 CSS 的 `#RRGGBBAA`。例如旧的半透明红色 `#80FF0000` 要改写为 `#FF000080`。Kotlin DSL 内部的颜色 `Int` 仍是 `0xAARRGGBB`，不受影响。
+- 不解析 `currentColor`、`lab()`、`color()` 等需要上下文或更广色彩空间的 CSS 表达式。
 
 #### 长度/数值
 
@@ -1196,24 +1201,24 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 #### 边框 border / borderLeft / borderTop / borderRight / borderBottom
 
 ```
-"<width> <STYLE> <#color>"
-例:"2 SOLID #FF333333"、"1 NONE #00000000"
+"<width> <STYLE> <color>"
+例:"2 SOLID #333333FF"、"1 NONE #00000000"
 ```
 
-- **单空格**分隔，三段都必填；`STYLE ∈ {NONE, SOLID}`（大小写敏感）。
+- 在颜色函数括号外以空白分隔，三段都必填；`STYLE ∈ {NONE, SOLID}`（大小写敏感）。
 - `border` 是四条边的默认值；某条边单独写了就覆盖默认值。
 
 #### 阴影 boxShadow
 
 ```
 "ELEVATION_8"                                  // Material 高度,数字 ∈ {0,1,2,3,4,6,8,9,12,16,24}
-"<x> <y> [blur] [spread] [#color] [blurMode]"  // 单条阴影,单空格分隔
+"<x> <y> [blur] [spread] [color] [blurMode]"   // 单条阴影，函数括号外以空白分隔
 "<阴影1>,<阴影2>"                               // 逗号分隔多条
-例:"0 4 8 #33000000"、"0 2 4 1 #26000000 NORMAL"
+例:"0 4 8 #00000033"、"0 2 4 1 #00000026 NORMAL"
 ```
 
 - 位置参数顺序固定：`offsetX offsetY [blurRadius] [spreadRadius]`（最多到 spread）。
-- `#color` 可省略（默认黑）；`blurMode` 取 `org.jetbrains.skia.FilterBlurMode` 的常量名（如 `NORMAL`）。
+- `color` 可省略（默认黑），支持上述 CSS 颜色写法；`blurMode` 取 `org.jetbrains.skia.FilterBlurMode` 的常量名（如 `NORMAL`）。阴影列表的逗号不会拆开 `rgb()` 等颜色函数的参数。
 - 每条阴影参数个数必须在 **2..6** 之间。
 
 #### 渐变属性
@@ -1227,6 +1232,8 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `gradientStops` | float 列表 | 等距生成 | 数量必须与颜色一致，值须在 `0..1` 内并按升序排列 |
 | `gradientTileMode` | enum | `CLAMP` | `CLAMP` / `REPEAT` / `MIRROR` / `DECAL` |
 | `gradientRotation` | float | 不设置 | 围绕装饰中心旋转的弧度数 |
+
+`gradientColors` 的列表逗号只在颜色函数括号外生效，例如 `rgb(255, 0, 0), hsl(120, 100%, 50%)` 表示两种颜色。
 
 各类型的专用属性：
 
@@ -1243,7 +1250,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 ```html
 <Container width="320" height="120"
            gradientType="LINEAR"
-           gradientColors="#FF6750A4, #FF03DAC6, #FFFFC107"
+           gradientColors="#6750A4FF, #03DAC6FF, #FFC107FF"
            gradientStops="0, 0.55, 1"
            gradientBegin="TOP_LEFT"
            gradientEnd="BOTTOM_RIGHT"/>
@@ -1314,8 +1321,8 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 背景装饰与 `foreground*` 前景装饰相互独立；前景装饰会在子节点之后绘制。`clipBehavior` 使用背景装饰的路径裁剪子节点，因此设置为 `HARD_EDGE`、`ANTI_ALIAS` 或 `ANTI_ALIAS_WITH_SAVE_LAYER` 时，必须同时提供边框、圆角、阴影、非默认形状或背景混合模式等需要构造 `BoxDecoration` 的属性；只有 `color` 时仍会使用轻量的纯色组件，不能作为裁剪路径。
 
 ```html
-<Container color="#FF00FF00" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
-    <Container color="#FFFF0000" width="100" height="50"/>
+<Container color="#00FF00FF" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
+    <Container color="#FF0000FF" width="100" height="50"/>
 </Container>
 ```
 
@@ -1338,7 +1345,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 ```html
 <ConstrainedBox maxWidth="240" maxHeight="160">
     <AspectRatio aspectRatio="2">
-        <ColoredBox color="#FF2196F3"/>
+        <ColoredBox color="#2196F3FF"/>
     </AspectRatio>
 </ConstrainedBox>
 ```
@@ -1355,7 +1362,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 ```html
 <ConstrainedBox maxWidth="240" maxHeight="160">
     <FractionallySizedBox widthFactor="0.5" heightFactor="0.5">
-        <ColoredBox color="#FF2196F3"/>
+        <ColoredBox color="#2196F3FF"/>
     </FractionallySizedBox>
 </ConstrainedBox>
 ```
@@ -1464,7 +1471,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 <Padding padding="(12,20)">
     <Align alignment="BOTTOM_RIGHT" widthFactor="2" heightFactor="1.5">
         <SizedBox width="120" height="60">
-            <Container color="#FF3F51B5"/>
+            <Container color="#3F51B5FF"/>
         </SizedBox>
     </Align>
 </Padding>
@@ -1475,7 +1482,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 属性与 `<Container>` 的背景装饰类属性完全一致：`color`、`border`、`borderLeft/Top/Right/Bottom`、`borderRadius`、`borderRadius{Corner}`、`boxShadow`、`shape`、`backgroundBlendMode` 及全套 `gradient*` 属性。解析成 `DecoratedBox(decoration = BoxDecoration(...))`，**不支持** `width`/`height`/`padding` 等布局属性。
 
 ```html
-<Border border="4 SOLID #FF2196F3" borderRadius="16" boxShadow="ELEVATION_4">
+<Border border="4 SOLID #2196F3FF" borderRadius="16" boxShadow="ELEVATION_4">
     <Container color="#FFFFFFFF" width="200" height="100"/>
 </Border>
 ```
@@ -1485,7 +1492,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 `ColoredBox` 适合只需要纯色填充的场景，`color` 为必填属性；最多包含 1 个子节点。
 
 ```html
-<ColoredBox color="#FF2196F3">
+<ColoredBox color="#2196F3FF">
     <SizedBox width="200" height="100"/>
 </ColoredBox>
 ```
@@ -1504,7 +1511,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `position` | enum | `BACKGROUND` | `BACKGROUND` 在子节点之前绘制；`FOREGROUND` 在子节点之后绘制 |
 
 ```html
-<DecoratedBox color="#66FFFFFF" border="2 SOLID #FFFFFFFF" position="FOREGROUND">
+<DecoratedBox color="#FFFFFF66" border="2 SOLID #FFFFFFFF" position="FOREGROUND">
     <SizedBox width="200" height="100"/>
 </DecoratedBox>
 ```
@@ -1537,10 +1544,10 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 <SizedBox width="300" height="80">
     <Row>
         <Expanded>
-            <Container color="#FFFF0000"/>
+            <Container color="#FF0000FF"/>
         </Expanded>
         <Flexible flex="2" fit="TIGHT">
-            <Container color="#FF00FF00"/>
+            <Container color="#00FF00FF"/>
         </Flexible>
     </Row>
 </SizedBox>
@@ -1569,7 +1576,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 ```html
 <Transform matrix="(1,0,0,0,0,1,0,0,0,0,1,0,20,10,0,1)">
     <SizedBox width="120" height="60">
-        <Container color="#FF3F51B5"/>
+        <Container color="#3F51B5FF"/>
     </SizedBox>
 </Transform>
 ```
@@ -1591,13 +1598,13 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 
 ```html
 <ClipRRect borderRadius="24" clipBehavior="ANTI_ALIAS">
-    <Container width="200" height="120" color="#FF3F51B5"/>
+    <Container width="200" height="120" color="#3F51B5FF"/>
 </ClipRRect>
 ```
 
 ```html
 <ClipOval>
-    <Container width="120" height="120" color="#FF00C853"/>
+    <Container width="120" height="120" color="#00C853FF"/>
 </ClipOval>
 ```
 
@@ -1613,8 +1620,8 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 最多包含 1 个子节点，内部等价于 `ColorFilter.makeBlend(color, blendMode)`。
 
 ```html
-<ColorFiltered color="#FFFF0000" blendMode="MODULATE">
-    <Container width="200" height="120" color="#FF00FF00"/>
+<ColorFiltered color="#FF0000FF" blendMode="MODULATE">
+    <Container width="200" height="120" color="#00FF00FF"/>
 </ColorFiltered>
 ```
 
@@ -1635,14 +1642,14 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 
 ```html
 <ImageFiltered sigmaX="8" sigmaY="8" tileMode="CLAMP">
-    <Container width="200" height="120" color="#FF3F51B5"/>
+    <Container width="200" height="120" color="#3F51B5FF"/>
 </ImageFiltered>
 ```
 
 ```html
 <SizedBox width="320" height="200">
     <Stack alignment="CENTER">
-        <Container width="320" height="200" color="#FF3F51B5"/>
+        <Container width="320" height="200" color="#3F51B5FF"/>
         <ClipRRect borderRadius="20">
             <BackdropFilter sigmaX="12" sigmaY="12" blendMode="SRC_OVER">
                 <SizedBox width="240" height="160"/>
@@ -1668,8 +1675,8 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 ```html
 <Snapshot>
     <IndexedStack index="1">
-        <Container width="200" height="120" color="#FFFF0000"/>
-        <Container width="100" height="80" color="#FF0000FF"/>
+        <Container width="200" height="120" color="#FF0000FF"/>
+        <Container width="100" height="80" color="#0000FFFF"/>
     </IndexedStack>
 </Snapshot>
 ```
@@ -1737,7 +1744,7 @@ val parser = Parser(dataUriImageDecoder = DataUriImageDecoder { dataUri ->
 | `foreground*` | 前景画笔参数 | Skiko 默认 | 控制填充/描边模式、笔触宽度与连接方式；属性见下文 |
 | `backgroundColor` | color | 不设置 | 创建纯色文本背景画笔 |
 | `decoration` | enum list | 不设置 | 文本装饰，英文逗号分隔：`UNDERLINE` / `OVERLINE` / `LINE_THROUGH`；`NONE` 表示显式取消继承的装饰且不能与其他值组合 |
-| `decorationColor` | color | `#FF000000` | 装饰线颜色；仅在设置 `decoration` 时可用 |
+| `decorationColor` | color | `#000000FF` | 装饰线颜色；仅在设置 `decoration` 时可用 |
 | `decorationLineStyle` | enum | `SOLID` | `SOLID` / `DOUBLE` / `DOTTED` / `DASHED` / `WAVY`；仅在设置 `decoration` 时可用 |
 | `decorationThickness` | float | `1` | 装饰线粗细倍数，必须为有限正数；仅在设置 `decoration` 时可用 |
 | `decorationGaps` | bool | `true` | 装饰线是否避让字形；仅在设置 `decoration` 时可用 |
@@ -1769,11 +1776,11 @@ val parser = Parser(dataUriImageDecoder = DataUriImageDecoder { dataUri ->
 
 ```html
 <Text fontSize="40"
-      foregroundColor="#FFE53935"
+      foregroundColor="#E53935FF"
       foregroundMode="STROKE_AND_FILL"
       foregroundStrokeWidth="2"
       foregroundStrokeJoin="ROUND"
-      backgroundColor="#FFFFF59D">描边文字</Text>
+      backgroundColor="#FFF59DFF">描边文字</Text>
 ```
 
 若同时设置 `color` 与 `foregroundColor`，两者都会保存在 `TextStyle` 中，但 Skiko 使用前景画笔绘制字形。`foregroundMode` 等修饰参数不能脱离 `foregroundColor` 单独使用。当前 Parser 的背景画笔只开放纯色，以避免把着色器、图片滤镜等复杂对象混入文本属性格式。
@@ -1785,10 +1792,10 @@ val parser = Parser(dataUriImageDecoder = DataUriImageDecoder { dataUri ->
 文本装饰示例：
 
 ```html
-<Text color="#FF1565C0"
+<Text color="#1565C0FF"
       fontSize="36"
       decoration="UNDERLINE,LINE_THROUGH"
-      decorationColor="#FFE53935"
+      decorationColor="#E53935FF"
       decorationLineStyle="WAVY"
       decorationThickness="1.5">带装饰的文本</Text>
 ```
@@ -1796,11 +1803,12 @@ val parser = Parser(dataUriImageDecoder = DataUriImageDecoder { dataUri ->
 只设置 `decorationColor` 等修饰参数而不设置 `decoration` 会抛出 `ParseException`。需要在子 span 中取消父级装饰时，应显式写 `decoration="NONE"`。
 
 文本阴影使用 `offsetX offsetY [blurSigma] [color]`，多个阴影用英文逗号分隔。偏移量必须是有限浮点数，模糊 sigma 必须是非负有限数；未写模糊值时默认为 `0`，未写颜色时默认为黑色。可选的模糊值和颜色顺序不限，但同一阴影中不能重复。
+颜色可使用上述 CSS 写法；`rgb()`、`hsl()` 函数内部的逗号不会分隔阴影。
 
 ```html
-<Text color="#FF1565C0"
+<Text color="#1565C0FF"
       fontSize="36"
-      textShadow="3 4 1.5 #66000000,-2 0 #66E53935">多重文本阴影</Text>
+      textShadow="3 4 1.5 #00000066,-2 0 #E5393566">多重文本阴影</Text>
 ```
 
 子 span 可通过 `textShadow="NONE"` 显式取消父级阴影；`NONE` 不能与其他阴影组合。
@@ -1856,7 +1864,7 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 <Text fontSize="20">
     价格
     <WidgetSpan alignment="MIDDLE">
-        <Container width="40" height="24" color="#FFFF0000"/>
+        <Container width="40" height="24" color="#FF0000FF"/>
     </WidgetSpan>
 </Text>
 ```
@@ -1943,7 +1951,7 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 | 触发条件 | 消息（节选） |
 |---|---|
 | 缺必填属性 | `Attr [url] must not be null` |
-| 颜色格式错 | `Attr [color] value must start with #` / `must be ARGB or RGB color hex` |
+| 颜色格式错 | `Attr [color] color must be #RGB, #RGBA, #RRGGBB or #RRGGBBAA` / `unsupported CSS color` |
 | 数值/结构格式错 | `Attr [width] value is invalid: For input string: "bad"`、`Attr [padding] value format error` 等 |
 | 枚举名写错 | `Attr [mainAxisAlignment] value is invalid: …`；原 `IllegalArgumentException` 保留在 `cause` 中 |
 | `fontStyle` 取值非法 | `Attr [fontStyle] value is invalid: Unexpected font style XXX` |
@@ -1999,7 +2007,7 @@ val text = """
         </Row>
         <Row>
             <Image width="200" height="200" url="https://samples-files.com/samples/images/jpg/480-360-sample.jpg" fit="COVER"/>
-            <Border border="4 SOLID #FF2196F3" borderRadius="24" boxShadow="ELEVATION_4">
+            <Border border="4 SOLID #2196F3FF" borderRadius="24" boxShadow="ELEVATION_4">
                 <Container color="#FFFF00" width="192" height="192"/>
             </Border>
         </Row>
@@ -2013,18 +2021,18 @@ File("out.png").writeBytes(Parser().parse(StringReader(text)).snapshot())
 `<Stack>` + `<Positioned>` 示例：
 
 ```html
-<Snapshot background="#FFEEEEEE" type="png">
+<Snapshot background="#EEEEEEFF" type="png">
     <Stack alignment="TOP_LEFT">
         <Container width="400" height="300" color="#FFFFFFFF"/>
         <Positioned left="20" top="20">
             <Opacity opacity="0.85">
                 <Padding padding="8">
-                    <Container width="120" height="120" color="#FFFF5722" borderRadius="16"/>
+                    <Container width="120" height="120" color="#FF5722FF" borderRadius="16"/>
                 </Padding>
             </Opacity>
         </Positioned>
         <Positioned bottom="20" right="20" width="160" height="60">
-            <Container color="#FF3F51B5" borderRadius="30" alignment="CENTER">
+            <Container color="#3F51B5FF" borderRadius="30" alignment="CENTER">
                 <Text color="#FFFFFFFF" fontSize="24">snapshot</Text>
             </Container>
         </Positioned>

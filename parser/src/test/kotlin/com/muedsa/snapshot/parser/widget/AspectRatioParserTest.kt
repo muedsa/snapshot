@@ -25,7 +25,7 @@ class AspectRatioParserTest {
                 <Snapshot>
                     <ConstrainedBox maxWidth="120" maxHeight="80">
                         <AspectRatio aspectRatio="2">
-                            <ColoredBox color="#FF0000FF"/>
+                            <ColoredBox color="#0000FFFF"/>
                         </AspectRatio>
                     </ConstrainedBox>
                 </Snapshot>

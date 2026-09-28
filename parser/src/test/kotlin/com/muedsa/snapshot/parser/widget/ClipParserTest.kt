@@ -37,7 +37,7 @@ class ClipParserTest {
             """
             <Snapshot background="#FFFFFFFF">
                 <ClipOval>
-                    <Container width="100" height="100" color="#FF00FF00"/>
+                    <Container width="100" height="100" color="#00FF00FF"/>
                 </ClipOval>
             </Snapshot>
             """.trimIndent()

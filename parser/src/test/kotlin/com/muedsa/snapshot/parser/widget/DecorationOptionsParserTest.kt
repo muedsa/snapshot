@@ -22,7 +22,7 @@ class DecorationOptionsParserTest {
             ParserTest.parse(
                 """
                 <Snapshot>
-                    <DecoratedBox color="#FFFF0000" shape="CIRCLE" backgroundBlendMode="MULTIPLY">
+                    <DecoratedBox color="#FF0000FF" shape="CIRCLE" backgroundBlendMode="MULTIPLY">
                         <SizedBox width="20" height="20"/>
                     </DecoratedBox>
                 </Snapshot>
@@ -41,7 +41,7 @@ class DecorationOptionsParserTest {
     fun container_uses_box_decoration_for_circle_shape() {
         val container = assertIs<Container>(
             ParserTest.parse(
-                "<Snapshot><Container width=\"20\" height=\"20\" color=\"#FF00FF00\" shape=\"CIRCLE\"/></Snapshot>"
+                "<Snapshot><Container width=\"20\" height=\"20\" color=\"#00FF00FF\" shape=\"CIRCLE\"/></Snapshot>"
             ).createWidget()
         )
 
@@ -57,7 +57,7 @@ class DecorationOptionsParserTest {
             ParserTest.parse(
                 """
                 <Snapshot>
-                    <Container width="20" height="20" color="#FF00FF00"
+                    <Container width="20" height="20" color="#00FF00FF"
                                backgroundBlendMode="MULTIPLY"/>
                 </Snapshot>
                 """.trimIndent()
@@ -77,7 +77,7 @@ class DecorationOptionsParserTest {
                 """
                 <Snapshot>
                     <Container width="20" height="20"
-                               foregroundColor="#660000FF"
+                               foregroundColor="#0000FF66"
                                foregroundShape="CIRCLE"
                                foregroundBackgroundBlendMode="SRC_OVER"/>
                 </Snapshot>

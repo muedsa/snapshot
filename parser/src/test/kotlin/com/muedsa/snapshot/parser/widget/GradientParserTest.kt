@@ -32,7 +32,7 @@ class GradientParserTest {
                 <Snapshot>
                     <Container width="100" height="50"
                                gradientType="LINEAR"
-                               gradientColors="#FFFF0000, #FF00FF00, #FF0000FF"
+                               gradientColors="#FF0000FF, #00FF00FF, #0000FFFF"
                                gradientStops="0, 0.4, 1"
                                gradientBegin="TOP_LEFT"
                                gradientEnd="BOTTOM_RIGHT"
@@ -68,7 +68,7 @@ class GradientParserTest {
                 """
                 <Snapshot>
                     <DecoratedBox gradientType="RADIAL"
-                                  gradientColors="#FFFFFFFF,#FF000000"
+                                  gradientColors="#FFFFFFFF,#000000FF"
                                   gradientCenter="TOP_CENTER"
                                   gradientRadius="0.8"
                                   gradientFocal="BOTTOM_CENTER"
@@ -95,7 +95,7 @@ class GradientParserTest {
                 """
                 <Snapshot>
                     <Border gradientType="SWEEP"
-                            gradientColors="#FFFF0000,#FF0000FF"
+                            gradientColors="#FF0000FF,#0000FFFF"
                             gradientCenter="CENTER_RIGHT"
                             gradientStartAngle="0.25"
                             gradientEndAngle="5.5"/>
@@ -119,7 +119,7 @@ class GradientParserTest {
                 <Snapshot>
                     <Container width="40" height="40"
                                foregroundGradientType="LINEAR"
-                               foregroundGradientColors="#66FFFFFF,#00000000"/>
+                               foregroundGradientColors="#FFFFFF66,#00000000"/>
                 </Snapshot>
                 """.trimIndent()
             ).createWidget()
@@ -135,18 +135,18 @@ class GradientParserTest {
     @Test
     fun rejects_invalid_gradient_options() {
         listOf(
-            "<Snapshot><Border gradientType=\"INVALID\" gradientColors=\"#FFFF0000,#FF0000FF\"/></Snapshot>",
+            "<Snapshot><Border gradientType=\"INVALID\" gradientColors=\"#FF0000FF,#0000FFFF\"/></Snapshot>",
             "<Snapshot><Border gradientType=\"LINEAR\"/></Snapshot>",
-            "<Snapshot><Border gradientColors=\"#FFFF0000,#FF0000FF\"/></Snapshot>",
-            "<Snapshot><Border gradientType=\"LINEAR\" gradientColors=\"#FFFF0000\"/></Snapshot>",
-            "<Snapshot><Border gradientType=\"LINEAR\" gradientColors=\"#FFFF0000,#FF0000FF\" gradientStops=\"0\"/></Snapshot>",
-            "<Snapshot><Border gradientType=\"LINEAR\" gradientColors=\"#FFFF0000,#FF0000FF\" gradientStops=\"0,1.1\"/></Snapshot>",
-            "<Snapshot><Border gradientType=\"LINEAR\" gradientColors=\"#FFFF0000,#FF0000FF\" gradientStops=\"0.8,0.2\"/></Snapshot>",
-            "<Snapshot><Border gradientType=\"LINEAR\" gradientColors=\"#FFFF0000,#FF0000FF\" gradientRadius=\"0.5\"/></Snapshot>",
-            "<Snapshot><Border gradientType=\"RADIAL\" gradientColors=\"#FFFF0000,#FF0000FF\" gradientRadius=\"0\"/></Snapshot>",
-            "<Snapshot><Border gradientType=\"RADIAL\" gradientColors=\"#FFFF0000,#FF0000FF\" gradientFocalRadius=\"0.2\"/></Snapshot>",
-            "<Snapshot><Border gradientType=\"SWEEP\" gradientColors=\"#FFFF0000,#FF0000FF\" gradientStartAngle=\"2\" gradientEndAngle=\"1\"/></Snapshot>",
-            "<Snapshot><Border gradientType=\"SWEEP\" gradientColors=\"#FFFF0000,#FF0000FF\" gradientRotation=\"NaN\"/></Snapshot>",
+            "<Snapshot><Border gradientColors=\"#FF0000FF,#0000FFFF\"/></Snapshot>",
+            "<Snapshot><Border gradientType=\"LINEAR\" gradientColors=\"#FF0000FF\"/></Snapshot>",
+            "<Snapshot><Border gradientType=\"LINEAR\" gradientColors=\"#FF0000FF,#0000FFFF\" gradientStops=\"0\"/></Snapshot>",
+            "<Snapshot><Border gradientType=\"LINEAR\" gradientColors=\"#FF0000FF,#0000FFFF\" gradientStops=\"0,1.1\"/></Snapshot>",
+            "<Snapshot><Border gradientType=\"LINEAR\" gradientColors=\"#FF0000FF,#0000FFFF\" gradientStops=\"0.8,0.2\"/></Snapshot>",
+            "<Snapshot><Border gradientType=\"LINEAR\" gradientColors=\"#FF0000FF,#0000FFFF\" gradientRadius=\"0.5\"/></Snapshot>",
+            "<Snapshot><Border gradientType=\"RADIAL\" gradientColors=\"#FF0000FF,#0000FFFF\" gradientRadius=\"0\"/></Snapshot>",
+            "<Snapshot><Border gradientType=\"RADIAL\" gradientColors=\"#FF0000FF,#0000FFFF\" gradientFocalRadius=\"0.2\"/></Snapshot>",
+            "<Snapshot><Border gradientType=\"SWEEP\" gradientColors=\"#FF0000FF,#0000FFFF\" gradientStartAngle=\"2\" gradientEndAngle=\"1\"/></Snapshot>",
+            "<Snapshot><Border gradientType=\"SWEEP\" gradientColors=\"#FF0000FF,#0000FFFF\" gradientRotation=\"NaN\"/></Snapshot>",
         ).forEach { text ->
             assertFailsWith<ParseException>(text) {
                 ParserTest.parse(text).createWidget()

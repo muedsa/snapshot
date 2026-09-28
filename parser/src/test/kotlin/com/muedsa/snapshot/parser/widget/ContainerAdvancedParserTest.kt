@@ -25,12 +25,12 @@ class ContainerAdvancedParserTest {
         val container = ParserTest.parse(
             """
             <Snapshot>
-                <Container width="100" height="80" color="#FFFF0000" borderRadius="12"
+                <Container width="100" height="80" color="#FF0000FF" borderRadius="12"
                            clipBehavior="ANTI_ALIAS"
                            transform="(1,0,0,0,0,1,0,0,0,0,1,0,20,10,0,1)"
                            transformAlignment="CENTER"
-                           foregroundColor="#660000FF"
-                           foregroundBorder="2 SOLID #FF00FF00"
+                           foregroundColor="#0000FF66"
+                           foregroundBorder="2 SOLID #00FF00FF"
                            foregroundBorderRadius="8">
                     <SizedBox/>
                 </Container>
@@ -75,7 +75,7 @@ class ContainerAdvancedParserTest {
     fun foreground_color_alone_creates_foreground_decoration() {
         val container = assertIs<Container>(
             ParserTest.parse(
-                "<Snapshot><Container width=\"10\" height=\"10\" foregroundColor=\"#660000FF\"/></Snapshot>"
+                "<Snapshot><Container width=\"10\" height=\"10\" foregroundColor=\"#0000FF66\"/></Snapshot>"
             ).createWidget()
         )
 
@@ -89,9 +89,9 @@ class ContainerAdvancedParserTest {
                 """
                 <Snapshot>
                     <Container width="20" height="20"
-                               foregroundBorderLeft="1 SOLID #FFFF0000"
-                               foregroundBorderTop="2 SOLID #FF00FF00"
-                               foregroundBorderRight="3 SOLID #FF0000FF"
+                               foregroundBorderLeft="1 SOLID #FF0000FF"
+                               foregroundBorderTop="2 SOLID #00FF00FF"
+                               foregroundBorderRight="3 SOLID #0000FFFF"
                                foregroundBorderBottom="4 SOLID #FFFFFFFF"
                                foregroundBorderRadiusTopLeft="1"
                                foregroundBorderRadiusTopRight="2"

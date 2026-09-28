@@ -43,8 +43,8 @@ class IndexedStackParserTest {
             ParserTest.parse(
                 """
                 <Snapshot><IndexedStack index="1">
-                    <Container width="60" height="40" color="#FFFF0000"/>
-                    <Container width="20" height="15" color="#FF0000FF"/>
+                    <Container width="60" height="40" color="#FF0000FF"/>
+                    <Container width="20" height="15" color="#0000FFFF"/>
                 </IndexedStack></Snapshot>
                 """.trimIndent()
             ).createWidget()

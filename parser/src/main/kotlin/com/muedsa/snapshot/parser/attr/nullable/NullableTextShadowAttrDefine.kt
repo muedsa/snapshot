@@ -2,6 +2,7 @@ package com.muedsa.snapshot.parser.attr.nullable
 
 import com.muedsa.snapshot.parser.attr.AttrStrValueConst
 import com.muedsa.snapshot.parser.attr.ColorAttrDefine
+import com.muedsa.snapshot.parser.attr.CssColorSyntax
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.paragraph.Shadow
@@ -11,7 +12,7 @@ class NullableTextShadowAttrDefine(name: String) :
 
     override fun parseValue(valueStr: String?): List<Shadow> {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
-        val entries = valueStr.split(',').map(String::trim)
+        val entries = CssColorSyntax.splitOn(valueStr, ',')
         require(entries.none(String::isEmpty)) { "Attr [$name] contains an empty shadow" }
         if ("NONE" in entries) {
             require(entries.size == 1) { "Attr [$name] value NONE can not be combined with other shadows" }
@@ -21,7 +22,7 @@ class NullableTextShadowAttrDefine(name: String) :
     }
 
     private fun parseShadow(value: String): Shadow {
-        val params = value.split(WHITESPACE_REGEX)
+        val params = CssColorSyntax.splitOnWhitespace(value)
         require(params.size in 2..4) {
             "Attr [$name] shadow must contain offsetX offsetY and optional blurSigma/color"
         }
@@ -44,7 +45,7 @@ class NullableTextShadowAttrDefine(name: String) :
                     hasBlurSigma = true
                 }
 
-                param.startsWith("#") -> {
+                ColorAttrDefine.isColorCandidate(param) -> {
                     require(!hasColor) { "Attr [$name] shadow contains duplicate color" }
                     color = ColorAttrDefine.parseColorFromText(param, this)
                     hasColor = true
@@ -60,8 +61,4 @@ class NullableTextShadowAttrDefine(name: String) :
         name: String,
         defaultValue: List<Shadow>?,
     ): NullableTextShadowAttrDefine = NullableTextShadowAttrDefine(name)
-
-    companion object {
-        private val WHITESPACE_REGEX = "\\s+".toRegex()
-    }
 }

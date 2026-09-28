@@ -3,6 +3,7 @@ package com.muedsa.snapshot.parser.attr.nullable
 import com.muedsa.snapshot.paint.decoration.BorderSide
 import com.muedsa.snapshot.paint.decoration.BorderStyle
 import com.muedsa.snapshot.parser.attr.ColorAttrDefine
+import com.muedsa.snapshot.parser.attr.CssColorSyntax
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
 
 class NullableBorderSideAttrDefine(name: String) :
@@ -10,7 +11,7 @@ class NullableBorderSideAttrDefine(name: String) :
 
     override fun parseValue(valueStr: String?): BorderSide {
         requireNotNull(valueStr)
-        val valueArr = valueStr.split(" ")
+        val valueArr = CssColorSyntax.splitOnWhitespace(valueStr)
         require(valueArr.size == 3)
         return BorderSide(
             width = valueArr[0].toFloat(),

@@ -5,6 +5,7 @@ import com.muedsa.snapshot.material.ELEVATION_MAP
 import com.muedsa.snapshot.paint.decoration.BoxShadow
 import com.muedsa.snapshot.parser.attr.AttrStrValueConst
 import com.muedsa.snapshot.parser.attr.ColorAttrDefine
+import com.muedsa.snapshot.parser.attr.CssColorSyntax
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.FilterBlurMode
@@ -24,9 +25,9 @@ class NullableBoxShadowAttrDefine(name: String) :
             }
             boxShadows
         } else {
-            val shadowStrArr = valueStr.split(",")
+            val shadowStrArr = CssColorSyntax.splitOn(valueStr, ',')
             Array(shadowStrArr.size) {
-                val params = shadowStrArr[it].split(" ")
+                val params = CssColorSyntax.splitOnWhitespace(shadowStrArr[it])
                 check(params.size in 2..6) { "boxShadows format error" }
                 val offset = Offset(
                     x = params[0].toFloat(),
@@ -45,7 +46,7 @@ class NullableBoxShadowAttrDefine(name: String) :
                         } else {
                             spreadRadius = params[i].toFloat()
                         }
-                    } else if (params[i].startsWith("#")) {
+                    } else if (ColorAttrDefine.isColorCandidate(params[i])) {
                         color = ColorAttrDefine.parseColorFromText(params[i], this)
                     } else {
                         blurStyle = FilterBlurMode.valueOf(params[i])

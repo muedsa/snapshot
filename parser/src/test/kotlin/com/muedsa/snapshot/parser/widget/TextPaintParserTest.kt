@@ -26,17 +26,17 @@ class TextPaintParserTest {
             ParserTest.parse(
                 """
                 <Snapshot>
-                    <Text color="#FF0000FF"
+                    <Text color="#0000FFFF"
                           fontFamily="$testFontFamily"
                           fontSize="40"
-                          foregroundColor="#FFFF0000"
+                          foregroundColor="#FF0000FF"
                           foregroundMode="STROKE_AND_FILL"
                           foregroundStrokeWidth="2"
                           foregroundStrokeMiter="5"
                           foregroundStrokeCap="ROUND"
                           foregroundStrokeJoin="BEVEL"
                           foregroundAntiAlias="true"
-                          backgroundColor="#FFFFFF00">文本画笔</Text>
+                          backgroundColor="#FFFF00FF">文本画笔</Text>
                 </Snapshot>
                 """.trimIndent()
             ).createWidget()
@@ -65,9 +65,9 @@ class TextPaintParserTest {
     fun paints_are_available_to_all_inline_span_tags() {
         val richText = assertIs<RichText>(
             ParserTest.parse(
-                "<Snapshot><Text><Text foregroundColor=\"#FFFF0000\">text</Text>" +
-                        "<Raw backgroundColor=\"#FF00FF00\"> raw </Raw>" +
-                        "<WidgetSpan foregroundColor=\"#FF0000FF\"><SizedBox/></WidgetSpan>" +
+                "<Snapshot><Text><Text foregroundColor=\"#FF0000FF\">text</Text>" +
+                        "<Raw backgroundColor=\"#00FF00FF\"> raw </Raw>" +
+                        "<WidgetSpan foregroundColor=\"#0000FFFF\"><SizedBox/></WidgetSpan>" +
                         "</Text></Snapshot>"
             ).createWidget()
         )
@@ -99,12 +99,12 @@ class TextPaintParserTest {
     fun rejects_invalid_text_paint_options() {
         listOf(
             "<Snapshot><Text foregroundColor=\"invalid\">text</Text></Snapshot>",
-            "<Snapshot><Text foregroundColor=\"#FFFF0000\" foregroundMode=\"INVALID\">text</Text></Snapshot>",
-            "<Snapshot><Text foregroundColor=\"#FFFF0000\" foregroundStrokeWidth=\"-1\">text</Text></Snapshot>",
-            "<Snapshot><Text foregroundColor=\"#FFFF0000\" foregroundStrokeWidth=\"NaN\">text</Text></Snapshot>",
-            "<Snapshot><Text foregroundColor=\"#FFFF0000\" foregroundStrokeMiter=\"0\">text</Text></Snapshot>",
-            "<Snapshot><Text foregroundColor=\"#FFFF0000\" foregroundStrokeCap=\"INVALID\">text</Text></Snapshot>",
-            "<Snapshot><Text foregroundColor=\"#FFFF0000\" foregroundStrokeJoin=\"INVALID\">text</Text></Snapshot>",
+            "<Snapshot><Text foregroundColor=\"#FF0000FF\" foregroundMode=\"INVALID\">text</Text></Snapshot>",
+            "<Snapshot><Text foregroundColor=\"#FF0000FF\" foregroundStrokeWidth=\"-1\">text</Text></Snapshot>",
+            "<Snapshot><Text foregroundColor=\"#FF0000FF\" foregroundStrokeWidth=\"NaN\">text</Text></Snapshot>",
+            "<Snapshot><Text foregroundColor=\"#FF0000FF\" foregroundStrokeMiter=\"0\">text</Text></Snapshot>",
+            "<Snapshot><Text foregroundColor=\"#FF0000FF\" foregroundStrokeCap=\"INVALID\">text</Text></Snapshot>",
+            "<Snapshot><Text foregroundColor=\"#FF0000FF\" foregroundStrokeJoin=\"INVALID\">text</Text></Snapshot>",
             "<Snapshot><Text backgroundColor=\"invalid\">text</Text></Snapshot>",
         ).forEach { source ->
             assertFailsWith<ParseException>(source) {

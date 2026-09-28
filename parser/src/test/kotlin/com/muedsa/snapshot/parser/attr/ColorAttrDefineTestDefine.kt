@@ -18,7 +18,7 @@ class ColorAttrDefineTestDefine {
         }
 
         expect(0xFF_00_00_00.toInt()) {
-            attr.parseValue(RawAttr(attrName, "#FF000000"))
+            attr.parseValue(RawAttr(attrName, "#000000FF"))
         }
     }
 }

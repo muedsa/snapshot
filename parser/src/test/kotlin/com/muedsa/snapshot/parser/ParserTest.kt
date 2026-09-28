@@ -30,8 +30,8 @@ class ParserTest {
     fun parse_test() {
         val text = """
             <Snapshot background="#FFFFFFFF" type="png" debug>
-                <Container color="#FF00FF00" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
-                    <Container color="#FFFF0000" width="100" height="50"/>
+                <Container color="#00FF00FF" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
+                    <Container color="#FF0000FF" width="100" height="50"/>
                 </Container>
             </Snapshot>
         """.trimIndent()
@@ -69,8 +69,8 @@ class ParserTest {
                     <Snapshot/>
                 </Snapshot>
                 <Snapshot background="#FFFFFFFF" type="png" debug>
-                    <Container color="#FF00FF00" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
-                        <Container color="#FFFF0000" width="100" height="50"/>
+                    <Container color="#00FF00FF" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
+                        <Container color="#FF0000FF" width="100" height="50"/>
                     </Container>
                 </Snapshot>
             """.trimIndent()
@@ -83,12 +83,12 @@ class ParserTest {
         assertFailsWith<ParseException> {
             val text = """
                 <Snapshot background="#FFFFFFFF" type="png" debug>
-                    <Container color="#FF00FF00" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
-                        <Container color="#FFFF0000" width="100" height="50"/>
+                    <Container color="#00FF00FF" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
+                        <Container color="#FF0000FF" width="100" height="50"/>
                     </Container>
                 </Snapshot>
-                <Container color="#FF00FF00" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
-                        <Container color="#FFFF0000" width="100" height="50"/>
+                <Container color="#00FF00FF" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
+                        <Container color="#FF0000FF" width="100" height="50"/>
                     </Container>
             """.trimIndent()
             parse(text)

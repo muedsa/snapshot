@@ -53,7 +53,7 @@ class NullableBoxShadowAttrDefineTest {
                     blurRadius = 0f
                 )
             ),
-            attr.parseValue(RawAttr(attrName, "12 23 #FFFF0000"))
+            attr.parseValue(RawAttr(attrName, "12 23 #FF0000FF"))
         )
 
         assertContentEquals(
@@ -88,7 +88,7 @@ class NullableBoxShadowAttrDefineTest {
                     blurRadius = 3f,
                 )
             ),
-            attr.parseValue(RawAttr(attrName, "12 23 3 #FFFF0000"))
+            attr.parseValue(RawAttr(attrName, "12 23 3 #FF0000FF"))
         )
 
         assertContentEquals(
@@ -112,7 +112,7 @@ class NullableBoxShadowAttrDefineTest {
                     spreadRadius = 6f
                 )
             ),
-            attr.parseValue(RawAttr(attrName, "12 23 3 6 #FFFF0000"))
+            attr.parseValue(RawAttr(attrName, "12 23 3 6 #FF0000FF"))
         )
 
         assertContentEquals(
@@ -138,7 +138,7 @@ class NullableBoxShadowAttrDefineTest {
                     blurStyle = FilterBlurMode.INNER
                 )
             ),
-            attr.parseValue(RawAttr(attrName, "12 23 3 6 #FFFF0000 INNER"))
+            attr.parseValue(RawAttr(attrName, "12 23 3 6 #FF0000FF INNER"))
         )
 
         assertContentEquals(

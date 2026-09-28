@@ -31,9 +31,9 @@ class WidgetSpanParserTest {
                         前
                         <WidgetSpan alignment="MIDDLE"
                                     baseline="IDEOGRAPHIC"
-                                    color="#FFFF0000"
+                                    color="#FF0000FF"
                                     fontSize="24">
-                            <Container width="30" height="20" color="#FF0000FF"/>
+                            <Container width="30" height="20" color="#0000FFFF"/>
                         </WidgetSpan>
                         后
                     </Text>

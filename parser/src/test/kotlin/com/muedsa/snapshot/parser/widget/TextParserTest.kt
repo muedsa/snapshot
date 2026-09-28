@@ -41,7 +41,7 @@ class TextParserTest {
         val widget = ParserTest.parse(
             """
             <Snapshot>
-                <Text color="#FFFF0000"
+                <Text color="#FF0000FF"
                       fontSize="20"
                       fontFamily="$testFontFamily"
                       fontStyle="BOLD">$expectedText</Text>
@@ -73,7 +73,7 @@ class TextParserTest {
         val parsedWidget = ParserTest.parse(
             """
             <Snapshot>
-                <Container color="#FFE59865" padding="20">
+                <Container color="#E59865FF" padding="20">
                     <Column>
                         <Text color="#FFFFFFFF" fontSize="18" fontFamily="$testFontFamily">$chinese</Text>
                         <Text color="#FFFFFFFF" fontSize="14" fontFamily="$testFontFamily">$english</Text>
@@ -123,7 +123,7 @@ class TextParserTest {
             val widget = ParserTest.parse(
                 """
                 <Snapshot>
-                    <Text color="#FFFF0000" fontSize="20" fontFamily="$testFontFamily">
+                    <Text color="#FF0000FF" fontSize="20" fontFamily="$testFontFamily">
                         第一层
                         <Emoji url="https://example.invalid/emoji.png" width="18" height="18"/>
                         <Text fontSize="24">第二层<Raw> 保留空格 </Raw></Text>

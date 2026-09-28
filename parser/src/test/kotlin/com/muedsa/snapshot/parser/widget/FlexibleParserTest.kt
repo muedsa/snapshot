@@ -29,10 +29,10 @@ class FlexibleParserTest {
                 <SizedBox width="300" height="100">
                     <Row>
                         <Expanded>
-                            <Container color="#FFFF0000"/>
+                            <Container color="#FF0000FF"/>
                         </Expanded>
                         <Flexible flex="2" fit="TIGHT">
-                            <Container color="#FF00FF00"/>
+                            <Container color="#00FF00FF"/>
                         </Flexible>
                     </Row>
                 </SizedBox>
@@ -63,8 +63,8 @@ class FlexibleParserTest {
             <Snapshot>
                 <SizedBox width="300" height="100">
                     <Flex direction="HORIZONTAL">
-                        <Expanded><Container color="#FFFF0000"/></Expanded>
-                        <Flexible flex="2" fit="TIGHT"><Container color="#FF00FF00"/></Flexible>
+                        <Expanded><Container color="#FF0000FF"/></Expanded>
+                        <Flexible flex="2" fit="TIGHT"><Container color="#00FF00FF"/></Flexible>
                     </Flex>
                 </SizedBox>
             </Snapshot>
