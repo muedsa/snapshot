@@ -3,7 +3,7 @@ package com.muedsa.geometry
 import org.jetbrains.skia.Point
 import org.jetbrains.skia.Rect
 
-open class Offset(val x: Float, val y: Float) : Comparable<Offset> {
+open class Offset(val x: Float, val y: Float) {
 
     val isInfinite by lazy {
         x >= Float.POSITIVE_INFINITY || y >= Float.POSITIVE_INFINITY
@@ -17,16 +17,14 @@ open class Offset(val x: Float, val y: Float) : Comparable<Offset> {
 
     fun toSkPoint(): Point = Point(x = x, y = y)
 
-    override fun compareTo(other: Offset): Int {
-        if (x == other.x && y == other.y) {
-            return 0
-        } else if (x > other.x && y > other.y) {
-            return 1
-        } else if (x < other.x && y < other.y) {
-            return -1
-        }
-        throw UnsupportedOperationException("compareTo($this, $other)")
-    }
+    /** 逐分量比较；二维偏序不能用单个 [Comparable.compareTo] 表达。 */
+    infix fun lessThan(other: Offset): Boolean = x < other.x && y < other.y
+
+    infix fun lessThanOrEqual(other: Offset): Boolean = x <= other.x && y <= other.y
+
+    infix fun greaterThan(other: Offset): Boolean = x > other.x && y > other.y
+
+    infix fun greaterThanOrEqual(other: Offset): Boolean = x >= other.x && y >= other.y
 
     open operator fun plus(offset: Offset) = Offset(x = x + offset.x, y = y + offset.y)
 

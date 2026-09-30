@@ -59,4 +59,16 @@ class ColoredBoxTest {
         )
         colors.forEach(::assertScene)
     }
+
+    @Test
+    fun zero_width_box_does_not_throw_during_paint() {
+        val pixmap = snapshotPixels {
+            Container(width = 40f, height = 40f, alignment = BoxAlignment.CENTER, color = background) {
+                SizedBox(width = 0f, height = 10f) {
+                    ColoredBox(color = Color.RED)
+                }
+            }
+        }
+        expectColorAt(pixmap, 0, 0, background)
+    }
 }

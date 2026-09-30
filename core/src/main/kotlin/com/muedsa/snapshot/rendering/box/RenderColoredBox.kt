@@ -11,7 +11,7 @@ class RenderColoredBox(
 
     override fun paint(context: PaintingContext, offset: Offset) {
         val size = definiteSize
-        if (size > Size.ZERO) {
+        if (size greaterThan Size.ZERO) {
             val paint = Paint()
             paint.color = color
             context.canvas.drawRect(offset combine size, paint)
