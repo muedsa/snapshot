@@ -9,6 +9,9 @@ import com.muedsa.snapshot.rendering.PaintingContext
 import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderContainerBox
+import com.muedsa.snapshot.rendering.box.EMPTY_FILTER_PAINT_BOUNDS
+import com.muedsa.snapshot.rendering.box.intersectFilterPaintBounds
+import org.jetbrains.skia.Rect
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.Direction
 import kotlin.math.max
@@ -23,6 +26,14 @@ open class RenderFlex(
     val textBaseline: BaselineMode? = null,
     val clipBehavior: ClipBehavior = ClipBehavior.NONE,
 ) : RenderContainerBox() {
+
+    internal override fun getFilterPaintBounds(): Rect? {
+        val bounds = super.getFilterPaintBounds()
+        if (!hasOverflow) return bounds
+        if (definiteSize.isEmpty) return EMPTY_FILTER_PAINT_BOUNDS
+        return if (clipBehavior == ClipBehavior.NONE) bounds
+        else bounds.intersectFilterPaintBounds(getPaintBounds())
+    }
 
     override fun setupParentData(child: RenderBox) {
         if (child.parentData !is FlexParentData) {

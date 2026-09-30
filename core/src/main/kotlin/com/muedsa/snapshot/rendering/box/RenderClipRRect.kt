@@ -10,6 +10,7 @@ import com.muedsa.snapshot.paint.decoration.BorderRadiusGeometry
 import com.muedsa.snapshot.rendering.ClipBehavior
 import com.muedsa.snapshot.rendering.PaintingContext
 import org.jetbrains.skia.RRect
+import org.jetbrains.skia.Rect
 import org.jetbrains.skia.paragraph.Direction
 
 class RenderClipRRect(
@@ -24,6 +25,10 @@ class RenderClipRRect(
 
     override val defaultClip: RRect
         get() = borderRadius.resolve(textDirection).toRRect(rect = Offset.ZERO combine definiteSize)
+
+    internal override fun getFilterPaintBounds(): Rect? =
+        if (clipBehavior == ClipBehavior.NONE) super.getFilterPaintBounds()
+        else super.getFilterPaintBounds().intersectFilterPaintBounds(getClip())
 
     override fun paint(context: PaintingContext, offset: Offset) {
         if (child != null) {

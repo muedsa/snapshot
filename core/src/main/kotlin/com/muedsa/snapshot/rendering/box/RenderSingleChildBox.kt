@@ -1,12 +1,19 @@
 package com.muedsa.snapshot.rendering.box
 
 import com.muedsa.geometry.Offset
+import com.muedsa.geometry.shift
 import com.muedsa.snapshot.rendering.PaintingContext
+import org.jetbrains.skia.Rect
 import org.jetbrains.skia.paragraph.BaselineMode
 
 abstract class RenderSingleChildBox : RenderBox() {
 
     var child: RenderBox? = null
+
+    internal override fun getFilterPaintBounds(): Rect? {
+        val currentChild = child ?: return EMPTY_FILTER_PAINT_BOUNDS
+        return currentChild.getFilterPaintBounds()?.shift(currentChild.parentData!!.offset)
+    }
 
     open fun appendChild(child: RenderBox) {
         this.child = child

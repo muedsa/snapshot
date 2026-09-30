@@ -5,12 +5,39 @@ import com.muedsa.geometry.Matrix44CMO
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.getAsTranslation
 import com.muedsa.snapshot.rendering.PaintingContext
+import org.jetbrains.skia.Rect
+import kotlin.math.max
+import kotlin.math.min
 
 class RenderTransform(
     transform: Matrix44CMO,
     val origin: Offset? = null,
     val alignment: BoxAlignment? = null,
 ) : RenderSingleChildBox() {
+
+    internal override fun getFilterPaintBounds(): Rect? {
+        val bounds = super.getFilterPaintBounds() ?: return null
+        if (bounds.width <= 0f || bounds.height <= 0f) return EMPTY_FILTER_PAINT_BOUNDS
+        val matrix = effectiveTransform.mat
+        var left = Float.POSITIVE_INFINITY
+        var top = Float.POSITIVE_INFINITY
+        var right = Float.NEGATIVE_INFINITY
+        var bottom = Float.NEGATIVE_INFINITY
+        for (x in floatArrayOf(bounds.left, bounds.right)) {
+            for (y in floatArrayOf(bounds.top, bounds.bottom)) {
+                val w = matrix[3] * x + matrix[7] * y + matrix[15]
+                if (!w.isFinite() || w <= 0f) return null
+                val mappedX = (matrix[0] * x + matrix[4] * y + matrix[12]) / w
+                val mappedY = (matrix[1] * x + matrix[5] * y + matrix[13]) / w
+                if (!mappedX.isFinite() || !mappedY.isFinite()) return null
+                left = min(left, mappedX)
+                top = min(top, mappedY)
+                right = max(right, mappedX)
+                bottom = max(bottom, mappedY)
+            }
+        }
+        return Rect.makeLTRB(left, top, right, bottom)
+    }
 
     val transform: Matrix44CMO = transform.clone()
 

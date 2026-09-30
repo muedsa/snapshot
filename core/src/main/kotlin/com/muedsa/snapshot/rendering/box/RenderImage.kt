@@ -28,6 +28,14 @@ open class RenderImage(
     val isAntiAlias: Boolean = false,
 ) : RenderBox() {
 
+    internal override fun getFilterPaintBounds(): Rect? = when {
+        image == null -> EMPTY_FILTER_PAINT_BOUNDS
+        // NONE 和超出常规范围的对齐可能将图片画在布局框外，避免错误裁剪。
+        repeat == ImageRepeat.NO_REPEAT &&
+            (fit == BoxFit.NONE || alignment.x !in -1f..1f || alignment.y !in -1f..1f) -> null
+        else -> getPaintBounds()
+    }
+
     init {
         requireValidImageScale(scale)
     }

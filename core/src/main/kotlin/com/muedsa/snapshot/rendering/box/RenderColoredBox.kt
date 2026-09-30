@@ -4,10 +4,14 @@ import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
 import com.muedsa.snapshot.rendering.PaintingContext
 import org.jetbrains.skia.Paint
+import org.jetbrains.skia.Rect
 
 class RenderColoredBox(
     var color: Int,
 ) : RenderSingleChildBox() {
+
+    internal override fun getFilterPaintBounds(): Rect? =
+        super.getFilterPaintBounds().unionFilterPaintBounds(getPaintBounds())
 
     override fun paint(context: PaintingContext, offset: Offset) {
         val size = definiteSize

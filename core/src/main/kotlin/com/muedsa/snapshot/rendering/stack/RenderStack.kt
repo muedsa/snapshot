@@ -6,6 +6,8 @@ import com.muedsa.snapshot.rendering.PaintingContext
 import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderContainerBox
+import com.muedsa.snapshot.rendering.box.intersectFilterPaintBounds
+import org.jetbrains.skia.Rect
 import org.jetbrains.skia.paragraph.Direction
 import kotlin.math.max
 
@@ -15,6 +17,15 @@ open class RenderStack(
     val fit: StackFit = StackFit.LOOSE,
     val clipBehavior: ClipBehavior = ClipBehavior.HARD_EDGE,
 ) : RenderContainerBox() {
+
+    internal override fun getFilterPaintBounds(): Rect? {
+        val bounds = super.getFilterPaintBounds()
+        return if (clipBehavior != ClipBehavior.NONE && hasVisualOverflow) {
+            bounds.intersectFilterPaintBounds(getPaintBounds())
+        } else {
+            bounds
+        }
+    }
 
     var hasVisualOverflow: Boolean = false
 
