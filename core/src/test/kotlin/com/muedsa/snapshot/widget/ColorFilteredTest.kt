@@ -170,11 +170,31 @@ class ColorFilteredTest {
     @Test
     fun empty_child_does_not_create_filter_color() {
         val pixmap = snapshotPixels {
-            ColorFiltered(colorFilter = ColorFilter.makeBlend(Color.RED, BlendMode.MULTIPLY)) {
+            ColorFiltered(colorFilter = ColorFilter.makeBlend(Color.RED, BlendMode.SRC)) {
                 SizedBox(width = 40f, height = 40f)
             }
         }
         expectColorAt(pixmap, 20, 20, Color.WHITE)
+    }
+
+    @Test
+    fun source_filter_colors_transparent_gap_only_within_child_paint_bounds() {
+        val pixmap = snapshotPixels {
+            Container(width = 140f, height = 40f, color = Color.WHITE, alignment = BoxAlignment.CENTER) {
+                SizedBox(width = 100f, height = 20f) {
+                    ColorFiltered(colorFilter = ColorFilter.makeBlend(Color.RED, BlendMode.SRC)) {
+                        Row(textDirection = Direction.LTR) {
+                            Container(width = 20f, height = 20f, color = Color.BLUE)
+                            SizedBox(width = 60f, height = 20f)
+                            Container(width = 20f, height = 20f, color = Color.BLUE)
+                        }
+                    }
+                }
+            }
+        }
+        expectColorAt(pixmap, 10, 20, Color.WHITE)
+        expectColorAt(pixmap, 70, 20, Color.RED)
+        expectColorAt(pixmap, 130, 20, Color.WHITE)
     }
 
     @Test

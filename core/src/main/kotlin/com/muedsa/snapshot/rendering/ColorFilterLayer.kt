@@ -15,7 +15,8 @@ class ColorFilterLayer @JvmOverloads constructor(
         val clipBounds = bounds?.takeIf { it.isFiniteFilterBounds() }
         if (clipBounds != null && (clipBounds.width <= 0f || clipBounds.height <= 0f)) return
         if (clipBounds != null) {
-            // saveLayer 的 bounds 只是分配提示，必须显式裁剪，否则滤镜可能把层外透明像素染色。
+            // Flutter 使用子图层绘制边界作为滤镜 saveLayer 的范围；Skiko 的 bounds
+            // 仅是分配提示，因此这里额外裁剪，避免可改变透明像素的滤镜染色到层外。
             context.canvas.save()
             context.canvas.clipRect(clipBounds)
         }
