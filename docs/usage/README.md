@@ -642,7 +642,7 @@ fun ChildSlot.Transform(
 | `DecoratedBox(decoration: Decoration, position: DecorationPosition = BACKGROUND, content)` | | `FOREGROUND` 会画在子节点之上 |
 | `Opacity(opacity: Float = 1f, content)` | `assert(opacity in 0f..1f)` | 整棵子树做 alpha 合成 |
 | `ColorFiltered(colorFilter: ColorFilter, content)` | | 传 Skia `ColorFilter`（如 `ColorFilter.makeBlend`/`makeMatrix`） |
-| `ImageFiltered(imageFilter: ImageFilter, content)` | | 传 Skia `ImageFilter`（如 `ImageFilter.makeBlur`） |
+| `ImageFiltered(imageFilter: ImageFilter, outputBounds: ((Rect) -> Rect)? = null, content)` | | 传 Skia `ImageFilter`；嵌套在 `ColorFiltered` 中时可提供滤镜输出边界 |
 | `BackdropFilter(imageFilter: ImageFilter, blendMode: BlendMode = SRC_OVER, content)` | | 对**已绘制的下层内容**做滤镜（毛玻璃效果） |
 | `ClipRect(clipper: ((Size) -> Rect)? = null, clipBehavior = HARD_EDGE, content)` | 默认 **HARD_EDGE** | `clipper` 为 `null` 时裁自身区域 |
 | `ClipRRect(borderRadius: BorderRadius = BorderRadius.ZERO, clipper: ((Size) -> RRect)? = null, clipBehavior = ANTI_ALIAS, content)` | 默认 **ANTI_ALIAS** | 圆角裁剪 |
@@ -848,6 +848,27 @@ SnapshotPNG {
 ```
 
 同样地，`ColorFiltered(colorFilter = ColorFilter.makeBlend(0xFF9E9E9E.toInt(), BlendMode.SATURATION))` 可以把子树转成灰度。
+
+#### 颜色滤镜的绘制边界
+
+`ColorFiltered` 只处理子树绘制结果，不处理已经画在它后面的背景；需要过滤背景时使用 `BackdropFilter`。它依据子树的**绘制边界**限制颜色滤镜，而不是简单裁到子节点的布局尺寸，因此子节点的合法溢出、文字阴影等仍可参与滤镜。像 `SRC`、`MULTIPLY` 等可能改变透明像素的模式，也可能给绘制边界内原本透明的间隙着色；边界外不应被染色。
+
+当子树中包含通用 `ImageFiltered` 时，Skiko 的 `ImageFilter` 不提供可查询的输出边界。若不提供 `outputBounds`，项目无法安全推断模糊、位移等效果会延伸多远，便会保留不裁剪回退；此时外层使用背景相关混合模式的 `ColorFiltered` 可能影响整个画布。`outputBounds` 接收 `ImageFiltered` 子树在本地坐标系中的输入绘制矩形，必须以无副作用的方式返回**覆盖滤镜全部输出**的矩形；范围过小会截断效果，过大则可能让透明区域被颜色滤镜着色。这个参数只供外层计算颜色滤镜边界，不改变 `ImageFiltered` 单独使用时的裁剪行为。
+
+高斯模糊可复用 `blurImageFilterBounds`，它按约 `3 × sigma` 向四周扩张输入边界：
+
+```kotlin
+ColorFiltered(colorFilter = ColorFilter.makeBlend(Color.RED, BlendMode.MULTIPLY)) {
+    ImageFiltered(
+        imageFilter = ImageFilter.makeBlur(2f, 2f, FilterTileMode.CLAMP),
+        outputBounds = blurImageFilterBounds(2f, 2f),
+    ) {
+        Container(width = 20f, height = 20f, color = Color.BLUE)
+    }
+}
+```
+
+使用其他图像滤镜时，可通过 `outputBounds = { input -> /* 计算完整输出矩形 */ }` 提供适合该滤镜的范围；无法确定时，在外层用 `ClipRect` 等组件明确限定允许受影响的区域。`BackdropFilter` 会读取子树之外的背景，不能只凭子节点绘制边界推断范围，仍建议显式裁剪。这里的边界约束是对 Skiko 合成行为的适配：其 `saveLayer` 的 bounds 不足以限制颜色滤镜的实际作用区域，因此项目还会显式裁剪已知范围。与 Flutter 从绘制指令计算边界的机制不同，本项目目前估算内置组件的绘制范围；自定义渲染对象若在自身尺寸外绘制，应自行验证滤镜结果，并在需要时提供明确裁剪。
 
 ---
 
@@ -1639,6 +1660,7 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 
 - `ImageFiltered` 只处理自己的子树。
 - `BackdropFilter` 处理绘制顺序中位于它下面的已有内容，通常放在 `Stack` 中，并用 `ClipRect`、`ClipOval` 或 `ClipRRect` 限定滤镜区域。
+- Parser 的 `<ImageFiltered>` 固定为高斯模糊，会根据 `sigmaX`、`sigmaY` 自动提供输出边界；因此它嵌套在 `<ColorFiltered>` 内时，无需另外配置边界。Kotlin DSL 中直接传入任意 Skia `ImageFilter` 时，边界规则和示例见 [7.4 滤镜](#74-滤镜)。
 
 ```html
 <ImageFiltered sigmaX="8" sigmaY="8" tileMode="CLAMP">

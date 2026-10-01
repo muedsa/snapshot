@@ -14,6 +14,8 @@ import com.muedsa.snapshot.widget.text.Text
 import org.jetbrains.skia.BlendMode
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.ColorFilter
+import org.jetbrains.skia.FilterTileMode
+import org.jetbrains.skia.ImageFilter
 import org.jetbrains.skia.Rect
 import org.jetbrains.skia.paragraph.Shadow
 import org.jetbrains.skia.paragraph.Direction
@@ -110,6 +112,27 @@ class ColorFilteredTest {
             expectColorAt(pixmap, 0, 0, Color.WHITE)
             assertNotEquals(Color.WHITE, pixmap.getColor(50, 50), "$mode 应继续作用于子节点")
         }
+    }
+
+    @Test
+    fun nested_image_filter_with_output_bounds_does_not_tint_outside_its_painted_area() {
+        val pixmap = snapshotPixels {
+            Container(width = 100f, height = 100f, alignment = BoxAlignment.CENTER, color = Color.WHITE) {
+                SizedBox(width = 20f, height = 20f) {
+                    ColorFiltered(colorFilter = ColorFilter.makeBlend(Color.RED, BlendMode.MULTIPLY)) {
+                        ImageFiltered(
+                            imageFilter = ImageFilter.makeBlur(2f, 2f, FilterTileMode.CLAMP),
+                            outputBounds = blurImageFilterBounds(2f, 2f),
+                        ) {
+                            ColoredBox(color = Color.BLUE)
+                        }
+                    }
+                }
+            }
+        }
+        expectColorAt(pixmap, 0, 0, Color.WHITE)
+        assertNotEquals(Color.WHITE, pixmap.getColor(38, 50), "模糊内容不应被裁到子节点尺寸内")
+        assertNotEquals(Color.WHITE, pixmap.getColor(50, 50))
     }
 
     @Test

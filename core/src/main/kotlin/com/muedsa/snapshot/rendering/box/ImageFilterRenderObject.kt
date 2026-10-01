@@ -7,10 +7,16 @@ import org.jetbrains.skia.Rect
 
 internal class ImageFilterRenderObject(
     val imageFilter: ImageFilter,
+    val outputBounds: ((Rect) -> Rect)? = null,
 ) : RenderSingleChildBox() {
 
-    // ImageFilter 可能扩展绘制范围；无法安全估算时保留原有的不裁剪行为。
-    internal override fun getFilterPaintBounds(): Rect? = null
+    internal override fun getFilterPaintBounds(): Rect? {
+        val childBounds = super.getFilterPaintBounds() ?: return null
+        if (childBounds.width <= 0f || childBounds.height <= 0f) return EMPTY_FILTER_PAINT_BOUNDS
+        // 未知滤镜不能按布局尺寸裁剪，否则会截断模糊、位移等越界效果。
+        val mappedBounds = outputBounds?.invoke(childBounds) ?: return null
+        return mappedBounds.takeIf { it.isFiniteFilterBounds() && it.width >= 0f && it.height >= 0f }
+    }
 
     override fun paint(context: PaintingContext, offset: Offset) {
         if (child != null) {
