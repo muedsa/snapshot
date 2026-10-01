@@ -1,7 +1,9 @@
 package com.muedsa.snapshot.rendering.box
 
 import com.muedsa.geometry.Offset
+import com.muedsa.geometry.shift
 import com.muedsa.snapshot.rendering.PaintingContext
+import org.jetbrains.skia.Rect
 import org.jetbrains.skia.paragraph.BaselineMode
 import kotlin.math.min
 
@@ -10,6 +12,16 @@ abstract class RenderContainerBox : RenderBox() {
     private val _children: MutableList<RenderBox> = mutableListOf()
 
     val children: List<RenderBox> = _children
+
+    internal override fun getFilterPaintBounds(): Rect? {
+        var bounds: Rect? = EMPTY_FILTER_PAINT_BOUNDS
+        for (child in children) {
+            bounds = bounds.unionFilterPaintBounds(
+                child.getFilterPaintBounds()?.shift(child.parentData!!.offset)
+            )
+        }
+        return bounds
+    }
 
     fun appendChild(child: RenderBox) {
         check(!_children.contains(child)) {

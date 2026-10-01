@@ -6,6 +6,7 @@ import com.muedsa.snapshot.rendering.ClipBehavior
 import com.muedsa.snapshot.rendering.PaintingContext
 import org.jetbrains.skia.Path
 import org.jetbrains.skia.PathBuilder
+import org.jetbrains.skia.Rect
 
 
 class RenderClipPath(
@@ -17,6 +18,10 @@ class RenderClipPath(
 ) {
     override val defaultClip: Path
         get() = PathBuilder().addRect(Offset.ZERO combine definiteSize).detach()
+
+    internal override fun getFilterPaintBounds(): Rect? =
+        if (clipBehavior == ClipBehavior.NONE) super.getFilterPaintBounds()
+        else super.getFilterPaintBounds().intersectFilterPaintBounds(getClip().bounds)
 
 
     override fun paint(context: PaintingContext, offset: Offset) {

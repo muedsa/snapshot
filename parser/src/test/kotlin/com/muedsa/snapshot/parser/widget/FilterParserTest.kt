@@ -63,6 +63,30 @@ class FilterParserTest {
     }
 
     @Test
+    fun parsed_blur_provides_bounds_to_outer_color_filter() {
+        val snapshot = ParserTest.parse(
+            """
+            <Snapshot>
+                <Container width="100" height="100" color="#FFFFFFFF" alignment="CENTER">
+                    <SizedBox width="20" height="20">
+                        <ColorFiltered color="#FF0000FF" blendMode="MULTIPLY">
+                            <ImageFiltered sigmaX="2" sigmaY="2" tileMode="CLAMP">
+                                <Container width="20" height="20" color="#0000FFFF"/>
+                            </ImageFiltered>
+                        </ColorFiltered>
+                    </SizedBox>
+                </Container>
+            </Snapshot>
+            """.trimIndent()
+        )
+
+        val pixels = snapshotPixels { attach(snapshot.createWidget()) }
+        expectColorAt(pixels, 0, 0, Color.WHITE)
+        assertNotEquals(Color.WHITE, pixels.getColor(38, 50))
+        assertNotEquals(Color.WHITE, pixels.getColor(50, 50))
+    }
+
+    @Test
     fun backdrop_filter_parses_blur_and_blend_mode() {
         val snapshot = ParserTest.parse(
             """

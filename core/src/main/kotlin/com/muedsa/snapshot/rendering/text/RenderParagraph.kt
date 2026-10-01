@@ -2,13 +2,16 @@ package com.muedsa.snapshot.rendering.text
 
 import com.muedsa.geometry.Offset
 import com.muedsa.geometry.Size
+import com.muedsa.geometry.shift
 import com.muedsa.snapshot.kEllipsis
 import com.muedsa.snapshot.paint.text.*
 import com.muedsa.snapshot.rendering.PaintingContext
 import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.rendering.box.RenderBox
 import com.muedsa.snapshot.rendering.box.RenderContainerBox
+import com.muedsa.snapshot.rendering.box.unionFilterPaintBounds
 import com.muedsa.snapshot.widget.text.TextParentData
+import org.jetbrains.skia.Rect
 import org.jetbrains.skia.paragraph.*
 
 class RenderParagraph(
@@ -22,6 +25,21 @@ class RenderParagraph(
     val textWidthBasis: TextWidthBasis = TextWidthBasis.PARENT,
     val textHeightMode: HeightMode? = null,
 ) : RenderContainerBox() {
+
+    internal override fun getFilterPaintBounds(): Rect? {
+        val textBounds = getPaintBounds()
+        var bounds = super.getFilterPaintBounds().unionFilterPaintBounds(textBounds)
+        text.visitChildren { span ->
+            span.mergedStyle?.shadows?.forEach { shadow ->
+                val shadowBounds = textBounds
+                    .shift(Offset(shadow.offsetX, shadow.offsetY))
+                    .inflate((3.0 * shadow.blurSigma).toFloat().coerceAtLeast(0f))
+                bounds = bounds.unionFilterPaintBounds(shadowBounds)
+            }
+            true
+        }
+        return bounds
+    }
 
     private val _textPainter: TextPainter = TextPainter(
         text = text,

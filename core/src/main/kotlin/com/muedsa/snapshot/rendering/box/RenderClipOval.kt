@@ -19,6 +19,10 @@ class RenderClipOval(
     override val defaultClip: Rect
         get() = Offset.ZERO combine definiteSize
 
+    internal override fun getFilterPaintBounds(): Rect? =
+        if (clipBehavior == ClipBehavior.NONE) super.getFilterPaintBounds()
+        else super.getFilterPaintBounds().intersectFilterPaintBounds(getClip())
+
     private var cachedRect: Rect? = null
     private lateinit var cachedPath: Path
 

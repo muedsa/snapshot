@@ -88,6 +88,9 @@ abstract class RenderBox {
 
     fun getPaintBounds(): Rect = Offset.ZERO combine definiteSize
 
+    /** 滤镜合成所需的子树绘制边界，使用当前渲染盒的局部坐标；null 表示无法安全估算。 */
+    internal open fun getFilterPaintBounds(): Rect? = getPaintBounds()
+
     /**
      * 渲染debug信息
      */
