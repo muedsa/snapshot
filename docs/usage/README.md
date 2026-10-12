@@ -1140,6 +1140,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `ClipRect` | 单子 | `ClipRect` | 按自身矩形范围裁剪子节点 |
 | `ClipOval` | 单子 | `ClipOval` | 按自身内接椭圆裁剪子节点 |
 | `ClipRRect` | 单子 | `ClipRRect` | 按圆角矩形裁剪子节点 |
+| `ClipPath` | 单子 | `ClipPath` | 用 SVG 路径数据裁剪，可缩放到自身尺寸并支持镂空 |
 | `ColorFiltered` | 单子 | `ColorFiltered` | 对子树应用颜色混合滤镜 |
 | `ImageFiltered` | 单子 | `ImageFiltered` | 对子树应用高斯模糊 |
 | `BackdropFilter` | 单子 | `BackdropFilter` | 对已经绘制的下层内容应用高斯模糊 |
@@ -1152,7 +1153,7 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 | `Emoji` | **无子** | `ImageEmoji`（行内图片） | `url` 网络图或 `dataUri` 内嵌图片；只能作为 `Text` 的子节点 |
 | `WidgetSpan` | **单子** | `WidgetSpan` | 把一个普通 Widget 嵌入文本，只能作为 `Text` 的子节点 |
 
-**没有对应标签的 Widget**（只能用 Kotlin DSL）：`ClipPath` 等——解析器目前覆盖 38 个标签。`ClipPath` 的核心能力依赖 Kotlin 回调动态构造任意路径，类 DOM 格式暂不提供路径描述语法。滤镜标签目前只开放颜色混合与高斯模糊；滤镜矩阵、阴影、组合滤镜和运行时着色器仍需 Kotlin DSL。
+解析器目前覆盖 39 个标签。`ClipPath` 已支持 SVG 路径数据及坐标缩放；需要根据布局尺寸动态计算路径的场景仍可使用 Kotlin DSL 的 `clipper` 回调，或注册自定义标签。滤镜标签目前只开放颜色混合与高斯模糊；滤镜矩阵、阴影、组合滤镜和运行时着色器仍需 Kotlin DSL。
 
 ### 10.3 属性取值格式
 
@@ -1629,7 +1630,50 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 </ClipOval>
 ```
 
-任意路径裁剪仍需使用 Kotlin DSL 的 `ClipPath(clipper = { size -> ... })`。
+#### `<ClipPath>`
+
+最多包含 1 个子节点，使用 SVG 路径数据描述复杂裁剪形状，复用 Kotlin DSL 中的 `ClipPath`。这里解析的是 SVG 的 `d` 属性内容，**不是完整 SVG 文档**，也不读取路径文件或 URL。
+
+| 属性 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `path` | SVG 路径字符串 | **必填** | 支持 `M/L/H/V/Z` 直线与闭合、`Q/T` 二次贝塞尔曲线、`C/S` 三次贝塞尔曲线、`A` 椭圆弧及多轮廓；小写命令使用相对坐标 |
+| `viewBox` | 四个数字 | 不指定 | `minX minY width height`，允许空白或逗号分隔及科学计数法；所有值必须有限，宽高必须大于 0 |
+| `fit` | enum | `FILL` | 有 `viewBox` 时生效：`FILL` 分别缩放宽高，`CONTAIN` 等比缩放并居中；暂不支持其他适配方式 |
+| `fillRule` | enum | `NON_ZERO` | 非零环绕规则；可改为 `EVEN_ODD` 奇偶规则，实现多轮廓镂空 |
+| `clipBehavior` | enum | `ANTI_ALIAS` | `NONE` / `HARD_EDGE` / `ANTI_ALIAS` / `ANTI_ALIAS_WITH_SAVE_LAYER`，语义同其他裁剪标签 |
+
+**坐标与布局规则：**
+
+- 不提供 `viewBox` 时，`path` 坐标直接使用组件本地坐标，原点为左上角，X 向右、Y 向下；`fit` 不改变路径。
+- 提供 `viewBox` 时，先减去 `(minX, minY)`，再映射到组件实际布局尺寸。`FILL` 可能拉伸形状；`CONTAIN` 保持比例，并在剩余空间中居中。
+- `viewBox` **不决定布局尺寸**，路径边界也不会撑开组件。尺寸仍取决于父约束和子节点；通常用外层 `SizedBox` 或子节点的宽高明确指定。
+- `viewBox` 只定义映射用的坐标窗口，**不会额外施加矩形裁剪**；路径超出窗口的部分仍会参与裁剪。如果必须截断在组件矩形内，可再包一层 `ClipRect`。
+- 裁剪使用路径的填充区域，而非描边；未闭合的轮廓按填充语义闭合。`NON_ZERO` 下内外轮廓的方向会影响是否镂空；`EVEN_ODD` 按穿越轮廓次数判断，适合不依赖轮廓方向的镂空图案。
+- 路径在创建 Widget 时解析一次，布局时只执行坐标变换；非法路径、非有限坐标、无效 `viewBox` 或枚举值会在 `createWidget()` 阶段报告带位置的 `ParseException`。缺少属性或空属性值时，位置回退到标签或属性名。
+
+例如，将带曲线的徽章缩放到 `240×160`：
+
+```html
+<SizedBox width="240" height="160">
+    <ClipPath path="M0 0 H100 V75 Q50 125 0 75 Z"
+              viewBox="0 0 100 100" fit="FILL">
+        <Container color="#3F51B5"/>
+    </ClipPath>
+</SizedBox>
+```
+
+使用两个同方向的矩形轮廓与 `EVEN_ODD` 镂空，中心露出背景：
+
+```html
+<SizedBox width="240" height="160">
+    <ClipPath path="M0 0 H100 V100 H0 Z M25 25 H75 V75 H25 Z"
+              viewBox="0 0 100 100" fit="CONTAIN" fillRule="EVEN_ODD">
+        <Container color="#00C853"/>
+    </ClipPath>
+</SizedBox>
+```
+
+如果需要“组件宽度变化，但票券缺口半径固定”等动态几何，SVG 路径整体缩放并不等价于重新计算几何。请使用 `ClipPath(clipper = { size -> ... })`，或按 [10.8](#108-扩展自定义标签) 注册自定义标签，在 Kotlin 中根据 `Size` 构造路径。
 
 #### `<ColorFiltered>`
 
@@ -2149,7 +2193,7 @@ EdgeInsets 必须写成 `"(1,2,3,4)"` 或 `"10"` 或 `"(1,2)"`，圆括号和逗
 裸属性会被当成 `null` 并回落到默认值 `false`。写 `debug="true"`。
 
 **Q：解析器里能用 `Expanded` 或裁剪标签吗？**
-可以。`Expanded`、`Flexible`、`Opacity`、`Transform`、`ClipRect`、`ClipOval`、`ClipRRect` 都已内置，完整列表见 [10.2](#102-标签总表)。任意路径裁剪 `ClipPath` 仍需在 Kotlin DSL 中构建，或按 [10.8](#108-扩展自定义标签) 注册自定义标签。
+可以。`Expanded`、`Flexible`、`Opacity`、`Transform`、`ClipRect`、`ClipOval`、`ClipRRect`、`ClipPath` 都已内置，完整列表见 [10.2](#102-标签总表)。`ClipPath` 可直接使用 SVG 路径字符串、`viewBox` 和填充规则；依赖布局尺寸动态计算路径时，使用 Kotlin DSL 或按 [10.8](#108-扩展自定义标签) 注册自定义标签。
 
 **Q：文本里怎么写 `<` `>`？**
 用 `<![CDATA[ ... ]]>`。库**不做** HTML 实体解码，`&lt;` 会原样输出；裸 `&` 可以直接书写并会原样保留（见 [10.5](#105-文本空白注释与-cdata)）。`<!-- ... -->` 会被当作注释忽略，不能用来显示字面量 `<`。

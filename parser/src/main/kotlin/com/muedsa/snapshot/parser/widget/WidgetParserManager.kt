@@ -60,6 +60,7 @@ class WidgetParserManager {
             { ClipRectParser() },
             { ClipOvalParser() },
             { ClipRRectParser() },
+            { ClipPathParser() },
             { ColorFilteredParser() },
             { ImageFilteredParser() },
             { BackdropFilterParser() },
