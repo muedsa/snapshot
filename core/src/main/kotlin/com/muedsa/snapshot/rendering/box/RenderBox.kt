@@ -110,23 +110,29 @@ abstract class RenderBox {
      */
     open fun paint(context: PaintingContext, offset: Offset) {}
 
+    /** 将直接子节点的布局偏移累计到 [transform]，对应 Flutter 的 RenderBox.applyPaintTransform。 */
     open fun applyPaintTransform(child: RenderBox, transform: Matrix44CMO) {
         require(child.parent == this) { "child must belong to this RenderBox" }
+        val offset = child.parentData!!.offset
+        transform.translate(offset.x, offset.y)
     }
 
+    /**
+     * 将当前节点的局部绘制坐标转换到 [ancestor] 的局部坐标；布局相关的偏移应在布局后查询。
+     *
+     * 保留祖先专用 API：目标为自身时返回单位矩阵，目标不是祖先时抛出 [IllegalArgumentException]。
+     * 按 Flutter getTransformTo 的顺序，从祖先向当前节点累计每一级绘制变换。
+     */
     fun getTransformTo(ancestor: RenderBox): Matrix44CMO {
-        val rendererList = mutableListOf<RenderBox>()
-        do {
-            var renderer = this
+        val rendererList = mutableListOf(this)
+        var renderer = this
+        while (renderer !== ancestor) {
+            renderer = requireNotNull(renderer.parent) { "ancestor must be this RenderBox or one of its ancestors" }
             rendererList.add(renderer)
-            renderer = renderer.parent as RenderBox
-        } while (renderer != ancestor)
-        rendererList.add(ancestor)
+        }
         val transform = Matrix44CMO.identity()
-        for (index: Int in rendererList.indices.reversed()) {
-            if (index > 1) {
-                rendererList[index].applyPaintTransform(rendererList[index - 1], transform)
-            }
+        for (index in rendererList.lastIndex downTo 1) {
+            rendererList[index].applyPaintTransform(rendererList[index - 1], transform)
         }
         return transform
     }
