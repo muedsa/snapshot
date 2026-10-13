@@ -11,7 +11,6 @@
 | 本手册 | 使用者：怎么用这套 API 出图 |
 | [`README.md`](../../README.md) | 项目简介与样例配图 |
 | [`docs/testing/README.md`](../testing/README.md) | 给 snapshot 写测试的作者：testkit、四层断言、golden 三态 |
-| [`docs/2026-09-07-skiko-0.0.0-snapshot-api-breakage-report.md`](../2026-09-07-skiko-0.0.0-snapshot-api-breakage-report.md) | 依赖的 skiko 快照 API 变动诊断 |
 
 目录
 
@@ -84,7 +83,7 @@ val png: ByteArray = Parser().parse(StringReader(text)).snapshot()
 | 图形依赖 | `org.jetbrains.skiko:skiko-awt:0.0.0-SNAPSHOT` | `gradle/libs.versions.toml` |
 | 依赖仓库 | `mavenCentral()` + `https://maven.pkg.jetbrains.space/public/p/compose/dev` | `settings.gradle.kts` |
 
-> ⚠️ skiko 用的是 **`0.0.0-SNAPSHOT`**（JetBrains compose dev 仓库的滚动快照），不是稳定版。同一份代码在不同时间拉到的快照可能编译不过——仓库里已经踩过三次（`Path` 不可变、`Shader` 渐变工厂改签名、`FontRastrSettings` 弃用），详见[诊断报告](../2026-09-07-skiko-0.0.0-snapshot-api-breakage-report.md)。**固定可复现构建时请显式锁版本。**
+> ⚠️ skiko 用的是 **`0.0.0-SNAPSHOT`**（JetBrains compose dev 仓库的滚动快照），不是稳定版。同一份代码在不同时间拉到的快照可能编译不过（如：`Path` 不可变、`Shader` 渐变工厂改签名、`FontRastrSettings` 弃用）。**固定可复现构建时请显式锁版本。**
 
 ### 常用命令
 

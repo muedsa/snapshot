@@ -458,5 +458,3 @@ golden 失配自动抛 `AssertionError` 并落 actual/diff,本身就是失败路
 | widget 整树 + golden(裁剪) | `core/src/test/.../widget/ClipGoldenTest.kt`(E4) |
 | golden 失配(默认 verify 才会跑) | `core/src/test/.../widget/GoldenVerifyRegressionTest.kt` |
 | 文本区间 + artifact | `core/src/test/.../paint/text/TextMetricsTest.kt`(E5) |
-
-> 补充阅读:框架设计文档 `docs/superpowers/specs/2026-09-07-testkit-design.md`,实现计划 `docs/superpowers/plans/2026-09-07-testkit-migration.md`。
