@@ -52,11 +52,15 @@ abstract class BoxBorder : ShapeBorder() {
                 canvas.drawRRect(borderRadius.toRRect(rect), paint)
             } else {
                 val borderRect: RRect = borderRadius.toRRect(rect)
-                val inner: RRect = borderRect.deflate(side.strokeInset) as RRect
-                val outer: RRect = borderRect.inflate(side.strokeOutset) as RRect
+                val inner: RRect = borderRect.deflate(side.strokeInset).toRRect()
+                val outer: RRect = borderRect.inflate(side.strokeOutset).toRRect()
                 canvas.drawDRRect(outer, inner, paint)
             }
         }
+
+        // Skiko 在圆角全部收缩消失时返回 Rect；用零圆角适配 drawDRRect，保留原有边界。
+        private fun Rect.toRRect(): RRect =
+            this as? RRect ?: RRect.makeLTRB(left, top, right, bottom, 0f)
 
         fun paintNonUniformBorder(
             canvas: Canvas,

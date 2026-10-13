@@ -1,11 +1,13 @@
 package com.muedsa.snapshot.parser.widget
 
+import com.muedsa.snapshot.expectColorAt
 import com.muedsa.snapshot.paint.decoration.Border
 import com.muedsa.snapshot.paint.decoration.BorderSide
 import com.muedsa.snapshot.paint.decoration.BoxDecoration
 import com.muedsa.snapshot.parser.ParseException
 import com.muedsa.snapshot.parser.ParserTest
 import com.muedsa.snapshot.rendering.box.DecorationPosition
+import com.muedsa.snapshot.snapshotPixels
 import com.muedsa.snapshot.widget.ColoredBox
 import com.muedsa.snapshot.widget.DecoratedBox
 import com.muedsa.snapshot.widget.SizedBox
@@ -16,6 +18,27 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 
 class DecorationParserTest {
+
+    @Test
+    fun thick_rounded_borders_render_through_decoration_tags() {
+        val borderAttrs = """border="4 SOLID #FF0000" borderRadius="2""""
+        val documents = listOf(
+            """<Container width="80" height="60" $borderAttrs/>""",
+            """<Border $borderAttrs><SizedBox width="80" height="60"/></Border>""",
+            """<DecoratedBox $borderAttrs><SizedBox width="80" height="60"/></DecoratedBox>""",
+            """<Container width="80" height="60" foregroundBorder="4 SOLID #FF0000" foregroundBorderRadius="2"/>""",
+        )
+        for (document in documents) {
+            val widget = ParserTest.parse("<Snapshot>$document</Snapshot>").createWidget()
+            val pixels = snapshotPixels { attach(widget) }
+            assertEquals(80, pixels.info.width)
+            assertEquals(60, pixels.info.height)
+            expectColorAt(pixels, 40, 1, Color.RED)
+            expectColorAt(pixels, 1, 30, Color.RED)
+            expectColorAt(pixels, 4, 4, Color.WHITE)
+            expectColorAt(pixels, 40, 30, Color.WHITE)
+        }
+    }
 
     @Test
     fun parses_colored_box_with_child() {
