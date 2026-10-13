@@ -591,7 +591,7 @@ fun IndexedStack.Positioned(
 
 - `Stack` 按子节点加入顺序**从下往上**叠放；非 `Positioned` 的子节点按 `alignment` 对齐，尺寸策略由 `fit` 决定（`LOOSE`/`EXPAND`/`PASSTHROUGH`）。
 - `IndexedStack` 布局全部子节点，尺寸由全部子节点共同决定，但只绘制 `index` 指定的子节点。索引从 `0` 开始；`null` 表示不绘制任何子节点。非空栈的索引必须在子节点范围内。
-- **注意默认裁剪**：`Stack` 和 `IndexedStack` 的 `clipBehavior` 默认是 `HARD_EDGE`（会裁掉溢出部分），要允许溢出请显式传 `ClipBehavior.NONE`。
+- **注意默认裁剪**：`Stack` 和 `IndexedStack` 的 `clipBehavior` 默认是 `HARD_EDGE`；任一直接子节点的布局矩形越界时启用裁剪，不受子节点顺序影响。与 Flutter 一致，阴影、变换或更深子孙的绘制越界不一定触发裁剪；需要始终裁到容器边界时请外包 `ClipRect`。要允许溢出请显式传 `ClipBehavior.NONE`。
 - `Positioned` 约束（`require`）：`left`/`right`/`width` 三者最多给两个；`top`/`bottom`/`height` 同理。快捷构造：`Positioned.fill(...)`、`Positioned.fromRect(rect)`、`Positioned.fromRelativeRect(rr)`、`Positioned.directional(textDirection, start, end, ...)`。
 
 ```kotlin
@@ -1748,6 +1748,8 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 ```
 
 `clipBehavior="NONE"` 可保留超出 Stack 边界的绘制内容；`fit="EXPAND"` 会让非定位子节点填满 Stack，`fit="PASSTHROUGH"` 会把父约束直接传给非定位子节点。
+
+`Stack` / `IndexedStack` 根据所有直接子节点的布局矩形累计越界状态；后续未越界的节点不会取消前面的裁剪需求。若只有阴影、变换或子孙节点的绘制越界，而直接子节点的布局矩形没有越界，仍可能不裁剪；需要无条件裁剪时请外包 `<ClipRect>`。
 
 #### `<Positioned>`
 
