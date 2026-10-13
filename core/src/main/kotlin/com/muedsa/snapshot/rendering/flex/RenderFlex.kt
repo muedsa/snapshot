@@ -144,6 +144,7 @@ open class RenderFlex(
                             )
 
                             Axis.VERTICAL -> BoxConstraints(
+                                maxWidth = constraints.maxWidth,
                                 minHeight = minChildExtent,
                                 maxHeight = maxChildExtent,
                             )

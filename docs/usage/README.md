@@ -543,6 +543,8 @@ fun Flex.Spacer(flex: Int = 1)
 
 接收者是 `Flex`，所以**只能出现在 `Row`/`Column`/`Flex` 的直接子位置**。`flex` 是剩余空间的分配权重；`TIGHT` 表示必须占满分配到的空间，`LOOSE` 表示"至多"那么多。`Spacer` 不接受子节点，相当于占满分配空间但不绘制内容；其 `flex` 必须是正整数。
 
+弹性分配只改变主轴约束，不解除交叉轴的最大尺寸限制：`Column` 中的 `Expanded` / `Flexible` 子节点仍受父级最大宽度约束，文本据此换行；`Row` 中则保留最大高度约束。非 `STRETCH` 对齐允许子节点更窄/更矮，只有 `STRETCH` 才要求填满交叉轴，与 Flutter 保持一致。
+
 ```kotlin
 SnapshotPNG {
     SizedBox(width = 300f, height = 60f) {
