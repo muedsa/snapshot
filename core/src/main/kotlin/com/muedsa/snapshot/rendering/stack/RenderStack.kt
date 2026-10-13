@@ -86,12 +86,13 @@ open class RenderStack(
             if (!childParentData.isPositioned) {
                 childParentData.offset = resolvedAlignment.alongOffset(definiteSize - child.definiteSize)
             } else {
+                // 与 Flutter 一致：先布局当前子节点，再累计溢出，避免短路跳过后续布局。
                 hasVisualOverflow = layoutPositionedChild(
                     child = child,
                     childParentData = childParentData,
                     size = definiteSize,
                     alignment = resolvedAlignment
-                )
+                ) || hasVisualOverflow
             }
         }
     }
