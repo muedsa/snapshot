@@ -10,6 +10,11 @@ internal fun requireValidImageScale(scale: Float) {
 }
 
 
+/**
+ * 按逻辑坐标绘制图片；[scale] 表示每个逻辑像素对应的图像像素数。
+ * [rect]、[centerSlice] 使用逻辑单位，底层源矩形使用图像物理像素。
+ * 保留项目默认适配方式：普通图片为 [BoxFit.FILL]，九宫格为 [BoxFit.SCALE_DOWN]。
+ */
 fun paintImage(
     canvas: Canvas,
     rect: Rect,
@@ -38,7 +43,7 @@ fun paintImage(
     if (centerSlice != null) {
         sliceBorder = inputSize / scale - centerSlice.size
         outputSize -= sliceBorder
-        inputSize -= sliceBorder
+        inputSize -= sliceBorder * scale
     }
     val imageFit = fit ?: if (centerSlice != null) {
         BoxFit.SCALE_DOWN
@@ -49,7 +54,7 @@ fun paintImage(
         "centerSlice cannot be used with BoxFit.NONE or BoxFit.COVER"
     }
     val fittedSizes: FittedSizes =
-        FittedSizes.applyBoxFit(fit = imageFit, inputSize = inputSize, outputSize = outputSize)
+        FittedSizes.applyBoxFit(fit = imageFit, inputSize = inputSize / scale, outputSize = outputSize)
     if (fittedSizes == FittedSizes.ZERO ||
         fittedSizes.destination.width <= 0f || fittedSizes.destination.height <= 0f ||
         !fittedSizes.destination.width.isFinite() || !fittedSizes.destination.height.isFinite()) {
@@ -62,7 +67,7 @@ fun paintImage(
         destinationSize += sliceBorder
         // We don't have the ability to draw a subset of the image at the same time
         // as we apply a nine-patch stretch.
-        require(fittedSizes.source == inputSize) {
+        require(sourceSize == inputSize) {
             "centerSlice was used with a BoxFit that does not guarantee that the image is fully visible."
         }
     }

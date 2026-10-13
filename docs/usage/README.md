@@ -683,6 +683,12 @@ SnapshotPNG {
 
 尺寸规则：以 `constraints.tightFor(width, height)` 为基础，在父约束内**按原始宽高比**收缩（`constrainSizeAndAttemptToPreserveAspectRatio`）；`image` 为 `null` 时取最小尺寸。`fit` 为 `null` 时按 `BoxFit.FILL` 处理（拉伸铺满目标框）；底层 `RenderImage` / `paintImage` 指定 `centerSlice` 时默认按 `SCALE_DOWN` 处理。
 
+`scale` 是像素密度，而不是对目标框直接做缩放：例如原图为 `40×20` 像素、`scale = 2f` 时，自然逻辑尺寸是 `20×10`；设为 `0.5f` 时则为 `80×40`。布局和 `fit` 按逻辑尺寸计算，实际采样源矩形再换回图像像素，因此不会因非 `1` 的 scale 错误截取图片。平铺的间距也按适配后的逻辑尺寸计算。
+
+底层九宫格参数 `centerSlice` 同样使用逻辑坐标。例如 `12×12` 像素图片在 `scale = 2f` 时对应 `6×6` 逻辑尺寸，`centerSlice = Rect.makeXYWH(2f, 2f, 2f, 2f)` 对应源图中从 `(4,4)` 开始的 `4×4` 像素中心区域。`FILL` 拉伸中心及边缘而保留角部的逻辑尺寸，`SCALE_DOWN` 在目标较大时保留自然逻辑尺寸。九宫格不能同时裁掉部分源图：`NONE`、`COVER` 以及会发生裁剪的 `FIT_WIDTH` / `FIT_HEIGHT` 组合会被拒绝。
+
+上述 scale 单位换算与 Flutter 保持一致，但为兼容既有行为，本项目**没有同步改变默认 fit**：Flutter 普通图默认为 `SCALE_DOWN`、九宫格默认为 `FILL`，与本项目相反。需要一致效果时请显式设置 `fit`。
+
 ```kotlin
 SnapshotPNG {
     CachedNetworkImage(
