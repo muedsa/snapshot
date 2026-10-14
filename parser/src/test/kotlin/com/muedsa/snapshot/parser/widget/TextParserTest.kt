@@ -125,7 +125,7 @@ class TextParserTest {
                 <Snapshot>
                     <Text color="#FF0000FF" fontSize="20" fontFamily="$testFontFamily">
                         第一层
-                        <Emoji url="https://example.invalid/emoji.png" width="18" height="18"/>
+                        <Emoji url="https://example.invalid/emoji.png" width="18" height="18" fit="FILL"/>
                         <Text fontSize="24">第二层<Raw> 保留空格 </Raw></Text>
                     </Text>
                 </Snapshot>

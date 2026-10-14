@@ -680,13 +680,13 @@ SnapshotPNG {
 
 重复绘制默认最多生成 `100_000` 个平铺矩形。应用可通过 core 的全局配置 `ImageRepeatConfig.maxTileCount = 10_000` 调整此上限（必须大于零）；一次绘制预计超限时会抛出 `IllegalArgumentException`，不会只绘制部分图片。此配置也约束 Parser 解析出的图片，解析文本不能修改它。
 
-尺寸规则：以 `constraints.tightFor(width, height)` 为基础，在父约束内**按原始宽高比**收缩（`constrainSizeAndAttemptToPreserveAspectRatio`）；`image` 为 `null` 时取最小尺寸。`fit` 为 `null` 时按 `BoxFit.FILL` 处理（拉伸铺满目标框）；底层 `RenderImage` / `paintImage` 指定 `centerSlice` 时默认按 `SCALE_DOWN` 处理。
+尺寸规则：以 `constraints.tightFor(width, height)` 为基础，在父约束内**按原始宽高比**收缩（`constrainSizeAndAttemptToPreserveAspectRatio`）；`image` 为 `null` 时取最小尺寸。绘制时，`fit` 为 `null` 的普通图片按 `BoxFit.SCALE_DOWN` 处理：保持宽高比，只在放不下时缩小，不把小图放大，剩余空间按 `alignment` 对齐。底层 `RenderImage` / `paintImage` 指定 `centerSlice` 时默认按 `FILL` 处理，用九宫格填满目标框。此默认适配规则与 Flutter 一致，不改变组件自身的布局尺寸。
 
 `scale` 是像素密度，而不是对目标框直接做缩放：例如原图为 `40×20` 像素、`scale = 2f` 时，自然逻辑尺寸是 `20×10`；设为 `0.5f` 时则为 `80×40`。布局和 `fit` 按逻辑尺寸计算，实际采样源矩形再换回图像像素，因此不会因非 `1` 的 scale 错误截取图片。平铺的间距也按适配后的逻辑尺寸计算。
 
 底层九宫格参数 `centerSlice` 同样使用逻辑坐标。例如 `12×12` 像素图片在 `scale = 2f` 时对应 `6×6` 逻辑尺寸，`centerSlice = Rect.makeXYWH(2f, 2f, 2f, 2f)` 对应源图中从 `(4,4)` 开始的 `4×4` 像素中心区域。`FILL` 拉伸中心及边缘而保留角部的逻辑尺寸，`SCALE_DOWN` 在目标较大时保留自然逻辑尺寸。九宫格不能同时裁掉部分源图：`NONE`、`COVER` 以及会发生裁剪的 `FIT_WIDTH` / `FIT_HEIGHT` 组合会被拒绝。
 
-上述 scale 单位换算与 Flutter 保持一致，但为兼容既有行为，本项目**没有同步改变默认 fit**：Flutter 普通图默认为 `SCALE_DOWN`、九宫格默认为 `FILL`，与本项目相反。需要一致效果时请显式设置 `fit`。
+`RawImage`、`ProviderImage`、`CachedNetworkImage`、行内图片及 `DecorationImage` 共用上述绘制默认值；Parser 的 `<Image>` / `<Emoji>` 不设置 `fit` 时也使用 `SCALE_DOWN`。显式设置 `fit` 的行为不变。**迁移提示**：此前本项目的两种默认值与 Flutter 相反；如需保留普通图片拉伸铺满的旧效果，请设置 `fit = BoxFit.FILL`（Parser 写 `fit="FILL"`）；如需保留九宫格只缩不放的旧效果，请显式设置 `fit = BoxFit.SCALE_DOWN`。
 
 ```kotlin
 SnapshotPNG {
@@ -1774,7 +1774,7 @@ Parser 中的这两个标签固定构造 `ImageFilter.makeBlur(...)`，用于声
 | `url` | url | 二选一 | — | 网络图片地址；与 `dataUri` 不能同时指定 |
 | `dataUri` | string | 二选一 | — | `data:image/png;base64,...` 等内嵌图片；与 `url` 不能同时指定 |
 | `width` / `height` | float | 否 | 不设置 | |
-| `fit` | enum | 否 | 不设置 | `FILL`/`CONTAIN`/`COVER`/`FIT_WIDTH`/`FIT_HEIGHT`/`NONE`/`SCALE_DOWN` |
+| `fit` | enum | 否 | 不设置（按 `SCALE_DOWN`） | `FILL`/`CONTAIN`/`COVER`/`FIT_WIDTH`/`FIT_HEIGHT`/`NONE`/`SCALE_DOWN`；默认等比缩小、不放大 |
 | `alignment` | alignment | 否 | `CENTER` | 图片在盒内的对齐 |
 | `repeat` | enum | 否 | `NO_REPEAT` | `REPEAT`/`REPEAT_X`/`REPEAT_Y`/`NO_REPEAT` |
 | `scale` | float | 否 | `1` | 缩放系数 |
@@ -1953,7 +1953,7 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 | `alignment` | enum | 否 | `BASELINE` | `PlaceholderAlignment`：`BASELINE` / `ABOVE_BASELINE` / `BELOW_BASELINE` / `TOP` / `BOTTOM` / `MIDDLE`（注意是**占位符对齐**，不是 `BoxAlignment`） |
 | `baseline` | enum | 否 | 不设置 | `BaselineMode`：`ALPHABETIC`/`IDEOGRAPHIC` |
 | `width` / `height` | float | 否 | 不设置 | 不给则按所在 span 的 `fontSize` 推导 |
-| `fit` | enum | 否 | 不设置 | 同 `<Image>` |
+| `fit` | enum | 否 | 不设置（按 `SCALE_DOWN`） | 同 `<Image>`；小图不会自动放大到占位框，需要拉伸时显式指定 `FILL` |
 | `imageAlignment` | alignment | 否 | `CENTER` | 图片在占位盒内的对齐 |
 | `repeat` | enum | 否 | `NO_REPEAT` | |
 | `scale` | float | 否 | `1` | |

@@ -50,9 +50,21 @@ class EmojiDataUriParserTest {
 
     @Test
     fun data_uri_emoji_renders_offline() {
-        val snapshot = parse("<Emoji dataUri=\"${bluePngDataUri()}\" width=\"18\" height=\"18\"/>")
+        val snapshot = parse("<Emoji dataUri=\"${bluePngDataUri()}\" width=\"18\" height=\"18\" fit=\"FILL\"/>")
         val text = assertIs<RichText>(snapshot.createWidget())
         assertTrue(countBluePixels(text) > 100, "Data URI 行内图片应产生蓝色像素")
+    }
+
+    @Test
+    fun omitted_fit_matches_scale_down_while_explicit_fill_enlarges() {
+        val uri = bluePngDataUri()
+        fun bluePixels(fit: String): Int = countBluePixels(assertIs<RichText>(
+            parse("<Emoji dataUri=\"$uri\" width=\"18\" height=\"18\" $fit/>").createWidget()
+        ))
+        val defaultPixels = bluePixels("")
+        assertTrue(defaultPixels > 0, "默认适配应保留可见的图片内容")
+        assertEquals(bluePixels("fit=\"SCALE_DOWN\""), defaultPixels)
+        assertTrue(bluePixels("fit=\"FILL\"") > defaultPixels, "显式 FILL 才应将小图放大到占位框")
     }
 
     @Test
@@ -62,7 +74,7 @@ class EmojiDataUriParserTest {
         val calls = mutableListOf<String>()
         val decoder = DataUriImageDecoder { value -> calls += value; image }
         try {
-            val snapshot = parse("<Emoji dataUri=\"$dataUri\" width=\"18\" height=\"18\"/>", Parser(dataUriImageDecoder = decoder))
+            val snapshot = parse("<Emoji dataUri=\"$dataUri\" width=\"18\" height=\"18\" fit=\"FILL\"/>", Parser(dataUriImageDecoder = decoder))
             assertTrue(calls.isEmpty(), "结构解析阶段不应提前解码行内图片")
             val text = assertIs<RichText>(snapshot.createWidget())
             assertEquals(listOf(dataUri), calls)
