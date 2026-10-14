@@ -27,7 +27,7 @@ jobs:
       - name: Build release jars
         run: ./gradlew releaseJars --no-daemon
       - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7
         with:
           name: jars
           path: |
