@@ -34,7 +34,7 @@ jobs:
         run: git diff --exit-code
       - name: 上传测试结果
         if: always()
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: test-results-${{ matrix.os }}
           path: |
