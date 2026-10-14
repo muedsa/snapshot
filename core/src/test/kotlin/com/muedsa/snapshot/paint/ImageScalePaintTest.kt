@@ -4,6 +4,7 @@ import com.muedsa.geometry.BoxAlignment
 import com.muedsa.snapshot.expectColorAt
 import com.muedsa.snapshot.painterImage
 import com.muedsa.snapshot.painterPixels
+import com.muedsa.snapshot.paint.decoration.DecorationImage
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.Image
 import org.jetbrains.skia.Paint
@@ -188,23 +189,77 @@ class ImageScalePaintTest {
     }
 
     @Test
-    fun existing_default_fits_are_preserved() {
-        // 本次只对齐 scale 换算；项目既有默认值与 Flutter 不同，不能随修复一起改变。
+    fun ordinary_image_defaults_to_scale_down_without_enlarging() {
+        for (scale in scales) quadrants(scale).use { image ->
+            val pixels = painterPixels(20f, 12f) { canvas ->
+                paintImage(canvas, Rect.makeWH(20f, 12f), image, scale = scale)
+            }
+            assertCorners(pixels, 6, 2, 8, 8)
+            expectColorAt(pixels, 5, 5, Color.WHITE)
+            expectColorAt(pixels, 10, 1, Color.WHITE)
+        }
+    }
+
+    @Test
+    fun ordinary_image_defaults_to_proportional_shrinking() {
+        for (scale in scales) quadrants(scale).use { image ->
+            val pixels = painterPixels(8f, 4f) { canvas ->
+                paintImage(canvas, Rect.makeWH(8f, 4f), image, scale = scale)
+            }
+            assertCorners(pixels, 2, 0, 4, 4, inset = 0)
+            expectColorAt(pixels, 1, 1, Color.WHITE)
+            expectColorAt(pixels, 6, 1, Color.WHITE)
+        }
+    }
+
+    @Test
+    fun nine_patch_defaults_to_fill() {
+        for (scale in scales) ninePatch(scale).use { image ->
+            val pixels = painterPixels(12f, 12f) { canvas ->
+                paintImage(canvas, Rect.makeWH(12f, 12f), image, scale = scale,
+                    centerSlice = Rect.makeXYWH(2f, 2f, 2f, 2f))
+            }
+            assertCorners(pixels, 0, 0, 12, 12, inset = 0)
+            expectColorAt(pixels, 6, 6, Color.CYAN)
+        }
+    }
+
+    @Test
+    fun explicit_fits_override_the_defaults() {
         for (scale in scales) {
             quadrants(scale).use { image ->
                 val pixels = painterPixels(20f, 12f) { canvas ->
-                    paintImage(canvas, Rect.makeWH(20f, 12f), image, scale = scale)
+                    paintImage(canvas, Rect.makeWH(20f, 12f), image, scale = scale, fit = BoxFit.FILL)
                 }
                 assertCorners(pixels, 0, 0, 20, 12)
             }
             ninePatch(scale).use { image ->
                 val pixels = painterPixels(12f, 12f) { canvas ->
                     paintImage(canvas, Rect.makeWH(12f, 12f), image, scale = scale,
-                        centerSlice = Rect.makeXYWH(2f, 2f, 2f, 2f))
+                        centerSlice = Rect.makeXYWH(2f, 2f, 2f, 2f), fit = BoxFit.SCALE_DOWN)
                 }
                 assertCorners(pixels, 3, 3, 6, 6, inset = 0)
                 expectColorAt(pixels, 0, 0, Color.WHITE)
             }
+        }
+    }
+
+    @Test
+    fun decoration_images_share_the_same_default_fits() {
+        quadrants(2f).use { image ->
+            val pixels = painterPixels(20f, 12f) { canvas ->
+                DecorationImage(image = image, scale = 2f).createPainter()
+                    .paint(canvas, Rect.makeWH(20f, 12f), clipPath = null)
+            }
+            assertCorners(pixels, 6, 2, 8, 8)
+            expectColorAt(pixels, 5, 5, Color.WHITE)
+        }
+        ninePatch(2f).use { image ->
+            val pixels = painterPixels(12f, 12f) { canvas ->
+                DecorationImage(image = image, scale = 2f, centerSlice = Rect.makeXYWH(2f, 2f, 2f, 2f))
+                    .createPainter().paint(canvas, Rect.makeWH(12f, 12f), clipPath = null)
+            }
+            assertCorners(pixels, 0, 0, 12, 12, inset = 0)
         }
     }
 }

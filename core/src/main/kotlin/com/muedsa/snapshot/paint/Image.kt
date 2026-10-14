@@ -13,7 +13,7 @@ internal fun requireValidImageScale(scale: Float) {
 /**
  * 按逻辑坐标绘制图片；[scale] 表示每个逻辑像素对应的图像像素数。
  * [rect]、[centerSlice] 使用逻辑单位，底层源矩形使用图像物理像素。
- * 保留项目默认适配方式：普通图片为 [BoxFit.FILL]，九宫格为 [BoxFit.SCALE_DOWN]。
+ * 与 Flutter 的默认适配方式一致：普通图片为 [BoxFit.SCALE_DOWN]，九宫格为 [BoxFit.FILL]。
  */
 fun paintImage(
     canvas: Canvas,
@@ -45,7 +45,7 @@ fun paintImage(
         outputSize -= sliceBorder
         inputSize -= sliceBorder * scale
     }
-    val imageFit = fit ?: if (centerSlice != null) {
+    val imageFit = fit ?: if (centerSlice == null) {
         BoxFit.SCALE_DOWN
     } else {
         BoxFit.FILL
