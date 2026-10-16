@@ -6,6 +6,8 @@ import org.jetbrains.skia.FontStyle
 class FontStyleAttrDefine(name: String, defaultValue: FontStyle = FontStyle.NORMAL) :
     DefaultValueAttrDefine<FontStyle>(name = name, defaultValue = defaultValue) {
 
+    override val valueInfo get() = AttributeValueFormats.FONT_STYLE
+
     override fun parseValue(valueStr: String?): FontStyle {
         requireNotNull(valueStr)
         return parseFormStr(valueStr)

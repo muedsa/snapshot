@@ -2,6 +2,7 @@ package com.muedsa.snapshot.parser.widget
 
 import com.muedsa.snapshot.parser.ContainerMode
 import com.muedsa.snapshot.parser.Element
+import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 import com.muedsa.snapshot.parser.attr.BooleanAttrDefine
 import com.muedsa.snapshot.parser.attr.CommonAttrDefine
 import com.muedsa.snapshot.parser.attr.ParagraphAlignmentAttrDefine
@@ -78,11 +79,11 @@ open class TextParser : WidgetParser {
         val ATTR_STRUT_HEIGHT_FORCED = NullableBooleanAttrDefine("strutHeightForced")
         val ATTR_STRUT_HEIGHT_OVERRIDDEN = NullableBooleanAttrDefine("strutHeightOverridden")
         val ATTR_FOREGROUND_COLOR = CommonAttrDefine.COLOR_N.copyWith("foregroundColor")
-        val ATTR_FOREGROUND_MODE = NullableEnumAttrDefine("foregroundMode", PaintMode::valueOf)
+        val ATTR_FOREGROUND_MODE = NullableEnumAttrDefine("foregroundMode", AttributeValueInfo.enum(PaintMode.entries), PaintMode::valueOf)
         val ATTR_FOREGROUND_STROKE_WIDTH = NullableFloatAttrDefine("foregroundStrokeWidth")
         val ATTR_FOREGROUND_STROKE_MITER = NullableFloatAttrDefine("foregroundStrokeMiter")
-        val ATTR_FOREGROUND_STROKE_CAP = NullableEnumAttrDefine("foregroundStrokeCap", PaintStrokeCap::valueOf)
-        val ATTR_FOREGROUND_STROKE_JOIN = NullableEnumAttrDefine("foregroundStrokeJoin", PaintStrokeJoin::valueOf)
+        val ATTR_FOREGROUND_STROKE_CAP = NullableEnumAttrDefine("foregroundStrokeCap", AttributeValueInfo.enum(PaintStrokeCap.entries), PaintStrokeCap::valueOf)
+        val ATTR_FOREGROUND_STROKE_JOIN = NullableEnumAttrDefine("foregroundStrokeJoin", AttributeValueInfo.enum(PaintStrokeJoin.entries), PaintStrokeJoin::valueOf)
         val ATTR_FOREGROUND_ANTI_ALIAS = NullableBooleanAttrDefine("foregroundAntiAlias")
         val ATTR_BACKGROUND_COLOR = CommonAttrDefine.COLOR_N.copyWith("backgroundColor")
     }

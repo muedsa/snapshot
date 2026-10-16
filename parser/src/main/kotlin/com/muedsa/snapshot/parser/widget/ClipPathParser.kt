@@ -3,6 +3,7 @@ package com.muedsa.snapshot.parser.widget
 import com.muedsa.geometry.Size
 import com.muedsa.snapshot.parser.ContainerMode
 import com.muedsa.snapshot.parser.Element
+import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 import com.muedsa.snapshot.parser.attr.CommonAttrDefine
 import com.muedsa.snapshot.parser.attr.StringAttrDefine
 import com.muedsa.snapshot.parser.attr.nullable.NullableViewBoxAttrDefine
@@ -10,10 +11,10 @@ import com.muedsa.snapshot.parser.attr.nullable.NullableViewBoxAttrDefine.ViewBo
 import com.muedsa.snapshot.parser.attr.required.RequiredSvgPathAttrDefine
 import com.muedsa.snapshot.widget.ClipPath
 import com.muedsa.snapshot.widget.Widget
+import kotlin.math.min
 import org.jetbrains.skia.Matrix33
 import org.jetbrains.skia.PathBuilder
 import org.jetbrains.skia.PathFillMode
-import kotlin.math.min
 
 open class ClipPathParser : WidgetParser {
 
@@ -45,10 +46,10 @@ open class ClipPathParser : WidgetParser {
     companion object {
         val PATH = RequiredSvgPathAttrDefine("path")
         val VIEW_BOX = NullableViewBoxAttrDefine("viewBox")
-        val FIT = StringAttrDefine("fit", "FILL") { attr, value ->
+        val FIT = StringAttrDefine("fit", "FILL", AttributeValueInfo.choices(listOf("FILL", "CONTAIN"))) { attr, value ->
             require(value == "FILL" || value == "CONTAIN") { "Attr [${attr.name}] must be FILL or CONTAIN" }
         }
-        val FILL_RULE = StringAttrDefine("fillRule", "NON_ZERO") { attr, value ->
+        val FILL_RULE = StringAttrDefine("fillRule", "NON_ZERO", AttributeValueInfo.choices(listOf("NON_ZERO", "EVEN_ODD"))) { attr, value ->
             require(value == "NON_ZERO" || value == "EVEN_ODD") { "Attr [${attr.name}] must be NON_ZERO or EVEN_ODD" }
         }
 

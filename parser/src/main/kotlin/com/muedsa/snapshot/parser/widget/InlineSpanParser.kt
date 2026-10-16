@@ -6,6 +6,7 @@ import com.muedsa.snapshot.paint.ImageRepeat
 import com.muedsa.snapshot.paint.text.InlineSpan
 import com.muedsa.snapshot.paint.text.TextSpan
 import com.muedsa.snapshot.parser.Element
+import com.muedsa.snapshot.parser.ParseException
 import com.muedsa.snapshot.parser.attr.CommonAttrDefine
 import com.muedsa.snapshot.widget.text.ImageEmoji
 import com.muedsa.snapshot.widget.text.WidgetSpan
@@ -82,10 +83,14 @@ private fun Element.parseWidgetSpan(): WidgetSpan {
     )
 }
 
-internal fun Element.parseInlineSpan(): InlineSpan = when (widgetParser) {
-    is TextParser -> parseTextSpan(raw = false)
-    is RawTextParser -> parseTextSpan(raw = true)
-    is EmojiParser -> parseEmojiSpan()
-    is WidgetSpanParser -> parseWidgetSpan()
-    else -> throw IllegalArgumentException("Unknown inline span type: ${widgetParser.id}")
+internal fun Element.parseInlineSpan(): InlineSpan = try {
+    when (widgetParser) {
+        is TextParser -> parseTextSpan(raw = false)
+        is RawTextParser -> parseTextSpan(raw = true)
+        is EmojiParser -> parseEmojiSpan()
+        is WidgetSpanParser -> parseWidgetSpan()
+        else -> throw IllegalArgumentException("Unknown inline span type: ${widgetParser.id}")
+    }
+} catch (pex: ParseException) {
+    throw pex.withElementContext(widgetParser.id, pos)
 }

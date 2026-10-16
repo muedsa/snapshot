@@ -1,10 +1,13 @@
 package com.muedsa.snapshot.parser.attr.nullable
 
+import com.muedsa.snapshot.parser.attr.AttributeValueFormats
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
 import org.jetbrains.skia.FontFeature
 
 class NullableFontFeatureListAttrDefine(name: String) :
     DefaultValueAttrDefine<List<FontFeature>?>(name = name, defaultValue = null) {
+
+    override val valueInfo get() = AttributeValueFormats.FONT_FEATURES
 
     override fun parseValue(valueStr: String?): List<FontFeature> {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }

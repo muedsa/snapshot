@@ -2001,7 +2001,40 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 
 解析与建树阶段的错误统一包装成 `com.muedsa.snapshot.parser.ParseException`（`RuntimeException` 子类），`toString()` 形如 `Pos[行:列]~偏移: 消息`（行列从 1 起，偏移从 0 起；未设置显示 `UNSET`）；原异常在 `cause` 里。
 
-通过统一属性解析入口产生的格式错误会在消息中标明属性名，并将位置指向属性值的起始字符；只写属性名而没有值时指向属性名。缺少必填属性时没有可定位的属性，位置为所在标签的起始处。若属性解析器已有更具体的 `Attr [名称] …` 消息，会原样保留，避免重复添加前缀。
+通过统一属性解析入口产生的格式错误会在消息中标明属性名，并将位置指向属性值的起始字符；只写属性名而没有值时指向属性名。缺少必填属性时没有可定位的属性，位置为所在标签的起始处。若属性解析器已有更具体的 `Attr [名称] …` 消息，会保留为第一行，避免重复添加前缀。
+
+属性诊断还会补充所在元素、实际输入、期望格式、填写示例，以及适用的枚举项或关键字。例如 `<Row mainAxisAlignment="MIDDLE"/>` 的错误消息包含：
+
+```text
+Attr [mainAxisAlignment] value is invalid: …
+元素：<Row>；实际值："MIDDLE"；格式：以下取值之一，区分大小写；可用值：START, END, CENTER, SPACE_BETWEEN, SPACE_AROUND, SPACE_EVENLY；示例：START
+```
+
+内置说明覆盖数值、CSS 颜色、对齐、边距、半径、偏移、矩阵、边框、阴影、渐变列表、文本装饰、字体特性、SVG 路径、`viewBox`、URL 和 Data URI 等类型。枚举候选从实际枚举定义生成；`ClipPath.fit` 等仅支持部分取值的属性只列出实际支持的选项。`foregroundGradientBegin` 等改名或带前缀的属性保留原类型说明。
+
+需要在界面上分别展示这些信息时，读取 `ParseException.attributeDiagnostic`，不必拆分错误消息：
+
+```kotlin
+try {
+    Parser().parse(StringReader(source)).createWidget()
+} catch (error: ParseException) {
+    println("位置：${error.pos.line}:${error.pos.column}")
+    error.attributeDiagnostic?.let { diagnostic ->
+        println("元素：${diagnostic.elementName}，属性：${diagnostic.attributeName}")
+        println("是否提供属性：${diagnostic.attributePresent}，原值：${diagnostic.rawValue}")
+        println("格式：${diagnostic.valueInfo?.format}")
+        println("可用值：${diagnostic.valueInfo?.allowedValues?.joinToString()}")
+        println("示例：${diagnostic.valueInfo?.examples?.joinToString()}")
+    }
+    println(error.message) // 完整可读提示；原始异常仍在 error.cause 中
+}
+```
+
+- `attributePresent = false` 表示属性缺失；`true` 且 `rawValue = null` 表示只写属性名；空字符串仍保留为 `""`。消息的“实际值”只预览前 120 个字符并转义换行，结构化字段保留完整原值。
+- `valueInfo.allowedValues` 对简单枚举表示完整候选；对边框等复合格式表示其中的样式枚举项，填写时仍须遵循 `format`。无枚举项时该列表为空。
+- 自定义 `AttrDefine` 可覆盖 `valueInfo: AttributeValueInfo?` 提供说明，并在 `copyWith()` 中保留它；也可使用带 `valueInfo` 的 `StringAttrDefine`、`RequiredStringAttrDefine`、`NullableEnumAttrDefine` 构造器。没有说明的自定义属性仍保留属性名、输入、位置与原始原因。
+- 结构错误、组件组合约束和统一属性解析入口之外的校验仍可能没有 `attributeDiagnostic`；自定义解析器主动抛出的 `ParseException` 保持原样。只调用基于属性 Map 的 `WidgetParser.parseAttrValue()` 时没有标签上下文，`elementName` 可为 `null`。
+- 仍在首个错误处抛出异常，不汇总所有错误，也不改变现有语法、默认值和布尔值转换规则。属性类型的格式说明不替代组件自身的范围/组合校验；例如能够解析成浮点数，不代表该组件允许负数。
 
 **`parse()` 阶段（结构性错误）**
 

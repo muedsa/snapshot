@@ -5,6 +5,8 @@ import com.muedsa.snapshot.rendering.flex.VerticalDirection
 class VerticalDirectionAttrDefine(name: String, defaultValue: VerticalDirection = VerticalDirection.DOWN) :
     DefaultValueAttrDefine<VerticalDirection>(name = name, defaultValue = defaultValue) {
 
+    override val valueInfo get() = AttributeValueInfo.enum(VerticalDirection.entries)
+
     override fun parseValue(valueStr: String?): VerticalDirection {
         requireNotNull(valueStr)
         return VerticalDirection.valueOf(valueStr)

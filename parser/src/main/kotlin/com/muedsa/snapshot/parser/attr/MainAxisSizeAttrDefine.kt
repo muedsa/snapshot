@@ -5,6 +5,8 @@ import com.muedsa.snapshot.rendering.flex.MainAxisSize
 class MainAxisSizeAttrDefine(name: String, defaultValue: MainAxisSize = MainAxisSize.MAX) :
     DefaultValueAttrDefine<MainAxisSize>(name = name, defaultValue = defaultValue) {
 
+    override val valueInfo get() = AttributeValueInfo.enum(MainAxisSize.entries)
+
     override fun parseValue(valueStr: String?): MainAxisSize {
         requireNotNull(valueStr)
         return MainAxisSize.valueOf(valueStr)

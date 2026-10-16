@@ -1,5 +1,6 @@
 package com.muedsa.snapshot.parser.attr.nullable
 
+import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
 
 enum class GradientType {
@@ -10,6 +11,8 @@ enum class GradientType {
 
 class NullableGradientTypeAttrDefine(name: String) :
     DefaultValueAttrDefine<GradientType?>(name = name, defaultValue = null) {
+
+    override val valueInfo get() = AttributeValueInfo.enum(GradientType.entries)
 
     override fun parseValue(valueStr: String?): GradientType {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }

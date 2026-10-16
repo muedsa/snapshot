@@ -2,10 +2,13 @@ package com.muedsa.snapshot.parser.attr.nullable
 
 import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.parser.attr.AttrStrValueConst
+import com.muedsa.snapshot.parser.attr.AttributeValueFormats
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
 
 class NullableOffsetAttrDefine(name: String) :
     DefaultValueAttrDefine<Offset?>(name = name, defaultValue = null) {
+
+    override val valueInfo get() = AttributeValueFormats.OFFSET
 
     override fun parseValue(valueStr: String?): Offset {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }

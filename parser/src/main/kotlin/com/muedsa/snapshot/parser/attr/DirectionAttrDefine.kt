@@ -5,6 +5,8 @@ import org.jetbrains.skia.paragraph.Direction
 class DirectionAttrDefine(name: String, defaultValue: Direction = Direction.LTR) :
     DefaultValueAttrDefine<Direction>(name = name, defaultValue = defaultValue) {
 
+    override val valueInfo get() = AttributeValueInfo.enum(Direction.entries)
+
     override fun parseValue(valueStr: String?): Direction {
         requireNotNull(valueStr)
         return Direction.valueOf(valueStr)

@@ -1,9 +1,12 @@
 package com.muedsa.snapshot.parser.attr.required
 
+import com.muedsa.snapshot.parser.attr.AttributeValueFormats
 import org.jetbrains.skia.Path
 
 /** SVG 路径数据（d 属性），不解析完整 SVG 文档。 */
 class RequiredSvgPathAttrDefine(name: String) : AttrDefine<Path>(name) {
+
+    override val valueInfo get() = AttributeValueFormats.SVG_PATH
 
     override fun parseValue(valueStr: String?): Path {
         require(!valueStr.isNullOrBlank()) { "Attr [$name] must contain SVG path data" }

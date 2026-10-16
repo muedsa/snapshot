@@ -2,12 +2,15 @@ package com.muedsa.snapshot.parser.attr.nullable
 
 import com.muedsa.snapshot.paint.decoration.BorderSide
 import com.muedsa.snapshot.paint.decoration.BorderStyle
+import com.muedsa.snapshot.parser.attr.AttributeValueFormats
 import com.muedsa.snapshot.parser.attr.ColorAttrDefine
 import com.muedsa.snapshot.parser.attr.CssColorSyntax
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
 
 class NullableBorderSideAttrDefine(name: String) :
     DefaultValueAttrDefine<BorderSide?>(name = name, defaultValue = null) {
+
+    override val valueInfo get() = AttributeValueFormats.BORDER
 
     override fun parseValue(valueStr: String?): BorderSide {
         requireNotNull(valueStr)

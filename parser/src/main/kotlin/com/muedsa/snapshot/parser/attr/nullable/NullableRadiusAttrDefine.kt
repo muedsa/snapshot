@@ -2,11 +2,14 @@ package com.muedsa.snapshot.parser.attr.nullable
 
 import com.muedsa.geometry.Radius
 import com.muedsa.snapshot.parser.attr.AttrStrValueConst
+import com.muedsa.snapshot.parser.attr.AttributeValueFormats
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
 import com.muedsa.snapshot.parser.attr.required.AttrDefine
 
 class NullableRadiusAttrDefine(name: String) :
     DefaultValueAttrDefine<Radius?>(name = name, defaultValue = null) {
+
+    override val valueInfo get() = AttributeValueFormats.RADIUS
 
     override fun parseValue(valueStr: String?): Radius =
         parseRadiusFromText(valueStr, this)

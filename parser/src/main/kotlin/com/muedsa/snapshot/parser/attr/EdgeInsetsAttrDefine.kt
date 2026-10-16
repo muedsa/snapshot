@@ -6,6 +6,8 @@ import com.muedsa.snapshot.parser.attr.required.AttrDefine
 class EdgeInsetsAttrDefine(name: String, defaultValue: EdgeInsets = EdgeInsets.ZERO) :
     DefaultValueAttrDefine<EdgeInsets>(name = name, defaultValue = defaultValue) {
 
+    override val valueInfo get() = AttributeValueFormats.EDGE_INSETS
+
     override fun parseValue(valueStr: String?): EdgeInsets = parseEdgeInsetsFromText(valueStr, this)
 
     override fun copyWith(name: String, defaultValue: EdgeInsets): EdgeInsetsAttrDefine =

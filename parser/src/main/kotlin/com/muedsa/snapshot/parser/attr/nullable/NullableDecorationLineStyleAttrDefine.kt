@@ -1,10 +1,13 @@
 package com.muedsa.snapshot.parser.attr.nullable
 
+import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
 import org.jetbrains.skia.paragraph.DecorationLineStyle
 
 class NullableDecorationLineStyleAttrDefine(name: String) :
     DefaultValueAttrDefine<DecorationLineStyle?>(name = name, defaultValue = null) {
+
+    override val valueInfo get() = AttributeValueInfo.enum(DecorationLineStyle.entries)
 
     override fun parseValue(valueStr: String?): DecorationLineStyle? =
         valueStr?.let(DecorationLineStyle::valueOf)

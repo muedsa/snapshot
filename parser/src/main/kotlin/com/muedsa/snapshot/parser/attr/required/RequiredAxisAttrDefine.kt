@@ -1,8 +1,11 @@
 package com.muedsa.snapshot.parser.attr.required
 
 import com.muedsa.snapshot.paint.Axis
+import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 
 class RequiredAxisAttrDefine(name: String) : AttrDefine<Axis>(name = name) {
+
+    override val valueInfo get() = AttributeValueInfo.enum(Axis.entries)
 
     override fun parseValue(valueStr: String?): Axis {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }

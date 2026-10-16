@@ -11,13 +11,13 @@ import com.muedsa.snapshot.rendering.flex.FlexFit
 import com.muedsa.snapshot.rendering.flex.MainAxisAlignment
 import com.muedsa.snapshot.rendering.flex.MainAxisSize
 import com.muedsa.snapshot.rendering.flex.VerticalDirection
+import java.net.URL
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.FilterTileMode
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.paragraph.BaselineMode
 import org.jetbrains.skia.paragraph.Direction
 import org.jetbrains.skia.paragraph.PlaceholderAlignment
-import java.net.URL
 
 object CommonAttrDefine {
 
@@ -107,7 +107,7 @@ object CommonAttrDefine {
     val FONT_STYLE_N = NullableFontStyleAttrDefine("fontStyle")
 
     // 必须的
-    val URL = RequiredStringAttrDefine("url") { _, valueStr ->
+    val URL = RequiredStringAttrDefine("url", AttributeValueFormats.URL) { _, valueStr ->
         // 简单校验
         URL(valueStr)
     }

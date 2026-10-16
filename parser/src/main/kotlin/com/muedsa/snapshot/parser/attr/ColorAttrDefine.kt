@@ -6,6 +6,8 @@ import org.jetbrains.skia.Color
 class ColorAttrDefine(name: String, defaultValue: Int = Color.TRANSPARENT) :
     DefaultValueAttrDefine<Int>(name = name, defaultValue = defaultValue) {
 
+    override val valueInfo get() = AttributeValueFormats.COLOR
+
     override fun parseValue(valueStr: String?): Int = parseColorFromText(valueStr, this)
     override fun copyWith(name: String, defaultValue: Int): ColorAttrDefine =
         ColorAttrDefine(name, defaultValue)

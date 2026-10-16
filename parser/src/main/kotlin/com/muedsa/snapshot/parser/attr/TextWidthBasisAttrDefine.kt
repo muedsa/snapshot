@@ -7,6 +7,8 @@ class TextWidthBasisAttrDefine(
     defaultValue: TextWidthBasis = TextWidthBasis.PARENT,
 ) : DefaultValueAttrDefine<TextWidthBasis>(name = name, defaultValue = defaultValue) {
 
+    override val valueInfo get() = AttributeValueInfo.enum(TextWidthBasis.entries)
+
     override fun parseValue(valueStr: String?): TextWidthBasis {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
         return TextWidthBasis.valueOf(valueStr)

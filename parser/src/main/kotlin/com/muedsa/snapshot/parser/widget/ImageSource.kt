@@ -2,6 +2,7 @@ package com.muedsa.snapshot.parser.widget
 
 import com.muedsa.snapshot.parser.Element
 import com.muedsa.snapshot.parser.ParseException
+import com.muedsa.snapshot.parser.attr.AttributeValueFormats
 import com.muedsa.snapshot.parser.attr.CommonAttrDefine
 import com.muedsa.snapshot.parser.attr.StringAttrDefine
 import com.muedsa.snapshot.parser.attr.required.AttrDefine
@@ -37,6 +38,8 @@ private class DataUriImageAttrDefine(
     private val decoder: DataUriImageDecoder,
     name: String = DATA_URI_ATTR_NAME,
 ) : AttrDefine<Image>(name) {
+
+    override val valueInfo get() = AttributeValueFormats.DATA_URI
 
     override fun parseValue(valueStr: String?): Image {
         val dataUri = StringAttrDefine.onlyCheck(this, valueStr)

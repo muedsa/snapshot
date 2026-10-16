@@ -7,6 +7,8 @@ class FilterTileModeAttrDefine(
     defaultValue: FilterTileMode = FilterTileMode.CLAMP,
 ) : DefaultValueAttrDefine<FilterTileMode>(name = name, defaultValue = defaultValue) {
 
+    override val valueInfo get() = AttributeValueInfo.enum(FilterTileMode.entries)
+
     override fun parseValue(valueStr: String?): FilterTileMode {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
         return FilterTileMode.valueOf(valueStr)

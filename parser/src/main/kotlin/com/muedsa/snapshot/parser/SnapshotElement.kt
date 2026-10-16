@@ -1,6 +1,7 @@
 package com.muedsa.snapshot.parser
 
 import com.muedsa.snapshot.drawRenderBox
+import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 import com.muedsa.snapshot.parser.attr.BooleanAttrDefine
 import com.muedsa.snapshot.parser.attr.ColorAttrDefine
 import com.muedsa.snapshot.parser.attr.StringAttrDefine
@@ -13,10 +14,10 @@ import com.muedsa.snapshot.rendering.box.BoxConstraints
 import com.muedsa.snapshot.tools.NetworkImageCache
 import com.muedsa.snapshot.tools.SimpleLimitedNetworkImageCache
 import com.muedsa.snapshot.widget.Widget
+import kotlin.math.ceil
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.EncodedImageFormat
 import org.jetbrains.skia.Surface
-import kotlin.math.ceil
 
 class SnapshotElement(
     attrs: MutableMap<String, RawAttr>,
@@ -71,7 +72,9 @@ class SnapshotElement(
 
     companion object {
         val ATTR_BACKGROUND: ColorAttrDefine = ColorAttrDefine(name = "background", defaultValue = Color.TRANSPARENT)
-        val ATTR_TYPE: StringAttrDefine = StringAttrDefine(name = "type", defaultValue = "png") { _, valueStr ->
+        val ATTR_TYPE: StringAttrDefine = StringAttrDefine(
+            name = "type", defaultValue = "png", valueInfo = AttributeValueInfo.choices(listOf("png", "jpg", "webp")),
+        ) { _, valueStr ->
             require(valueStr == "png" || valueStr == "jpg" || valueStr == "webp") {
                 "Attr [type] value must be one of 'png' 'jpg' 'webp', but get '${valueStr}'"
             }

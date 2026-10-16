@@ -4,6 +4,7 @@ import com.muedsa.geometry.Offset
 import com.muedsa.snapshot.material.ELEVATION_MAP
 import com.muedsa.snapshot.paint.decoration.BoxShadow
 import com.muedsa.snapshot.parser.attr.AttrStrValueConst
+import com.muedsa.snapshot.parser.attr.AttributeValueFormats
 import com.muedsa.snapshot.parser.attr.ColorAttrDefine
 import com.muedsa.snapshot.parser.attr.CssColorSyntax
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
@@ -12,6 +13,8 @@ import org.jetbrains.skia.FilterBlurMode
 
 class NullableBoxShadowAttrDefine(name: String) :
     DefaultValueAttrDefine<Array<BoxShadow>?>(name = name, defaultValue = null) {
+
+    override val valueInfo get() = AttributeValueFormats.BOX_SHADOW
 
     override fun parseValue(valueStr: String?): Array<BoxShadow> {
         requireNotNull(valueStr)
