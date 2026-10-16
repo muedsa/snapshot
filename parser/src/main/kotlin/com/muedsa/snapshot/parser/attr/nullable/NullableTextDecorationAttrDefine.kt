@@ -1,5 +1,6 @@
 package com.muedsa.snapshot.parser.attr.nullable
 
+import com.muedsa.snapshot.parser.attr.AttributeValueFormats
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
 
 enum class TextDecorationLine {
@@ -10,6 +11,8 @@ enum class TextDecorationLine {
 
 class NullableTextDecorationAttrDefine(name: String) :
     DefaultValueAttrDefine<Set<TextDecorationLine>?>(name = name, defaultValue = null) {
+
+    override val valueInfo get() = AttributeValueFormats.TEXT_DECORATION
 
     override fun parseValue(valueStr: String?): Set<TextDecorationLine> {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }

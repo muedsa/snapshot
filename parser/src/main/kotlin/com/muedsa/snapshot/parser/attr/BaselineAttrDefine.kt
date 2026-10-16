@@ -5,6 +5,8 @@ import org.jetbrains.skia.paragraph.BaselineMode
 class BaselineAttrDefine(name: String, defaultValue: BaselineMode = BaselineMode.ALPHABETIC) :
     DefaultValueAttrDefine<BaselineMode>(name = name, defaultValue = defaultValue) {
 
+    override val valueInfo get() = AttributeValueInfo.enum(BaselineMode.entries)
+
     override fun parseValue(valueStr: String?): BaselineMode {
         requireNotNull(valueStr)
         return BaselineMode.valueOf(valueStr)

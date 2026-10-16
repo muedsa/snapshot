@@ -7,6 +7,8 @@ class ParagraphAlignmentAttrDefine(
     defaultValue: Alignment = Alignment.START,
 ) : DefaultValueAttrDefine<Alignment>(name = name, defaultValue = defaultValue) {
 
+    override val valueInfo get() = AttributeValueInfo.enum(Alignment.entries)
+
     override fun parseValue(valueStr: String?): Alignment {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
         return Alignment.valueOf(valueStr)

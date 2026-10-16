@@ -7,6 +7,8 @@ class ClipBehaviorAttrDefine(
     defaultValue: ClipBehavior = ClipBehavior.ANTI_ALIAS,
 ) : DefaultValueAttrDefine<ClipBehavior>(name = name, defaultValue = defaultValue) {
 
+    override val valueInfo get() = AttributeValueInfo.enum(ClipBehavior.entries)
+
     override fun parseValue(valueStr: String?): ClipBehavior {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
         return ClipBehavior.valueOf(valueStr)

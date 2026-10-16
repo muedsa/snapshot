@@ -36,7 +36,7 @@ open class Element(
         val widget = try {
             widgetParser.buildWidget(this)
         } catch (pex: ParseException) {
-            throw pex
+            throw pex.withElementContext(widgetParser.id, pos)
         } catch (t: Throwable) {
             throw ParseException(pos, t.message ?: "Parse Tag ${widgetParser.id} error", t)
         }

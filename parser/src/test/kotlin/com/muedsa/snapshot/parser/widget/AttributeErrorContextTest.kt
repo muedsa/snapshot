@@ -43,7 +43,7 @@ class AttributeErrorContextTest {
             ParserTest.parse(source).createWidget()
         }
 
-        assertEquals("Attr [minWidth] value can not be null", exception.message)
+        assertEquals("Attr [minWidth] value can not be null", exception.message?.lineSequence()?.first())
         assertEquals(source.indexOf("minWidth"), exception.pos.pos)
     }
 
@@ -54,7 +54,7 @@ class AttributeErrorContextTest {
             ParserTest.parse(source).createWidget()
         }
 
-        assertEquals("Attr [aspectRatio] must not be null", exception.message)
+        assertEquals("Attr [aspectRatio] must not be null", exception.message?.lineSequence()?.first())
         assertEquals(source.indexOf("<AspectRatio"), exception.pos.pos)
     }
 

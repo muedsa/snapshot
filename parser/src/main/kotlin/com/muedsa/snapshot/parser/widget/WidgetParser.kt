@@ -1,8 +1,10 @@
 package com.muedsa.snapshot.parser.widget
 
+import com.muedsa.snapshot.parser.AttributeDiagnostic
 import com.muedsa.snapshot.parser.ContainerMode
 import com.muedsa.snapshot.parser.Element
 import com.muedsa.snapshot.parser.ParseException
+import com.muedsa.snapshot.parser.TrackPos
 import com.muedsa.snapshot.parser.attr.required.AttrDefine
 import com.muedsa.snapshot.parser.token.RawAttr
 import com.muedsa.snapshot.widget.ChildSlot
@@ -25,16 +27,18 @@ interface WidgetParser {
             } catch (pex: ParseException) {
                 throw pex
             } catch (t: Throwable) {
-                if (rawAttr == null) throw t
-
                 val detail = t.message?.takeIf { it.isNotBlank() }
                 val message = if (detail?.startsWith("Attr [${attrDefine.name}]") == true) {
                     detail
                 } else {
                     "Attr [${attrDefine.name}] value is invalid" + (detail?.let { ": $it" } ?: "")
                 }
-                val position = rawAttr.valueStartPos.takeIf { it.hasSetting() } ?: rawAttr.nameStartPos
-                throw ParseException(position.copy(), message, t)
+                val position = rawAttr?.valueStartPos?.takeIf { it.hasSetting() }
+                    ?: rawAttr?.nameStartPos ?: TrackPos()
+                throw ParseException(
+                    position.copy(), message, t,
+                    AttributeDiagnostic(attrDefine.name, rawAttr?.value, rawAttr != null, attrDefine.valueInfo),
+                )
             }
         }
 

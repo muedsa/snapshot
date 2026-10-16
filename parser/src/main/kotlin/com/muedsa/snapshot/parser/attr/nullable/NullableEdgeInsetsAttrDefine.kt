@@ -1,11 +1,14 @@
 package com.muedsa.snapshot.parser.attr.nullable
 
 import com.muedsa.geometry.EdgeInsets
+import com.muedsa.snapshot.parser.attr.AttributeValueFormats
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
 import com.muedsa.snapshot.parser.attr.EdgeInsetsAttrDefine
 
 class NullableEdgeInsetsAttrDefine(name: String) :
     DefaultValueAttrDefine<EdgeInsets?>(name = name, defaultValue = null) {
+
+    override val valueInfo get() = AttributeValueFormats.EDGE_INSETS
 
     override fun parseValue(valueStr: String?): EdgeInsets =
         EdgeInsetsAttrDefine.parseEdgeInsetsFromText(valueStr, this)

@@ -5,6 +5,8 @@ import com.muedsa.snapshot.rendering.flex.CrossAxisAlignment
 class CrossAxisAlignmentAttrDefine(name: String, defaultValue: CrossAxisAlignment = CrossAxisAlignment.CENTER) :
     DefaultValueAttrDefine<CrossAxisAlignment>(name = name, defaultValue = defaultValue) {
 
+    override val valueInfo get() = AttributeValueInfo.enum(CrossAxisAlignment.entries)
+
     override fun parseValue(valueStr: String?): CrossAxisAlignment {
         requireNotNull(valueStr)
         return CrossAxisAlignment.valueOf(valueStr)

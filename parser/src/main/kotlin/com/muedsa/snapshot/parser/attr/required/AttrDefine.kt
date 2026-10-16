@@ -1,10 +1,14 @@
 package com.muedsa.snapshot.parser.attr.required
 
+import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 import com.muedsa.snapshot.parser.token.RawAttr
 
 abstract class AttrDefine<T>(
     val name: String,
 ) {
+    /** 自定义属性可以覆盖此说明，为解析失败提供格式、示例和可用值。 */
+    open val valueInfo: AttributeValueInfo? get() = null
+
     /**
      * 当属性被指定到Element上时才会调用
      * @param valueStr

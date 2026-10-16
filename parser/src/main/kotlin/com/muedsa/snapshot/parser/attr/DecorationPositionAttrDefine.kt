@@ -7,6 +7,8 @@ class DecorationPositionAttrDefine(
     defaultValue: DecorationPosition = DecorationPosition.BACKGROUND,
 ) : DefaultValueAttrDefine<DecorationPosition>(name = name, defaultValue = defaultValue) {
 
+    override val valueInfo get() = AttributeValueInfo.enum(DecorationPosition.entries)
+
     override fun parseValue(valueStr: String?): DecorationPosition {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
         return DecorationPosition.valueOf(valueStr)

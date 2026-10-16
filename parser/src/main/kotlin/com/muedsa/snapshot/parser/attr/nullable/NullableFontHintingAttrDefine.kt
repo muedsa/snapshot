@@ -1,10 +1,13 @@
 package com.muedsa.snapshot.parser.attr.nullable
 
+import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
 import org.jetbrains.skia.FontHinting
 
 class NullableFontHintingAttrDefine(name: String) :
     DefaultValueAttrDefine<FontHinting?>(name = name, defaultValue = null) {
+
+    override val valueInfo get() = AttributeValueInfo.enum(FontHinting.entries)
 
     override fun parseValue(valueStr: String?): FontHinting {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }

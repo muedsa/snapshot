@@ -1,6 +1,7 @@
 package com.muedsa.snapshot.parser.attr.nullable
 
 import com.muedsa.snapshot.parser.attr.AttrStrValueConst
+import com.muedsa.snapshot.parser.attr.AttributeValueFormats
 import com.muedsa.snapshot.parser.attr.ColorAttrDefine
 import com.muedsa.snapshot.parser.attr.CssColorSyntax
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
@@ -9,6 +10,8 @@ import org.jetbrains.skia.paragraph.Shadow
 
 class NullableTextShadowAttrDefine(name: String) :
     DefaultValueAttrDefine<List<Shadow>?>(name = name, defaultValue = null) {
+
+    override val valueInfo get() = AttributeValueFormats.TEXT_SHADOW
 
     override fun parseValue(valueStr: String?): List<Shadow> {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }

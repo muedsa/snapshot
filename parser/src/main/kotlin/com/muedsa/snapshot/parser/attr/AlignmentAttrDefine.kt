@@ -6,6 +6,8 @@ import com.muedsa.snapshot.parser.attr.required.AttrDefine
 class AlignmentAttrDefine(name: String, defaultValue: BoxAlignment = BoxAlignment.CENTER) :
     DefaultValueAttrDefine<BoxAlignment>(name = name, defaultValue = defaultValue) {
 
+    override val valueInfo get() = AttributeValueFormats.ALIGNMENT
+
     override fun parseValue(valueStr: String?): BoxAlignment = parseAlignmentFromText(valueStr, this)
 
     override fun copyWith(name: String, defaultValue: BoxAlignment): AttrDefine<BoxAlignment> =

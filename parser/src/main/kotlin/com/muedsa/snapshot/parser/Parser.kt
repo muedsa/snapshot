@@ -29,7 +29,9 @@ open class Parser(
             try {
                 process(token)
             } catch (pex: ParseException) {
-                throw pex
+                throw if (token is Token.StartTag && token.tagName != null) {
+                    pex.withElementContext(token.tagName!!, token.startPos)
+                } else pex
             } catch (t: Throwable) {
                 throw ParseException(
                     token.startPos,

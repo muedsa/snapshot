@@ -7,6 +7,8 @@ class TextOverflowAttrDefine(
     defaultValue: TextOverflow = TextOverflow.CLIP,
 ) : DefaultValueAttrDefine<TextOverflow>(name = name, defaultValue = defaultValue) {
 
+    override val valueInfo get() = AttributeValueInfo.enum(TextOverflow.entries)
+
     override fun parseValue(valueStr: String?): TextOverflow {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
         return TextOverflow.valueOf(valueStr)

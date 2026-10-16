@@ -7,6 +7,8 @@ class StackFitAttrDefine(
     defaultValue: StackFit = StackFit.LOOSE,
 ) : DefaultValueAttrDefine<StackFit>(name = name, defaultValue = defaultValue) {
 
+    override val valueInfo get() = AttributeValueInfo.enum(StackFit.entries)
+
     override fun parseValue(valueStr: String?): StackFit {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
         return StackFit.valueOf(valueStr)

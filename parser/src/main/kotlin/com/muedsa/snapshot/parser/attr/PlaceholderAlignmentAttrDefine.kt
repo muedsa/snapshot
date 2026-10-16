@@ -6,6 +6,8 @@ import org.jetbrains.skia.paragraph.PlaceholderAlignment
 class PlaceholderAlignmentAttrDefine (name: String, defaultValue: PlaceholderAlignment = PlaceholderAlignment.BASELINE):
     DefaultValueAttrDefine<PlaceholderAlignment>(name = name, defaultValue = defaultValue) {
 
+    override val valueInfo get() = AttributeValueInfo.enum(PlaceholderAlignment.entries)
+
     override fun parseValue(valueStr: String?): PlaceholderAlignment {
         requireNotNull(valueStr)
         return PlaceholderAlignment.valueOf(valueStr)
