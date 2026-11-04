@@ -24,8 +24,8 @@ internal object AttributeValueFormats {
         listOf("TOP_LEFT", "TOP_CENTER", "TOP_RIGHT", "CENTER_LEFT", "CENTER", "CENTER_RIGHT", "BOTTOM_LEFT", "BOTTOM_CENTER", "BOTTOM_RIGHT"),
     )
     val EDGE_INSETS = AttributeValueInfo(
-        "十进制数，或 (垂直,水平)，或 (左,上,右,下)；元组内不含空白",
-        listOf("8", "(8,16)", "(1,2,3,4)"),
+        "空白分隔的 1～4 个数，按 CSS 上、右、下、左展开；旧元组 (垂直,水平) / (左,上,右,下) 保留原顺序；支持空白和科学计数法，数值须有限",
+        listOf("8", "8 16", "1 2 3", "1 2 3 4", "(1, 2, 3, 4)"),
     )
     val RADIUS = AttributeValueInfo("圆半径或 (水平半径,垂直半径)；十进制数，元组内不含空白", listOf("8", "(8,16)"))
     val OFFSET = AttributeValueInfo("(x,y)；两个有限十进制数，元组内不含空白", listOf("(4,-2)"))
