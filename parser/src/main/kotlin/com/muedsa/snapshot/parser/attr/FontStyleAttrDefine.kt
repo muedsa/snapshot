@@ -19,7 +19,7 @@ class FontStyleAttrDefine(name: String, defaultValue: FontStyle = FontStyle.NORM
     companion object {
 
         fun parseFormStr(valueStr: String): FontStyle =
-            when (valueStr) {
+            when (EnumAttributeSyntax.normalize(valueStr)) {
                 "BOLD" -> FontStyle.BOLD
                 "BOLD_ITALIC" -> FontStyle.BOLD_ITALIC
                 "ITALIC" -> FontStyle.ITALIC

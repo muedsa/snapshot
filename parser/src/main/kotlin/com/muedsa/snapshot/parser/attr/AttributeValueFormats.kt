@@ -19,7 +19,7 @@ internal object AttributeValueFormats {
         listOf("#33669980", "red", "rgb(255 0 0 / 50%)"),
     )
     val ALIGNMENT = AttributeValueInfo(
-        "对齐关键字或两个有限坐标 x y / x,y / (x,y)；支持空白和科学计数法",
+        "对齐关键字（忽略大小写，支持连字符）或两个有限坐标 x y / x,y / (x,y)；支持空白和科学计数法",
         listOf("CENTER", "-1 0", "(-1, 0)"),
         listOf("TOP_LEFT", "TOP_CENTER", "TOP_RIGHT", "CENTER_LEFT", "CENTER", "CENTER_RIGHT", "BOTTOM_LEFT", "BOTTOM_CENTER", "BOTTOM_RIGHT"),
     )
@@ -33,9 +33,9 @@ internal object AttributeValueFormats {
         "(m0,m1,…,m15)；16 个有限浮点数，列优先排列，逗号分隔且不含空白",
         listOf("(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1)"),
     )
-    val FONT_STYLE = AttributeValueInfo.choices(listOf("NORMAL", "BOLD", "ITALIC", "BOLD_ITALIC"))
+    val FONT_STYLE = AttributeValueInfo.enumNames(listOf("NORMAL", "BOLD", "ITALIC", "BOLD_ITALIC"))
     val BORDER = AttributeValueInfo(
-        "宽度 样式 颜色；空白分隔，样式区分大小写，颜色使用 CSS 格式",
+        "宽度 样式 颜色；空白分隔，样式忽略大小写，颜色使用 CSS 格式",
         listOf("1 SOLID #336699", "2 SOLID rgb(255,0,0)"),
         BorderStyle.entries.map { it.name },
     )

@@ -1,5 +1,7 @@
 package com.muedsa.snapshot.parser.attr.nullable
 
+import com.muedsa.snapshot.parser.attr.EnumAttributeSyntax
+
 import com.muedsa.snapshot.paint.BoxFit
 import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
@@ -12,7 +14,7 @@ class NullableBoxFitAttrDefine(name: String) :
 
     override fun parseValue(valueStr: String?): BoxFit {
         requireNotNull(valueStr)
-        return BoxFit.valueOf(valueStr)
+        return BoxFit.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: BoxFit?): DefaultValueAttrDefine<BoxFit?> =

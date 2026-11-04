@@ -1,5 +1,7 @@
 package com.muedsa.snapshot.parser.attr.nullable
 
+import com.muedsa.snapshot.parser.attr.EnumAttributeSyntax
+
 import com.muedsa.snapshot.paint.decoration.BorderSide
 import com.muedsa.snapshot.paint.decoration.BorderStyle
 import com.muedsa.snapshot.parser.attr.AttributeValueFormats
@@ -18,7 +20,7 @@ class NullableBorderSideAttrDefine(name: String) :
         require(valueArr.size == 3)
         return BorderSide(
             width = valueArr[0].toFloat(),
-            style = BorderStyle.valueOf(valueArr[1]),
+            style = BorderStyle.valueOf(EnumAttributeSyntax.normalize(valueArr[1])),
             color = ColorAttrDefine.parseColorFromText(valueArr[2], this),
         )
     }

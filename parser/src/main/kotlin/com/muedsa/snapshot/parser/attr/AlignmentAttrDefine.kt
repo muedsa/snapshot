@@ -17,7 +17,7 @@ class AlignmentAttrDefine(name: String, defaultValue: BoxAlignment = BoxAlignmen
 
         fun parseAlignmentFromText(valueStr: String?, attrDefine: AttrDefine<*>): BoxAlignment {
             requireNotNull(valueStr) { "Attr [${attrDefine.name}] value can not be null" }
-            return when (valueStr.trim()) {
+            return when (EnumAttributeSyntax.normalize(valueStr)) {
                 "TOP_LEFT" -> BoxAlignment.TOP_LEFT
                 "TOP_CENTER" -> BoxAlignment.TOP_CENTER
                 "TOP_RIGHT" -> BoxAlignment.TOP_RIGHT

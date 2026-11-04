@@ -6,6 +6,7 @@ import com.muedsa.snapshot.parser.Element
 import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 import com.muedsa.snapshot.parser.attr.CommonAttrDefine
 import com.muedsa.snapshot.parser.attr.StringAttrDefine
+import com.muedsa.snapshot.parser.attr.EnumAttributeSyntax
 import com.muedsa.snapshot.parser.attr.nullable.NullableViewBoxAttrDefine
 import com.muedsa.snapshot.parser.attr.nullable.NullableViewBoxAttrDefine.ViewBox
 import com.muedsa.snapshot.parser.attr.required.RequiredSvgPathAttrDefine
@@ -46,10 +47,10 @@ open class ClipPathParser : WidgetParser {
     companion object {
         val PATH = RequiredSvgPathAttrDefine("path")
         val VIEW_BOX = NullableViewBoxAttrDefine("viewBox")
-        val FIT = StringAttrDefine("fit", "FILL", AttributeValueInfo.choices(listOf("FILL", "CONTAIN"))) { attr, value ->
+        val FIT = StringAttrDefine("fit", "FILL", AttributeValueInfo.enumNames(listOf("FILL", "CONTAIN")), EnumAttributeSyntax::normalize) { attr, value ->
             require(value == "FILL" || value == "CONTAIN") { "Attr [${attr.name}] must be FILL or CONTAIN" }
         }
-        val FILL_RULE = StringAttrDefine("fillRule", "NON_ZERO", AttributeValueInfo.choices(listOf("NON_ZERO", "EVEN_ODD"))) { attr, value ->
+        val FILL_RULE = StringAttrDefine("fillRule", "NON_ZERO", AttributeValueInfo.enumNames(listOf("NON_ZERO", "EVEN_ODD")), EnumAttributeSyntax::normalize) { attr, value ->
             require(value == "NON_ZERO" || value == "EVEN_ODD") { "Attr [${attr.name}] must be NON_ZERO or EVEN_ODD" }
         }
 

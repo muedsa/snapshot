@@ -5,6 +5,7 @@ import com.muedsa.snapshot.parser.attr.AttributeValueFormats
 import com.muedsa.snapshot.parser.attr.ColorAttrDefine
 import com.muedsa.snapshot.parser.attr.CssColorSyntax
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
+import com.muedsa.snapshot.parser.attr.EnumAttributeSyntax
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.paragraph.Shadow
 
@@ -17,7 +18,7 @@ class NullableTextShadowAttrDefine(name: String) :
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
         val entries = CssColorSyntax.splitOn(valueStr, ',')
         require(entries.none(String::isEmpty)) { "Attr [$name] contains an empty shadow" }
-        if ("NONE" in entries) {
+        if (entries.any { EnumAttributeSyntax.normalize(it) == "NONE" }) {
             require(entries.size == 1) { "Attr [$name] value NONE can not be combined with other shadows" }
             return emptyList()
         }

@@ -6,8 +6,16 @@ class StringAttrDefine(
     name: String,
     defaultValue: String,
     override val valueInfo: AttributeValueInfo,
+    private val normalize: (String) -> String,
     val checker: ((AttrDefine<String>, String?) -> Unit)? = null,
 ) : DefaultValueAttrDefine<String>(name = name, defaultValue = defaultValue) {
+
+    constructor(
+        name: String,
+        defaultValue: String,
+        valueInfo: AttributeValueInfo,
+        checker: ((AttrDefine<String>, String?) -> Unit)? = null,
+    ) : this(name, defaultValue, valueInfo, { it }, checker)
 
     constructor(
         name: String,
@@ -15,10 +23,10 @@ class StringAttrDefine(
         checker: ((AttrDefine<String>, String?) -> Unit)? = null,
     ) : this(name, defaultValue, AttributeValueFormats.STRING, checker)
 
-    override fun parseValue(valueStr: String?): String = onlyCheck(this, valueStr, checker)
+    override fun parseValue(valueStr: String?): String = onlyCheck(this, valueStr?.let(normalize), checker)
 
     override fun copyWith(name: String, defaultValue: String): StringAttrDefine =
-        StringAttrDefine(name, defaultValue, valueInfo, checker)
+        StringAttrDefine(name, defaultValue, valueInfo, normalize, checker)
 
     companion object {
 

@@ -9,7 +9,7 @@ class FlexFitAttrDefine(name: String, defaultValue: FlexFit = FlexFit.LOOSE) :
 
     override fun parseValue(valueStr: String?): FlexFit {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
-        return FlexFit.valueOf(valueStr)
+        return FlexFit.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: FlexFit): FlexFitAttrDefine =

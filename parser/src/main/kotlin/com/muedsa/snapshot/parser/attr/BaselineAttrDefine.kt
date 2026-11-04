@@ -9,7 +9,7 @@ class BaselineAttrDefine(name: String, defaultValue: BaselineMode = BaselineMode
 
     override fun parseValue(valueStr: String?): BaselineMode {
         requireNotNull(valueStr)
-        return BaselineMode.valueOf(valueStr)
+        return BaselineMode.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: BaselineMode): DefaultValueAttrDefine<BaselineMode> =

@@ -2,6 +2,7 @@ package com.muedsa.snapshot.parser.attr.nullable
 
 import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
+import com.muedsa.snapshot.parser.attr.EnumAttributeSyntax
 
 class NullableEnumAttrDefine<T>(
     name: String,
@@ -11,7 +12,9 @@ class NullableEnumAttrDefine<T>(
 
     constructor(name: String, parse: (String) -> T) : this(name, null, parse)
 
-    override fun parseValue(valueStr: String?): T? = valueStr?.let(parse)
+    override fun parseValue(valueStr: String?): T? = valueStr?.let {
+        parse(EnumAttributeSyntax.canonical(it, valueInfo?.allowedValues.orEmpty()))
+    }
 
     override fun copyWith(
         name: String,

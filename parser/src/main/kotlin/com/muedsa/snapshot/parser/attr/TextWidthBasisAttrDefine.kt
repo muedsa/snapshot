@@ -11,7 +11,7 @@ class TextWidthBasisAttrDefine(
 
     override fun parseValue(valueStr: String?): TextWidthBasis {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
-        return TextWidthBasis.valueOf(valueStr)
+        return TextWidthBasis.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(

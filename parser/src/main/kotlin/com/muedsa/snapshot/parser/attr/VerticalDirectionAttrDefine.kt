@@ -9,7 +9,7 @@ class VerticalDirectionAttrDefine(name: String, defaultValue: VerticalDirection 
 
     override fun parseValue(valueStr: String?): VerticalDirection {
         requireNotNull(valueStr)
-        return VerticalDirection.valueOf(valueStr)
+        return VerticalDirection.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: VerticalDirection): DefaultValueAttrDefine<VerticalDirection> =

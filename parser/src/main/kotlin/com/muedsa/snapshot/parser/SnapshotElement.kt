@@ -5,6 +5,7 @@ import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 import com.muedsa.snapshot.parser.attr.BooleanAttrDefine
 import com.muedsa.snapshot.parser.attr.ColorAttrDefine
 import com.muedsa.snapshot.parser.attr.StringAttrDefine
+import java.util.Locale
 import com.muedsa.snapshot.parser.image.DataUriImageDecoder
 import com.muedsa.snapshot.parser.image.SimpleDataUriImageDecoder
 import com.muedsa.snapshot.parser.token.RawAttr
@@ -73,7 +74,8 @@ class SnapshotElement(
     companion object {
         val ATTR_BACKGROUND: ColorAttrDefine = ColorAttrDefine(name = "background", defaultValue = Color.TRANSPARENT)
         val ATTR_TYPE: StringAttrDefine = StringAttrDefine(
-            name = "type", defaultValue = "png", valueInfo = AttributeValueInfo.choices(listOf("png", "jpg", "webp")),
+            name = "type", defaultValue = "png", valueInfo = AttributeValueInfo.enumNames(listOf("png", "jpg", "webp")),
+            normalize = { it.trim().lowercase(Locale.ROOT) },
         ) { _, valueStr ->
             require(valueStr == "png" || valueStr == "jpg" || valueStr == "webp") {
                 "Attr [type] value must be one of 'png' 'jpg' 'webp', but get '${valueStr}'"

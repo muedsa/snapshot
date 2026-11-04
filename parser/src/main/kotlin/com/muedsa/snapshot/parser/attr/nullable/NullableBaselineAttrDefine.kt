@@ -1,5 +1,7 @@
 package com.muedsa.snapshot.parser.attr.nullable
 
+import com.muedsa.snapshot.parser.attr.EnumAttributeSyntax
+
 import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
 import org.jetbrains.skia.paragraph.BaselineMode
@@ -11,7 +13,7 @@ class NullableBaselineAttrDefine(name: String) :
 
     override fun parseValue(valueStr: String?): BaselineMode {
         requireNotNull(valueStr)
-        return BaselineMode.valueOf(valueStr)
+        return BaselineMode.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: BaselineMode?): NullableBaselineAttrDefine =

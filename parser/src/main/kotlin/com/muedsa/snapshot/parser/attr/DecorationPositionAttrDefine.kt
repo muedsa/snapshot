@@ -11,7 +11,7 @@ class DecorationPositionAttrDefine(
 
     override fun parseValue(valueStr: String?): DecorationPosition {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
-        return DecorationPosition.valueOf(valueStr)
+        return DecorationPosition.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(

@@ -1166,6 +1166,8 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 
 写属性前先看这张"格式表"，绝大多数报错都来自这里。
 
+内置枚举与关键字允许首尾空白、大小写变体，以及连字符替代下划线：`CENTER` / `center`、`SPACE_BETWEEN` / `space-between`、`ANTI_ALIAS` / `anti-alias` 等价。该规则也适用于组合属性中的边框样式、阴影模式、文本装饰、`NONE` 和 `ELEVATION_2`（可写 `elevation-2`）。标签名和属性名仍使用文档中的写法；正文、字体名称、URL 与 OpenType 四字符特性标签保留原文。错误诊断中的 `rawValue` 始终保留用户输入。
+
 #### 颜色
 
 ```
@@ -1243,7 +1245,7 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 例:"2 SOLID #333333FF"、"1 NONE #00000000"
 ```
 
-- 在颜色函数括号外以空白分隔，三段都必填；`STYLE ∈ {NONE, SOLID}`（大小写敏感）。
+- 在颜色函数括号外以空白分隔，三段都必填；`STYLE ∈ {NONE, SOLID}`（忽略大小写）。
 - `border` 是四条边的默认值；某条边单独写了就覆盖默认值。
 
 #### 阴影 boxShadow
@@ -2016,7 +2018,7 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 
 ```text
 Attr [mainAxisAlignment] value is invalid: …
-元素：<Row>；实际值："MIDDLE"；格式：以下取值之一，区分大小写；可用值：START, END, CENTER, SPACE_BETWEEN, SPACE_AROUND, SPACE_EVENLY；示例：START
+元素：<Row>；实际值："MIDDLE"；格式：以下枚举名称之一；忽略首尾空白和大小写，连字符可代替下划线；可用值：START, END, CENTER, SPACE_BETWEEN, SPACE_AROUND, SPACE_EVENLY；示例：START
 ```
 
 内置说明覆盖数值、CSS 颜色、对齐、边距、半径、偏移、矩阵、边框、阴影、渐变列表、文本装饰、字体特性、SVG 路径、`viewBox`、URL 和 Data URI 等类型。枚举候选从实际枚举定义生成；`ClipPath.fit` 等仅支持部分取值的属性只列出实际支持的选项。`foregroundGradientBegin` 等改名或带前缀的属性保留原类型说明。

@@ -8,6 +8,7 @@ import com.muedsa.snapshot.parser.attr.AttributeValueFormats
 import com.muedsa.snapshot.parser.attr.ColorAttrDefine
 import com.muedsa.snapshot.parser.attr.CssColorSyntax
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
+import com.muedsa.snapshot.parser.attr.EnumAttributeSyntax
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.FilterBlurMode
 
@@ -18,8 +19,9 @@ class NullableBoxShadowAttrDefine(name: String) :
 
     override fun parseValue(valueStr: String?): Array<BoxShadow> {
         requireNotNull(valueStr)
-        return if (valueStr.startsWith(ELEVATION_PREFIX)) {
-            val result: MatchResult? = ELEVATION_REGEX.find(valueStr)
+        val keyword = EnumAttributeSyntax.normalize(valueStr)
+        return if (keyword.startsWith(ELEVATION_PREFIX)) {
+            val result: MatchResult? = ELEVATION_REGEX.find(keyword)
             check(result != null) { "elevation only allow use $ELEVATION_REGEX${ELEVATION_MAP.keys}" }
             val e = result.groupValues[1].toInt()
             val boxShadows = ELEVATION_MAP[e]
@@ -52,7 +54,7 @@ class NullableBoxShadowAttrDefine(name: String) :
                     } else if (ColorAttrDefine.isColorCandidate(params[i])) {
                         color = ColorAttrDefine.parseColorFromText(params[i], this)
                     } else {
-                        blurStyle = FilterBlurMode.valueOf(params[i])
+                        blurStyle = FilterBlurMode.valueOf(EnumAttributeSyntax.normalize(params[i]))
                     }
                     i++
                 }

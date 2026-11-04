@@ -11,6 +11,7 @@ import com.muedsa.snapshot.parser.widget.TextParser
 import com.muedsa.snapshot.parser.widget.UnconstrainedBoxParser
 import com.muedsa.snapshot.parser.widget.WidgetParser
 import org.jetbrains.skia.PaintMode
+import java.util.Locale
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -108,9 +109,13 @@ class AttributeValueInfoTest {
     fun every_advertised_single_choice_is_accepted() {
         for (definition in definitions) {
             val info = assertNotNull(definition.valueInfo)
-            if (info.format != "以下取值之一，区分大小写") continue
+            if (!info.format.startsWith("以下")) continue
             for (value in info.allowedValues) {
-                definition.parseValue(RawAttr(definition.name, value))
+                val expected = definition.parseValue(RawAttr(definition.name, value))
+                val alias = " ${value.lowercase(Locale.ROOT).replace('_', '-')} "
+                assertEquals(expected, definition.parseValue(RawAttr(definition.name, alias)), definition.name)
+                val renamed = definition.copyWith("renamed")
+                assertEquals(expected, renamed.parseValue(RawAttr("renamed", alias)), definition.name)
             }
         }
     }
