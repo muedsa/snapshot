@@ -30,8 +30,8 @@ internal object AttributeValueFormats {
     val RADIUS = AttributeValueInfo("圆半径，或 水平半径 / 垂直半径，或旧元组 (水平半径,垂直半径)；有限数，支持空白和科学计数法", listOf("8", "8 / 16", "(8, 16)"))
     val OFFSET = AttributeValueInfo("两个有限坐标 x y / x,y / (x,y)；支持空白和科学计数法", listOf("4 -2", "(4, -2)"))
     val MATRIX = AttributeValueInfo(
-        "(m0,m1,…,m15)；16 个有限浮点数，列优先排列，逗号分隔且不含空白",
-        listOf("(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1)"),
+        "16 个有限数，列优先排列，空白或逗号分隔，可加括号；或 translate(x[,y]) rotate(角度deg/rad) scale(x[,y]) 函数序列；none 表示单位矩阵，按书写顺序右乘",
+        listOf("(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)", "translate(12,8) rotate(30deg) scale(1.2)", "none"),
     )
     val FONT_STYLE = AttributeValueInfo.enumNames(listOf("NORMAL", "BOLD", "ITALIC", "BOLD_ITALIC"))
     val BORDER = AttributeValueInfo(

@@ -1233,7 +1233,22 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 "(m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13,m14,m15)"
 ```
 
-值之间不能有空格。单位矩阵为 `"(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1)"`；其中 `m12`、`m13` 分别表示 x、y 平移量。
+矩阵支持空白或逗号分隔，允许首尾空白、换行、科学计数法，外层括号可省略。单位矩阵为 `"(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1)"`；其中 `m12`、`m13` 分别表示 x、y 平移量。
+
+`Transform.matrix` 和 `Container.transform` 也支持函数简写：
+
+```html
+<Transform matrix="translate(12,8) rotate(30deg) scale(1.2)">
+    <SizedBox width="20" height="10"/>
+</Transform>
+```
+
+- `translate(x[,y])`：逻辑坐标平移，省略 y 时为 0；不接受 px 或百分比。
+- `scale(x[,y])`：省略 y 时与 x 相同。
+- `rotate(angle)`：必须明确使用 `deg`（角度）或 `rad`（弧度）。
+- 函数参数可用空白或逗号分隔；函数名忽略大小写。`none` 表示单位矩阵。
+- 按书写顺序右乘矩阵，等价于 Kotlin 中依次调用 `translate`、`rotateZ`、`scale`。作用到点时右边的变换先发生：`translate(10,0) scale(2)` 将点 `(1,0)` 映射为 `(12,0)`，交换顺序则为 `(22,0)`。变换原点仍由 `origin` / `alignment` / `transformAlignment` 控制。
+- 原始矩阵和函数序列是两种独立形式；组合结果必须有限。
 
 #### 圆角 borderRadius / borderRadius{Corner}
 
@@ -1614,7 +1629,7 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 
 | 属性 | 类型 | 必填 | 默认 | 说明 |
 |---|---|---|---|---|
-| `matrix` | Matrix44CMO | **是** | — | 16 个列主序浮点数 |
+| `matrix` | Matrix44CMO | **是** | — | 16 个列主序浮点数或 translate/rotate/scale 函数序列，见变换格式 |
 | `origin` | Offset | 否 | 不设置 | 绝对变换原点，支持 `"x y"`、`"x,y"`、`"(x,y)"` |
 | `alignment` | alignment | 否 | 不设置 | 相对子节点尺寸的变换原点 |
 
