@@ -1204,6 +1204,10 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 
 **四值顺序不同**：旧元组按“左、上、右、下”，CSS 简写按“上、右、下、左”。例如 `"(1,2,3,4)"` 对应 `"2 3 4 1"`，迁移时不能只删除括号和逗号。两种写法都不接受 `px` 等单位。
 
+#### 字体列表 fontFamily / strutFontFamily
+
+字体列表 `fontFamily` 与 `strutFontFamily` 均以逗号分隔，逐项忽略首尾空白并保留名称内部空白。例如 `"Arial, Noto Sans"` 得到 `Arial` 和 `Noto Sans`；空项（如 `"Arial,,Noto Sans"`）会报告对应属性的错误。字体名不经过枚举大小写/连字符转换。
+
 #### 对齐 alignment
 
 ```
@@ -1816,7 +1820,7 @@ val parser = Parser(dataUriImageDecoder = DataUriImageDecoder { dataUri ->
 | `text` | string | 不设置 | 文本内容；**会被 trim** |
 | `color` | color | 不设置 | |
 | `fontSize` | float | 不设置 | |
-| `fontFamily` | string | 不设置 | 多个字体用**英文逗号**分隔，且**不做 trim**：`"A, B"` 的第二个字体名会带上前导空格 |
+| `fontFamily` | string | 不设置 | 多个字体用英文逗号分隔，逐项移除首尾空白并保留名称内部空白；不允许空项 |
 | `fontStyle` | enum | 不设置 | `NORMAL`/`BOLD`/`ITALIC`/`BOLD_ITALIC` |
 | `height` | float | 不设置 | 行高倍数 |
 | `topRatio` | float | 不设置 | 基线在行高中的顶部比例 |

@@ -88,6 +88,7 @@ class AttributeValueInfoTest {
         ClipPathParser.FIT,
         ClipPathParser.FILL_RULE,
         CommonAttrDefine.URL,
+        CommonAttrDefine.FONT_FAMILY_N,
     )
 
     @Test

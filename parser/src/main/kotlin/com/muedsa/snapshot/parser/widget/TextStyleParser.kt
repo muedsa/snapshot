@@ -28,7 +28,7 @@ private val DECORATION_CONTRACT = RequiredAttributeContract(
 )
 
 internal fun Element.parseTextStyle(): TextStyle? {
-    val fontFamilyNames = WidgetParser.parseAttrValue(CommonAttrDefine.FONT_FAMILY_N, attrs)?.split(",")
+    val fontFamilyNames = WidgetParser.parseAttrValue(CommonAttrDefine.FONT_FAMILY_N, attrs)?.split(',')?.map(String::trim)
     return TextStyle(
         color = WidgetParser.parseAttrValue(CommonAttrDefine.COLOR_N, attrs),
         foreground = parseForegroundPaint(),
