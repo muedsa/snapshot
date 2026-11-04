@@ -19,8 +19,8 @@ internal object AttributeValueFormats {
         listOf("#33669980", "red", "rgb(255 0 0 / 50%)"),
     )
     val ALIGNMENT = AttributeValueInfo(
-        "对齐关键字或 (x,y)；坐标为十进制数，元组内不含空白",
-        listOf("CENTER", "(-1,0)"),
+        "对齐关键字或两个有限坐标 x y / x,y / (x,y)；支持空白和科学计数法",
+        listOf("CENTER", "-1 0", "(-1, 0)"),
         listOf("TOP_LEFT", "TOP_CENTER", "TOP_RIGHT", "CENTER_LEFT", "CENTER", "CENTER_RIGHT", "BOTTOM_LEFT", "BOTTOM_CENTER", "BOTTOM_RIGHT"),
     )
     val EDGE_INSETS = AttributeValueInfo(
@@ -28,7 +28,7 @@ internal object AttributeValueFormats {
         listOf("8", "8 16", "1 2 3", "1 2 3 4", "(1, 2, 3, 4)"),
     )
     val RADIUS = AttributeValueInfo("圆半径或 (水平半径,垂直半径)；十进制数，元组内不含空白", listOf("8", "(8,16)"))
-    val OFFSET = AttributeValueInfo("(x,y)；两个有限十进制数，元组内不含空白", listOf("(4,-2)"))
+    val OFFSET = AttributeValueInfo("两个有限坐标 x y / x,y / (x,y)；支持空白和科学计数法", listOf("4 -2", "(4, -2)"))
     val MATRIX = AttributeValueInfo(
         "(m0,m1,…,m15)；16 个有限浮点数，列优先排列，逗号分隔且不含空白",
         listOf("(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1)"),

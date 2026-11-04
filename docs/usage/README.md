@@ -1209,11 +1209,15 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 "CENTER_LEFT" | "CENTER" | "CENTER_RIGHT"
 "BOTTOM_LEFT" | "BOTTOM_CENTER" | "BOTTOM_RIGHT"
 "(0.5,-0.5)"        // 自定义,范围语义同 BoxAlignment
+"0.5 -0.5"          // 空白分隔的两个坐标
+"0.5, -0.5"         // 也支持逗号分隔与首尾空白
 ```
+
+数值对齐支持科学计数法，两个坐标必须有限；`imageAlignment`、`transformAlignment`、渐变起止点/中心/焦点等 BoxAlignment 属性共用该规则。
 
 #### 偏移 origin
 
-`Transform.origin` 使用 `"(x,y)"`，例如 `origin="(20,-10)"`。两个值必须有限，且括号和逗号之间不能有空格。
+`Transform.origin` 支持 `"x y"`、`"x,y"` 和旧括号写法，例如 `origin="20 -10"`、`origin="(20, -10)"`。允许首尾空白、换行和科学计数法，两个值必须有限。
 
 #### 4×4 变换矩阵 matrix
 
@@ -1602,7 +1606,7 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 | 属性 | 类型 | 必填 | 默认 | 说明 |
 |---|---|---|---|---|
 | `matrix` | Matrix44CMO | **是** | — | 16 个列主序浮点数 |
-| `origin` | Offset | 否 | 不设置 | 绝对变换原点，格式为 `"(x,y)"` |
+| `origin` | Offset | 否 | 不设置 | 绝对变换原点，支持 `"x y"`、`"x,y"`、`"(x,y)"` |
 | `alignment` | alignment | 否 | 不设置 | 相对子节点尺寸的变换原点 |
 
 最多包含 1 个子节点。以下矩阵将子节点向右平移 20、向下平移 10：
