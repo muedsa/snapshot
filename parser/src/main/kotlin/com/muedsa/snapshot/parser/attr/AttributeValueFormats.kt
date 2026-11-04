@@ -49,11 +49,11 @@ internal object AttributeValueFormats {
         listOf("NONE", "1 2 3 #00000080"),
     )
     val TEXT_DECORATION = AttributeValueInfo(
-        "逗号分隔的文本装饰，不可重复；NONE 必须单独使用",
-        listOf("NONE", "UNDERLINE,LINE_THROUGH"),
+        "空白或逗号分隔的文本装饰（不混用分隔符），忽略大小写，支持连字符，不可重复；NONE 必须单独使用",
+        listOf("none", "underline line-through", "UNDERLINE,LINE_THROUGH"),
         listOf("NONE") + TextDecorationLine.entries.map { it.name },
     )
-    val FLOAT_LIST = AttributeValueInfo("逗号分隔的有限浮点数列表", listOf("0,0.5,1"))
+    val FLOAT_LIST = AttributeValueInfo("空白或逗号分隔的有限浮点数列表（不混用分隔符），支持科学计数法", listOf("0 0.5 1", "0,0.5,1"))
     val COLOR_LIST = AttributeValueInfo("逗号分隔的 CSS 颜色列表，至少两个颜色", listOf("#ff0000,#0000ff", "rgb(255,0,0),blue"))
     val FONT_FEATURES = AttributeValueInfo(
         "NONE 或空白分隔的 OpenType 特性：四字符标签、可选 + / - 前缀、[起点:终点] 范围及 =整数；范围起点不得大于终点",

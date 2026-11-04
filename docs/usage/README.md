@@ -1293,7 +1293,7 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 |---|---|---|---|
 | `gradientType` | enum | 不设置 | `LINEAR` / `RADIAL` / `SWEEP`；设置其他渐变属性时必填 |
 | `gradientColors` | color 列表 | **渐变必填** | 至少两种颜色，以英文逗号分隔；逗号两侧允许空白 |
-| `gradientStops` | float 列表 | 等距生成 | 数量必须与颜色一致，值须在 `0..1` 内并按升序排列 |
+| `gradientStops` | float 列表 | 等距生成 | 空白或逗号分隔，如 `0 0.5 1`；数量必须与颜色一致，值须在 `0..1` 内并按升序排列 |
 | `gradientTileMode` | enum | `CLAMP` | `CLAMP` / `REPEAT` / `MIRROR` / `DECAL` |
 | `gradientRotation` | float | 不设置 | 围绕装饰中心旋转的弧度数 |
 
@@ -1853,7 +1853,7 @@ val parser = Parser(dataUriImageDecoder = DataUriImageDecoder { dataUri ->
 | `foregroundColor` | color | 不设置 | 创建文本前景画笔；设置后画笔会优先于普通 `color` 绘制字形 |
 | `foreground*` | 前景画笔参数 | Skiko 默认 | 控制填充/描边模式、笔触宽度与连接方式；属性见下文 |
 | `backgroundColor` | color | 不设置 | 创建纯色文本背景画笔 |
-| `decoration` | enum list | 不设置 | 文本装饰，英文逗号分隔：`UNDERLINE` / `OVERLINE` / `LINE_THROUGH`；`NONE` 表示显式取消继承的装饰且不能与其他值组合 |
+| `decoration` | enum list | 不设置 | 文本装饰，空白或英文逗号分隔：`UNDERLINE` / `OVERLINE` / `LINE_THROUGH`，如 `underline line-through`；`NONE` 表示显式取消继承的装饰且不能与其他值组合 |
 | `decorationColor` | color | `#000000FF` | 装饰线颜色；仅在设置 `decoration` 时可用 |
 | `decorationLineStyle` | enum | `SOLID` | `SOLID` / `DOUBLE` / `DOTTED` / `DASHED` / `WAVY`；仅在设置 `decoration` 时可用 |
 | `decorationThickness` | float | `1` | 装饰线粗细倍数，必须为有限正数；仅在设置 `decoration` 时可用 |
@@ -1911,6 +1911,8 @@ val parser = Parser(dataUriImageDecoder = DataUriImageDecoder { dataUri ->
 ```
 
 只设置 `decorationColor` 等修饰参数而不设置 `decoration` 会抛出 `ParseException`。需要在子 span 中取消父级装饰时，应显式写 `decoration="NONE"`。
+
+`decoration` 和 `gradientStops` 列表可选择空白或逗号作为分隔符；逗号两侧允许空白，但同一列表不能混用两种分隔符。空列表、首尾逗号、连续逗号、重复装饰仍然报错。颜色列表仍使用括号外的逗号分隔，不按空白拆分颜色函数。
 
 文本阴影使用 `offsetX offsetY [blurSigma] [color]`，多个阴影用英文逗号分隔。偏移量必须是有限浮点数，模糊 sigma 必须是非负有限数；未写模糊值时默认为 `0`，未写颜色时默认为黑色。可选的模糊值和颜色顺序不限，但同一阴影中不能重复。
 颜色可使用上述 CSS 写法；`rgb()`、`hsl()` 函数内部的逗号不会分隔阴影。

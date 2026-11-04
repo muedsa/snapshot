@@ -17,7 +17,8 @@ class NullableTextDecorationAttrDefine(name: String) :
 
     override fun parseValue(valueStr: String?): Set<TextDecorationLine> {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
-        val values = valueStr.split(',').map(EnumAttributeSyntax::normalize)
+        val parts = if (',' in valueStr) valueStr.split(',') else valueStr.trim().split(Regex("\\s+"))
+        val values = parts.map(EnumAttributeSyntax::normalize)
         require(values.none(String::isEmpty)) { "Attr [$name] contains an empty decoration name" }
         require(values.distinct().size == values.size) { "Attr [$name] contains duplicate decoration names" }
         if ("NONE" in values) {
