@@ -114,7 +114,7 @@ class AttributeDiagnosticsTest {
         val clipFit = failure("<ClipPath fit=\"COVER\"/>")
         assertEquals(listOf("FILL", "CONTAIN"), clipFit.attributeDiagnostic?.valueInfo?.allowedValues)
         assertEquals(listOf("NON_ZERO", "EVEN_ODD"), failure("<ClipPath fillRule=\"WINDING\"/>").attributeDiagnostic?.valueInfo?.allowedValues)
-        assertContains(failure("<Border border=\"1 DASHED red\"/>").message.orEmpty(), "宽度 样式 颜色")
+        assertContains(failure("<Border border=\"1 DASHED red\"/>").message.orEmpty(), "宽度 [样式] 颜色")
         assertContains(failure("<Border boxShadow=\"bad\"/>").message.orEmpty(), "offsetX offsetY")
         assertContains(failure("<Image dataUri=\"not-a-data-uri\"/>").message.orEmpty(), "data:image/<类型>;base64")
     }

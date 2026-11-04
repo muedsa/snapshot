@@ -35,8 +35,8 @@ internal object AttributeValueFormats {
     )
     val FONT_STYLE = AttributeValueInfo.enumNames(listOf("NORMAL", "BOLD", "ITALIC", "BOLD_ITALIC"))
     val BORDER = AttributeValueInfo(
-        "宽度 样式 颜色；空白分隔，样式忽略大小写，颜色使用 CSS 格式",
-        listOf("1 SOLID #336699", "2 SOLID rgb(255,0,0)"),
+        "宽度 [样式] 颜色，省略样式时为 SOLID；none 表示无边框；空白分隔，宽度须有限，样式忽略大小写，颜色使用 CSS 格式",
+        listOf("2 red", "none", "1 SOLID #336699", "2 SOLID rgb(255,0,0)"),
         BorderStyle.entries.map { it.name },
     )
     val BOX_SHADOW = AttributeValueInfo(

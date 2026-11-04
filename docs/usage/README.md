@@ -1262,12 +1262,14 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 
 #### 边框 border / borderLeft / borderTop / borderRight / borderBottom
 
+可写 `border="2 red"`，省略样式时使用实线 `SOLID`；`border="none"` 表示无边框。原有的三项写法继续支持。宽度是有限数，支持科学计数法；颜色可使用 CSS 函数（如 `2 rgb(255 0 0 / 50%)`）。该简写也适用于单边和 `foregroundBorder*` 前景边框。参数顺序固定，不接受 `red 2`、单独的颜色或带 `px` 的宽度。
+
 ```
 "<width> <STYLE> <color>"
 例:"2 SOLID #333333FF"、"1 NONE #00000000"
 ```
 
-- 在颜色函数括号外以空白分隔，三段都必填；`STYLE ∈ {NONE, SOLID}`（忽略大小写）。
+- 在颜色函数括号外以空白分隔；三项形式的 `STYLE ∈ {NONE, SOLID}`（忽略大小写）。
 - `border` 是四条边的默认值；某条边单独写了就覆盖默认值。
 
 #### 阴影 boxShadow
