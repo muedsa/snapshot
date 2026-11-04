@@ -1241,6 +1241,9 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 |---|---|
 | `"12"` | `Radius.circular(12)` |
 | `"(12,6)"` | `Radius.elliptical(x = 12, y = 6)` |
+| `"12 / 6"` | 水平半径 12、垂直半径 6，与 `"(12,6)"` 等价 |
+
+支持首尾空白、元组中的空白和科学计数法，数值须有限。该格式也适用于单角属性与前景圆角。`"12 6"` 不表示椭圆半径，也未引入 CSS 的多角简写；各角仍由对应的 `borderRadiusTopLeft` 等属性指定。
 
 #### 边框 border / borderLeft / borderTop / borderRight / borderBottom
 
