@@ -8,7 +8,11 @@ data class AttributeValueInfo(
     val allowedValues: List<String> = emptyList(),
 ) {
     companion object {
-        fun enum(values: List<Enum<*>>): AttributeValueInfo = choices(values.map { it.name })
+        fun enum(values: List<Enum<*>>): AttributeValueInfo = enumNames(values.map { it.name })
+
+        fun enumNames(values: List<String>): AttributeValueInfo = choices(values).copy(
+            format = "以下枚举名称之一；忽略首尾空白和大小写，连字符可代替下划线",
+        )
 
         fun choices(values: List<String>): AttributeValueInfo = AttributeValueInfo(
             format = "以下取值之一，区分大小写",

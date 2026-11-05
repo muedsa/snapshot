@@ -9,7 +9,7 @@ class ImageRepeatAttrDefine(name: String, defaultValue: ImageRepeat = ImageRepea
 
     override fun parseValue(valueStr: String?): ImageRepeat {
         requireNotNull(valueStr)
-        return ImageRepeat.valueOf(valueStr)
+        return ImageRepeat.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: ImageRepeat): DefaultValueAttrDefine<ImageRepeat> =

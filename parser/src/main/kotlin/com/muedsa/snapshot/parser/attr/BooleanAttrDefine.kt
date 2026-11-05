@@ -5,7 +5,7 @@ class BooleanAttrDefine(name: String, defaultValue: Boolean = false) :
 
     override val valueInfo get() = AttributeValueFormats.BOOLEAN
 
-    override fun parseValue(valueStr: String?): Boolean = valueStr?.toBoolean() ?: defaultValue
+    override fun parseValue(valueStr: String?): Boolean = BooleanAttributeSyntax.parse(valueStr, name)
 
     override fun copyWith(name: String, defaultValue: Boolean): BooleanAttrDefine =
         BooleanAttrDefine(name, defaultValue)

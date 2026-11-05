@@ -11,7 +11,8 @@ internal object AttributeValueFormats {
     val INT = AttributeValueInfo("32 位整数；具体取值范围由所在组件约束", listOf("0", "3"))
     val STRING = AttributeValueInfo("字符串；使用引号包裹含空白的值", listOf("hello"))
     val BOOLEAN = AttributeValueInfo(
-        "布尔值；true 不区分大小写，其余已赋值文本按 false 处理（兼容现有规则）",
+        "布尔值 true / false，忽略首尾空白和大小写；裸属性表示 true，未提供时使用默认值；空值和其他文本均报错",
+        listOf("true", "false"),
         listOf("true", "false"),
     )
     val COLOR = AttributeValueInfo(
@@ -19,41 +20,41 @@ internal object AttributeValueFormats {
         listOf("#33669980", "red", "rgb(255 0 0 / 50%)"),
     )
     val ALIGNMENT = AttributeValueInfo(
-        "对齐关键字或 (x,y)；坐标为十进制数，元组内不含空白",
-        listOf("CENTER", "(-1,0)"),
+        "对齐关键字（忽略大小写，支持连字符）或两个有限坐标 x y / x,y / (x,y)；支持空白和科学计数法",
+        listOf("CENTER", "-1 0", "(-1, 0)"),
         listOf("TOP_LEFT", "TOP_CENTER", "TOP_RIGHT", "CENTER_LEFT", "CENTER", "CENTER_RIGHT", "BOTTOM_LEFT", "BOTTOM_CENTER", "BOTTOM_RIGHT"),
     )
     val EDGE_INSETS = AttributeValueInfo(
-        "十进制数，或 (垂直,水平)，或 (左,上,右,下)；元组内不含空白",
-        listOf("8", "(8,16)", "(1,2,3,4)"),
+        "空白分隔的 1～4 个数，按 CSS 上、右、下、左展开；旧元组 (垂直,水平) / (左,上,右,下) 保留原顺序；支持空白和科学计数法，数值须有限",
+        listOf("8", "8 16", "1 2 3", "1 2 3 4", "(1, 2, 3, 4)"),
     )
-    val RADIUS = AttributeValueInfo("圆半径或 (水平半径,垂直半径)；十进制数，元组内不含空白", listOf("8", "(8,16)"))
-    val OFFSET = AttributeValueInfo("(x,y)；两个有限十进制数，元组内不含空白", listOf("(4,-2)"))
+    val RADIUS = AttributeValueInfo("圆半径，或 水平半径 / 垂直半径，或旧元组 (水平半径,垂直半径)；有限数，支持空白和科学计数法", listOf("8", "8 / 16", "(8, 16)"))
+    val OFFSET = AttributeValueInfo("两个有限坐标 x y / x,y / (x,y)；支持空白和科学计数法", listOf("4 -2", "(4, -2)"))
     val MATRIX = AttributeValueInfo(
-        "(m0,m1,…,m15)；16 个有限浮点数，列优先排列，逗号分隔且不含空白",
-        listOf("(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1)"),
+        "16 个有限数，列优先排列，空白或逗号分隔，可加括号；或 translate(x[,y]) rotate(角度deg/rad) scale(x[,y]) 函数序列；none 表示单位矩阵，按书写顺序右乘",
+        listOf("(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)", "translate(12,8) rotate(30deg) scale(1.2)", "none"),
     )
-    val FONT_STYLE = AttributeValueInfo.choices(listOf("NORMAL", "BOLD", "ITALIC", "BOLD_ITALIC"))
+    val FONT_STYLE = AttributeValueInfo.enumNames(listOf("NORMAL", "BOLD", "ITALIC", "BOLD_ITALIC"))
     val BORDER = AttributeValueInfo(
-        "宽度 样式 颜色；空白分隔，样式区分大小写，颜色使用 CSS 格式",
-        listOf("1 SOLID #336699", "2 SOLID rgb(255,0,0)"),
+        "宽度 [样式] 颜色，省略样式时为 SOLID；none 表示无边框；空白分隔，宽度须有限，样式忽略大小写，颜色使用 CSS 格式",
+        listOf("2 red", "none", "1 SOLID #336699", "2 SOLID rgb(255,0,0)"),
         BorderStyle.entries.map { it.name },
     )
     val BOX_SHADOW = AttributeValueInfo(
-        "ELEVATION_n（n 可选 ${ELEVATION_MAP.keys.joinToString()}），或 offsetX offsetY [blurRadius [spreadRadius]] [颜色] [模糊样式]；多个阴影用逗号分隔",
-        listOf("ELEVATION_2", "0 2 4 0 #00000080 NORMAL"),
+        "NONE、ELEVATION_n（n 可选 ${ELEVATION_MAP.keys.joinToString()}），或 offsetX offsetY [blurRadius [spreadRadius]] [颜色] [模糊样式]；偏移之后按数值出现顺序取半径，颜色与样式位置不限且不可重复；数值须有限，blurRadius 非负；支持科学计数法，多个阴影用逗号分隔",
+        listOf("none", "elevation-2", "0 2 4 0 #00000080 NORMAL", "0 2 red 4"),
         FilterBlurMode.entries.map { it.name },
     )
     val TEXT_SHADOW = AttributeValueInfo(
-        "NONE 或 offsetX offsetY [blurSigma] [颜色]；偏移须有限，blurSigma 须有限且非负，多个阴影用逗号分隔",
-        listOf("NONE", "1 2 3 #00000080"),
+        "NONE 或 offsetX offsetY [blurSigma] [颜色]；偏移之后颜色与 blurSigma 顺序不限且不可重复；偏移须有限，blurSigma 须有限且非负，支持科学计数法，多个阴影用逗号分隔",
+        listOf("none", "1 2 3 #00000080", "0 2 red 4"),
     )
     val TEXT_DECORATION = AttributeValueInfo(
-        "逗号分隔的文本装饰，不可重复；NONE 必须单独使用",
-        listOf("NONE", "UNDERLINE,LINE_THROUGH"),
+        "空白或逗号分隔的文本装饰（不混用分隔符），忽略大小写，支持连字符，不可重复；NONE 必须单独使用",
+        listOf("none", "underline line-through", "UNDERLINE,LINE_THROUGH"),
         listOf("NONE") + TextDecorationLine.entries.map { it.name },
     )
-    val FLOAT_LIST = AttributeValueInfo("逗号分隔的有限浮点数列表", listOf("0,0.5,1"))
+    val FLOAT_LIST = AttributeValueInfo("空白或逗号分隔的有限浮点数列表（不混用分隔符），支持科学计数法", listOf("0 0.5 1", "0,0.5,1"))
     val COLOR_LIST = AttributeValueInfo("逗号分隔的 CSS 颜色列表，至少两个颜色", listOf("#ff0000,#0000ff", "rgb(255,0,0),blue"))
     val FONT_FEATURES = AttributeValueInfo(
         "NONE 或空白分隔的 OpenType 特性：四字符标签、可选 + / - 前缀、[起点:终点] 范围及 =整数；范围起点不得大于终点",

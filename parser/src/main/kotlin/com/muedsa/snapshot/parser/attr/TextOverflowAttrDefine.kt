@@ -11,7 +11,7 @@ class TextOverflowAttrDefine(
 
     override fun parseValue(valueStr: String?): TextOverflow {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
-        return TextOverflow.valueOf(valueStr)
+        return TextOverflow.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(

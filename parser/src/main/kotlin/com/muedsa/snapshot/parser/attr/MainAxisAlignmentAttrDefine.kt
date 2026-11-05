@@ -9,7 +9,7 @@ class MainAxisAlignmentAttrDefine(name: String, defaultValue: MainAxisAlignment 
 
     override fun parseValue(valueStr: String?): MainAxisAlignment {
         requireNotNull(valueStr)
-        return MainAxisAlignment.valueOf(valueStr)
+        return MainAxisAlignment.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: MainAxisAlignment): DefaultValueAttrDefine<MainAxisAlignment> =

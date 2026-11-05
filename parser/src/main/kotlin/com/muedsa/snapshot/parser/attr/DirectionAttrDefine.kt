@@ -9,7 +9,7 @@ class DirectionAttrDefine(name: String, defaultValue: Direction = Direction.LTR)
 
     override fun parseValue(valueStr: String?): Direction {
         requireNotNull(valueStr)
-        return Direction.valueOf(valueStr)
+        return Direction.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: Direction): DefaultValueAttrDefine<Direction> =

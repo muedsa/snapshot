@@ -2,6 +2,7 @@ package com.muedsa.snapshot.parser.attr.nullable
 
 import com.muedsa.snapshot.parser.attr.AttributeValueFormats
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
+import com.muedsa.snapshot.parser.attr.EnumAttributeSyntax
 import org.jetbrains.skia.FontFeature
 
 class NullableFontFeatureListAttrDefine(name: String) :
@@ -14,7 +15,7 @@ class NullableFontFeatureListAttrDefine(name: String) :
         val value = valueStr.trim()
         require(value.isNotEmpty()) { "Attr [$name] value can not be empty" }
         val tokens = value.split(WHITESPACE_REGEX)
-        if ("NONE" in tokens) {
+        if (tokens.any { EnumAttributeSyntax.normalize(it) == "NONE" }) {
             require(tokens.size == 1) { "Attr [$name] value NONE can not be combined with other font features" }
             return emptyList()
         }

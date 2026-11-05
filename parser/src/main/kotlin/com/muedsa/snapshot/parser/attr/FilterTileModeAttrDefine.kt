@@ -11,7 +11,7 @@ class FilterTileModeAttrDefine(
 
     override fun parseValue(valueStr: String?): FilterTileMode {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
-        return FilterTileMode.valueOf(valueStr)
+        return FilterTileMode.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: FilterTileMode): FilterTileModeAttrDefine =

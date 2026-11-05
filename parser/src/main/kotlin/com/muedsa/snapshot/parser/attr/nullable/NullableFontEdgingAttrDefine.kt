@@ -1,5 +1,7 @@
 package com.muedsa.snapshot.parser.attr.nullable
 
+import com.muedsa.snapshot.parser.attr.EnumAttributeSyntax
+
 import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
 import org.jetbrains.skia.FontEdging
@@ -11,7 +13,7 @@ class NullableFontEdgingAttrDefine(name: String) :
 
     override fun parseValue(valueStr: String?): FontEdging {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
-        return FontEdging.valueOf(valueStr)
+        return FontEdging.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: FontEdging?): NullableFontEdgingAttrDefine =

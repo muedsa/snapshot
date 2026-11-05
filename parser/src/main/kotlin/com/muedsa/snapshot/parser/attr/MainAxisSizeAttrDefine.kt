@@ -9,7 +9,7 @@ class MainAxisSizeAttrDefine(name: String, defaultValue: MainAxisSize = MainAxis
 
     override fun parseValue(valueStr: String?): MainAxisSize {
         requireNotNull(valueStr)
-        return MainAxisSize.valueOf(valueStr)
+        return MainAxisSize.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: MainAxisSize): DefaultValueAttrDefine<MainAxisSize> =

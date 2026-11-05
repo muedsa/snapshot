@@ -11,7 +11,7 @@ class BlendModeAttrDefine(
 
     override fun parseValue(valueStr: String?): BlendMode {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
-        return BlendMode.valueOf(valueStr)
+        return BlendMode.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: BlendMode): BlendModeAttrDefine =

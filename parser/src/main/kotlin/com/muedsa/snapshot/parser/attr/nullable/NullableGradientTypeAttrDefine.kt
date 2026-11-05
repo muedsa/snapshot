@@ -1,5 +1,7 @@
 package com.muedsa.snapshot.parser.attr.nullable
 
+import com.muedsa.snapshot.parser.attr.EnumAttributeSyntax
+
 import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
 
@@ -16,7 +18,7 @@ class NullableGradientTypeAttrDefine(name: String) :
 
     override fun parseValue(valueStr: String?): GradientType {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
-        return GradientType.valueOf(valueStr)
+        return GradientType.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: GradientType?): NullableGradientTypeAttrDefine =

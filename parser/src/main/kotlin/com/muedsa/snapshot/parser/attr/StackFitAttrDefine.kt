@@ -11,7 +11,7 @@ class StackFitAttrDefine(
 
     override fun parseValue(valueStr: String?): StackFit {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
-        return StackFit.valueOf(valueStr)
+        return StackFit.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: StackFit): StackFitAttrDefine =

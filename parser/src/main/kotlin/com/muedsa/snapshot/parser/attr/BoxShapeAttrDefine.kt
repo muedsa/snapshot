@@ -11,7 +11,7 @@ class BoxShapeAttrDefine(
 
     override fun parseValue(valueStr: String?): BoxShape {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
-        return BoxShape.valueOf(valueStr)
+        return BoxShape.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: BoxShape): BoxShapeAttrDefine =

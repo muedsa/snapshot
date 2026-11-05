@@ -11,7 +11,7 @@ class ParagraphAlignmentAttrDefine(
 
     override fun parseValue(valueStr: String?): Alignment {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
-        return Alignment.valueOf(valueStr)
+        return Alignment.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(

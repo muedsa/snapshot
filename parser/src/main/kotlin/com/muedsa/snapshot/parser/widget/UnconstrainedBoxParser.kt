@@ -5,6 +5,7 @@ import com.muedsa.snapshot.parser.ContainerMode
 import com.muedsa.snapshot.parser.Element
 import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 import com.muedsa.snapshot.parser.attr.CommonAttrDefine
+import com.muedsa.snapshot.parser.attr.EnumAttributeSyntax
 import com.muedsa.snapshot.parser.attr.nullable.NullableEnumAttrDefine
 import com.muedsa.snapshot.widget.UnconstrainedBox
 import com.muedsa.snapshot.widget.Widget
@@ -15,7 +16,7 @@ class UnconstrainedBoxParser : WidgetParser {
 
     override val containerMode: ContainerMode = ContainerMode.SINGLE
 
-    val constrainedAxis = NullableEnumAttrDefine("constrainedAxis", AttributeValueInfo.enum(Axis.entries), Axis::valueOf)
+    val constrainedAxis = NullableEnumAttrDefine("constrainedAxis", AttributeValueInfo.enum(Axis.entries), EnumAttributeSyntax::normalize, Axis::valueOf)
 
     override fun buildWidget(element: Element): Widget = UnconstrainedBox(
         constrainedAxis = WidgetParser.parseAttrValue(constrainedAxis, element.attrs),

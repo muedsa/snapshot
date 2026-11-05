@@ -90,7 +90,14 @@ object CommonAttrDefine {
     val FIT_N: NullableBoxFitAttrDefine = NullableBoxFitAttrDefine("fit")
     val BLEND_MODE_N: NullableBlendModeAttrDefine = NullableBlendModeAttrDefine("blendMode")
     val BACKGROUND_BLEND_MODE_N: NullableBlendModeAttrDefine = NullableBlendModeAttrDefine("backgroundBlendMode")
-    val FONT_FAMILY_N = NullableStringAttrDefine(name = "fontFamily")
+    val FONT_FAMILY_N = NullableStringAttrDefine(
+        name = "fontFamily",
+        valueInfo = AttributeValueInfo("逗号分隔的字体名称；忽略每项首尾空白，保留名称内部空白，不允许空项", listOf("Arial, Noto Sans")),
+    ) { attr, value ->
+        require(value?.split(',')?.none { it.isBlank() } == true) {
+            "Attr [${attr.name}] contains an empty font family"
+        }
+    }
     val BORDER_N: NullableBorderSideAttrDefine = NullableBorderSideAttrDefine("border")
     val BORDER_LEFT_N: NullableBorderSideAttrDefine = NullableBorderSideAttrDefine("borderLeft")
     val BORDER_TOP_N: NullableBorderSideAttrDefine = NullableBorderSideAttrDefine("borderTop")

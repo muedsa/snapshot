@@ -21,9 +21,6 @@ internal fun Element.parseStrutStyle(): StrutStyle? {
         style.isEnabled = WidgetParser.parseAttrValue(TextParser.ATTR_STRUT_ENABLED, attrs) ?: true
         WidgetParser.parseAttrValue(TextParser.ATTR_STRUT_FONT_FAMILY, attrs)?.let { value ->
             val fontFamilies = value.split(',').map(String::trim)
-            require(fontFamilies.none(String::isEmpty)) {
-                "Attr [${TextParser.ATTR_STRUT_FONT_FAMILY.name}] contains an empty font family"
-            }
             style.setFontFamilies(fontFamilies.toTypedArray())
         }
         WidgetParser.parseAttrValue(TextParser.ATTR_STRUT_FONT_STYLE, attrs)?.let(style::setFontStyle)

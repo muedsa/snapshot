@@ -1166,6 +1166,8 @@ val bytes   = element.snapshot()                   // ③ 布局 + 渲染 + 编�
 
 写属性前先看这张"格式表"，绝大多数报错都来自这里。
 
+内置枚举与关键字允许首尾空白、大小写变体，以及连字符替代下划线：`CENTER` / `center`、`SPACE_BETWEEN` / `space-between`、`ANTI_ALIAS` / `anti-alias` 等价。该规则也适用于组合属性中的边框样式、阴影模式、文本装饰、`NONE` 和 `ELEVATION_2`（可写 `elevation-2`）。标签名和属性名仍使用文档中的写法；正文、字体名称、URL 与 OpenType 四字符特性标签保留原文。错误诊断中的 `rawValue` 始终保留用户输入。
+
 #### 颜色
 
 ```
@@ -1192,10 +1194,19 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 | 写法 | 含义 |
 |---|---|
 | `"10"` | 四边都是 10 |
+| `"1 2"` | 上下为 1，左右为 2 |
+| `"1 2 3"` | 上为 1，左右为 2，下为 3 |
+| `"1 2 3 4"` | 上为 1，右为 2，下为 3，左为 4 |
 | `"(1,2)"` | `symmetric(vertical = 1, horizontal = 2)` |
 | `"(1,2,3,4)"` | `EdgeInsets(left=1, top=2, right=3, bottom=4)` |
 
-> 格式严格：多值写法必须是**紧贴的圆括号 + 逗号**，不允许出现空格；也不接受三值写法。
+推荐使用空白分隔的 CSS 简写，支持 1～4 个有限数值、首尾空白、换行和科学计数法。旧括号元组仍支持 2 或 4 个逗号分隔的数，逗号周围可以有空白。不要省略旧元组的括号后只留下逗号。
+
+**四值顺序不同**：旧元组按“左、上、右、下”，CSS 简写按“上、右、下、左”。例如 `"(1,2,3,4)"` 对应 `"2 3 4 1"`，迁移时不能只删除括号和逗号。两种写法都不接受 `px` 等单位。
+
+#### 字体列表 fontFamily / strutFontFamily
+
+字体列表 `fontFamily` 与 `strutFontFamily` 均以逗号分隔，逐项忽略首尾空白并保留名称内部空白。例如 `"Arial, Noto Sans"` 得到 `Arial` 和 `Noto Sans`；空项（如 `"Arial,,Noto Sans"`）会报告对应属性的错误。字体名不经过枚举大小写/连字符转换。
 
 #### 对齐 alignment
 
@@ -1204,11 +1215,15 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 "CENTER_LEFT" | "CENTER" | "CENTER_RIGHT"
 "BOTTOM_LEFT" | "BOTTOM_CENTER" | "BOTTOM_RIGHT"
 "(0.5,-0.5)"        // 自定义,范围语义同 BoxAlignment
+"0.5 -0.5"          // 空白分隔的两个坐标
+"0.5, -0.5"         // 也支持逗号分隔与首尾空白
 ```
+
+数值对齐支持科学计数法，两个坐标必须有限；`imageAlignment`、`transformAlignment`、渐变起止点/中心/焦点等 BoxAlignment 属性共用该规则。
 
 #### 偏移 origin
 
-`Transform.origin` 使用 `"(x,y)"`，例如 `origin="(20,-10)"`。两个值必须有限，且括号和逗号之间不能有空格。
+`Transform.origin` 支持 `"x y"`、`"x,y"` 和旧括号写法，例如 `origin="20 -10"`、`origin="(20, -10)"`。允许首尾空白、换行和科学计数法，两个值必须有限。
 
 #### 4×4 变换矩阵 matrix
 
@@ -1218,7 +1233,22 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 "(m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13,m14,m15)"
 ```
 
-值之间不能有空格。单位矩阵为 `"(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1)"`；其中 `m12`、`m13` 分别表示 x、y 平移量。
+矩阵支持空白或逗号分隔，允许首尾空白、换行、科学计数法，外层括号可省略。单位矩阵为 `"(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1)"`；其中 `m12`、`m13` 分别表示 x、y 平移量。
+
+`Transform.matrix` 和 `Container.transform` 也支持函数简写：
+
+```html
+<Transform matrix="translate(12,8) rotate(30deg) scale(1.2)">
+    <SizedBox width="20" height="10"/>
+</Transform>
+```
+
+- `translate(x[,y])`：逻辑坐标平移，省略 y 时为 0；不接受 px 或百分比。
+- `scale(x[,y])`：省略 y 时与 x 相同。
+- `rotate(angle)`：必须明确使用 `deg`（角度）或 `rad`（弧度）。
+- 函数参数可用空白或逗号分隔；函数名忽略大小写。`none` 表示单位矩阵。
+- 按书写顺序右乘矩阵，等价于 Kotlin 中依次调用 `translate`、`rotateZ`、`scale`。作用到点时右边的变换先发生：`translate(10,0) scale(2)` 将点 `(1,0)` 映射为 `(12,0)`，交换顺序则为 `(22,0)`。变换原点仍由 `origin` / `alignment` / `transformAlignment` 控制。
+- 原始矩阵和函数序列是两种独立形式；组合结果必须有限。
 
 #### 圆角 borderRadius / borderRadius{Corner}
 
@@ -1226,15 +1256,20 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 |---|---|
 | `"12"` | `Radius.circular(12)` |
 | `"(12,6)"` | `Radius.elliptical(x = 12, y = 6)` |
+| `"12 / 6"` | 水平半径 12、垂直半径 6，与 `"(12,6)"` 等价 |
+
+支持首尾空白、元组中的空白和科学计数法，数值须有限。该格式也适用于单角属性与前景圆角。`"12 6"` 不表示椭圆半径，也未引入 CSS 的多角简写；各角仍由对应的 `borderRadiusTopLeft` 等属性指定。
 
 #### 边框 border / borderLeft / borderTop / borderRight / borderBottom
+
+可写 `border="2 red"`，省略样式时使用实线 `SOLID`；`border="none"` 表示无边框。原有的三项写法继续支持。宽度是有限数，支持科学计数法；颜色可使用 CSS 函数（如 `2 rgb(255 0 0 / 50%)`）。该简写也适用于单边和 `foregroundBorder*` 前景边框。参数顺序固定，不接受 `red 2`、单独的颜色或带 `px` 的宽度。
 
 ```
 "<width> <STYLE> <color>"
 例:"2 SOLID #333333FF"、"1 NONE #00000000"
 ```
 
-- 在颜色函数括号外以空白分隔，三段都必填；`STYLE ∈ {NONE, SOLID}`（大小写敏感）。
+- 在颜色函数括号外以空白分隔；三项形式的 `STYLE ∈ {NONE, SOLID}`（忽略大小写）。
 - `border` 是四条边的默认值；某条边单独写了就覆盖默认值。
 
 #### 阴影 boxShadow
@@ -1246,9 +1281,11 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 例:"0 4 8 #00000033"、"0 2 4 1 #00000026 NORMAL"
 ```
 
-- 位置参数顺序固定：`offsetX offsetY [blurRadius] [spreadRadius]`（最多到 spread）。
+- 前两个参数固定为 `offsetX offsetY`；其后按数值出现顺序读取 `blurRadius`、`spreadRadius`，默认均为 0。颜色与模糊样式可穿插其间，因此 `0 2 red 4` 等价于 `0 2 4 red`，表示模糊半径 4、扩散半径 0。
 - `color` 可省略（默认黑），支持上述 CSS 颜色写法；`blurMode` 取 `org.jetbrains.skia.FilterBlurMode` 的常量名（如 `NORMAL`）。阴影列表的逗号不会拆开 `rgb()` 等颜色函数的参数。
-- 每条阴影参数个数必须在 **2..6** 之间。
+- 每条阴影参数个数必须在 **2..6** 之间；颜色和模糊样式各最多出现一次，数值须有限且支持科学计数法，模糊半径不得为负，扩散半径可为负。
+- `none` 表示空阴影列表，不能与其他阴影或 `ELEVATION_n` 组合；`ELEVATION_n` 也必须单独使用。该规则同时适用于前景阴影。
+- 兼容性提醒：旧版按参数的绝对位置识别半径，可能把 `0 2 red 4` 中的 `4` 当成扩散半径；现在统一按数值顺序解释。旧版重复颜色/模式会覆盖前值，现在报错。`boxShadow` 使用模糊半径，`textShadow` 使用 sigma，两者数值含义不同；`INNER` 仍是 Skia 模糊模式，不等价于 CSS 的 `inset` 阴影。
 
 #### 渐变属性
 
@@ -1258,7 +1295,7 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 |---|---|---|---|
 | `gradientType` | enum | 不设置 | `LINEAR` / `RADIAL` / `SWEEP`；设置其他渐变属性时必填 |
 | `gradientColors` | color 列表 | **渐变必填** | 至少两种颜色，以英文逗号分隔；逗号两侧允许空白 |
-| `gradientStops` | float 列表 | 等距生成 | 数量必须与颜色一致，值须在 `0..1` 内并按升序排列 |
+| `gradientStops` | float 列表 | 等距生成 | 空白或逗号分隔，如 `0 0.5 1`；数量必须与颜色一致，值须在 `0..1` 内并按升序排列 |
 | `gradientTileMode` | enum | `CLAMP` | `CLAMP` / `REPEAT` / `MIRROR` / `DECAL` |
 | `gradientRotation` | float | 不设置 | 围绕装饰中心旋转的弧度数 |
 
@@ -1296,9 +1333,12 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 
 #### 布尔属性
 
-用 Kotlin 的 `String.toBoolean()`：**只有 `"true"`（忽略大小写）为真，其他任何值都是假**。
+- 未提供属性：保留该属性的默认值，或保持未设置以继承上级样式。
+- 仅写属性名：表示 `true`，例如 `<Snapshot debug>`、`<Text subpixel>`。
+- 显式赋值：只接受 `true` / `false`，忽略大小写和首尾空白，例如 `softWrap=" FALSE "`。
+- 空字符串、`tru`、`1`、`yes` 等其他值会报 `ParseException`，诊断包含可用值。需要关闭时明确写 `false`。
 
-> ⚠️ 裸写属性（`<Snapshot debug>`）在词法上 `value == null`，会**回落到默认值 `false`**，不是"置真"。要开必须写 `debug="true"` / `noCache="true"`。
+兼容性提醒：旧版用 `String.toBoolean()` 将错误文本静默转成 `false`，部分裸属性也会得到 `false`。现在裸属性统一为 `true`，错误值报错；依赖旧行为的调用方需要改为显式 `false`。`debug`、`raw`、`noCache`、`softWrap` 及可空的文本布尔属性使用相同规则。
 
 #### URL
 
@@ -1596,8 +1636,8 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 
 | 属性 | 类型 | 必填 | 默认 | 说明 |
 |---|---|---|---|---|
-| `matrix` | Matrix44CMO | **是** | — | 16 个列主序浮点数 |
-| `origin` | Offset | 否 | 不设置 | 绝对变换原点，格式为 `"(x,y)"` |
+| `matrix` | Matrix44CMO | **是** | — | 16 个列主序浮点数或 translate/rotate/scale 函数序列，见变换格式 |
+| `origin` | Offset | 否 | 不设置 | 绝对变换原点，支持 `"x y"`、`"x,y"`、`"(x,y)"` |
 | `alignment` | alignment | 否 | 不设置 | 相对子节点尺寸的变换原点 |
 
 最多包含 1 个子节点。以下矩阵将子节点向右平移 20、向下平移 10：
@@ -1805,7 +1845,7 @@ val parser = Parser(dataUriImageDecoder = DataUriImageDecoder { dataUri ->
 | `text` | string | 不设置 | 文本内容；**会被 trim** |
 | `color` | color | 不设置 | |
 | `fontSize` | float | 不设置 | |
-| `fontFamily` | string | 不设置 | 多个字体用**英文逗号**分隔，且**不做 trim**：`"A, B"` 的第二个字体名会带上前导空格 |
+| `fontFamily` | string | 不设置 | 多个字体用英文逗号分隔，逐项移除首尾空白并保留名称内部空白；不允许空项 |
 | `fontStyle` | enum | 不设置 | `NORMAL`/`BOLD`/`ITALIC`/`BOLD_ITALIC` |
 | `height` | float | 不设置 | 行高倍数 |
 | `topRatio` | float | 不设置 | 基线在行高中的顶部比例 |
@@ -1818,7 +1858,7 @@ val parser = Parser(dataUriImageDecoder = DataUriImageDecoder { dataUri ->
 | `foregroundColor` | color | 不设置 | 创建文本前景画笔；设置后画笔会优先于普通 `color` 绘制字形 |
 | `foreground*` | 前景画笔参数 | Skiko 默认 | 控制填充/描边模式、笔触宽度与连接方式；属性见下文 |
 | `backgroundColor` | color | 不设置 | 创建纯色文本背景画笔 |
-| `decoration` | enum list | 不设置 | 文本装饰，英文逗号分隔：`UNDERLINE` / `OVERLINE` / `LINE_THROUGH`；`NONE` 表示显式取消继承的装饰且不能与其他值组合 |
+| `decoration` | enum list | 不设置 | 文本装饰，空白或英文逗号分隔：`UNDERLINE` / `OVERLINE` / `LINE_THROUGH`，如 `underline line-through`；`NONE` 表示显式取消继承的装饰且不能与其他值组合 |
 | `decorationColor` | color | `#000000FF` | 装饰线颜色；仅在设置 `decoration` 时可用 |
 | `decorationLineStyle` | enum | `SOLID` | `SOLID` / `DOUBLE` / `DOTTED` / `DASHED` / `WAVY`；仅在设置 `decoration` 时可用 |
 | `decorationThickness` | float | `1` | 装饰线粗细倍数，必须为有限正数；仅在设置 `decoration` 时可用 |
@@ -1877,7 +1917,9 @@ val parser = Parser(dataUriImageDecoder = DataUriImageDecoder { dataUri ->
 
 只设置 `decorationColor` 等修饰参数而不设置 `decoration` 会抛出 `ParseException`。需要在子 span 中取消父级装饰时，应显式写 `decoration="NONE"`。
 
-文本阴影使用 `offsetX offsetY [blurSigma] [color]`，多个阴影用英文逗号分隔。偏移量必须是有限浮点数，模糊 sigma 必须是非负有限数；未写模糊值时默认为 `0`，未写颜色时默认为黑色。可选的模糊值和颜色顺序不限，但同一阴影中不能重复。
+`decoration` 和 `gradientStops` 列表可选择空白或逗号作为分隔符；逗号两侧允许空白，但同一列表不能混用两种分隔符。空列表、首尾逗号、连续逗号、重复装饰仍然报错。颜色列表仍使用括号外的逗号分隔，不按空白拆分颜色函数。
+
+文本阴影使用 `offsetX offsetY [blurSigma] [color]`，多个阴影用英文逗号分隔。数值支持科学计数法；偏移量必须是有限浮点数，模糊 sigma 必须是非负有限数；未写模糊值时默认为 `0`，未写颜色时默认为黑色。可选的模糊值和颜色顺序不限，但同一阴影中不能重复，例如 `0 2 red 4` 与 `0 2 4 red` 等价。
 颜色可使用上述 CSS 写法；`rgb()`、`hsl()` 函数内部的逗号不会分隔阴影。
 
 ```html
@@ -2007,7 +2049,7 @@ OpenType 字体特性使用空白分隔，每个标签必须由 4 个小写英�
 
 ```text
 Attr [mainAxisAlignment] value is invalid: …
-元素：<Row>；实际值："MIDDLE"；格式：以下取值之一，区分大小写；可用值：START, END, CENTER, SPACE_BETWEEN, SPACE_AROUND, SPACE_EVENLY；示例：START
+元素：<Row>；实际值："MIDDLE"；格式：以下枚举名称之一；忽略首尾空白和大小写，连字符可代替下划线；可用值：START, END, CENTER, SPACE_BETWEEN, SPACE_AROUND, SPACE_EVENLY；示例：START
 ```
 
 内置说明覆盖数值、CSS 颜色、对齐、边距、半径、偏移、矩阵、边框、阴影、渐变列表、文本装饰、字体特性、SVG 路径、`viewBox`、URL 和 Data URI 等类型。枚举候选从实际枚举定义生成；`ClipPath.fit` 等仅支持部分取值的属性只列出实际支持的选项。`foregroundGradientBegin` 等改名或带前缀的属性保留原类型说明。
@@ -2033,8 +2075,9 @@ try {
 - `attributePresent = false` 表示属性缺失；`true` 且 `rawValue = null` 表示只写属性名；空字符串仍保留为 `""`。消息的“实际值”只预览前 120 个字符并转义换行，结构化字段保留完整原值。
 - `valueInfo.allowedValues` 对简单枚举表示完整候选；对边框等复合格式表示其中的样式枚举项，填写时仍须遵循 `format`。无枚举项时该列表为空。
 - 自定义 `AttrDefine` 可覆盖 `valueInfo: AttributeValueInfo?` 提供说明，并在 `copyWith()` 中保留它；也可使用带 `valueInfo` 的 `StringAttrDefine`、`RequiredStringAttrDefine`、`NullableEnumAttrDefine` 构造器。没有说明的自定义属性仍保留属性名、输入、位置与原始原因。
+- `valueInfo` 只提供诊断信息，不会自动转换自定义解析器的输入。`StringAttrDefine` 和 `NullableEnumAttrDefine` 可显式传入 `normalize` 函数，并通过 `copyWith()` 保留；原构造器仍将输入原样交给自定义校验器/解析函数。
 - 结构错误、组件组合约束和统一属性解析入口之外的校验仍可能没有 `attributeDiagnostic`；自定义解析器主动抛出的 `ParseException` 保持原样。只调用基于属性 Map 的 `WidgetParser.parseAttrValue()` 时没有标签上下文，`elementName` 可为 `null`。
-- 仍在首个错误处抛出异常，不汇总所有错误，也不改变现有语法、默认值和布尔值转换规则。属性类型的格式说明不替代组件自身的范围/组合校验；例如能够解析成浮点数，不代表该组件允许负数。
+- 仍在首个错误处抛出异常，不汇总所有错误。属性语法见 [10.3](#103-属性取值格式)；类型的格式说明不替代组件自身的范围/组合校验，例如能够解析成浮点数，不代表该组件允许负数。
 
 **`parse()` 阶段（结构性错误）**
 
@@ -2229,10 +2272,10 @@ Surface 尺寸 = `ceil()` 后的布局尺寸，内容以 1:1 从原点绘制。�
 用 `Transform.rotate(angle, alignment = BoxAlignment.CENTER)`；`angle` 是弧度（`computeRotation`）。注意 DSL 的 `Transform(transform = ..., alignment = ...)` 没有默认 `alignment`，必须显式传（可传 `null`）。
 
 **Q：`<Container>` 的 `padding="1 2 3 4"` 不生效？**
-EdgeInsets 必须写成 `"(1,2,3,4)"` 或 `"10"` 或 `"(1,2)"`，圆括号和逗号是格式的一部分。
+当前 Parser 支持该 CSS 简写，顺序为上、右、下、左；若仍报错，请检查实际使用的 Parser 版本。旧版写法 `"(1,2,3,4)"` 仍可用，但其顺序是左、上、右、下，不能与空格写法直接互换。
 
 **Q：`<Snapshot debug>` 没打开调试？**
-裸属性会被当成 `null` 并回落到默认值 `false`。写 `debug="true"`。
+当前版本的裸属性表示 `true`，`<Snapshot debug>` 与 `debug="true"` 等价；旧版可能回落为 `false`。需要兼容旧版时显式写 `debug="true"`，关闭时写 `debug="false"`。
 
 **Q：解析器里能用 `Expanded` 或裁剪标签吗？**
 可以。`Expanded`、`Flexible`、`Opacity`、`Transform`、`ClipRect`、`ClipOval`、`ClipRRect`、`ClipPath` 都已内置，完整列表见 [10.2](#102-标签总表)。`ClipPath` 可直接使用 SVG 路径字符串、`viewBox` 和填充规则；依赖布局尺寸动态计算路径时，使用 Kotlin DSL 或按 [10.8](#108-扩展自定义标签) 注册自定义标签。

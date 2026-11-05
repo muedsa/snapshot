@@ -1,5 +1,7 @@
 package com.muedsa.snapshot.parser.attr.nullable
 
+import com.muedsa.snapshot.parser.attr.EnumAttributeSyntax
+
 import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
 import org.jetbrains.skia.paragraph.HeightMode
@@ -9,7 +11,7 @@ class NullableHeightModeAttrDefine(name: String) :
 
     override val valueInfo get() = AttributeValueInfo.enum(HeightMode.entries)
 
-    override fun parseValue(valueStr: String?): HeightMode? = valueStr?.let(HeightMode::valueOf)
+    override fun parseValue(valueStr: String?): HeightMode? = valueStr?.let { HeightMode.valueOf(EnumAttributeSyntax.normalize(it)) }
 
     override fun copyWith(
         name: String,

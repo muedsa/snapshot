@@ -1,5 +1,7 @@
 package com.muedsa.snapshot.parser.attr.required
 
+import com.muedsa.snapshot.parser.attr.EnumAttributeSyntax
+
 import com.muedsa.snapshot.paint.Axis
 import com.muedsa.snapshot.parser.attr.AttributeValueInfo
 
@@ -9,7 +11,7 @@ class RequiredAxisAttrDefine(name: String) : AttrDefine<Axis>(name = name) {
 
     override fun parseValue(valueStr: String?): Axis {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
-        return Axis.valueOf(valueStr)
+        return Axis.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String): RequiredAxisAttrDefine = RequiredAxisAttrDefine(name)

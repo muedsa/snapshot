@@ -9,7 +9,7 @@ class CrossAxisAlignmentAttrDefine(name: String, defaultValue: CrossAxisAlignmen
 
     override fun parseValue(valueStr: String?): CrossAxisAlignment {
         requireNotNull(valueStr)
-        return CrossAxisAlignment.valueOf(valueStr)
+        return CrossAxisAlignment.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: CrossAxisAlignment): DefaultValueAttrDefine<CrossAxisAlignment> =

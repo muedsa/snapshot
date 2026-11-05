@@ -10,7 +10,7 @@ class PlaceholderAlignmentAttrDefine (name: String, defaultValue: PlaceholderAli
 
     override fun parseValue(valueStr: String?): PlaceholderAlignment {
         requireNotNull(valueStr)
-        return PlaceholderAlignment.valueOf(valueStr)
+        return PlaceholderAlignment.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: PlaceholderAlignment): AttrDefine<PlaceholderAlignment> =

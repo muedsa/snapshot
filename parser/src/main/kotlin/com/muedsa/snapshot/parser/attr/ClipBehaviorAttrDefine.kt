@@ -11,7 +11,7 @@ class ClipBehaviorAttrDefine(
 
     override fun parseValue(valueStr: String?): ClipBehavior {
         requireNotNull(valueStr) { "Attr [$name] value can not be null" }
-        return ClipBehavior.valueOf(valueStr)
+        return ClipBehavior.valueOf(EnumAttributeSyntax.normalize(valueStr))
     }
 
     override fun copyWith(name: String, defaultValue: ClipBehavior): ClipBehaviorAttrDefine =

@@ -2,6 +2,7 @@ package com.muedsa.snapshot.parser.attr.required
 
 import com.muedsa.geometry.Matrix44CMO
 import com.muedsa.snapshot.parser.attr.AttributeValueFormats
+import com.muedsa.snapshot.parser.attr.TransformAttributeSyntax
 
 class RequiredMatrix44CMOAttrDefine(name: String) : AttrDefine<Matrix44CMO>(name = name) {
 
@@ -15,18 +16,7 @@ class RequiredMatrix44CMOAttrDefine(name: String) : AttrDefine<Matrix44CMO>(name
 
         fun parseMatrix44CMOFromText(valueStr: String?, attrDefine: AttrDefine<*>): Matrix44CMO {
             requireNotNull(valueStr) { "Attr [${attrDefine.name}] value can not be null" }
-            require(valueStr.startsWith('(') && valueStr.endsWith(')')) {
-                "Attr [${attrDefine.name}] value format error"
-            }
-            val values = valueStr.substring(1, valueStr.lastIndex).split(',')
-            require(values.size == 16) { "Attr [${attrDefine.name}] must contain 16 values" }
-            val matrix = values.map { value ->
-                require(value == value.trim()) { "Attr [${attrDefine.name}] must not contain whitespace" }
-                value.toFloat().also {
-                    require(it.isFinite()) { "Attr [${attrDefine.name}] values must be finite" }
-                }
-            }
-            return Matrix44CMO(*matrix.toFloatArray())
+            return TransformAttributeSyntax.parse(valueStr, attrDefine.name)
         }
     }
 }

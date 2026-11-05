@@ -11,6 +11,7 @@ import com.muedsa.snapshot.parser.widget.TextParser
 import com.muedsa.snapshot.parser.widget.UnconstrainedBoxParser
 import com.muedsa.snapshot.parser.widget.WidgetParser
 import org.jetbrains.skia.PaintMode
+import java.util.Locale
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -87,6 +88,7 @@ class AttributeValueInfoTest {
         ClipPathParser.FIT,
         ClipPathParser.FILL_RULE,
         CommonAttrDefine.URL,
+        CommonAttrDefine.FONT_FAMILY_N,
     )
 
     @Test
@@ -108,9 +110,13 @@ class AttributeValueInfoTest {
     fun every_advertised_single_choice_is_accepted() {
         for (definition in definitions) {
             val info = assertNotNull(definition.valueInfo)
-            if (info.format != "以下取值之一，区分大小写") continue
+            if (!info.format.startsWith("以下")) continue
             for (value in info.allowedValues) {
-                definition.parseValue(RawAttr(definition.name, value))
+                val expected = definition.parseValue(RawAttr(definition.name, value))
+                val alias = " ${value.lowercase(Locale.ROOT).replace('_', '-')} "
+                assertEquals(expected, definition.parseValue(RawAttr(definition.name, alias)), definition.name)
+                val renamed = definition.copyWith("renamed")
+                assertEquals(expected, renamed.parseValue(RawAttr("renamed", alias)), definition.name)
             }
         }
     }
@@ -126,7 +132,7 @@ class AttributeValueInfoTest {
     }
 
     @Test
-    fun legacy_constructors_defaults_and_boolean_behavior_remain_available() {
+    fun legacy_constructors_and_missing_attribute_defaults_remain_available() {
         val string = StringAttrDefine("value", "default") { _, value -> require(value != "bad") }
         assertEquals("default", string.parseValue(null as RawAttr?))
         assertEquals("test", string.parseValue(RawAttr("value", "test")))
@@ -136,7 +142,22 @@ class AttributeValueInfoTest {
         val bool = BooleanAttrDefine("flag", true)
         assertTrue(bool.parseValue(null as RawAttr?))
         assertTrue(bool.parseValue(RawAttr("flag")))
-        assertFalse(bool.parseValue(RawAttr("flag", "typo")))
+        assertFalse(bool.parseValue(RawAttr("flag", "false")))
+        assertFailsWith<IllegalArgumentException> { bool.parseValue(RawAttr("flag", "typo")) }
+    }
+
+    @Test
+    fun custom_enum_help_does_not_normalize_inputs_and_explicit_normalizers_survive_copy_with() {
+        val custom = NullableEnumAttrDefine("value", AttributeValueInfo.choices(listOf("Mixed_Case"))) { it }
+        for (definition in listOf(custom, custom.copyWith("renamed"))) {
+            assertEquals(" mixed-case ", definition.parseValue(RawAttr(definition.name, " mixed-case ")))
+            assertEquals(custom.valueInfo, definition.valueInfo)
+        }
+        val strict = NullableEnumAttrDefine("value", AttributeValueInfo.choices(listOf("FILL")), PaintMode::valueOf)
+        assertFailsWith<IllegalArgumentException> { strict.parseValue(RawAttr("value", "fill")) }
+        val normalized = NullableEnumAttrDefine("value", AttributeValueInfo.enum(PaintMode.entries), EnumAttributeSyntax::normalize, PaintMode::valueOf)
+            .copyWith("renamed")
+        assertEquals(PaintMode.FILL, normalized.parseValue(RawAttr("renamed", " fill ")))
     }
 
     @Test
