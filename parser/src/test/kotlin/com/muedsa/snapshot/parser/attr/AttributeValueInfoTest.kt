@@ -147,6 +147,20 @@ class AttributeValueInfoTest {
     }
 
     @Test
+    fun custom_enum_help_does_not_normalize_inputs_and_explicit_normalizers_survive_copy_with() {
+        val custom = NullableEnumAttrDefine("value", AttributeValueInfo.choices(listOf("Mixed_Case"))) { it }
+        for (definition in listOf(custom, custom.copyWith("renamed"))) {
+            assertEquals(" mixed-case ", definition.parseValue(RawAttr(definition.name, " mixed-case ")))
+            assertEquals(custom.valueInfo, definition.valueInfo)
+        }
+        val strict = NullableEnumAttrDefine("value", AttributeValueInfo.choices(listOf("FILL")), PaintMode::valueOf)
+        assertFailsWith<IllegalArgumentException> { strict.parseValue(RawAttr("value", "fill")) }
+        val normalized = NullableEnumAttrDefine("value", AttributeValueInfo.enum(PaintMode.entries), EnumAttributeSyntax::normalize, PaintMode::valueOf)
+            .copyWith("renamed")
+        assertEquals(PaintMode.FILL, normalized.parseValue(RawAttr("renamed", " fill ")))
+    }
+
+    @Test
     fun custom_string_help_and_checker_survive_copy_with() {
         val info = AttributeValueInfo("偶数字符串", listOf("2"))
         val definition = StringAttrDefine("value", "2", info) { _, value ->

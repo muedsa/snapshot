@@ -2075,6 +2075,7 @@ try {
 - `attributePresent = false` 表示属性缺失；`true` 且 `rawValue = null` 表示只写属性名；空字符串仍保留为 `""`。消息的“实际值”只预览前 120 个字符并转义换行，结构化字段保留完整原值。
 - `valueInfo.allowedValues` 对简单枚举表示完整候选；对边框等复合格式表示其中的样式枚举项，填写时仍须遵循 `format`。无枚举项时该列表为空。
 - 自定义 `AttrDefine` 可覆盖 `valueInfo: AttributeValueInfo?` 提供说明，并在 `copyWith()` 中保留它；也可使用带 `valueInfo` 的 `StringAttrDefine`、`RequiredStringAttrDefine`、`NullableEnumAttrDefine` 构造器。没有说明的自定义属性仍保留属性名、输入、位置与原始原因。
+- `valueInfo` 只提供诊断信息，不会自动转换自定义解析器的输入。`StringAttrDefine` 和 `NullableEnumAttrDefine` 可显式传入 `normalize` 函数，并通过 `copyWith()` 保留；原构造器仍将输入原样交给自定义校验器/解析函数。
 - 结构错误、组件组合约束和统一属性解析入口之外的校验仍可能没有 `attributeDiagnostic`；自定义解析器主动抛出的 `ParseException` 保持原样。只调用基于属性 Map 的 `WidgetParser.parseAttrValue()` 时没有标签上下文，`elementName` 可为 `null`。
 - 仍在首个错误处抛出异常，不汇总所有错误。属性语法见 [10.3](#103-属性取值格式)；类型的格式说明不替代组件自身的范围/组合校验，例如能够解析成浮点数，不代表该组件允许负数。
 
