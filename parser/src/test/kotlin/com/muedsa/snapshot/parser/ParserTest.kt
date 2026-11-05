@@ -29,7 +29,7 @@ class ParserTest {
     @Test
     fun parse_test() {
         val text = """
-            <Snapshot background="#FFFFFFFF" type="png" debug>
+            <Snapshot background="#FFFFFFFF" type="png" debug="false">
                 <Container color="#00FF00FF" width="400" height="300" alignment="CENTER" padding="10" margin="(1,2,4,8)">
                     <Container color="#FF0000FF" width="100" height="50"/>
                 </Container>

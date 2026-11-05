@@ -11,7 +11,8 @@ internal object AttributeValueFormats {
     val INT = AttributeValueInfo("32 位整数；具体取值范围由所在组件约束", listOf("0", "3"))
     val STRING = AttributeValueInfo("字符串；使用引号包裹含空白的值", listOf("hello"))
     val BOOLEAN = AttributeValueInfo(
-        "布尔值；true 不区分大小写，其余已赋值文本按 false 处理（兼容现有规则）",
+        "布尔值 true / false，忽略首尾空白和大小写；裸属性表示 true，未提供时使用默认值；空值和其他文本均报错",
+        listOf("true", "false"),
         listOf("true", "false"),
     )
     val COLOR = AttributeValueInfo(

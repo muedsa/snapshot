@@ -132,7 +132,7 @@ class AttributeValueInfoTest {
     }
 
     @Test
-    fun legacy_constructors_defaults_and_boolean_behavior_remain_available() {
+    fun legacy_constructors_and_missing_attribute_defaults_remain_available() {
         val string = StringAttrDefine("value", "default") { _, value -> require(value != "bad") }
         assertEquals("default", string.parseValue(null as RawAttr?))
         assertEquals("test", string.parseValue(RawAttr("value", "test")))
@@ -142,7 +142,8 @@ class AttributeValueInfoTest {
         val bool = BooleanAttrDefine("flag", true)
         assertTrue(bool.parseValue(null as RawAttr?))
         assertTrue(bool.parseValue(RawAttr("flag")))
-        assertFalse(bool.parseValue(RawAttr("flag", "typo")))
+        assertFalse(bool.parseValue(RawAttr("flag", "false")))
+        assertFailsWith<IllegalArgumentException> { bool.parseValue(RawAttr("flag", "typo")) }
     }
 
     @Test

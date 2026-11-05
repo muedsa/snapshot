@@ -1333,9 +1333,12 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 
 #### 布尔属性
 
-用 Kotlin 的 `String.toBoolean()`：**只有 `"true"`（忽略大小写）为真，其他任何值都是假**。
+- 未提供属性：保留该属性的默认值，或保持未设置以继承上级样式。
+- 仅写属性名：表示 `true`，例如 `<Snapshot debug>`、`<Text subpixel>`。
+- 显式赋值：只接受 `true` / `false`，忽略大小写和首尾空白，例如 `softWrap=" FALSE "`。
+- 空字符串、`tru`、`1`、`yes` 等其他值会报 `ParseException`，诊断包含可用值。需要关闭时明确写 `false`。
 
-> ⚠️ 裸写属性（`<Snapshot debug>`）在词法上 `value == null`，会**回落到默认值 `false`**，不是"置真"。要开必须写 `debug="true"` / `noCache="true"`。
+兼容性提醒：旧版用 `String.toBoolean()` 将错误文本静默转成 `false`，部分裸属性也会得到 `false`。现在裸属性统一为 `true`，错误值报错；依赖旧行为的调用方需要改为显式 `false`。`debug`、`raw`、`noCache`、`softWrap` 及可空的文本布尔属性使用相同规则。
 
 #### URL
 
@@ -2073,7 +2076,7 @@ try {
 - `valueInfo.allowedValues` 对简单枚举表示完整候选；对边框等复合格式表示其中的样式枚举项，填写时仍须遵循 `format`。无枚举项时该列表为空。
 - 自定义 `AttrDefine` 可覆盖 `valueInfo: AttributeValueInfo?` 提供说明，并在 `copyWith()` 中保留它；也可使用带 `valueInfo` 的 `StringAttrDefine`、`RequiredStringAttrDefine`、`NullableEnumAttrDefine` 构造器。没有说明的自定义属性仍保留属性名、输入、位置与原始原因。
 - 结构错误、组件组合约束和统一属性解析入口之外的校验仍可能没有 `attributeDiagnostic`；自定义解析器主动抛出的 `ParseException` 保持原样。只调用基于属性 Map 的 `WidgetParser.parseAttrValue()` 时没有标签上下文，`elementName` 可为 `null`。
-- 仍在首个错误处抛出异常，不汇总所有错误，也不改变现有语法、默认值和布尔值转换规则。属性类型的格式说明不替代组件自身的范围/组合校验；例如能够解析成浮点数，不代表该组件允许负数。
+- 仍在首个错误处抛出异常，不汇总所有错误。属性语法见 [10.3](#103-属性取值格式)；类型的格式说明不替代组件自身的范围/组合校验，例如能够解析成浮点数，不代表该组件允许负数。
 
 **`parse()` 阶段（结构性错误）**
 
@@ -2271,7 +2274,7 @@ Surface 尺寸 = `ceil()` 后的布局尺寸，内容以 1:1 从原点绘制。�
 当前 Parser 支持该 CSS 简写，顺序为上、右、下、左；若仍报错，请检查实际使用的 Parser 版本。旧版写法 `"(1,2,3,4)"` 仍可用，但其顺序是左、上、右、下，不能与空格写法直接互换。
 
 **Q：`<Snapshot debug>` 没打开调试？**
-裸属性会被当成 `null` 并回落到默认值 `false`。写 `debug="true"`。
+当前版本的裸属性表示 `true`，`<Snapshot debug>` 与 `debug="true"` 等价；旧版可能回落为 `false`。需要兼容旧版时显式写 `debug="true"`，关闭时写 `debug="false"`。
 
 **Q：解析器里能用 `Expanded` 或裁剪标签吗？**
 可以。`Expanded`、`Flexible`、`Opacity`、`Transform`、`ClipRect`、`ClipOval`、`ClipRRect`、`ClipPath` 都已内置，完整列表见 [10.2](#102-标签总表)。`ClipPath` 可直接使用 SVG 路径字符串、`viewBox` 和填充规则；依赖布局尺寸动态计算路径时，使用 Kotlin DSL 或按 [10.8](#108-扩展自定义标签) 注册自定义标签。
