@@ -1,11 +1,11 @@
 package com.muedsa.snapshot.parser.attr.nullable
 
-import com.muedsa.snapshot.parser.attr.AttrStrValueConst
 import com.muedsa.snapshot.parser.attr.AttributeValueFormats
 import com.muedsa.snapshot.parser.attr.ColorAttrDefine
 import com.muedsa.snapshot.parser.attr.CssColorSyntax
 import com.muedsa.snapshot.parser.attr.DefaultValueAttrDefine
 import com.muedsa.snapshot.parser.attr.EnumAttributeSyntax
+import com.muedsa.snapshot.parser.attr.NumericAttributeSyntax
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.paragraph.Shadow
 
@@ -30,9 +30,8 @@ class NullableTextShadowAttrDefine(name: String) :
         require(params.size in 2..4) {
             "Attr [$name] shadow must contain offsetX offsetY and optional blurSigma/color"
         }
-        val offsetX = params[0].toFloat()
-        val offsetY = params[1].toFloat()
-        require(offsetX.isFinite() && offsetY.isFinite()) { "Attr [$name] offsets must be finite" }
+        val offsetX = NumericAttributeSyntax.parse(params[0], name, false).single()
+        val offsetY = NumericAttributeSyntax.parse(params[1], name, false).single()
 
         var blurSigma = 0.0
         var color = Color.BLACK
@@ -40,7 +39,7 @@ class NullableTextShadowAttrDefine(name: String) :
         var hasColor = false
         params.drop(2).forEach { param ->
             when {
-                AttrStrValueConst.ONE_FLOAT_VALUE_REGEX.matches(param) -> {
+                NumericAttributeSyntax.isNumber(param) -> {
                     require(!hasBlurSigma) { "Attr [$name] shadow contains duplicate blur sigma" }
                     blurSigma = param.toDouble()
                     require(blurSigma.isFinite() && blurSigma >= 0.0) {

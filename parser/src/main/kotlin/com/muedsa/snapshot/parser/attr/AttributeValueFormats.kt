@@ -40,13 +40,13 @@ internal object AttributeValueFormats {
         BorderStyle.entries.map { it.name },
     )
     val BOX_SHADOW = AttributeValueInfo(
-        "ELEVATION_n（n 可选 ${ELEVATION_MAP.keys.joinToString()}），或 offsetX offsetY [blurRadius [spreadRadius]] [颜色] [模糊样式]；多个阴影用逗号分隔",
-        listOf("ELEVATION_2", "0 2 4 0 #00000080 NORMAL"),
+        "NONE、ELEVATION_n（n 可选 ${ELEVATION_MAP.keys.joinToString()}），或 offsetX offsetY [blurRadius [spreadRadius]] [颜色] [模糊样式]；偏移之后按数值出现顺序取半径，颜色与样式位置不限且不可重复；数值须有限，blurRadius 非负；支持科学计数法，多个阴影用逗号分隔",
+        listOf("none", "elevation-2", "0 2 4 0 #00000080 NORMAL", "0 2 red 4"),
         FilterBlurMode.entries.map { it.name },
     )
     val TEXT_SHADOW = AttributeValueInfo(
-        "NONE 或 offsetX offsetY [blurSigma] [颜色]；偏移须有限，blurSigma 须有限且非负，多个阴影用逗号分隔",
-        listOf("NONE", "1 2 3 #00000080"),
+        "NONE 或 offsetX offsetY [blurSigma] [颜色]；偏移之后颜色与 blurSigma 顺序不限且不可重复；偏移须有限，blurSigma 须有限且非负，支持科学计数法，多个阴影用逗号分隔",
+        listOf("none", "1 2 3 #00000080", "0 2 red 4"),
     )
     val TEXT_DECORATION = AttributeValueInfo(
         "空白或逗号分隔的文本装饰（不混用分隔符），忽略大小写，支持连字符，不可重复；NONE 必须单独使用",

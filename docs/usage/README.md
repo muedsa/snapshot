@@ -1281,9 +1281,11 @@ rgb(255 0 0 / 50%) / hsl(120deg 100% 50% / 50%)
 例:"0 4 8 #00000033"、"0 2 4 1 #00000026 NORMAL"
 ```
 
-- 位置参数顺序固定：`offsetX offsetY [blurRadius] [spreadRadius]`（最多到 spread）。
+- 前两个参数固定为 `offsetX offsetY`；其后按数值出现顺序读取 `blurRadius`、`spreadRadius`，默认均为 0。颜色与模糊样式可穿插其间，因此 `0 2 red 4` 等价于 `0 2 4 red`，表示模糊半径 4、扩散半径 0。
 - `color` 可省略（默认黑），支持上述 CSS 颜色写法；`blurMode` 取 `org.jetbrains.skia.FilterBlurMode` 的常量名（如 `NORMAL`）。阴影列表的逗号不会拆开 `rgb()` 等颜色函数的参数。
-- 每条阴影参数个数必须在 **2..6** 之间。
+- 每条阴影参数个数必须在 **2..6** 之间；颜色和模糊样式各最多出现一次，数值须有限且支持科学计数法，模糊半径不得为负，扩散半径可为负。
+- `none` 表示空阴影列表，不能与其他阴影或 `ELEVATION_n` 组合；`ELEVATION_n` 也必须单独使用。该规则同时适用于前景阴影。
+- 兼容性提醒：旧版按参数的绝对位置识别半径，可能把 `0 2 red 4` 中的 `4` 当成扩散半径；现在统一按数值顺序解释。旧版重复颜色/模式会覆盖前值，现在报错。`boxShadow` 使用模糊半径，`textShadow` 使用 sigma，两者数值含义不同；`INNER` 仍是 Skia 模糊模式，不等价于 CSS 的 `inset` 阴影。
 
 #### 渐变属性
 
@@ -1914,7 +1916,7 @@ val parser = Parser(dataUriImageDecoder = DataUriImageDecoder { dataUri ->
 
 `decoration` 和 `gradientStops` 列表可选择空白或逗号作为分隔符；逗号两侧允许空白，但同一列表不能混用两种分隔符。空列表、首尾逗号、连续逗号、重复装饰仍然报错。颜色列表仍使用括号外的逗号分隔，不按空白拆分颜色函数。
 
-文本阴影使用 `offsetX offsetY [blurSigma] [color]`，多个阴影用英文逗号分隔。偏移量必须是有限浮点数，模糊 sigma 必须是非负有限数；未写模糊值时默认为 `0`，未写颜色时默认为黑色。可选的模糊值和颜色顺序不限，但同一阴影中不能重复。
+文本阴影使用 `offsetX offsetY [blurSigma] [color]`，多个阴影用英文逗号分隔。数值支持科学计数法；偏移量必须是有限浮点数，模糊 sigma 必须是非负有限数；未写模糊值时默认为 `0`，未写颜色时默认为黑色。可选的模糊值和颜色顺序不限，但同一阴影中不能重复，例如 `0 2 red 4` 与 `0 2 4 red` 等价。
 颜色可使用上述 CSS 写法；`rgb()`、`hsl()` 函数内部的逗号不会分隔阴影。
 
 ```html

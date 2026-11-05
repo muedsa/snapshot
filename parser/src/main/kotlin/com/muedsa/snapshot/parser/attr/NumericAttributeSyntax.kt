@@ -5,6 +5,8 @@ internal object NumericAttributeSyntax {
     private val NUMBER = Regex("[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?")
     private val WHITESPACE = Regex("\\s+")
 
+    fun isNumber(value: String): Boolean = NUMBER.matches(value)
+
     fun pair(value: String, attrName: String): List<Float> {
         val text = value.trim()
         val body = if (text.startsWith('(') && text.endsWith(')')) text.substring(1, text.lastIndex) else text
