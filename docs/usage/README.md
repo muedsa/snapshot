@@ -81,7 +81,7 @@ val png: ByteArray = Parser().parse(StringReader(text)).snapshot()
 | CI 使用的 JDK | **17**（temurin） | `.github/workflows/*.yaml` |
 | Kotlin | **2.4.20** | `gradle/libs.versions.toml` |
 | 图形依赖 | `org.jetbrains.skiko:skiko-awt:0.0.0-SNAPSHOT` | `gradle/libs.versions.toml` |
-| 依赖仓库 | `mavenCentral()` + `https://maven.pkg.jetbrains.space/public/p/compose/dev` | `settings.gradle.kts` |
+| 依赖仓库 | `mavenCentral()` + `https://redirector.kotlinlang.org/maven/compose-dev` | `settings.gradle.kts` |
 
 > ⚠️ skiko 用的是 **`0.0.0-SNAPSHOT`**（JetBrains compose dev 仓库的滚动快照），不是稳定版。同一份代码在不同时间拉到的快照可能编译不过（如：`Path` 不可变、`Shader` 渐变工厂改签名、`FontRastrSettings` 弃用）。**固定可复现构建时请显式锁版本。**
 
@@ -123,7 +123,7 @@ gpr.key=YOUR_CLASSIC_PAT
 repositories {
     mavenCentral()
     // snapshot 当前依赖 Skiko 开发快照。
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven("https://redirector.kotlinlang.org/maven/compose-dev")
     maven {
         url = uri("https://maven.pkg.github.com/muedsa/snapshot")
         credentials {

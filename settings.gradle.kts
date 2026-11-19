@@ -11,7 +11,7 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         mavenCentral()
-        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
+        maven { url = uri("https://redirector.kotlinlang.org/maven/compose-dev") }
     }
 }
 rootProject.name = "snapshot"
